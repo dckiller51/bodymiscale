@@ -10,7 +10,7 @@
       {% set today = now() %}
       {% set birthday = (1980, 05, 28)%}
       {{ today.year - birthday[0] - ((today.month, today.day) < (birthday[1], birthday[2])) }}
-  sex: "male"
+  gender: "male"
 - user2
   username: Siham
   weight:
@@ -23,7 +23,7 @@
       {% set today = now() %}
       {% set birthday = (1979, 12, 19)%}
       {{ today.year - birthday[0] - ((today.month, today.day) < (birthday[1], birthday[2])) }}
-  sex: "female"
+  gender: "female"
 - user3
   username: Théo
   weight:
@@ -36,7 +36,7 @@
       {% set today = now() %}
       {% set birthday = (2006, 03, 28)%}
       {{ today.year - birthday[0] - ((today.month, today.day) < (birthday[1], birthday[2])) }}
-  sex: "male"
+  gender: "male"
 - user4
   username: Sacha
   weight:
@@ -49,7 +49,7 @@
       {% set today = now() %}
       {% set birthday = (2009, 06, 15)%}
       {{ today.year - birthday[0] - ((today.month, today.day) < (birthday[1], birthday[2])) }}
-  sex: "male"
+  gender: "male"
 - user5
   username: Noham
   weight:
@@ -62,4 +62,4 @@
       {% set today = now() %}
       {% set birthday = (2019, 09, 15)%}
       {{ today.year - birthday[0] - ((today.month, today.day) < (birthday[1], birthday[2])) }}
-  sex: "male"
+  gender: "male"

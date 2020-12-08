@@ -1,11 +1,11 @@
 from math import floor
 
 class bodymiscale:
-	def __init__(self, weight, height, age, sex, impedance):
+	def __init__(self, weight, height, age, gender, impedance):
 		self._weight = weight
 		self._height = height
 		self._age = age
-		self._sex = sex
+		self._gender = gender
 		self._impedance = impedance
 
 		# Check for potential out of boundaries
@@ -37,7 +37,7 @@ class bodymiscale:
 
 	# Get BMR
 	def getBMR(self):
-		if self._sex == 'female':
+		if self._gender == 'female':
 			bmr = 864.6 + self._weight * 10.2036
 			bmr -= self._height * 0.39336
 			bmr -= self._age * 6.204
@@ -47,9 +47,9 @@ class bodymiscale:
 			bmr -= self._age * 8.976
 
 		# Capping
-		#if self._sex == 'female' and bmr > 2996:
+		#if self._gender == 'female' and bmr > 2996:
 		#	bmr = 5000
-		#elif self._sex == 'male' and bmr > 2322:
+		#elif self._gender == 'male' and bmr > 2322:
 		#	bmr = 5000
 		return self._checkValueOverflow(bmr, 500, 10000)
 
@@ -60,7 +60,7 @@ class bodymiscale:
 			'male': {12: 36, 15: 30, 17: 26, 29: 23, 50: 21, 120: 20}
 		}
 
-		for age, coefficient in coefficients[self._sex].items():
+		for age, coefficient in coefficients[self._gender].items():
 			if self._age < age:
 				return [self._weight * coefficient]
 				break
@@ -68,9 +68,9 @@ class bodymiscale:
 	# Get fat percentage
 	def getFatPercentage(self):
 		# Set a constant to remove from LBM
-		if self._sex == 'female' and self._age <= 49:
+		if self._gender == 'female' and self._age <= 49:
 			const = 9.25
-		elif self._sex == 'female' and self._age > 49:
+		elif self._gender == 'female' and self._age > 49:
 			const = 7.25
 		else:
 			const = 0.8
@@ -78,13 +78,13 @@ class bodymiscale:
 		# Calculate body fat percentage
 		LBM = self._getLBMCoefficient()
 
-		if self._sex == 'male' and self._weight < 61:
+		if self._gender == 'male' and self._weight < 61:
 			coefficient = 0.98
-		elif self._sex == 'female' and self._weight > 60:
+		elif self._gender == 'female' and self._weight > 60:
 			coefficient = 0.96
 			if self._height > 160:
 				coefficient *= 1.03
-		elif self._sex == 'female' and self._weight < 50:
+		elif self._gender == 'female' and self._weight < 50:
 			coefficient = 1.02
 			if self._height > 160:
 				coefficient *= 1.03
@@ -114,7 +114,7 @@ class bodymiscale:
 
 		for scale in scales:
 			if self._age >= scale['min'] and self._age <= scale['max']:
-				return scale[self._sex]
+				return scale[self._gender]
 
 	# Get water percentage
 	def getWaterPercentage(self):
@@ -136,7 +136,7 @@ class bodymiscale:
 
 	# Get bone mass
 	def getBoneMass(self):
-		if self._sex == 'female':
+		if self._gender == 'female':
 			base = 0.245691014
 		else:
 			base = 0.18016894
@@ -149,9 +149,9 @@ class bodymiscale:
 			boneMass -= 0.1
 
 		# Capping boneMass
-		if self._sex == 'female' and boneMass > 5.1:
+		if self._gender == 'female' and boneMass > 5.1:
 			boneMass = 8
-		elif self._sex == 'male' and boneMass > 5.2:
+		elif self._gender == 'male' and boneMass > 5.2:
 			boneMass = 8
 		return self._checkValueOverflow(boneMass, 0.5 , 8)
 
@@ -164,17 +164,17 @@ class bodymiscale:
 		]
 
 		for scale in scales:
-			if self._weight >= scale[self._sex]['min']:
-				return [scale[self._sex]['optimal']-1, scale[self._sex]['optimal']+1]
+			if self._weight >= scale[self._gender]['min']:
+				return [scale[self._gender]['optimal']-1, scale[self._gender]['optimal']+1]
 
 	# Get muscle mass
 	def getMuscleMass(self):
 		muscleMass = self._weight - ((self._getFatPercentage() * 0.01) * self._weight) - self._getBoneMass()
 
 		# Capping muscle mass
-		if self._sex == 'female' and muscleMass >= 84:
+		if self._gender == 'female' and muscleMass >= 84:
 			muscleMass = 120
-		elif self._sex == 'male' and muscleMass >= 93.5:
+		elif self._gender == 'male' and muscleMass >= 93.5:
 			muscleMass = 120
 
 		return self._checkValueOverflow(muscleMass, 10 ,120)
@@ -189,11 +189,11 @@ class bodymiscale:
 
 		for scale in scales:
 			if self._height >= scale['min']:
-				return scale[self._sex]
+				return scale[self._gender]
 
 	# Get Visceral Fat
 	def getVisceralFat(self):
-		if self._sex == 'female':
+		if self._gender == 'female':
 			if self._weight > (13 - (self._height * 0.5)) * -1:
 				subsubcalc = ((self._height * 1.45) + (self._height * 0.1158) * self._height) - 120
 				subcalc = self._weight * 500 / subsubcalc
