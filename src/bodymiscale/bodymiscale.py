@@ -1,6 +1,3 @@
-import requests
-import datetime, time
-import logging
 from math import floor
 
 class bodymiscale:
