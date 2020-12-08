@@ -1,0 +1,9 @@
+{
+    "domain": "bodymiscale",
+    "name": "Body MI Scale sensor",
+    "documentation": "",
+    "requirements": [
+    ],
+    "dependencies": [],
+    "codeowners": []
+}
