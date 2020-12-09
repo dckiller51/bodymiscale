@@ -1,46 +1,39 @@
 {
   "user": [ 
     {
-      "user1": [
-      {
-        "username": "Aurélien",
-        "height": 176,
-        "age": 1980-05-28,
-        "gender": "male"
-        ]
-      },
-      "user2": [
-      {
-        "username": "Siham",
-        "height": 166,
-        "age": 1979-12-19,
-        "gender": "female"
-        ]
-      },
-      "user3": [
-      {
-        "username": "Théo",
-        "height": 156,
-        "age": 2006-03-28,
-        "gender": "male"
-        ]
-      },
-      "user4": [
-      {
-        "username": "Sacha",
-        "height": 136,
-        "age": 2009-06-15,
-        "gender": "male"
-        ]
-      },
-      "user5": [
-      {
-        "username": "Noham",
-        "height": 86,
-        "age": 2019-09-15,
-        "gender": "male"
-        ]
-      }
-    ]
-  }
+      "id": "user1",
+      "username": "Aurélien",
+      "height": 176,
+      "age": "1980-05-28",
+      "gender": "male"
+    },
+    {
+      "id": "user2",
+      "username": "Siham",
+      "height": 166,
+      "age": "1979-12-19",
+      "gender": "female"
+    },
+    {
+      "id": "user3",
+      "username": "Théo",
+      "height": 156,
+      "age": "2006-03-28",
+      "gender": "male"
+    },
+    {
+      "id": "user4",
+      "username": "Sacha",
+      "height": 136,
+      "age": "2009-06-15",
+      "gender": "male"
+    },
+    {
+      "id": "user5",
+      "username": "Noham",
+      "height": 86,
+      "age": "2019-09-15",
+      "gender": "male"
+    }
+  ]
 }
