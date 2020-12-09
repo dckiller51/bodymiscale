@@ -1,0 +1,34 @@
+{
+  "user": [ 
+    {
+      "username": "Aurélien",
+      "height": 176,
+      "age": 1980-05-28,
+      "gender": "male"
+    },
+    {
+      "username": "Siham",
+      "height": 166,
+      "age": 1979-12-19,
+      "gender": "female"
+    },
+    {
+      "username": "Théo",
+      "height": 156,
+      "age": 2006-03-28,
+      "gender": "male"
+    },
+    {
+      "username": "Sacha",
+      "height": 136,
+      "age": 2009-06-15,
+      "gender": "male"
+    },
+    {
+      "username": "Noham",
+      "height": 86,
+      "age": 2019-09-15,
+      "gender": "male"
+    }
+  ]
+}
