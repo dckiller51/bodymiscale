@@ -1,5 +1,8 @@
+import datetime, time
+import logging
 from math import floor
 
+__namemybodymiscale__ = "bodymiscale"
 class bodymiscale:
 	def __init__(self, weight, height, age, gender, impedance):
 		self._weight = weight
