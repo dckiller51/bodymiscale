@@ -26,6 +26,13 @@ SCAN_INTERVAL = timedelta(minutes=1)
 
 __VERSION__ = "1.0.0.0"
 
+ATTR_WEIGHT = "weight"
+ATTR_BMI = "bmi"
+ATTR_BASAL_METABOLISM = "basal_metabolism"
+ATTR_VISCERAL_FAT = "visceral_fat"
+ATTR_IDEAL_WEIGHT = "ideal_weight"
+ATTR_IMCLABEL = "imclabel"
+
 DEFAUT_WEIGHT = "0"
 DEFAUT_IMPEDANCE = "0"
 WEIGHT = "weight"
@@ -62,22 +69,24 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     except :
         _LOGGER.exception("Could not run my First Extension")
         return False
-    add_entities([mybodymiscale(session, name )], True)
+    mydatabody = (weight, height, age, gender, 0)
+    add_entities([mybodymiscale(session, name, mydatabody )], True)
 
 class mybodymiscale(Entity):
     """."""
 
-    def __init__(self, session, name ):
+    def __init__(self, session, name, mydatabody):
         """Initialize the sensor."""
         self._session = session
         self._name = name
-        self._attributes = {}
+        self._mydatabody = mydatabody
+        self._data = {}
         self._state = None
 
     @property
     def name(self):
         """Return the name of the sensor."""
-        return "mybodymiscale.%s" %(self._name)
+        return "bodymiscale.%s" %(self._name)
 
     @property
     def state(self):
@@ -86,5 +95,11 @@ class mybodymiscale(Entity):
 
     @property
     def device_state_attributes(self):
-        """Return the state attributes."""
-        return self._attributes
+        return {
+            ATTR_WEIGHT: self._data.get("weight"),
+            ATTR_BMI: self._data.get("bmi"),
+            ATTR_BASAL_METABOLISM: self._data.get("basal_metabolism"),
+            ATTR_VISCERAL_FAT: self._data.get("visceral_fat"),
+            ATTR_IDEAL_WEIGHT: self._data.get("ideal_weight"),
+            ATTR_IMCLABEL: self._data.get("imclabel")
+        }

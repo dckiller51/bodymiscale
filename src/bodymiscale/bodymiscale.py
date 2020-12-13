@@ -10,6 +10,7 @@ class bodymiscale:
 		self._age = age
 		self._gender = gender
 		self._impedance = impedance
+		self._BMI = None
 
 		# Check for potential out of boundaries
 		if self.height > 220:
