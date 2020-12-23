@@ -2,7 +2,6 @@
 from collections import deque
 from datetime import datetime, timedelta
 import logging
-
 import voluptuous as vol
 
 from homeassistant.components.recorder.models import States
@@ -28,9 +27,11 @@ DEFAULT_NAME = "bodymiscale"
 
 READING_WEIGHT = "weight"
 
+attributes = "attributes"
 ATTR_PROBLEM = "problem"
 ATTR_SENSORS = "sensors"
 PROBLEM_NONE = "none"
+ATTR_BMI = "bmi"
 
 # we're not returning only one value, we're returning a dict here. So we need
 # to have a separate literal for it to avoid confusion.
@@ -72,14 +73,20 @@ async def async_setup(hass, config):
     component = EntityComponent(_LOGGER, DOMAIN, hass)
 
     entities = []
+    weight = config.get(CONF_SENSOR_WEIGHT)
+    height = config.get(CONF_HEIGHT)
+    age = config.get(CONF_AGE)
+    gender = config.get(CONF_GENDER)
     for bodymiscale_name, bodymiscale_config in config[DOMAIN].items():
         _LOGGER.info("Added bodymiscale %s", bodymiscale_name)
-        entity = Bodymiscale(bodymiscale_name, bodymiscale_config)
+        entity = Bodymiscale(bodymiscale_name, bodymiscale_config, weight, \
+            height, age, gender)
         entities.append(entity)
 
     await component.async_add_entities(entities)
     return True
 
+from . import bodymetrics
 
 class Bodymiscale(Entity):
     """Bodymiscale the well-being of a body.
@@ -94,7 +101,7 @@ class Bodymiscale(Entity):
         },
     }
 
-    def __init__(self, name, config):
+    def __init__(self, name, config, weight, height, age, gender):
         """Initialize the Bodymiscale component."""
         self._config = config
         self._sensormap = {}
@@ -109,6 +116,8 @@ class Bodymiscale(Entity):
         self._height = None
         self._age = None
         self._gender = None
+        self._body_state = None
+        self._attr_mbi = None
         self._problems = PROBLEM_NONE
 
     @callback
@@ -129,7 +138,7 @@ class Bodymiscale(Entity):
         reading = self._sensormap[entity_id]
         if reading == READING_WEIGHT:
             if value != STATE_UNAVAILABLE:
-                value = float(value)
+                value = "{:.2f}".format(float(value))
             self._weight = value
         else:
             raise HomeAssistantError(
@@ -138,6 +147,10 @@ class Bodymiscale(Entity):
         if ATTR_UNIT_OF_MEASUREMENT in new_state.attributes:
             self._unit_of_measurement[reading] = new_state.attributes.get(
                 ATTR_UNIT_OF_MEASUREMENT
+            )
+        if attributes in new_state.attributes:
+            self._bodymiscale_attributes = new_state.attributes.get(
+                attributes
             )
         self._update_state()
 
@@ -195,8 +208,8 @@ class Bodymiscale(Entity):
 
     @property
     def state_attributes(self):
+        lib = bodymetrics.bodyMetrics(self._weight, self._height, self._age, self._gender, 0)
         """Return the attributes of the entity.
-
         Provide the individual measurements from the
         sensor in the attributes of the device.
         """
@@ -204,6 +217,7 @@ class Bodymiscale(Entity):
             ATTR_PROBLEM: self._problems,
             ATTR_SENSORS: self._readingmap,
             ATTR_DICT_OF_UNITS_OF_MEASUREMENT: self._unit_of_measurement,
+            ATTR_BMI: "{:.2f}".format(lib.getBMI()),
         }
 
         for reading in self._sensormap.values():
