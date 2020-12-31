@@ -38,22 +38,28 @@ For miscale 2 (thanks to impedance)
  
  ## Installation
 
-- Vous pouvez l'installer manuellement. Copiez-collez simplement le contenu du
-dossier `bodymiscale/custom_components` dans votre` config/custom_components`. 
-Par exemple, vous obtiendrez le fichier `__init__.py` dans le chemin suivant:
-`/config/custom_components/bodymiscale/__init__.py`.
+- You can install it manually. Simply copy and paste the contents of the 
+`bodymiscale/custom_components` folder in your` config/custom_components`. 
+For example, you will get the file `__init __.Py` in the following path:
+`/config/custom_components/bodymiscale/__init__. py`.
 
 ## Configuration
-clé | type | la description
+key | type | description
 :--- | :--- | :---
-**plateforme (obligatoire)** | chaîne | `bodymiscale`
-**nom (obligatoire)** | chaîne | Nom personnalisé du capteur. `bodymiscale.nom`
-**weight (obligatoire)** | sensor / sensor.weight_ | Votre sensor retournant votre poids.
-**height (obligatoire)** | nombre | Votre taille en cm. 
-**born (facultatif)** | chaîne | Votre date d'anniversaire. Année/Mois/Jour `"1990-04-10"`
-**gender (facultatif)** | chaîne | Femme(female) ou Homme(male). `"male"` 
+**plateform (Required)** | string | `bodymiscale`
+**name (Required)** | string | Custom name for the sensor. `bodymiscale.nom`
+**weight (Required)** | sensors / sensor.weight_ | Your sensor returning your weight.
+**height (Required)** | number | Your height in cm. 
+**born (Required)** | string | Your birthday. `"1990-04-10"`
+**gender (Required)** | string | female or male. `"male"` 
 
 ## Example
+**Configuration YAML**
+```yaml
+bodymiscale: !include components/bodymiscale.yaml
+```
+Create a file in `/config/components/bodymiscale.yaml`.
+
 **Configuration with default settings:**
 ```yaml
 aurelien:
