@@ -1,13 +1,35 @@
 """Support for bodymiscale."""
 from collections import deque
 from datetime import datetime, timedelta
+from math import floor
 import logging
 import voluptuous as vol
 
-from homeassistant.components.recorder.models import States
+from custom_components.bodymiscale.const import (
+    DEFAULT_NAME,
+    ATTR_PROBLEM,
+    ATTR_SENSORS,
+    PROBLEM_NONE,
+    ATTR_AGE,
+    ATTR_BMI,
+    ATTR_BMR,
+    ATTR_IDEAL,
+    ATTR_IMCLABEL,
+    ATTR_DICT_OF_UNITS_OF_MEASUREMENT,
+    CONF_SENSOR_WEIGHT,
+    CONF_HEIGHT,
+    CONF_BORN,
+    CONF_GENDER,
+    DEFAULT_WEIGHT,
+    DEFAULT_HEIGHT,
+    DEFAULT_BORN,
+    DEFAULT_GENDER,
+)
+
 from homeassistant.components.recorder.util import execute, session_scope
 from homeassistant.const import (
     ATTR_UNIT_OF_MEASUREMENT,
+    EVENT_HOMEASSISTANT_START,
     CONF_SENSORS,
     STATE_OK,
     STATE_PROBLEM,
@@ -23,41 +45,17 @@ from homeassistant.helpers.event import async_track_state_change_event
 
 _LOGGER = logging.getLogger(__name__)
 
-DEFAULT_NAME = "bodymiscale"
-
-READING_WEIGHT = "weight"
-
-attributes = "attributes"
-ATTR_PROBLEM = "problem"
-ATTR_SENSORS = "sensors"
-PROBLEM_NONE = "none"
-ATTR_BMI = "bmi"
-
-# we're not returning only one value, we're returning a dict here. So we need
-# to have a separate literal for it to avoid confusion.
-ATTR_DICT_OF_UNITS_OF_MEASUREMENT = "unit_of_measurement_dict"
-
-CONF_HEIGHT = "height"
-CONF_AGE = "age"
-CONF_GENDER = "gender"
-
-CONF_SENSOR_WEIGHT = READING_WEIGHT
-
-DEFAULT_HEIGHT = 60
-DEFAULT_AGE = 1
-DEFAULT_GENDER = "female"
-
 SCHEMA_SENSORS = vol.Schema(
     {
-        vol.Optional(CONF_SENSOR_WEIGHT): cv.entity_id,
+        vol.Required(CONF_SENSOR_WEIGHT, default=DEFAULT_WEIGHT): cv.entity_id,
     }
 )
 
 BODYMISCALE_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_SENSORS): vol.Schema(SCHEMA_SENSORS),
-        vol.Optional(CONF_HEIGHT, default=DEFAULT_HEIGHT): cv.positive_int,
-        vol.Optional(CONF_AGE, default=DEFAULT_AGE): cv.positive_int,
+        vol.Required(CONF_HEIGHT, default=DEFAULT_HEIGHT): cv.positive_int,
+        vol.Optional(CONF_BORN, default=DEFAULT_BORN): cv.string,
         vol.Optional(CONF_GENDER, default=DEFAULT_GENDER): cv.string,
     }
 )
@@ -66,21 +64,14 @@ DOMAIN = "bodymiscale"
 
 CONFIG_SCHEMA = vol.Schema({DOMAIN: {cv.string: BODYMISCALE_SCHEMA}}, extra=vol.ALLOW_EXTRA)
 
-ENABLE_LOAD_HISTORY = False
-
 async def async_setup(hass, config):
     """Set up the Bodymiscale component."""
     component = EntityComponent(_LOGGER, DOMAIN, hass)
 
     entities = []
-    weight = config.get(CONF_SENSOR_WEIGHT)
-    height = config.get(CONF_HEIGHT)
-    age = config.get(CONF_AGE)
-    gender = config.get(CONF_GENDER)
     for bodymiscale_name, bodymiscale_config in config[DOMAIN].items():
         _LOGGER.info("Added bodymiscale %s", bodymiscale_name)
-        entity = Bodymiscale(bodymiscale_name, bodymiscale_config, weight, \
-            height, age, gender)
+        entity = Bodymiscale(bodymiscale_name, bodymiscale_config)
         entities.append(entity)
 
     await component.async_add_entities(entities)
@@ -96,12 +87,12 @@ class Bodymiscale(Entity):
     """
 
     READINGS = {
-        READING_WEIGHT: {
+        CONF_SENSOR_WEIGHT: {
             ATTR_UNIT_OF_MEASUREMENT: "",
         },
     }
 
-    def __init__(self, name, config, weight, height, age, gender):
+    def __init__(self, name, config):
         """Initialize the Bodymiscale component."""
         self._config = config
         self._sensormap = {}
@@ -112,13 +103,23 @@ class Bodymiscale(Entity):
             self._readingmap[reading] = entity_id
         self._state = None
         self._name = name
-        self._weight = None
-        self._height = None
-        self._age = None
-        self._gender = None
-        self._body_state = None
-        self._attr_mbi = None
         self._problems = PROBLEM_NONE
+        self._weight = None
+
+        self._height = None
+        if CONF_HEIGHT in self._config:
+            self._conf_height = self._config[CONF_HEIGHT]
+        self._born = None
+        if CONF_BORN in self._config:
+            self._conf_born = self._config[CONF_BORN]
+        self._gender = None
+        if CONF_GENDER in self._config:
+            self._conf_gender = self._config[CONF_GENDER]
+
+    def GetAge(self, d1):
+        d1 = datetime.strptime(d1, "%Y-%m-%d")
+        d2 = datetime.strptime(datetime.today().strftime('%Y-%m-%d'),'%Y-%m-%d')
+        return abs((d2 - d1).days)/365
 
     @callback
     def _state_changed_event(self, event):
@@ -136,7 +137,7 @@ class Bodymiscale(Entity):
             return
 
         reading = self._sensormap[entity_id]
-        if reading == READING_WEIGHT:
+        if reading == CONF_SENSOR_WEIGHT:
             if value != STATE_UNAVAILABLE:
                 value = "{:.2f}".format(float(value))
             self._weight = value
@@ -147,10 +148,6 @@ class Bodymiscale(Entity):
         if ATTR_UNIT_OF_MEASUREMENT in new_state.attributes:
             self._unit_of_measurement[reading] = new_state.attributes.get(
                 ATTR_UNIT_OF_MEASUREMENT
-            )
-        if attributes in new_state.attributes:
-            self._bodymiscale_attributes = new_state.attributes.get(
-                attributes
             )
         self._update_state()
 
@@ -176,11 +173,7 @@ class Bodymiscale(Entity):
         self.async_write_ha_state()
 
     async def async_added_to_hass(self):
-        """After being added to hass, load from history."""
-        if ENABLE_LOAD_HISTORY and "recorder" in self.hass.config.components:
-            # only use the database if it's configured
-            await self.hass.async_add_executor_job(self._load_history_from_db)
-            self.async_write_ha_state()
+        await super().async_added_to_hass()
 
         async_track_state_change_event(
             self.hass, list(self._sensormap), self._state_changed_event
@@ -190,6 +183,16 @@ class Bodymiscale(Entity):
             state = self.hass.states.get(entity_id)
             if state is not None:
                 self.state_changed(entity_id, state)
+
+        @callback
+        def _async_startup(event):
+            """Init on startup."""
+            if self._sensormap:
+                state = self.hass.states.get(entity_id)
+                if state and state.state != STATE_UNKNOWN:
+                    self.state_changed(entity_id, state)
+
+        self.hass.bus.async_listen_once(EVENT_HOMEASSISTANT_START, _async_startup)
 
     @property
     def should_poll(self):
@@ -202,13 +205,22 @@ class Bodymiscale(Entity):
         return self._name
 
     @property
+    def icon(self):
+        """Return the icon that will be shown in the interface."""
+        return 'mdi:human'
+
+    @property
     def state(self):
         """Return the state of the entity."""
         return self._state
 
     @property
     def state_attributes(self):
-        lib = bodymetrics.bodyMetrics(self._weight, self._height, self._age, self._gender, 0)
+        weight = 70
+        height = self._conf_height
+        age = self.GetAge(self._conf_born)
+        gender = self._conf_gender
+        lib = bodymetrics.bodyMetrics(weight, height, age, gender, 0)
         """Return the attributes of the entity.
         Provide the individual measurements from the
         sensor in the attributes of the device.
@@ -217,7 +229,13 @@ class Bodymiscale(Entity):
             ATTR_PROBLEM: self._problems,
             ATTR_SENSORS: self._readingmap,
             ATTR_DICT_OF_UNITS_OF_MEASUREMENT: self._unit_of_measurement,
+            ATTR_AGE: int(age),
+            CONF_HEIGHT: height,
+            CONF_GENDER: gender,
             ATTR_BMI: "{:.2f}".format(lib.getBMI()),
+            ATTR_BMR: "{:.2f}".format(lib.getBMR()),
+            ATTR_IDEAL: "{:.2f}".format(lib.getIdealWeight()),
+            ATTR_IMCLABEL: lib.getImcLabel()
         }
 
         for reading in self._sensormap.values():
