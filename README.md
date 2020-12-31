@@ -36,4 +36,31 @@ For miscale 2 (thanks to impedance)
 - Body type
 - Metabolic age 
  
- 
+ ## Installation
+
+- Vous pouvez l'installer manuellement. Copiez-collez simplement le contenu du
+Dossier `bodymiscale/custom_components` dans votre` config/custom_components`
+annuaire. Par exemple, vous obtiendrez le fichier `__init__.py` dans le chemin suivant:
+`/config/custom_components/bodymiscale/__init__.py`.
+
+## Configuration
+clé | type | la description
+:--- | :--- | :---
+**plateforme (obligatoire) ** | chaîne | `bodymiscale`
+**nom (obligatoire) ** | chaîne | Nom personnalisé du capteur. `bodymiscale.nom`
+**weight (obligatoire) ** | sensor / sensor.weight_ | Votre sensor retournant votre poids.
+**height (obligatoire) ** | nombre | Votre taille en cm. 
+**born (facultatif) ** | chaîne | Votre date d'anniversaire. Année/Mois/Jour `"1990-04-10"`
+**gender (facultatif) ** | chaîne | Femme(female) ou Homme(male). `"male"` 
+
+## Example
+**Configuration with default settings:**
+```yaml
+aurelien:
+  sensors:
+    weight: sensor.weight_aurelien
+  height: 176
+  born: "1990-04-10"
+  gender: "male"
+```
+
