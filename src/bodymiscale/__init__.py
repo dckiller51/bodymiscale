@@ -6,24 +6,39 @@ import logging
 import voluptuous as vol
 
 from custom_components.bodymiscale.const import (
-    DEFAULT_NAME,
-    ATTR_PROBLEM,
-    ATTR_SENSORS,
-    PROBLEM_NONE,
+    DOMAIN,
+    READING_WEIGHT,
+    CONF_SENSOR_WEIGHT,
+    ATTR_HEIGHT,
+    ATTR_BORN,
+    ATTR_GENDER,
     ATTR_AGE,
     ATTR_BMI,
     ATTR_BMR,
+    ATTR_VISCERAL,
     ATTR_IDEAL,
     ATTR_IMCLABEL,
-    ATTR_DICT_OF_UNITS_OF_MEASUREMENT,
-    CONF_SENSOR_WEIGHT,
-    CONF_HEIGHT,
-    CONF_BORN,
-    CONF_GENDER,
+    READING_IMPEDANCE,
+    CONF_SENSOR_IMPEDANCE,
+    ATTR_LBM,
+    ATTR_FAT,
+    ATTR_WATER,
+    ATTR_BONES,
+    ATTR_MUSCLE,
+    ATTR_FATMASSIDEAL,
+    ATTR_PROTEIN,
+    ATTR_BODY,
+    DEFAULT_NAME,
     DEFAULT_WEIGHT,
+    DEFAULT_IMPEDANCE,
     DEFAULT_HEIGHT,
     DEFAULT_BORN,
     DEFAULT_GENDER,
+    ATTR_DICT_OF_UNITS_OF_MEASUREMENT,
+    ATTR_PROBLEM,
+    ATTR_SENSORS,
+    PROBLEM_NONE,
+    STARTUP_MESSAGE,
 )
 
 from homeassistant.components.recorder.util import execute, session_scope
@@ -48,24 +63,27 @@ _LOGGER = logging.getLogger(__name__)
 SCHEMA_SENSORS = vol.Schema(
     {
         vol.Required(CONF_SENSOR_WEIGHT, default=DEFAULT_WEIGHT): cv.entity_id,
+        vol.Optional(CONF_SENSOR_IMPEDANCE, default=DEFAULT_IMPEDANCE): cv.entity_id,
     }
 )
 
 BODYMISCALE_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_SENSORS): vol.Schema(SCHEMA_SENSORS),
-        vol.Required(CONF_HEIGHT, default=DEFAULT_HEIGHT): cv.positive_int,
-        vol.Optional(CONF_BORN, default=DEFAULT_BORN): cv.string,
-        vol.Optional(CONF_GENDER, default=DEFAULT_GENDER): cv.string,
+        vol.Required(ATTR_HEIGHT, default=DEFAULT_HEIGHT): cv.positive_int,
+        vol.Required(ATTR_BORN, default=DEFAULT_BORN): cv.string,
+        vol.Required(ATTR_GENDER, default=DEFAULT_GENDER): cv.string,
     }
 )
-
-DOMAIN = "bodymiscale"
 
 CONFIG_SCHEMA = vol.Schema({DOMAIN: {cv.string: BODYMISCALE_SCHEMA}}, extra=vol.ALLOW_EXTRA)
 
 async def async_setup(hass, config):
     """Set up the Bodymiscale component."""
+    if hass.data.get(DOMAIN) is None:
+        hass.data.setdefault(DOMAIN, {})
+        _LOGGER.info(STARTUP_MESSAGE)
+
     component = EntityComponent(_LOGGER, DOMAIN, hass)
 
     entities = []
@@ -87,7 +105,10 @@ class Bodymiscale(Entity):
     """
 
     READINGS = {
-        CONF_SENSOR_WEIGHT: {
+        READING_WEIGHT: {
+            ATTR_UNIT_OF_MEASUREMENT: "",
+        },
+        READING_IMPEDANCE: {
             ATTR_UNIT_OF_MEASUREMENT: "",
         },
     }
@@ -105,16 +126,16 @@ class Bodymiscale(Entity):
         self._name = name
         self._problems = PROBLEM_NONE
         self._weight = None
-
+        self._impedance = None
         self._height = None
-        if CONF_HEIGHT in self._config:
-            self._conf_height = self._config[CONF_HEIGHT]
+        if ATTR_HEIGHT in self._config:
+            self._attr_height = self._config[ATTR_HEIGHT]
         self._born = None
-        if CONF_BORN in self._config:
-            self._conf_born = self._config[CONF_BORN]
+        if ATTR_BORN in self._config:
+            self._attr_born = self._config[ATTR_BORN]
         self._gender = None
-        if CONF_GENDER in self._config:
-            self._conf_gender = self._config[CONF_GENDER]
+        if ATTR_GENDER in self._config:
+            self._attr_gender = self._config[ATTR_GENDER]
 
     def GetAge(self, d1):
         d1 = datetime.strptime(d1, "%Y-%m-%d")
@@ -137,10 +158,14 @@ class Bodymiscale(Entity):
             return
 
         reading = self._sensormap[entity_id]
-        if reading == CONF_SENSOR_WEIGHT:
+        if reading == READING_WEIGHT:
             if value != STATE_UNAVAILABLE:
                 value = "{:.2f}".format(float(value))
             self._weight = value
+        elif reading == READING_IMPEDANCE:
+            if value != STATE_UNAVAILABLE:
+                value = int(float(value))
+            self._impedance = value
         else:
             raise HomeAssistantError(
                 f"Unknown reading from sensor {entity_id}: {value}"
@@ -173,7 +198,6 @@ class Bodymiscale(Entity):
         self.async_write_ha_state()
 
     async def async_added_to_hass(self):
-        await super().async_added_to_hass()
 
         async_track_state_change_event(
             self.hass, list(self._sensormap), self._state_changed_event
@@ -183,16 +207,6 @@ class Bodymiscale(Entity):
             state = self.hass.states.get(entity_id)
             if state is not None:
                 self.state_changed(entity_id, state)
-
-        @callback
-        def _async_startup(event):
-            """Init on startup."""
-            if self._sensormap:
-                state = self.hass.states.get(entity_id)
-                if state and state.state != STATE_UNKNOWN:
-                    self.state_changed(entity_id, state)
-
-        self.hass.bus.async_listen_once(EVENT_HOMEASSISTANT_START, _async_startup)
 
     @property
     def should_poll(self):
@@ -216,11 +230,12 @@ class Bodymiscale(Entity):
 
     @property
     def state_attributes(self):
-        weight = 70
-        height = self._conf_height
-        age = self.GetAge(self._conf_born)
-        gender = self._conf_gender
-        lib = bodymetrics.bodyMetrics(weight, height, age, gender, 0)
+        weight = 73
+        impedance = 565
+        height = self._attr_height
+        age = self.GetAge(self._attr_born)
+        gender = self._attr_gender
+        lib = bodymetrics.bodyMetrics(weight, height, age, gender, impedance)
         """Return the attributes of the entity.
         Provide the individual measurements from the
         sensor in the attributes of the device.
@@ -230,12 +245,21 @@ class Bodymiscale(Entity):
             ATTR_SENSORS: self._readingmap,
             ATTR_DICT_OF_UNITS_OF_MEASUREMENT: self._unit_of_measurement,
             ATTR_AGE: int(age),
-            CONF_HEIGHT: height,
-            CONF_GENDER: gender,
+            ATTR_HEIGHT: height,
+            ATTR_GENDER: gender,
             ATTR_BMI: "{:.2f}".format(lib.getBMI()),
             ATTR_BMR: "{:.2f}".format(lib.getBMR()),
+            ATTR_VISCERAL: "{:.2f}".format(lib.getVisceralFat()),
             ATTR_IDEAL: "{:.2f}".format(lib.getIdealWeight()),
-            ATTR_IMCLABEL: lib.getImcLabel()
+            ATTR_IMCLABEL: lib.getImcLabel(),
+            ATTR_LBM: "{:.2f}".format(lib.getLBMCoefficient()),
+            ATTR_FAT: "{:.2f}".format(lib.getFatPercentage()),
+            ATTR_WATER: "{:.2f}".format(lib.getWaterPercentage()),
+            ATTR_BONES: "{:.2f}".format(lib.getBoneMass()),
+            ATTR_MUSCLE: "{:.2f}".format(lib.getMuscleMass()),
+            ATTR_FATMASSIDEAL: "{:.2f}".format(lib.getFatMassToIdeal()),
+            ATTR_PROTEIN: "{:.2f}".format(lib.getProteinPercentage()),
+            ATTR_BODY: lib.getBodyType(),
         }
 
         for reading in self._sensormap.values():

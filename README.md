@@ -10,7 +10,7 @@ Bonjour à ce stade ce compossant est à construire. Le but de ce composant est 
 
 The generated data is :
 
-For miscale
+## For miscale (181D)
 
 - Weight
 - Bmi
@@ -19,7 +19,7 @@ For miscale
 - Ideal weight
 - Bmi label
 
-For miscale 2 (thanks to impedance)
+## For miscale 2 (181B) (with to impedance)
 
 - Weight
 - Bmi
@@ -27,14 +27,14 @@ For miscale 2 (thanks to impedance)
 - Visceral fat
 - Ideal weight
 - Bmi label
-- Lean_body_mass
+- Lean body mass
 - Body fat
 - Water
 - Bone mass
 - Muscle mass
+- Fat mass ideal
 - Protein
 - Body type
-- Metabolic age 
  
  ## Installation
 
@@ -49,6 +49,7 @@ key | type | description
 **plateform (Required)** | string | `bodymiscale`
 **name (Required)** | string | Custom name for the sensor. `bodymiscale.nom`
 **weight (Required)** | sensors / sensor.weight_ | Your sensor returning your weight.
+**impedance (Optional)** | sensors / sensor.impedance_ | Your sensor returning your impedance.
 **height (Required)** | number | Your height in cm. 
 **born (Required)** | string | Your birthday. `"1990-04-10"`
 **gender (Required)** | string | female or male. `"male"` 
@@ -69,4 +70,13 @@ aurelien:
   born: "1990-04-10"
   gender: "male"
 ```
-
+**Configuration with impedance (miscale2) settings:**
+```yaml
+aurelien:
+  sensors:
+    weight: sensor.weight_aurelien
+	impedance: sensor.impedance_aurelien
+  height: 176
+  born: "1990-04-10"
+  gender: "male"
+```
