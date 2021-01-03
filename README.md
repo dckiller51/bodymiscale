@@ -75,7 +75,7 @@ aurelien:
 aurelien:
   sensors:
     weight: sensor.weight_aurelien
-	impedance: sensor.impedance_aurelien
+    impedance: sensor.impedance_aurelien
   height: 176
   born: "1990-04-10"
   gender: "male"
