@@ -13,6 +13,9 @@ ICON = "mdi:human"
 # Common constants Miscale
 READING_WEIGHT = "weight"
 CONF_SENSOR_WEIGHT = READING_WEIGHT
+CONF_MIN_WEIGHT = f"min_{READING_WEIGHT}"
+CONF_MAX_WEIGHT = f"max_{READING_WEIGHT}"
+ATTR_WEIGHT = "weight"
 ATTR_HEIGHT = "height"
 ATTR_BORN = "born"
 ATTR_GENDER = "gender"
@@ -26,6 +29,9 @@ ATTR_IMCLABEL = "bmi Label"
 # Constants for Miscale 2
 READING_IMPEDANCE = "impedance"
 CONF_SENSOR_IMPEDANCE = READING_IMPEDANCE
+CONF_MIN_IMPEDANCE = f"min_{READING_IMPEDANCE}"
+CONF_MAX_IMPEDANCE = f"max_{READING_IMPEDANCE}"
+ATTR_IMPEDANCE = "impedance"
 ATTR_LBM = "lean_body_mass"
 ATTR_FAT = "body fat"
 ATTR_WATER = "water"
@@ -34,20 +40,21 @@ ATTR_MUSCLE = "muscle mass"
 ATTR_FATMASSIDEAL = "fat mass ideal"
 ATTR_PROTEIN = "protein"
 ATTR_BODY = "body type"
+ATTR_METABOLIC = "metabolic age"
 
 # Defaults
 DEFAULT_NAME = "bodymiscale"
-DEFAULT_WEIGHT = 40
-DEFAULT_IMPEDANCE = 200
-DEFAULT_HEIGHT = 40
-DEFAULT_BORN = "1990-01-01"
-DEFAULT_GENDER = "female"
 
 ATTR_DICT_OF_UNITS_OF_MEASUREMENT = "unit_of_measurement_dict"
 
 ATTR_PROBLEM = "problem"
 ATTR_SENSORS = "sensors"
 PROBLEM_NONE = "none"
+
+DEFAULT_MIN_WEIGHT = 10
+DEFAULT_MAX_WEIGHT = 200
+DEFAULT_MIN_IMPEDANCE = 0
+DEFAULT_MAX_IMPEDANCE = 3000
 
 STARTUP_MESSAGE = f"""
 -------------------------------------------------------------------

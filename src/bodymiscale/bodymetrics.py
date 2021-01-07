@@ -240,7 +240,6 @@ class bodyMetrics:
     def getFatMassToIdeal(self):
         mass = (self.weight * (self.getFatPercentage() / 100)) - (self.weight * (self.getFatPercentageScale()[2] / 100))
         return mass
-
     # Get protetin percentage (warn: guessed formula)
     def getProteinPercentage(self):
         proteinPercentage = 100 - (floor(self.getFatPercentage() * 100) / 100)
@@ -271,6 +270,14 @@ class bodyMetrics:
     # Return body type scale
     def getBodyTypeScale(self):
         return ['Obèse', 'Surpoids', 'Trapu', 'Manque d\'exercice', 'Equilibré', 'Equilibré musclé', 'Maigre', 'Equilibré maigre', 'Maigre musclé']
+
+    # Get Metabolic Age
+    def getMetabolicAge(self):
+        if self.gender == 'female':
+            metabolicAge = (self.height * -1.1165) + (self.weight * 1.5784) + (self.age * 0.4615) + (self.impedance * 0.0415) + 83.2548
+        else:
+            metabolicAge = (self.height * -0.7471) + (self.weight * 0.9161) + (self.age * 0.4184) + (self.impedance * 0.0517) + 54.2267
+        return self.checkValueOverflow(metabolicAge, 15, 80)
 
     def getImcLabel(self):
         imc = self.getBMI()
