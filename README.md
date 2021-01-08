@@ -61,7 +61,7 @@ key | type | description
 **height (Required)** | number | Your height in cm. 
 **born (Required)** | string | Your birthday. `"1990-04-10"`
 **gender (Required)** | string | female or male. `"male"` 
-**Model (Optional)** | string / 181D or 181B | Define the scale model.
+**Model (Optional)** | string | Define the scale model."181D" or "181B".
 
 ## Example
 **Configuration YAML**
@@ -78,7 +78,7 @@ aurelien:
   height: 176
   born: "1990-04-10"
   gender: "male"
-model_miscale: "181D"
+  model_miscale: "181D"
 ```
 **Configuration with impedance (miscale2) settings:**
 ```yaml
