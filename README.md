@@ -12,6 +12,7 @@ The generated data is :
 
 ## For miscale (181D)
 
+- Model Miscale
 - Weight
 - Height
 - Years
@@ -24,6 +25,7 @@ The generated data is :
 
 ## For miscale 2 (181B) (with to impedance)
 
+- Model Miscale
 - Weight
 - Height
 - Years
@@ -59,6 +61,7 @@ key | type | description
 **height (Required)** | number | Your height in cm. 
 **born (Required)** | string | Your birthday. `"1990-04-10"`
 **gender (Required)** | string | female or male. `"male"` 
+**Model (Optional)** | string / 181D or 181B | Define the scale model.
 
 ## Example
 **Configuration YAML**
@@ -75,6 +78,7 @@ aurelien:
   height: 176
   born: "1990-04-10"
   gender: "male"
+model_miscale: "181D"
 ```
 **Configuration with impedance (miscale2) settings:**
 ```yaml
@@ -85,4 +89,5 @@ aurelien:
   height: 176
   born: "1990-04-10"
   gender: "male"
+  model_miscale: "181B"
 ```
