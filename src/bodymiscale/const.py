@@ -51,10 +51,13 @@ ATTR_PROBLEM = "problem"
 ATTR_SENSORS = "sensors"
 PROBLEM_NONE = "none"
 
+ATTR_MODEL = "model_miscale"
+
 DEFAULT_MIN_WEIGHT = 10
 DEFAULT_MAX_WEIGHT = 200
 DEFAULT_MIN_IMPEDANCE = 0
 DEFAULT_MAX_IMPEDANCE = 3000
+DEFAULT_MODEL = "181D"
 
 STARTUP_MESSAGE = f"""
 -------------------------------------------------------------------
