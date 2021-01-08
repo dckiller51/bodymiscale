@@ -61,7 +61,7 @@ key | type | description
 **height (Required)** | number | Your height in cm. 
 **born (Required)** | string | Your birthday. `"1990-04-10"`
 **gender (Required)** | string | female or male. `"male"` 
-**Model (Optional)** | string | Define the scale model."181D" or "181B".
+**Model (Optional)** | string | Define the scale model.`"181D"` or `"181B"`.
 
 ## Example
 **Configuration YAML**
