@@ -1,8 +1,0 @@
-{
-  "domain": "bodymiscale",
-  "name": "Bodymiscale",
-  "documentation": [],
-  "after_dependencies": ["recorder"],
-  "codeowners": [],
-  "quality_scale": "internal"
-}
