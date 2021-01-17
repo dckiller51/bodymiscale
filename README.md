@@ -44,12 +44,16 @@ The generated data is :
 - Protein
 - Body type
  
+************* 
+ 
  ## Installation
 
 - You can install it manually. Simply copy and paste the contents of the 
 `bodymiscale/custom_components` folder in your` config/custom_components`. 
 For example, you will get the file `__init __.Py` in the following path:
 `/config/custom_components/bodymiscale/__init__. py`.
+
+*************
 
 ## Configuration
 key | type | description
@@ -62,6 +66,8 @@ key | type | description
 **born (Required)** | string | Your birthday. `"1990-04-10"`
 **gender (Required)** | string | female or male. `"male"` 
 **Model (Optional)** | string | Define the scale model.`"181D"` or `"181B"`.
+
+*************
 
 ## Example
 **Configuration YAML**
@@ -91,3 +97,14 @@ aurelien:
   gender: "male"
   model_miscale: "181B"
 ```
+
+*************
+
+**VERSION**
+
+**0.0.2**
+
+Implantation of calculations. Thanks to lolouk44. I took the liberty of taking back these files.
+
+**0.0.1**
+First version. Thanks to the designer of the component plant of homeassisant.
