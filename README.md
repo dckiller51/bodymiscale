@@ -46,8 +46,12 @@ The generated data is :
  
 ************* 
  
- ## Installation
+## Installation
 
+### Via HACS : 
+* Add Custom repositories URL : `https://github.com/dckiller51/bodymiscale`
+
+### Manual installation :
 - You can install it manually. Simply copy and paste the contents of the 
 `bodymiscale/custom_components` folder in your` config/custom_components`. 
 For example, you will get the file `__init __.Py` in the following path:
@@ -103,7 +107,6 @@ aurelien:
 **VERSION**
 
 **0.0.2**
-
 Implantation of calculations. Thanks to lolouk44. I took the liberty of taking back these files.
 
 **0.0.1**
