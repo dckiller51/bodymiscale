@@ -2,11 +2,11 @@
 
 EN :
 
-The purpose of this component is to have additional information when weighing yourself with a Miscale Xiaomi connected scale. Currently the weight is sent to Hassio with an ESPHOME. The calculator is the bodmiscale.py file. The database is in the user.yaml file we find name, weight, height, age, gender and impedance (only for miscale2). The name of the sensor should be sensor.bodymiscale.username
+The purpose of this component is to have additional information when weighing yourself with a Miscale Xiaomi connected scale. Currently the weight is sent to Hassio with an ESPHOME. The calculator is the body_metrics.py file. The database is in the bodymiscale.yaml file we find name, weight, height, age, gender and impedance (only for miscale2). The name of the component should be bodymiscale.username
 
 FR : 
 
-Le but de ce composant est d'avoir des informations supplémentaires lorsque l'on se pese avec une balance connectée Miscale Xiaomi. Actuellement le poids est envoyé sur Hassio avec un ESPHOME. Le calculateur est le fichier bodmiscale.py. La base de données est dans le fichier user.yaml on y retrouve name, le poids, la taille, l'age, le genre et l'impedance (uniquement pour la miscale2). Le nom du sensor devra être sensor.bodymiscale.username
+Le but de ce composant est d'avoir des informations supplémentaires lorsque l'on se pese avec une balance connectée Miscale Xiaomi. Actuellement le poids est envoyé sur Hassio avec un ESPHOME. Le calculateur est le fichier body_metrics.py. La base de données est dans le fichier bodymiscale.yaml on y retrouve name, le poids, la taille, l'age, le genre et l'impedance (uniquement pour la miscale2). Le nom du composant devra être bodymiscale.username
 
 The generated data is :
 
