@@ -110,4 +110,4 @@ aurelien:
 Implantation of calculations. Thanks to lolouk44. I took the liberty of taking back these files.
 
 **0.0.1**
-First version. Thanks to the designer of the component plant of homeassisant.
+First version. Thanks to the designer of the component plant of homeassistant.
