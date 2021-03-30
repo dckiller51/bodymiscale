@@ -277,11 +277,11 @@ class Bodymiscale(Entity):
             ATTR_PROBLEM: self._problems,
             ATTR_SENSORS: self._readingmap,
             ATTR_MODEL: self._attr_model,
-            ATTR_WEIGHT: "{:.2f} kg".format(weight),
-            ATTR_IMPEDANCE: "{} ohm".format(impedance),
-            ATTR_HEIGHT: "{} cm".format(height),
+            ATTR_WEIGHT: "{:.2f}".format(weight),
+            ATTR_IMPEDANCE: "{}".format(impedance),
+            ATTR_HEIGHT: "{}".format(height),
             ATTR_GENDER: self._attr_gender,
-            ATTR_AGE: "{} years".format(int(age)),
+            ATTR_AGE: "{}".format(int(age)),
         }
 
         if model == "181D":
