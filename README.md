@@ -106,6 +106,9 @@ aurelien:
 
 **VERSION**
 
+**0.0.3**
+Delete the units for the future custom card.
+
 **0.0.2**
 Implantation of calculations. Thanks to lolouk44. I took the liberty of taking back these files.
 
