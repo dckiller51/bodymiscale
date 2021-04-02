@@ -3,5 +3,6 @@
   "name": "Bodymiscale",
   "documentation": [],
   "after_dependencies": [],
-  "codeowners": ["dckiller51"]
+  "codeowners": ["dckiller51"],
+  "version": "0.0.3"
 }
