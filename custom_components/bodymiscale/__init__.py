@@ -146,7 +146,7 @@ class Bodymiscale(Entity):
         self._name = name
         self._problems = PROBLEM_NONE
         self._state_attributes = {}
-        self._weight = None
+        self._weight = 0.0
         self._impedance = None
         if ATTR_HEIGHT in self._config:
             self._attr_height = self._config[ATTR_HEIGHT]
