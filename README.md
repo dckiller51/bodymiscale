@@ -52,10 +52,10 @@ The generated data is :
 * Add Custom repositories URL : `https://github.com/dckiller51/bodymiscale`
 
 ### Manual installation :
-- You can install it manually. Simply copy and paste the contents of the 
-`bodymiscale/custom_components` folder in your` config/custom_components`. 
-For example, you will get the file `__init __.Py` in the following path:
-`/config/custom_components/bodymiscale/__init__. py`.
+- You can install it manually. Simply copy and paste the content of the 
+`bodymiscale/custom_components` folder in your `config/custom_components`. 
+For example, you will get the file `__init __.py` in the following path:
+`/config/custom_components/bodymiscale/__init__.py`.
 
 *************
 
