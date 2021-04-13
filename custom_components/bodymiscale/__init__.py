@@ -126,7 +126,7 @@ class Bodymiscale(Entity):
         READING_WEIGHT: {
             "min": CONF_MIN_WEIGHT,
             "max": CONF_MAX_WEIGHT,
-       },
+        },
         READING_IMPEDANCE: {
             "min": CONF_MIN_IMPEDANCE,
             "max": CONF_MAX_IMPEDANCE,
@@ -200,8 +200,11 @@ class Bodymiscale(Entity):
                 if value == STATE_UNAVAILABLE:
                     result.append(f"{sensor_name} unavailable")
                 else:
-                    result.append(self._check_min(sensor_name, value, params))
-                result.append(self._check_max(sensor_name, value, params))
+                    if sensor_name == READING_IMPEDANCE:
+                        result.append(self._check_min(sensor_name, value, params))
+                    else:
+                        result.append(self._check_min(sensor_name, value, params))
+                    result.append(self._check_max(sensor_name, value, params))
 
         result = [r for r in result if r is not None]
 
@@ -269,6 +272,8 @@ class Bodymiscale(Entity):
         age = self.GetAge(self._attr_born)
         gender = self._attr_gender
         model = self._attr_model
+        problem = self._state
+        problem_sensor = self._problems
         """Return the attributes of the entity.
         Provide the individual measurements from the
         sensor in the attributes of the device.
@@ -277,21 +282,22 @@ class Bodymiscale(Entity):
             ATTR_PROBLEM: self._problems,
             ATTR_SENSORS: self._readingmap,
             ATTR_MODEL: self._attr_model,
-            ATTR_WEIGHT: "{:.2f}".format(weight),
-            ATTR_IMPEDANCE: "{}".format(impedance),
             ATTR_HEIGHT: "{}".format(height),
             ATTR_GENDER: self._attr_gender,
             ATTR_AGE: "{}".format(int(age)),
         }
 
-        if model == "181D":
+        for reading in self._sensormap.values():
+            attrib[reading] = getattr(self, f"_{reading}")
+
+        if model == "181D" and problem == "ok" or model == "181B" and problem_sensor == "impedance low":
             lib = body_metrics.bodyMetrics(weight, height, age, gender, 0)
             attrib[ATTR_BMI] = "{:.2f}".format(lib.getBMI())
             attrib[ATTR_BMR] = "{:.2f}".format(lib.getBMR())
             attrib[ATTR_VISCERAL] = "{:.2f}".format(lib.getVisceralFat())
             attrib[ATTR_IDEAL] = "{:.2f}".format(lib.getIdealWeight())
             attrib[ATTR_BMILABEL] = lib.getBmiLabel()
-        elif model == "181B":
+        elif model == "181B" and problem == "ok":
             lib = body_metrics.bodyMetrics(weight, height, age, gender, impedance)
             bodyscale = ['Obese', 'Overweight', 'Thick-set', 'Lack-exerscise', 'Balanced', 'Balanced-muscular', 'Skinny', 'Balanced-skinny', 'Skinny-muscular']
             attrib[ATTR_BMI] = "{:.2f}".format(lib.getBMI())
