@@ -107,8 +107,8 @@ aurelien:
 **VERSION**
 
 **0.0.4**
-Fixed a startup error.
-Update Readme by @Ernst79 (Thanks)
+- Fixed a startup error.
+- Update Readme by @Ernst79 (Thanks)
 
 **0.0.3**
 Delete the units for the future custom card.
