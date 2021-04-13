@@ -2,11 +2,11 @@
 
 EN :
 
-The purpose of this component is to have additional information when weighing yourself with a Miscale Xiaomi connected scale. Currently the weight is sent to Hassio with an ESPHOME. The calculator is the body_metrics.py file. The database is in the bodymiscale.yaml file we find name, weight, height, age, gender and impedance (only for miscale2). The name of the component should be bodymiscale.username
+The purpose of this custom integration is to have additional information when weighing yourself with a Xiaomi Mi Scale (or any other smart scale). The input sensors for the custom integration are `weight` and optionally `impedance` (Mi Scale V2 only). You can use [ESPHome](https://esphome.io/) or [BLE monitor](https://github.com/custom-components/ble_monitor) to collect the required data via Bluetooth. The calculations are done in the `body_metrics.py` file. The configuration is in `bodymiscale.yaml` where you define `name`, `weight`, `height`, `age`, `gender` and `impedance` (only for Mi Scale V2).
 
 FR : 
 
-Le but de ce composant est d'avoir des informations supplémentaires lorsque l'on se pese avec une balance connectée Miscale Xiaomi. Actuellement le poids est envoyé sur Hassio avec un ESPHOME. Le calculateur est le fichier body_metrics.py. La base de données est dans le fichier bodymiscale.yaml on y retrouve name, le poids, la taille, l'age, le genre et l'impedance (uniquement pour la miscale2). Le nom du composant devra être bodymiscale.username
+Le but de ce composant est d'avoir des informations supplémentaires lorsque l'on se pese avec une balance connectée Miscale Xiaomi. Actuellement le poids est envoyé sur Hassio avec un [ESPHome](https://esphome.io/) ou [BLE monitor](https://github.com/custom-components/ble_monitor). Le calculateur est le fichier `body_metrics.py`. La base de données est dans le fichier `bodymiscale.yaml` on y retrouve `name`, `le poids`, `la taille`, `l'age`, `le genre` et `l'impedance` (uniquement pour la Mi Scale V2). Le nom du composant devra être bodymiscale.username
 
 The generated data is :
 
@@ -105,6 +105,10 @@ aurelien:
 *************
 
 **VERSION**
+
+**0.0.4**
+Fixed a startup error.
+Update Readme by @Ernst79 (Thanks)
 
 **0.0.3**
 Delete the units for the future custom card.
