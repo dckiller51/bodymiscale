@@ -106,6 +106,9 @@ aurelien:
 
 **VERSION**
 
+**0.0.5**
+- Rename HomeAssistantType —> HomeAssistant for integrations n* - p* #49559
+
 **0.0.4**
 - Fixed a startup error.
 - Update Readme by @Ernst79 (Thanks)
