@@ -106,6 +106,9 @@ aurelien:
 
 **VERSION**
 
+**0.0.6**
+- Use snake_case format for attribute names (thanks to Pavel Popov https://github.com/dckiller51/bodymiscale/pull/13)
+
 **0.0.5**
 - Rename HomeAssistantType —> HomeAssistant for integrations n* - p* #49559
 
