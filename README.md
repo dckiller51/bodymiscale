@@ -63,7 +63,7 @@ For example, you will get the file `__init __.Py` in the following path:
 key | type | description
 :--- | :--- | :---
 **plateform (Required)** | string | `bodymiscale`
-**name (Required)** | string | Custom name for the sensor. `bodymiscale.nom`
+**name (Required)** | string | Custom name for the sensor. `yourname`
 **weight (Required)** | sensors / sensor.weight_ | Your sensor returning your weight.
 **impedance (Optional)** | sensors / sensor.impedance_ | Your sensor returning your impedance.
 **height (Required)** | number | Your height in cm. 
@@ -74,15 +74,22 @@ key | type | description
 *************
 
 ## Example
+
+[configuration.yaml]
+
 **Configuration YAML**
+
 ```yaml
 bodymiscale: !include components/bodymiscale.yaml
 ```
 Create a file in `/config/components/bodymiscale.yaml`.
 
+[bodymiscale.yaml]
+
 **Configuration with default settings:**
+
 ```yaml
-aurelien:
+yourname:
   sensors:
     weight: sensor.weight_aurelien
   height: 176
@@ -91,8 +98,9 @@ aurelien:
   model_miscale: "181D"
 ```
 **Configuration with impedance (miscale2) settings:**
+
 ```yaml
-aurelien:
+yourname:
   sensors:
     weight: sensor.weight_aurelien
     impedance: sensor.impedance_aurelien
@@ -106,6 +114,10 @@ aurelien:
 
 **VERSION**
 
+**0.0.7**
+- Update decimal by @typxxi (Thanks)
+- Update readme by @typxxi (Thanks)
+
 **0.0.6**
 - Use snake_case format for attribute names (thanks to Pavel Popov https://github.com/dckiller51/bodymiscale/pull/13)
 
@@ -114,7 +126,7 @@ aurelien:
 
 **0.0.4**
 - Fixed a startup error.
-- Update Readme by @Ernst79 (Thanks)
+- Update readme by @Ernst79 (Thanks)
 
 **0.0.3**
 Delete the units for the future custom card.
