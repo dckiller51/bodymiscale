@@ -75,18 +75,14 @@ key | type | description
 
 ## Example
 
-[configuration.yaml]
-
-**Configuration YAML**
+**Configuration YAML**[configuration.yaml]
 
 ```yaml
 bodymiscale: !include components/bodymiscale.yaml
 ```
 Create a file in `/config/components/bodymiscale.yaml`.
 
-[bodymiscale.yaml]
-
-**Configuration with default settings:**
+**Configuration with default settings:**[bodymiscale.yaml]
 
 ```yaml
 yourname:
@@ -97,7 +93,7 @@ yourname:
   gender: "male"
   model_miscale: "181D"
 ```
-**Configuration with impedance (miscale2) settings:**
+**Configuration with impedance (miscale2) settings:**[bodymiscale.yaml]
 
 ```yaml
 yourname:
