@@ -299,7 +299,7 @@ class Bodymiscale(Entity):
             attrib[ATTR_BMILABEL] = lib.getBmiLabel()
         elif model == "181B" and problem == "ok":
             lib = body_metrics.bodyMetrics(weight, height, age, gender, impedance)
-            bodyscale = ['Obese', 'Overweight', 'Thick-set', 'Lack-exerscise', 'Balanced', 'Balanced-muscular', 'Skinny', 'Balanced-skinny', 'Skinny-muscular']
+            bodyscale = ['Obese', 'Overweight', 'Thick-set', 'Lack-exercise', 'Balanced', 'Balanced-muscular', 'Skinny', 'Balanced-skinny', 'Skinny-muscular']
             attrib[ATTR_BMI] = "{:.1f}".format(lib.getBMI())
             attrib[ATTR_BMR] = "{:.0f}".format(lib.getBMR())
             attrib[ATTR_VISCERAL] = "{:.0f}".format(lib.getVisceralFat())
