@@ -290,7 +290,7 @@ class Bodymiscale(Entity):
         for reading in self._sensormap.values():
             attrib[reading] = getattr(self, f"_{reading}")
 
-        if model == "181D" and problem == "ok" or model == "181B" and problem_sensor == "impedance low":
+        if model == "181D" and problem == "ok" or model == "181B" and problem_sensor == "impedance low" or model == "181B" and problem_sensor == "impedance unavailable":
             lib = body_metrics.bodyMetrics(weight, height, age, gender, 0)
             attrib[ATTR_BMI] = "{:.1f}".format(lib.getBMI())
             attrib[ATTR_BMR] = "{:.0f}".format(lib.getBMR())
