@@ -13,6 +13,10 @@ FR :
 
 Le but de ce composant est d'avoir des informations supplémentaires lorsque l'on se pese avec une balance connectée Miscale Xiaomi. Actuellement le poids est envoyé sur Hassio avec un [ESPHome](https://esphome.io/) ou [BLE monitor](https://github.com/custom-components/ble_monitor). Le calculateur est le fichier `body_metrics.py`. La base de données est dans le fichier `bodymiscale.yaml` on y retrouve `name`, `le poids`, `la taille`, `l'age`, `le genre` et `l'impedance` (uniquement pour la Mi Scale V2). Le nom du composant devra être bodymiscale.username
 
+DE : 
+
+Der Zweck dieser benutzerdefinierten Integration besteht darin, beim Wiegen mit einer Xiaomi Mi-Waage (oder einer anderen intelligenten Waage) zusätzliche Informationen zu erhalten. Die Sensoren für die benutzerdefinierte Integration sind "Gewicht" und optional "Impedanz" (nur Mi Scale V2). Sie können [ESPHome](https://esphome.io/) oder [BLE monitor](https://github.com/custom-components/ble_monitor) verwenden, um die erforderlichen Daten über Bluetooth zu erhalten. Die Berechnungen erfolgen in der Datei `body_metrics.py`. Die Konfiguration befindet sich in `bodymiscale.yaml` wo Sie `name`, `weight`, `height`, `age`, `gender` und `impedance` definieren (nur für Mi Scale V2).
+
 The generated data is :
 
 ## For miscale (181D)
