@@ -58,6 +58,7 @@ from custom_components.bodymiscale.const import (
     ATTR_FATMASSTOGAIN,
     ATTR_PROTEIN,
     ATTR_BODY,
+    ATTR_BODY_SCORE,
     ATTR_METABOLIC,
     DEFAULT_NAME,
     ATTR_PROBLEM,
@@ -300,7 +301,15 @@ class Bodymiscale(Entity):
         elif model == "181B" and problem == "ok":
             lib = body_metrics.bodyMetrics(weight, height, age, gender, impedance)
             bodyscale = ['Obese', 'Overweight', 'Thick-set', 'Lack-exercise', 'Balanced', 'Balanced-muscular', 'Skinny', 'Balanced-skinny', 'Skinny-muscular']
-            attrib[ATTR_BMI] = "{:.1f}".format(lib.getBMI())
+            bmi = lib.getBMI()
+            bodyfat = 9 
+            muscle = 0
+            water = 0
+            visceral_fat = 0
+            bone = 0
+            basal_metabolism = 0
+            protein = 0
+            attrib[ATTR_BMI] = "{:.1f}".format(bmi)
             attrib[ATTR_BMR] = "{:.0f}".format(lib.getBMR())
             attrib[ATTR_VISCERAL] = "{:.0f}".format(lib.getVisceralFat())
             attrib[ATTR_IDEAL] = "{:.2f}".format(lib.getIdealWeight())
@@ -317,5 +326,7 @@ class Bodymiscale(Entity):
             attrib[ATTR_PROTEIN] = "{:.1f}".format(lib.getProteinPercentage())
             attrib[ATTR_BODY] = bodyscale[lib.getBodyType()]
             attrib[ATTR_METABOLIC] = "{:.0f}".format(lib.getMetabolicAge())
+            bs = body_score.bodyScore(age, gender, height, weight, bmi, bodyfat, muscle, water, visceral_fat, bone, basal_metabolism, protein)
+            attrib[ATTR_BODY_SCORE] = "{:.0f}".format(bs.getBodyScore())
 
         return attrib

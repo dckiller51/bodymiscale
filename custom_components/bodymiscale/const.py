@@ -41,6 +41,7 @@ ATTR_FATMASSTOLOSE = "fat_mass_to_lose"
 ATTR_FATMASSTOGAIN = "fat_mass_to_gain"
 ATTR_PROTEIN = "protein"
 ATTR_BODY = "body_type"
+ATTR_BODY_SCORE = "body_score"
 ATTR_METABOLIC = "metabolic_age"
 
 # Defaults
