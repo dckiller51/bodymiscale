@@ -293,9 +293,12 @@ class Bodymiscale(Entity):
 
         if model == "181D" and problem == "ok" or model == "181B" and problem_sensor == "impedance low" or model == "181B" and problem_sensor == "impedance unavailable":
             lib = body_metrics.bodyMetrics(weight, height, age, gender, 0)
-            attrib[ATTR_BMI] = "{:.1f}".format(lib.getBMI())
-            attrib[ATTR_BMR] = "{:.0f}".format(lib.getBMR())
-            attrib[ATTR_VISCERAL] = "{:.0f}".format(lib.getVisceralFat())
+            bmi = lib.getBMI()
+            visceral_fat = lib.getVisceralFat()
+            basal_metabolism = lib.getBMR()
+            attrib[ATTR_BMI] = "{:.1f}".format(bmi)
+            attrib[ATTR_BMR] = "{:.0f}".format(basal_metabolism)
+            attrib[ATTR_VISCERAL] = "{:.0f}".format(visceral_fat)
             attrib[ATTR_IDEAL] = "{:.2f}".format(lib.getIdealWeight())
             attrib[ATTR_BMILABEL] = lib.getBmiLabel()
         elif model == "181B" and problem == "ok":
@@ -323,7 +326,7 @@ class Bodymiscale(Entity):
                 attrib[ATTR_FATMASSTOLOSE] = "{:.2f}".format(lib.getFatMassToIdeal()['mass'])
             else:
                 attrib[ATTR_FATMASSTOGAIN] = "{:.2f}".format(lib.getFatMassToIdeal()['mass'])
-            attrib[ATTR_PROTEIN] = "{:.1f}".format(lib.getProteinPercentage())
+            attrib[ATTR_PROTEIN] = "{:.1f}".format(protein)
             attrib[ATTR_BODY] = bodyscale[lib.getBodyType()]
             attrib[ATTR_METABOLIC] = "{:.0f}".format(lib.getMetabolicAge())
             bs = body_score.bodyScore(age, gender, height, weight, bmi, bodyfat, muscle, water, visceral_fat, bone, basal_metabolism, protein)
