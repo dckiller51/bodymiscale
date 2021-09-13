@@ -60,7 +60,7 @@ The generated data is :
 
 ### Via HACS
 
-*Add Custom repositories URL : `https://github.com/dckiller51/bodymiscale`
+- Add Custom repositories URL : `https://github.com/dckiller51/bodymiscale`
 
 ### Manual installation
 
