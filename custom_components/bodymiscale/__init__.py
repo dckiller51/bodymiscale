@@ -291,7 +291,9 @@ class Bodymiscale(Entity):
         for reading in self._sensormap.values():
             attrib[reading] = getattr(self, f"_{reading}")
 
-        if model == "181D" and problem == "ok" or model == "181B" and problem_sensor == "impedance low" or model == "181B" and problem_sensor == "impedance unavailable":
+        if impedance is None and weight is None:
+            pass
+        elif model == "181D" and problem == "ok" or model == "181B" and problem_sensor == "impedance low" or model == "181B" and problem_sensor == "impedance unavailable" or impedance is None:
             lib = body_metrics.bodyMetrics(weight, height, age, gender, 0)
             bmi = lib.getBMI()
             visceral_fat = lib.getVisceralFat()
