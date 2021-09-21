@@ -293,6 +293,8 @@ class Bodymiscale(Entity):
 
         if impedance is None and weight is None:
             pass
+        elif problem_sensor == "weight unavailable":
+            pass
         elif model == "181D" and problem == "ok" or model == "181B" and problem_sensor == "impedance low" or model == "181B" and problem_sensor == "impedance unavailable" or impedance is None:
             lib = body_metrics.bodyMetrics(weight, height, age, gender, 0)
             bmi = lib.getBMI()
