@@ -125,6 +125,10 @@ yourname:
 
 ## VERSION
 
+## v1.1.1
+
+Update to fix startup errors (thank you @stefangries )
+
 ## v1.1.0
 
 Adding body score (thank you @alinelena )
