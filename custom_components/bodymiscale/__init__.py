@@ -9,8 +9,6 @@ import logging
 
 import voluptuous as vol
 
-from homeassistant.components.recorder.models import States
-from homeassistant.components.recorder.util import execute, session_scope
 from homeassistant.const import (
     ATTR_UNIT_OF_MEASUREMENT,
     CONF_SENSORS,
@@ -293,7 +291,7 @@ class Bodymiscale(Entity):
 
         if impedance is None and weight is None:
             pass
-        elif problem_sensor == "weight unavailable":
+        elif problem_sensor == "weight unavailable" or problem_sensor == "impedance unavailable":
             pass
         elif model == "181D" and problem == "ok" or model == "181B" and problem_sensor == "impedance low" or model == "181B" and problem_sensor == "impedance unavailable" or impedance is None:
             lib = body_metrics.bodyMetrics(weight, height, age, gender, 0)

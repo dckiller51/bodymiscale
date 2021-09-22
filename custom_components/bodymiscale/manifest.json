@@ -3,7 +3,9 @@
   "name": "BodyMiScale",
   "documentation": "https://github.com/dckiller51/bodymiscale",
   "issue_tracker": "https://github.com/dckiller51/bodymiscale/issues",
-  "after_dependencies": [],
+  "dependencies": [],
   "codeowners": ["@dckiller51"],
-  "version": "1.1.1"
+  "requirements": [],
+  "iot_class": "local_push",
+  "version": "1.1.2"
 }
