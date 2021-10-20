@@ -60,7 +60,7 @@ The generated data is :
 
 ### Via HACS
 
-- Add Custom repositories URL : `https://github.com/dckiller51/bodymiscale`
+- Search "Bodymiscale" recently added Component under Integrations in the HACS Store tab
 
 ### Manual installation
 
@@ -124,6 +124,15 @@ yourname:
 *************
 
 ## VERSION
+
+## v1.1.3
+
+Update readme: default integration in Hacs is available
+Update iot_class (thank you @edenhaus)
+
+## v1.1.2
+
+Update for default integration in Hacs
 
 ## v1.1.1
 
