@@ -6,6 +6,6 @@
   "dependencies": [],
   "codeowners": ["@dckiller51"],
   "requirements": [],
-  "iot_class": "local_push",
+  "iot_class": "calculated",
   "version": "1.1.2"
 }
