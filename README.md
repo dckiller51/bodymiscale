@@ -127,8 +127,8 @@ yourname:
 
 ## v1.1.3
 
-Update readme: default integration in Hacs is available
-Update iot_class (thank you @edenhaus)
+- Update readme: default integration in Hacs is available
+- Update iot_class (thank you @edenhaus)
 
 ## v1.1.2
 
