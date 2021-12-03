@@ -80,7 +80,7 @@ key | type | description
 **weight (Required)** | sensors / sensor.weight_ | Your sensor returning your weight.
 **impedance (Optional)** | sensors / sensor.impedance_ | Your sensor returning your impedance.
 **height (Required)** | number | Your height in cm.
-**born (Required)** | string | Your birthday. `"1990-04-10"`
+**born (Required)** | string | Your birthday. `"YYYY-MM-DD"`
 **gender (Required)** | string | female or male. `"male"`
 **Model (Optional)** | string | Define the scale model.`"181D"` or `"181B"`.
 
@@ -124,6 +124,11 @@ yourname:
 *************
 
 ## VERSION
+
+## v1.1.4
+
+- Update getage function to correctly calculate age from DOB (thank you @borpin)
+- Use assignment expressions
 
 ## v1.1.3
 
