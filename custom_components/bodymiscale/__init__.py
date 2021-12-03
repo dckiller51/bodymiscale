@@ -157,9 +157,9 @@ class Bodymiscale(Entity):
             self._attr_model = self._config[ATTR_MODEL]
 
     def GetAge(self, d1):
-        d1 = datetime.strptime(d1, "%Y-%m-%d")
-        d2 = datetime.strptime(datetime.today().strftime('%Y-%m-%d'),'%Y-%m-%d')
-        return abs((d2 - d1).days)/365
+        born = datetime.strptime(d1, "%Y-%m-%d")
+        today = datetime.today()
+        return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
 
     @callback
     def _state_changed_event(self, event):
