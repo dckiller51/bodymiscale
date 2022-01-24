@@ -58,6 +58,8 @@ from custom_components.bodymiscale.const import (
     ATTR_BODY,
     ATTR_BODY_SCORE,
     ATTR_METABOLIC,
+    ATTR_UNIT_OF_MEASUREMENT,
+    UNIT_POUNDS,
     DEFAULT_NAME,
     ATTR_PROBLEM,
     ATTR_SENSORS,
@@ -178,6 +180,8 @@ class Bodymiscale(Entity):
         if reading == READING_WEIGHT:
             if value != STATE_UNAVAILABLE:
                 value = float(value)
+            if new_state.attributes.get(ATTR_UNIT_OF_MEASUREMENT) == UNIT_POUNDS:
+                value = value * 0.45359237
             self._weight = value
         elif reading == READING_IMPEDANCE:
             if value != STATE_UNAVAILABLE:
