@@ -17,12 +17,13 @@ from homeassistant.const import (
     STATE_UNAVAILABLE,
     STATE_UNKNOWN,
 )
-from homeassistant.core import callback
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import HomeAssistantError
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.entity_component import EntityComponent
 from homeassistant.helpers.event import async_track_state_change_event
+from homeassistant.helpers.typing import ConfigType
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -58,6 +59,8 @@ from custom_components.bodymiscale.const import (
     ATTR_BODY,
     ATTR_BODY_SCORE,
     ATTR_METABOLIC,
+    ATTR_UNIT_OF_MEASUREMENT,
+    UNIT_POUNDS,
     DEFAULT_NAME,
     ATTR_PROBLEM,
     ATTR_SENSORS,
@@ -178,6 +181,8 @@ class Bodymiscale(Entity):
         if reading == READING_WEIGHT:
             if value != STATE_UNAVAILABLE:
                 value = float(value)
+            if new_state.attributes.get(ATTR_UNIT_OF_MEASUREMENT) == UNIT_POUNDS:
+                value = value * 0.45359237            
             self._weight = value
         elif reading == READING_IMPEDANCE:
             if value != STATE_UNAVAILABLE:

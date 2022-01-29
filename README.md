@@ -125,6 +125,11 @@ yourname:
 
 ## VERSION
 
+## v1.1.5
+
+- Convert weight from lbs to kgs (thank you @rale)
+- added portuguese brazilian language support (thank you @hudsonbrendon)
+
 ## v1.1.4
 
 - Update getage function to correctly calculate age from DOB (thank you @borpin)
