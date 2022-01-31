@@ -8,15 +8,21 @@
 
 EN :
 
-The purpose of this custom integration is to have additional information when weighing yourself with a Xiaomi Mi Scale (or any other smart scale). The input sensors for the custom integration are `weight` and optionally `impedance` (Mi Scale V2 only). You can use [ESPHome](https://esphome.io/) or [BLE monitor](https://github.com/custom-components/ble_monitor) to collect the required data via Bluetooth. The calculations are done in the `body_metrics.py` file. The configuration is in `bodymiscale.yaml` where you define `name`, `weight`, `height`, `age`, `gender` and `impedance` (only for Mi Scale V2).
+The purpose of this custom integration is to have additional information when weighing yourself with a Xiaomi Mi Scale (or any other smart scale). The input sensors for the custom integration are `weight` and optionally `impedance` (Mi Scale V2 only). You can use [ESPHome](https://esphome.io/) or [BLE monitor](https://github.com/custom-components/ble_monitor) to collect the required data via Bluetooth. The calculations are done in the `body_metrics.py` file. The configuration is in `bodymiscale.yaml` where you define `name`, `weight`, `height`, `age`, `gender` and `impedance` (only for Mi Scale V2). The name of the component should be bodymiscale.username.
+
+Information about the unit of measurement. All calculations are made using the unit of measurement KG. If your scale is set in lbs don't worry Bodymiscale will convert for you. If you want to display your data in lbs you can use the card here [lovelace-body-miscale-card](https://github.com/dckiller51/lovelace-body-miscale-card). Just click on Convert kg to lbs.
 
 FR :
 
-Le but de ce composant est d'avoir des informations supplémentaires lorsque l'on se pese avec une balance connectée Miscale Xiaomi. Actuellement le poids est envoyé sur Hassio avec un [ESPHome](https://esphome.io/) ou [BLE monitor](https://github.com/custom-components/ble_monitor). Le calculateur est le fichier `body_metrics.py`. La base de données est dans le fichier `bodymiscale.yaml` on y retrouve `name`, `le poids`, `la taille`, `l'age`, `le genre` et `l'impedance` (uniquement pour la Mi Scale V2). Le nom du composant devra être bodymiscale.username
+Le but de ce composant est d'avoir des informations supplémentaires lorsque l'on se pese avec une balance connectée Miscale Xiaomi. Actuellement le poids est envoyé sur Hassio avec un [ESPHome](https://esphome.io/) ou [BLE monitor](https://github.com/custom-components/ble_monitor). Le calculateur est le fichier `body_metrics.py`. La base de données est dans le fichier `bodymiscale.yaml` on y retrouve `name`, `le poids`, `la taille`, `l'age`, `le genre` et `l'impedance` (uniquement pour la Mi Scale V2). Le nom du composant devra être bodymiscale.username.
+
+Information concernant l'unité de mesure. Tous les calcules sont réalisés à l'aide de l'unité de mesure en KG. Si votre balance est paramétré en lbs ne vous soucié pas Bodymiscale convertira pour vous. Si vous souhaitez afficher vos données en lbs vous pouvez utiliser la card ici [lovelace-body-miscale-card](https://github.com/dckiller51/lovelace-body-miscale-card). Il vous suffit de cliquer sur Convertir les kg en lbs.
 
 DE :
 
-Der Zweck dieser benutzerdefinierten Integration besteht darin, beim Wiegen mit einer Xiaomi Mi-Waage (oder einer anderen intelligenten Waage) zusätzliche Informationen zu erhalten. Die Sensoren für die benutzerdefinierte Integration sind "Gewicht" und optional "Impedanz" (nur Mi Scale V2). Sie können [ESPHome](https://esphome.io/) oder [BLE monitor](https://github.com/custom-components/ble_monitor) verwenden, um die erforderlichen Daten über Bluetooth zu erhalten. Die Berechnungen erfolgen in der Datei `body_metrics.py`. Die Konfiguration befindet sich in `bodymiscale.yaml` wo Sie `name`, `weight`, `height`, `age`, `gender` und `impedance` definieren (nur für Mi Scale V2).
+Der Zweck dieser benutzerdefinierten Integration besteht darin, beim Wiegen mit einer Xiaomi Mi-Waage (oder einer anderen intelligenten Waage) zusätzliche Informationen zu erhalten. Die Sensoren für die benutzerdefinierte Integration sind "Gewicht" und optional "Impedanz" (nur Mi Scale V2). Sie können [ESPHome](https://esphome.io/) oder [BLE monitor](https://github.com/custom-components/ble_monitor) verwenden, um die erforderlichen Daten über Bluetooth zu erhalten. Die Berechnungen erfolgen in der Datei `body_metrics.py`. Die Konfiguration befindet sich in `bodymiscale.yaml` wo Sie `name`, `weight`, `height`, `age`, `gender` und `impedance` definieren (nur für Mi Scale V2). Der Name der Komponente sollte bodymiscale.username lauten.
+
+Informationen zur Maßeinheit. Alle Berechnungen werden mit der Maßeinheit KG durchgeführt. Wenn Ihre Waage in lbs eingestellt ist, brauchen Sie sich keine Sorgen zu machen, Bodymiscale wird das für Sie umrechnen. Wenn Sie Ihre Daten in lbs anzeigen möchten, können Sie die Karte hier [lovelace-body-miscale-card](https://github.com/dckiller51/lovelace-body-miscale-card) verwenden. Klicken Sie einfach auf kg in lbs umwandeln.
 
 The generated data is :
 
@@ -127,7 +133,7 @@ yourname:
 
 ## v1.1.5
 
-- Convert weight from lbs to kgs (thank you @rale)
+- Convert weight from lbs to kgs if your scale is set to this unit (thank you @rale)
 - added portuguese brazilian language support (thank you @hudsonbrendon)
 
 ## v1.1.4
