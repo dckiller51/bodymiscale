@@ -1,14 +1,9 @@
 """Support for bodymiscale."""
-from collections import deque
-from datetime import datetime, timedelta
-from math import floor
-from .body_metrics import bodyMetrics
-from .body_scales import bodyScales
-from .body_score import bodyScore
 import logging
+from datetime import datetime, timedelta
 
+import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
-
 from homeassistant.const import (
     ATTR_UNIT_OF_MEASUREMENT,
     CONF_SENSORS,
@@ -17,61 +12,63 @@ from homeassistant.const import (
     STATE_UNAVAILABLE,
     STATE_UNKNOWN,
 )
-from homeassistant.core import HomeAssistant, callback
+from homeassistant.core import callback
 from homeassistant.exceptions import HomeAssistantError
-import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.entity_component import EntityComponent
 from homeassistant.helpers.event import async_track_state_change_event
-from homeassistant.helpers.typing import ConfigType
+
+from .body_metrics import BodyMetrics, BodyMetricsImpedance
+from .body_scales import BodyScale
+from .body_score import BodyScore
 
 _LOGGER = logging.getLogger(__name__)
 
 from custom_components.bodymiscale.const import (
-    DOMAIN,
-    READING_WEIGHT,
-    CONF_SENSOR_WEIGHT,
-    CONF_MIN_WEIGHT,
-    CONF_MAX_WEIGHT,
-    ATTR_WEIGHT,
-    ATTR_HEIGHT,
-    ATTR_BORN,
-    ATTR_GENDER,
     ATTR_AGE,
     ATTR_BMI,
-    ATTR_BMR,
-    ATTR_VISCERAL,
-    ATTR_IDEAL,
     ATTR_BMILABEL,
-    READING_IMPEDANCE,
-    CONF_SENSOR_IMPEDANCE,
-    CONF_MIN_IMPEDANCE,
-    CONF_MAX_IMPEDANCE,
-    ATTR_IMPEDANCE,
-    ATTR_LBM,
-    ATTR_FAT,
-    ATTR_WATER,
-    ATTR_BONES,
-    ATTR_MUSCLE,
-    ATTR_FATMASSTOLOSE,
-    ATTR_FATMASSTOGAIN,
-    ATTR_PROTEIN,
+    ATTR_BMR,
     ATTR_BODY,
     ATTR_BODY_SCORE,
+    ATTR_BONES,
+    ATTR_BORN,
+    ATTR_FAT,
+    ATTR_FATMASSTOGAIN,
+    ATTR_FATMASSTOLOSE,
+    ATTR_GENDER,
+    ATTR_HEIGHT,
+    ATTR_IDEAL,
+    ATTR_IMPEDANCE,
+    ATTR_LBM,
     ATTR_METABOLIC,
-    ATTR_UNIT_OF_MEASUREMENT,
-    UNIT_POUNDS,
-    DEFAULT_NAME,
-    ATTR_PROBLEM,
-    ATTR_SENSORS,
-    PROBLEM_NONE,
     ATTR_MODEL,
-    DEFAULT_MIN_WEIGHT,
+    ATTR_MUSCLE,
+    ATTR_PROBLEM,
+    ATTR_PROTEIN,
+    ATTR_SENSORS,
+    ATTR_UNIT_OF_MEASUREMENT,
+    ATTR_VISCERAL,
+    ATTR_WATER,
+    ATTR_WEIGHT,
+    CONF_MAX_IMPEDANCE,
+    CONF_MAX_WEIGHT,
+    CONF_MIN_IMPEDANCE,
+    CONF_MIN_WEIGHT,
+    CONF_SENSOR_IMPEDANCE,
+    CONF_SENSOR_WEIGHT,
+    DEFAULT_MAX_IMPEDANCE,
     DEFAULT_MAX_WEIGHT,
     DEFAULT_MIN_IMPEDANCE,
-    DEFAULT_MAX_IMPEDANCE,
+    DEFAULT_MIN_WEIGHT,
     DEFAULT_MODEL,
+    DEFAULT_NAME,
+    DOMAIN,
+    PROBLEM_NONE,
+    READING_IMPEDANCE,
+    READING_WEIGHT,
     STARTUP_MESSAGE,
+    UNIT_POUNDS,
 )
 
 SCHEMA_SENSORS = vol.Schema(
@@ -86,8 +83,12 @@ BODYMISCALE_SCHEMA = vol.Schema(
         vol.Required(CONF_SENSORS): vol.Schema(SCHEMA_SENSORS),
         vol.Optional(CONF_MIN_WEIGHT, default=DEFAULT_MIN_WEIGHT): vol.Coerce(float),
         vol.Optional(CONF_MAX_WEIGHT, default=DEFAULT_MAX_WEIGHT): vol.Coerce(float),
-        vol.Optional(CONF_MIN_IMPEDANCE, default=DEFAULT_MIN_IMPEDANCE): cv.positive_int,
-        vol.Optional(CONF_MAX_IMPEDANCE, default=DEFAULT_MAX_IMPEDANCE): cv.positive_int,
+        vol.Optional(
+            CONF_MIN_IMPEDANCE, default=DEFAULT_MIN_IMPEDANCE
+        ): cv.positive_int,
+        vol.Optional(
+            CONF_MAX_IMPEDANCE, default=DEFAULT_MAX_IMPEDANCE
+        ): cv.positive_int,
         vol.Required(ATTR_HEIGHT): cv.positive_int,
         vol.Required(ATTR_BORN): cv.string,
         vol.Required(ATTR_GENDER): cv.string,
@@ -95,9 +96,12 @@ BODYMISCALE_SCHEMA = vol.Schema(
     }
 )
 
-CONFIG_SCHEMA = vol.Schema({DOMAIN: {cv.string: BODYMISCALE_SCHEMA}}, extra=vol.ALLOW_EXTRA)
+CONFIG_SCHEMA = vol.Schema(
+    {DOMAIN: {cv.string: BODYMISCALE_SCHEMA}}, extra=vol.ALLOW_EXTRA
+)
 
 SCAN_INTERVAL = timedelta(seconds=30)
+
 
 async def async_setup(hass, config):
     """Set up the Bodymiscale component."""
@@ -116,6 +120,7 @@ async def async_setup(hass, config):
     await component.async_add_entities(entities)
 
     return True
+
 
 class Bodymiscale(Entity):
     """Bodymiscale the well-being of a body.
@@ -162,12 +167,15 @@ class Bodymiscale(Entity):
     def GetAge(self, d1):
         born = datetime.strptime(d1, "%Y-%m-%d")
         today = datetime.today()
-        return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
+        return (
+            today.year - born.year - ((today.month, today.day) < (born.month, born.day))
+        )
 
     @callback
     def _state_changed_event(self, event):
         """Sensor state change event."""
         self.state_changed(event.data.get("entity_id"), event.data.get("new_state"))
+
     @callback
     def state_changed(self, entity_id, new_state):
         """Update the sensor status."""
@@ -182,7 +190,7 @@ class Bodymiscale(Entity):
             if value != STATE_UNAVAILABLE:
                 value = float(value)
             if new_state.attributes.get(ATTR_UNIT_OF_MEASUREMENT) == UNIT_POUNDS:
-                value = value * 0.45359237            
+                value = value * 0.45359237
             self._weight = value
         elif reading == READING_IMPEDANCE:
             if value != STATE_UNAVAILABLE:
@@ -237,7 +245,7 @@ class Bodymiscale(Entity):
 
     async def async_added_to_hass(self):
         """After being added to hass."""
-        
+
         async_track_state_change_event(
             self.hass, list(self._sensormap), self._state_changed_event
         )
@@ -259,7 +267,7 @@ class Bodymiscale(Entity):
     @property
     def icon(self):
         """Return the icon that will be shown in the interface."""
-        return 'mdi:human'
+        return "mdi:human"
 
     @property
     def state(self):
@@ -284,57 +292,58 @@ class Bodymiscale(Entity):
             ATTR_PROBLEM: self._problems,
             ATTR_SENSORS: self._readingmap,
             ATTR_MODEL: self._attr_model,
-            ATTR_HEIGHT: "{}".format(height),
+            ATTR_HEIGHT: f"{height}",
             ATTR_GENDER: self._attr_gender,
-            ATTR_AGE: "{}".format(int(age)),
+            ATTR_AGE: f"{int(age)}",
         }
 
         for reading in self._sensormap.values():
             attrib[reading] = getattr(self, f"_{reading}")
 
-        if impedance is None and weight is None:
-            pass
-        elif problem_sensor == "weight unavailable" or problem_sensor == "impedance unavailable":
-            pass
-        elif model == "181D" and problem == "ok" or model == "181B" and problem_sensor == "impedance low" or model == "181B" and problem_sensor == "impedance unavailable" or impedance is None:
-            lib = body_metrics.bodyMetrics(weight, height, age, gender, 0)
-            bmi = lib.getBMI()
-            visceral_fat = lib.getVisceralFat()
-            basal_metabolism = lib.getBMR()
-            attrib[ATTR_BMI] = "{:.1f}".format(bmi)
-            attrib[ATTR_BMR] = "{:.0f}".format(basal_metabolism)
-            attrib[ATTR_VISCERAL] = "{:.0f}".format(visceral_fat)
-            attrib[ATTR_IDEAL] = "{:.2f}".format(lib.getIdealWeight())
-            attrib[ATTR_BMILABEL] = lib.getBmiLabel()
-        elif model == "181B" and problem == "ok":
-            lib = body_metrics.bodyMetrics(weight, height, age, gender, impedance)
-            bodyscale = ['Obese', 'Overweight', 'Thick-set', 'Lack-exercise', 'Balanced', 'Balanced-muscular', 'Skinny', 'Balanced-skinny', 'Skinny-muscular']
-            bmi = lib.getBMI()
-            bodyfat = lib.getFatPercentage() 
-            muscle = lib.getMuscleMass()
-            water = lib.getWaterPercentage()
-            visceral_fat = lib.getVisceralFat()
-            bone = lib.getBoneMass()
-            basal_metabolism = lib.getBMR()
-            protein = lib.getProteinPercentage()
-            attrib[ATTR_BMI] = "{:.1f}".format(bmi)
-            attrib[ATTR_BMR] = "{:.0f}".format(basal_metabolism)
-            attrib[ATTR_VISCERAL] = "{:.0f}".format(visceral_fat)
-            attrib[ATTR_IDEAL] = "{:.2f}".format(lib.getIdealWeight())
-            attrib[ATTR_BMILABEL] = lib.getBmiLabel()
-            attrib[ATTR_LBM] = "{:.1f}".format(lib.getLBMCoefficient())
-            attrib[ATTR_FAT] = "{:.1f}".format(bodyfat)
-            attrib[ATTR_WATER] = "{:.1f}".format(water)
-            attrib[ATTR_BONES] = "{:.2f}".format(bone)
-            attrib[ATTR_MUSCLE] = "{:.2f}".format(muscle)
-            if lib.getFatMassToIdeal()['type'] == 'to_lose':
-                attrib[ATTR_FATMASSTOLOSE] = "{:.2f}".format(lib.getFatMassToIdeal()['mass'])
+        if (
+            (impedance is None and weight is None)
+            or ("unavailable" in problem_sensor)
+            or (problem != "ok")
+        ):
+            return attrib
+
+        metrics = BodyMetrics(weight, height, age, gender)
+
+        if model == "181B" and "impedance" not in problem_sensor:
+            metrics = BodyMetricsImpedance(weight, height, age, gender, impedance)
+
+        attrib[ATTR_BMI] = f"{metrics.bmi:.1f}"
+        attrib[ATTR_BMR] = f"{metrics.bmr:.0f}"
+        attrib[ATTR_VISCERAL] = f"{metrics.visceral_fat:.0f}"
+        attrib[ATTR_IDEAL] = f"{metrics.get_ideal_weight():.2f}"
+        attrib[ATTR_BMILABEL] = metrics.bmi_label
+
+        if isinstance(metrics, BodyMetricsImpedance):
+            bodyscale = [
+                "Obese",
+                "Overweight",
+                "Thick-set",
+                "Lack-exercise",
+                "Balanced",
+                "Balanced-muscular",
+                "Skinny",
+                "Balanced-skinny",
+                "Skinny-muscular",
+            ]
+            attrib[ATTR_LBM] = f"{metrics.lbm_coefficient:.1f}"
+            attrib[ATTR_FAT] = f"{metrics.fat_percentage:.1f}"
+            attrib[ATTR_WATER] = f"{metrics.water_percentage:.1f}"
+            attrib[ATTR_BONES] = f"{metrics.bone_mass:.2f}"
+            attrib[ATTR_MUSCLE] = f"{metrics.muscle_mass:.2f}"
+            fat_mass_to_ideal = metrics.fat_mass_to_ideal
+            if fat_mass_to_ideal["type"] == "to_lose":
+                attrib[ATTR_FATMASSTOLOSE] = f"{fat_mass_to_ideal['mass']:.2f}"
             else:
-                attrib[ATTR_FATMASSTOGAIN] = "{:.2f}".format(lib.getFatMassToIdeal()['mass'])
-            attrib[ATTR_PROTEIN] = "{:.1f}".format(protein)
-            attrib[ATTR_BODY] = bodyscale[lib.getBodyType()]
-            attrib[ATTR_METABOLIC] = "{:.0f}".format(lib.getMetabolicAge())
-            bs = body_score.bodyScore(age, gender, height, weight, bmi, bodyfat, muscle, water, visceral_fat, bone, basal_metabolism, protein)
-            attrib[ATTR_BODY_SCORE] = "{:.0f}".format(bs.getBodyScore())
+                attrib[ATTR_FATMASSTOGAIN] = f"{fat_mass_to_ideal['mass']:.2f}"
+            attrib[ATTR_PROTEIN] = f"{metrics.protein_percentage:.1f}"
+            attrib[ATTR_BODY] = bodyscale[metrics.body_type]
+            attrib[ATTR_METABOLIC] = f"{metrics.metabolic_age:.0f}"
+            bs = BodyScore(metrics)
+            attrib[ATTR_BODY_SCORE] = f"{bs.body_score:.0f}"
 
         return attrib
