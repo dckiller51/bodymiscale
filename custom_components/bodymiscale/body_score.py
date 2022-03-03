@@ -1,9 +1,18 @@
-# Reverse engineered from amazfit's app (also known as Mi Fit)
+"""Body score module."""
+from functools import cached_property
+from typing import Union
+
 from . import BodyMetricsImpedance
 from .models import Gender
 
 
-def _get_malus(data, min_data, max_data, max_malus, min_malus):
+def _get_malus(
+    data: float,
+    min_data: float,
+    max_data: float,
+    max_malus: Union[int, float],
+    min_malus: int,
+) -> float:
     result = ((data - max_data) / (min_data - max_data)) * float(max_malus - min_malus)
     if result >= 0.0:
         return result
@@ -11,18 +20,15 @@ def _get_malus(data, min_data, max_data, max_malus, min_malus):
 
 
 class BodyScore:
+    """Body score implementation."""
+
     def __init__(self, metrics: BodyMetricsImpedance):
         self._metrics = metrics
 
-        # Store calculation result in variable to avoid recalculation
-        self.__body_score = None
-
-    @property
-    def body_score(self):
-        if self.__body_score is not None:
-            return self.__body_score
-
-        score = 100
+    @cached_property
+    def body_score(self) -> float:
+        """Get/calculate body score."""
+        score = 100.0
         score -= self._calculate_bmi_deduct_score()
         score -= self._calculate_body_fat_deduct_score()
         score -= self._calculate_muscle_deduct_score()
@@ -30,13 +36,14 @@ class BodyScore:
         score -= self._calculate_body_visceral_deduct_score()
         score -= self._calculate_bone_deduct_score()
         score -= self._calculate_basal_metabolism_deduct_score()
-        if self._metrics.protein_percentage():
+        if self._metrics.protein_percentage:
             score -= self._calculate_protein_deduct_score()
 
-        self.__body_score = score
-        return self.__body_score
+        return score
 
-    def _calculate_bmi_deduct_score(self):
+    def _calculate_bmi_deduct_score(  # pylint: disable=too-many-return-statements
+        self,
+    ) -> float:
         if not self._metrics.height >= 90:
             # "BMI is not reasonable
             return 0.0
@@ -57,7 +64,7 @@ class BodyScore:
             return 0.0
 
         # Extremely skinny (bmi < 14)
-        elif self._metrics.bmi <= bmi_very_low:
+        if self._metrics.bmi <= bmi_very_low:
             return 30.0
         # Too skinny (bmi between 14 and 15)
         if self._metrics.bmi < bmi_low:
@@ -81,7 +88,7 @@ class BodyScore:
 
         return 0.0
 
-    def _calculate_body_fat_deduct_score(self):
+    def _calculate_body_fat_deduct_score(self) -> float:
         scale = self._metrics.scale.fat_percentage
 
         if self._metrics.gender == Gender.MALE:
@@ -95,7 +102,7 @@ class BodyScore:
         if self._metrics.fat_percentage >= scale[3]:
             return 20.0
 
-        # Sightly high body fat
+        # Slightly high body fat
         if self._metrics.fat_percentage < scale[3]:
             return (
                 _get_malus(self._metrics.fat_percentage, scale[3], scale[2], 20, 10)
@@ -112,7 +119,7 @@ class BodyScore:
 
         return 0.0
 
-    def _calculate_muscle_deduct_score(self):
+    def _calculate_muscle_deduct_score(self) -> float:
         scale = self._metrics.scale.muscle_mass
 
         # For some reason, there's code to return self.calculate(muscle, normal[0], normal[0]+2.0, 3, 5) + 3.0
@@ -125,7 +132,7 @@ class BodyScore:
             _get_malus(self._metrics.muscle_mass, scale[0] - 5.0, scale[0], 10, 5) + 5.0
         )
 
-    def _calculate_water_deduct_score(self):
+    def _calculate_water_deduct_score(self) -> float:
         # No malus = normal or good; maximum malus (10.0) = less than normal-5.0;
         # malus = between 5 and 10, on your water being between normal-5.0 and normal
         scale = self._metrics.scale.water_percentage
@@ -139,7 +146,7 @@ class BodyScore:
             + 5.0
         )
 
-    def _calculate_body_visceral_deduct_score(self):
+    def _calculate_body_visceral_deduct_score(self) -> float:
         # No malus = normal; maximum malus (15.0) = very high; malus = between 10 and 15
         # with your visceral fat in your high range
         scale = self._metrics.scale.visceral_fat
@@ -153,7 +160,7 @@ class BodyScore:
             return 15.0
         return _get_malus(self._metrics.visceral_fat, scale[1], scale[0], 15, 10) + 10.0
 
-    def _calculate_bone_deduct_score(self):
+    def _calculate_bone_deduct_score(self) -> float:
         scale = self._metrics.scale.bone_mass
 
         if self._metrics.bone_mass >= scale[0]:
@@ -164,9 +171,9 @@ class BodyScore:
             _get_malus(self._metrics.bone_mass, scale[0] - 0.3, scale[0], 10, 5) + 5.0
         )
 
-    def _calculate_basal_metabolism_deduct_score(self):
+    def _calculate_basal_metabolism_deduct_score(self) -> float:
         # Get normal BMR
-        normal = self._metrics.scale.bmr()[0]
+        normal = self._metrics.scale.bmr
 
         if self._metrics.bmr >= normal:
             return 0.0
@@ -175,7 +182,7 @@ class BodyScore:
         # It's really + 5.0 in the app, but it's probably a mistake, should be 3.0
         return _get_malus(self._metrics.bmr, normal - 300, normal, 6, 3) + 5.0
 
-    def _calculate_protein_deduct_score(self):
+    def _calculate_protein_deduct_score(self) -> float:
         # low: 10,16; normal: 16,17
         # Check limits
         if self._metrics.protein_percentage > 17.0:
@@ -186,5 +193,7 @@ class BodyScore:
         # Return values for low proteins or normal proteins
         if self._metrics.protein_percentage <= 16.0:
             return _get_malus(self._metrics.protein_percentage, 10.0, 16.0, 10, 5) + 5.0
-        elif self._metrics.protein_percentage <= 17.0:
+        if self._metrics.protein_percentage <= 17.0:
             return _get_malus(self._metrics.protein_percentage, 16.0, 17.0, 5, 3) + 3.0
+
+        return 0.0

@@ -15,7 +15,6 @@ READING_WEIGHT = "weight"
 CONF_SENSOR_WEIGHT = READING_WEIGHT
 CONF_MIN_WEIGHT = f"min_{READING_WEIGHT}"
 CONF_MAX_WEIGHT = f"max_{READING_WEIGHT}"
-ATTR_WEIGHT = "weight"
 ATTR_HEIGHT = "height"
 ATTR_BORN = "born"
 ATTR_GENDER = "gender"
@@ -31,7 +30,6 @@ READING_IMPEDANCE = "impedance"
 CONF_SENSOR_IMPEDANCE = READING_IMPEDANCE
 CONF_MIN_IMPEDANCE = f"min_{READING_IMPEDANCE}"
 CONF_MAX_IMPEDANCE = f"max_{READING_IMPEDANCE}"
-ATTR_IMPEDANCE = "impedance"
 ATTR_LBM = "lean_body_mass"
 ATTR_FAT = "body_fat"
 ATTR_WATER = "water"
@@ -43,12 +41,9 @@ ATTR_PROTEIN = "protein"
 ATTR_BODY = "body_type"
 ATTR_BODY_SCORE = "body_score"
 ATTR_METABOLIC = "metabolic_age"
-ATTR_UNIT_OF_MEASUREMENT = "unit_of_measurement"
 UNIT_POUNDS = "lbs"
 
 # Defaults
-DEFAULT_NAME = "bodymiscale"
-
 ATTR_PROBLEM = "problem"
 ATTR_SENSORS = "sensors"
 PROBLEM_NONE = "none"
@@ -70,4 +65,3 @@ If you have any issues with this you need to open an issue here:
 {ISSUE_URL}
 -------------------------------------------------------------------
 """
-

@@ -1,3 +1,7 @@
+"""Body metrics module."""
+from functools import cached_property
+from typing import Union
+
 from .body_scales import BodyScale
 from .models import Gender
 
@@ -12,6 +16,8 @@ def _check_value_constraints(value: float, minimum: float, maximum: float) -> fl
 
 
 class BodyMetrics:
+    """Body metrics implementation."""
+
     def __init__(self, weight: float, height: int, age: int, gender: Gender):
         # Check for potential out of boundaries
         if height > 220:
@@ -28,43 +34,35 @@ class BodyMetrics:
         self._age = age
         self._gender = gender
 
-        # Store calculation result in variable to avoid recalculation
-        self.__bmi = None
-        self.__bmr = None
-        self.__visceral_fat = None
-
     @property
     def weight(self) -> float:
+        """Get weight."""
         return self._weight
 
     @property
     def height(self) -> int:
+        """Get height."""
         return self._height
 
     @property
     def age(self) -> int:
+        """Get age."""
         return self._age
 
     @property
     def gender(self) -> Gender:
+        """Get gender."""
         return self._gender
 
-    @property
+    @cached_property
     def bmi(self) -> float:
         """Get MBI."""
-        if self.__bmi is not None:
-            return self.__bmi
-
         bmi = self._weight / ((self._height / 100) * (self._height / 100))
-        self.__bmi = _check_value_constraints(bmi, 10, 90)
-        return self.__bmi
+        return _check_value_constraints(bmi, 10, 90)
 
-    @property
+    @cached_property
     def bmr(self) -> float:
         """Get BMR."""
-        if self.__bmr is not None:
-            return self.__bmr
-
         if self._gender == Gender.FEMALE:
             bmr = 864.6 + self._weight * 10.2036
             bmr -= self._height * 0.39336
@@ -80,15 +78,11 @@ class BodyMetrics:
             if bmr > 2322:
                 bmr = 5000
 
-        self.__bmr = _check_value_constraints(bmr, 500, 5000)
-        return self.__bmr
+        return _check_value_constraints(bmr, 500, 5000)
 
-    @property
-    def visceral_fat(self):
+    @cached_property
+    def visceral_fat(self) -> float:
         """Get Visceral Fat."""
-        if self.__visceral_fat is not None:
-            return self.__visceral_fat
-
         if self._gender == Gender.FEMALE:
             if self._weight > (13 - (self._height * 0.5)) * -1:
                 subsubcalc = (
@@ -119,22 +113,19 @@ class BodyMetrics:
                     - 5.0
                 )
 
-        self.__visceral_fat = _check_value_constraints(vfal, 1, 50)
-        return self.__visceral_fat
+        return _check_value_constraints(vfal, 1, 50)
 
-    def get_ideal_weight(self, orig=True):
+    @cached_property
+    def ideal_weight(self) -> float:
         """Get ideal weight (just doing a reverse BMI, should be something better)."""
         # Uses mi fit algorithm (or holtek's one)
-        if orig:
-            if self._gender == Gender.FEMALE:
-                return (self._height - 70) * 0.6
-            return (self._height - 80) * 0.7
-        return _check_value_constraints(
-            (22 * self._height) * self._height / 10000, 5.5, 198
-        )
+        if self._gender == Gender.FEMALE:
+            return (self._height - 70) * 0.6
+        return (self._height - 80) * 0.7
 
     @property
-    def bmi_label(self) -> str:
+    def bmi_label(self) -> str:  # pylint: disable=too-many-return-statements
+        """Get BMI label."""
         bmi = self.bmi
         if bmi < 18.5:
             return "Underweight"
@@ -152,7 +143,9 @@ class BodyMetrics:
 
 
 class BodyMetricsImpedance(BodyMetrics):
-    def __init__(
+    """body metrics with impedance implementation."""
+
+    def __init__(  # pylint: disable=too-many-arguments
         self, weight: float, height: int, age: int, gender: Gender, impedance: int
     ):
         super().__init__(weight, height, age, gender)
@@ -161,41 +154,24 @@ class BodyMetricsImpedance(BodyMetrics):
         self._impedance = impedance
         self._scale = BodyScale(age, height, gender, weight)
 
-        # Store calculation result in variable to avoid recalculation
-        self.__lbm_coefficient = None
-        self.__fat_percentage = None
-        self.__water_percentage = None
-        self.__bone_mass = None
-        self.__muscle_mass = None
-        self.__metabolic_age = None
-        self.__fat_mass_to_ideal = None
-        self.__body_type = None
-        self.__protein_percentage = None
-
     @property
     def scale(self) -> BodyScale:
+        """Get body scale."""
         return self._scale
 
-    @property
+    @cached_property
     def lbm_coefficient(self) -> float:
         """Get LBM coefficient (with impedance)."""
-        if self.__lbm_coefficient is not None:
-            return self.__lbm_coefficient
-
         lbm = (self._height * 9.058 / 100) * (self._height / 100)
         lbm += self._weight * 0.32 + 12.226
         lbm -= self._impedance * 0.0068
         lbm -= self._age * 0.0542
 
-        self.__lbm_coefficient = lbm
-        return self.__lbm_coefficient
+        return lbm
 
-    @property
-    def fat_percentage(self):
+    @cached_property
+    def fat_percentage(self) -> float:
         """Get fat percentage."""
-        if self.__fat_percentage is not None:
-            return self.__fat_percentage
-
         # Set a constant to remove from LBM
         if self._gender == "female":
             const = 9.25 if self._age <= 49 else 7.25
@@ -222,15 +198,11 @@ class BodyMetricsImpedance(BodyMetrics):
         # Capping body fat percentage
         if fat_percentage > 63:
             fat_percentage = 75
-        self.__fat_percentage = _check_value_constraints(fat_percentage, 5, 75)
-        return self.__fat_percentage
+        return _check_value_constraints(fat_percentage, 5, 75)
 
-    @property
-    def water_percentage(self):
+    @cached_property
+    def water_percentage(self) -> float:
         """Get water percentage."""
-        if self.__water_percentage is not None:
-            return self.__water_percentage
-
         water_percentage = (100 - self.fat_percentage) * 0.7
 
         coefficient = 1.02 if water_percentage <= 50 else 0.98
@@ -238,17 +210,11 @@ class BodyMetricsImpedance(BodyMetrics):
         # Capping water percentage
         if water_percentage * coefficient >= 65:
             water_percentage = 75
-        self.__water_percentage = _check_value_constraints(
-            water_percentage * coefficient, 35, 75
-        )
-        return self.__water_percentage
+        return _check_value_constraints(water_percentage * coefficient, 35, 75)
 
-    @property
-    def bone_mass(self):
+    @cached_property
+    def bone_mass(self) -> float:
         """Get bone mass."""
-        if self.__bone_mass is not None:
-            return self.__bone_mass
-
         if self._gender == Gender.FEMALE:
             base = 0.245691014
         else:
@@ -266,15 +232,12 @@ class BodyMetricsImpedance(BodyMetrics):
             bone_mass = 8
         elif self._gender == Gender.MALE and bone_mass > 5.2:
             bone_mass = 8
-        self.__bone_mass = _check_value_constraints(bone_mass, 0.5, 8)
-        return self.__bone_mass
 
-    @property
-    def muscle_mass(self):
+        return _check_value_constraints(bone_mass, 0.5, 8)
+
+    @cached_property
+    def muscle_mass(self) -> float:
         """Get muscle mass."""
-        if self.__muscle_mass is not None:
-            return self.__muscle_mass
-
         muscle_mass = (
             self._weight
             - ((self.fat_percentage * 0.01) * self._weight)
@@ -287,15 +250,11 @@ class BodyMetricsImpedance(BodyMetrics):
         elif self._gender == Gender.MALE and muscle_mass >= 93.5:
             muscle_mass = 120
 
-        self.__muscle_mass = _check_value_constraints(muscle_mass, 10, 120)
-        return self.__muscle_mass
+        return _check_value_constraints(muscle_mass, 10, 120)
 
-    @property
-    def metabolic_age(self):
+    @cached_property
+    def metabolic_age(self) -> float:
         """Get metabolic age."""
-        if self.__metabolic_age is not None:
-            return self.__metabolic_age
-
         if self._gender == Gender.FEMALE:
             metabolic_age = (
                 (self._height * -1.1165)
@@ -312,42 +271,31 @@ class BodyMetricsImpedance(BodyMetrics):
                 + (self._impedance * 0.0517)
                 + 54.2267
             )
-        self.__metabolic_age = _check_value_constraints(metabolic_age, 15, 80)
-        return self.__metabolic_age
+        return _check_value_constraints(metabolic_age, 15, 80)
 
-    @property
-    def fat_mass_to_ideal(self):
-        if self.__fat_mass_to_ideal is not None:
-            return self.__fat_mass_to_ideal
-
+    @cached_property
+    def fat_mass_to_ideal(self) -> dict[str, Union[str, float]]:
+        """Get missig mass to idea weight."""
         mass = (self._weight * (self.fat_percentage / 100)) - (
             self._weight * (self._scale.fat_percentage[2] / 100)
         )
         if mass < 0:
-            self.__fat_mass_to_ideal = {"type": "to_gain", "mass": mass * -1}
-        else:
-            self.__fat_mass_to_ideal = {"type": "to_lose", "mass": mass}
-        return self.__fat_mass_to_ideal
+            return {"type": "to_gain", "mass": mass * -1}
 
-    @property
-    def protein_percentage(self):
+        return {"type": "to_lose", "mass": mass}
+
+    @cached_property
+    def protein_percentage(self) -> float:
         """Get protetin percentage (warn: guessed formula)."""
-        if self.__protein_percentage is not None:
-            return self.__protein_percentage
-
         # Use original algorithm from mi fit (or legacy guess one)
         protein_percentage = (self.muscle_mass / self._weight) * 100
         protein_percentage -= self.water_percentage
 
-        self.__protein_percentage = _check_value_constraints(protein_percentage, 5, 32)
-        return self.__protein_percentage
+        return _check_value_constraints(protein_percentage, 5, 32)
 
-    @property
-    def body_type(self):
+    @cached_property
+    def body_type(self) -> int:
         """Get body type (out of nine possible)."""
-        if self.__body_type is not None:
-            return self.__body_type
-
         if self.fat_percentage > self._scale.fat_percentage[2]:
             factor = 0
         elif self.fat_percentage < self._scale.fat_percentage[1]:
@@ -356,10 +304,8 @@ class BodyMetricsImpedance(BodyMetrics):
             factor = 1
 
         if self.muscle_mass > self._scale.muscle_mass[1]:
-            self.__body_type = 2 + (factor * 3)
-        elif self.muscle_mass < self._scale.muscle_mass[0]:
-            self.__body_type = factor * 3
-        else:
-            self.__body_type = 1 + (factor * 3)
+            return 2 + (factor * 3)
+        if self.muscle_mass < self._scale.muscle_mass[0]:
+            return factor * 3
 
-        return self.__body_type
+        return 1 + (factor * 3)

@@ -1,7 +1,12 @@
+"""Body scale module."""
+from functools import cached_property
+
 from custom_components.bodymiscale.models import Gender
 
 
 class BodyScale:
+    """body scale implementation."""
+
     def __init__(self, age: int, height: int, gender: Gender, weight: float):
         self._age = age
         self._height = height
@@ -9,19 +14,19 @@ class BodyScale:
         self._weight = weight
 
     @property
-    def bmi(self):
+    def bmi(self) -> list[float]:
         """Get BMI."""
         # Amazfit/new mi fit
         # return [18.5, 24, 28]
         # Old mi fit // amazfit for body figure
         return [18.5, 25.0, 28.0, 32.0]
 
-    @property
-    def fat_percentage(self):
+    @cached_property
+    def fat_percentage(self) -> list[float]:
         """Get fat percentage."""
 
         # The included tables where quite strange, maybe bogus, replaced them with better ones...
-        scales = [
+        scales: list[dict] = [
             {
                 "min": 0,
                 "max": 12,
@@ -68,11 +73,15 @@ class BodyScale:
 
         for scale in scales:
             if scale["min"] <= self._age < scale["max"]:
-                return scale[self._gender]
+                return scale[self._gender]  # type: ignore
 
-    @property
-    def muscle_mass(self):
-        scales = [
+        # will never happen but mypy required it
+        raise NotImplementedError
+
+    @cached_property
+    def muscle_mass(self) -> list[float]:
+        """Get muscle mass."""
+        scales: list[dict] = [
             {
                 "min": {Gender.MALE: 170, Gender.FEMALE: 160},
                 Gender.FEMALE: [36.5, 42.6],
@@ -92,22 +101,27 @@ class BodyScale:
 
         for scale in scales:
             if self._height >= scale["min"][self._gender]:
-                return scale[self._gender]
+                return scale[self._gender]  # type: ignore
+
+        # will never happen but mypy required it
+        raise NotImplementedError
 
     @property
-    def water_percentage(self):
+    def water_percentage(self) -> list[float]:
+        """Get water percentage."""
         if self._gender == Gender.MALE:
             return [55.0, 65.1]
-        else:
-            return [45.0, 60.1]
+
+        return [45.0, 60.1]
 
     @property
-    def visceral_fat(self):
-        # Actually the same in mi fit/amazfit and holtek's sdk
+    def visceral_fat(self) -> list[float]:
+        """Get visceral fat."""
         return [10.0, 15.0]
 
-    @property
-    def bone_mass(self):
+    @cached_property
+    def bone_mass(self) -> list[float]:
+        """Get bone mass."""
         scales = [
             {
                 Gender.MALE: {"min": 75.0, "scale": [2.0, 4.2]},
@@ -124,11 +138,15 @@ class BodyScale:
         ]
 
         for scale in scales:
-            if self._weight >= scale[self._gender]["min"]:
-                return scale[self._gender]["scale"]
+            if self._weight >= scale[self._gender]["min"]:  # type: ignore
+                return scale[self._gender]["scale"]  # type: ignore
 
-    @property
-    def bmr(self):
+        # will never happen but mypy required it
+        raise NotImplementedError
+
+    @cached_property
+    def bmr(self) -> float:
+        """Get BMR."""
         coefficients = {
             Gender.MALE: {30: 21.6, 50: 20.07, 100: 19.35},
             Gender.FEMALE: {30: 21.24, 50: 19.53, 100: 18.63},
@@ -136,28 +154,33 @@ class BodyScale:
 
         for age, coefficient in coefficients[self._gender].items():
             if self._age < age:
-                return [self._weight * coefficient]
+                return self._weight * coefficient
+
+        # will never happen but mypy required it
+        raise NotImplementedError
 
     @property
-    def protein_percentage(self):
-        # Actually the same in mi fit and holtek's sdk
+    def protein_percentage(self) -> list[float]:
+        """Get protein percentage."""
         return [16, 20]
 
-    @property
-    def ideal_weight(self):
+    @cached_property
+    def ideal_weight(self) -> list[float]:
         """Get ideal weight scale (BMI scale converted to weights)."""
-        scale = []
-        for bmiScale in self.bmi:
-            scale.append((bmiScale * self._height) * self._height / 10000)
-        return scale
+        scales = []
+        for scale in self.bmi:
+            scales.append((scale * self._height) * self._height / 10000)
+        return scales
 
     @property
-    def body_score(self):
+    def body_score(self) -> list[float]:
+        """Get body score."""
         # very bad, bad, normal, good, better
         return [50.0, 60.0, 80.0, 90.0]
 
     @property
-    def body_type(self):
+    def body_type(self) -> list[str]:
+        """Get body type."""
         return [
             "obese",
             "overweight",
