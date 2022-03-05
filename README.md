@@ -60,7 +60,7 @@ The generated data is :
 - Protein
 - Body type
 
-*************
+---
 
 ## Installation
 
@@ -71,26 +71,26 @@ The generated data is :
 ### Manual installation
 
 - You can install it manually. Simply copy and paste the contents of the
-`bodymiscale/custom_components` folder in your`config/custom_components`.
-For example, you will get the file `__init __.Py` in the following path:
-`/config/custom_components/bodymiscale/__init__. py`.
+  `bodymiscale/custom_components` folder in your`config/custom_components`.
+  For example, you will get the file `__init __.Py` in the following path:
+  `/config/custom_components/bodymiscale/__init__. py`.
 
-*************
+---
 
 ## Configuration
 
-key | type | description
-:--- | :--- | :---
-**plateform (Required)** | string | `bodymiscale`
-**name (Required)** | string | Custom name for the sensor. `yourname`
-**weight (Required)** | sensors / sensor.weight_ | Your sensor returning your weight.
-**impedance (Optional)** | sensors / sensor.impedance_ | Your sensor returning your impedance.
-**height (Required)** | number | Your height in cm.
-**born (Required)** | string | Your birthday. `"YYYY-MM-DD"`
-**gender (Required)** | string | female or male. `"male"`
-**Model (Optional)** | string | Define the scale model.`"181D"` or `"181B"`.
+| key                      | type                         | description                                  |
+| :----------------------- | :--------------------------- | :------------------------------------------- |
+| **plateform (Required)** | string                       | `bodymiscale`                                |
+| **name (Required)**      | string                       | Custom name for the sensor. `yourname`       |
+| **weight (Required)**    | sensors / sensor.weight\_    | Your sensor returning your weight.           |
+| **impedance (Optional)** | sensors / sensor.impedance\_ | Your sensor returning your impedance.        |
+| **height (Required)**    | number                       | Your height in cm.                           |
+| **born (Required)**      | string                       | Your birthday. `"YYYY-MM-DD"`                |
+| **gender (Required)**    | string                       | female or male. `"male"`                     |
+| **Model (Optional)**     | string                       | Define the scale model.`"181D"` or `"181B"`. |
 
-*************
+---
 
 ## Example
 
@@ -127,7 +127,7 @@ yourname:
   model_miscale: "181B"
 ```
 
-*************
+---
 
 ## VERSION
 

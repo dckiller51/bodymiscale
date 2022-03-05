@@ -1,9 +1,9 @@
 {
-    "state": {
-        "_": {
-            "ok": "OK",
-            "problem": "Problem"
-        }
-    },
-    "title": "Bodymiscale"
+  "state": {
+    "_": {
+      "ok": "OK",
+      "problem": "Problem"
+    }
+  },
+  "title": "Bodymiscale"
 }
