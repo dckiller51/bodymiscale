@@ -2,7 +2,7 @@
 # Base component constants
 NAME = "Body Xiaomi Miscale Esphome"
 DOMAIN = "bodymiscale"
-VERSION = "1.1.5"
+VERSION = "2.0.0"
 
 ISSUE_URL = "https://github.com/dckiller51/bodymiscale/issues"
 DOC_URL = "https://github.com/dckiller51/bodymiscale"

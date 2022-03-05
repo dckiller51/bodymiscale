@@ -131,6 +131,19 @@ yourname:
 
 ## VERSION
 
+## v2.0.0
+
+Big update offered by @edenhaus. It offers us a better quality code and especially to be able to work in devcontainer.
+
+- Add code quality tools, which run with pre-commit
+- removed unused code (e.g. holtek)
+- use @cached_property to run certain calculation only once
+- adjust names and code to python coding styles
+- update ci actions
+- Add devcontainer for easier development
+
+Thanks to you for the work done.
+
 ## v1.1.5
 
 - Convert weight from lbs to kgs if your scale is set to this unit (thank you @rale)
