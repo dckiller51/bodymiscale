@@ -1,5 +1,5 @@
 homeassistant>=2022.3.0.b0
-mypy==0.931
+mypy==0.940
 pre-commit==2.17.0
 pylint==2.12.2
 
