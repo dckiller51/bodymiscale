@@ -5,5 +5,35 @@
       "problem": "Problem"
     }
   },
-  "title": "Bodymiscale"
+  "config": {
+    "step": {
+      "user": {
+        "data": {
+          "name": "Name",
+          "height": "Height",
+          "birthday": "Birthday",
+          "gender": "Gender",
+          "weight": "Weight sensor",
+          "impedance": "Impedance sensor"
+        },
+        "data_description": {
+          "impedance": "If your scale does not provide the impedance, leave this field empty."
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "height": "Height",
+          "weight": "Weight sensor",
+          "impedance": "Impedance sensor"
+        },
+        "data_description": {
+          "impedance": "If your scale does not provide the impedance, leave this field empty."
+        }
+      }
+    }
+  }
 }

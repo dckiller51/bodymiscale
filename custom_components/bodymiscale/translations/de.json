@@ -1,0 +1,32 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "data": {
+          "height": "Größe",
+          "birthday": "Geburtstag",
+          "gender": "Geschlecht",
+          "weight": "Gewicht sensor",
+          "impedance": "Impedanz sensor"
+        },
+        "data_description": {
+          "impedance": "Falls deine Waage keine Impedanz liefert, lasse das Feld leer."
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "height": "Größe",
+          "weight": "Gewicht sensor",
+          "impedance": "Impedanz sensor"
+        },
+        "data_description": {
+          "impedance": "Falls deine Waage keine Impedanz liefert, lasse das Feld leer."
+        }
+      }
+    }
+  }
+}
