@@ -192,29 +192,18 @@ class Bodymiscale(BodyScaleBaseEntity):
             attrib[ATTR_BMILABEL] = metrics.bmi_label
 
             if isinstance(metrics, BodyMetricsImpedance):
-                bodyscale = [
-                    "Obese",
-                    "Overweight",
-                    "Thick-set",
-                    "Lack-exercise",
-                    "Balanced",
-                    "Balanced-muscular",
-                    "Skinny",
-                    "Balanced-skinny",
-                    "Skinny-muscular",
-                ]
                 attrib[ATTR_LBM] = f"{metrics.lbm_coefficient:.1f}"
                 attrib[ATTR_FAT] = f"{metrics.fat_percentage:.1f}"
                 attrib[ATTR_WATER] = f"{metrics.water_percentage:.1f}"
                 attrib[ATTR_BONES] = f"{metrics.bone_mass:.2f}"
                 attrib[ATTR_MUSCLE] = f"{metrics.muscle_mass:.2f}"
                 fat_mass_to_ideal = metrics.fat_mass_to_ideal
-                if fat_mass_to_ideal["type"] == "to_lose":
-                    attrib[ATTR_FATMASSTOLOSE] = f"{fat_mass_to_ideal['mass']:.2f}"
+                if fat_mass_to_ideal < 0:
+                    attrib[ATTR_FATMASSTOLOSE] = f"{fat_mass_to_ideal*-1:.2f}"
                 else:
-                    attrib[ATTR_FATMASSTOGAIN] = f"{fat_mass_to_ideal['mass']:.2f}"
+                    attrib[ATTR_FATMASSTOGAIN] = f"{fat_mass_to_ideal:.2f}"
                 attrib[ATTR_PROTEIN] = f"{metrics.protein_percentage:.1f}"
-                attrib[ATTR_BODY] = bodyscale[metrics.body_type]
+                attrib[ATTR_BODY] = metrics.body_type
                 attrib[ATTR_METABOLIC] = f"{metrics.metabolic_age:.0f}"
                 body_score = BodyScore(metrics)
                 attrib[ATTR_BODY_SCORE] = f"{body_score.body_score:.0f}"

@@ -60,4 +60,4 @@ MAX = "max"
 COMPONENT = "component"
 COORDINATORS = "coordinators"
 
-PLATFORMS: set[Platform] = set()
+PLATFORMS: set[Platform] = {Platform.SENSOR}

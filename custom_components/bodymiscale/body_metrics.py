@@ -1,6 +1,5 @@
 """Body metrics module."""
 from functools import cached_property
-from typing import Union
 
 from .body_scales import BodyScale
 from .const import (
@@ -282,15 +281,11 @@ class BodyMetricsImpedance(BodyMetrics):
         return _check_value_constraints(metabolic_age, 15, 80)
 
     @cached_property
-    def fat_mass_to_ideal(self) -> dict[str, Union[str, float]]:
-        """Get missig mass to idea weight."""
-        mass = (self._weight * (self.fat_percentage / 100)) - (
-            self._weight * (self._scale.fat_percentage[2] / 100)
+    def fat_mass_to_ideal(self) -> float:
+        """Get missig mass to ideal weight."""
+        return (self._weight * (self._scale.fat_percentage[2] / 100)) - (
+            self._weight * (self.fat_percentage / 100)
         )
-        if mass < 0:
-            return {"type": "to_gain", "mass": mass * -1}
-
-        return {"type": "to_lose", "mass": mass}
 
     @cached_property
     def protein_percentage(self) -> float:
@@ -302,8 +297,20 @@ class BodyMetricsImpedance(BodyMetrics):
         return _check_value_constraints(protein_percentage, 5, 32)
 
     @cached_property
-    def body_type(self) -> int:
-        """Get body type (out of nine possible)."""
+    def body_type(self) -> str:
+        """Get body type."""
+        types = [
+            "Obese",
+            "Overweight",
+            "Thick-set",
+            "Lack-exercise",
+            "Balanced",
+            "Balanced-muscular",
+            "Skinny",
+            "Balanced-skinny",
+            "Skinny-muscular",
+        ]
+
         if self.fat_percentage > self._scale.fat_percentage[2]:
             factor = 0
         elif self.fat_percentage < self._scale.fat_percentage[1]:
@@ -312,8 +319,9 @@ class BodyMetricsImpedance(BodyMetrics):
             factor = 1
 
         if self.muscle_mass > self._scale.muscle_mass[1]:
-            return 2 + (factor * 3)
+            type_num = 2 + (factor * 3)
         if self.muscle_mass < self._scale.muscle_mass[0]:
-            return factor * 3
+            type_num = factor * 3
 
-        return 1 + (factor * 3)
+        type_num = 1 + (factor * 3)
+        return types[type_num]
