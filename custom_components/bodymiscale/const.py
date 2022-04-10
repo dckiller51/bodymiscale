@@ -1,60 +1,42 @@
 """Constants for bodymiscale."""
-# Base component constants
-NAME = "Body Xiaomi Miscale Esphome"
+
+from homeassistant.const import Platform
+
+MIN_REQUIRED_HA_VERSION = "2022.4.0b0"
+NAME = "BodyMiScale"
 DOMAIN = "bodymiscale"
 VERSION = "2.0.0"
 
 ISSUE_URL = "https://github.com/dckiller51/bodymiscale/issues"
-DOC_URL = "https://github.com/dckiller51/bodymiscale"
 
-# Icons
-ICON = "mdi:human"
+CONF_BIRTHDAY = "birthday"
+CONF_GENDER = "gender"
+CONF_HEIGHT = "height"
+CONF_SENSOR_IMPEDANCE = "impedance"
+CONF_SENSOR_WEIGHT = "weight"
 
-# Common constants Miscale
-READING_WEIGHT = "weight"
-CONF_SENSOR_WEIGHT = READING_WEIGHT
-CONF_MIN_WEIGHT = f"min_{READING_WEIGHT}"
-CONF_MAX_WEIGHT = f"max_{READING_WEIGHT}"
-ATTR_HEIGHT = "height"
-ATTR_BORN = "born"
-ATTR_GENDER = "gender"
 ATTR_AGE = "age"
 ATTR_BMI = "bmi"
-ATTR_BMR = "basal_metabolism"
-ATTR_VISCERAL = "visceral_fat"
-ATTR_IDEAL = "ideal"
 ATTR_BMILABEL = "bmi_label"
-
-# Constants for Miscale 2
-READING_IMPEDANCE = "impedance"
-CONF_SENSOR_IMPEDANCE = READING_IMPEDANCE
-CONF_MIN_IMPEDANCE = f"min_{READING_IMPEDANCE}"
-CONF_MAX_IMPEDANCE = f"max_{READING_IMPEDANCE}"
-ATTR_LBM = "lean_body_mass"
-ATTR_FAT = "body_fat"
-ATTR_WATER = "water"
-ATTR_BONES = "bone_mass"
-ATTR_MUSCLE = "muscle_mass"
-ATTR_FATMASSTOLOSE = "fat_mass_to_lose"
-ATTR_FATMASSTOGAIN = "fat_mass_to_gain"
-ATTR_PROTEIN = "protein"
+ATTR_BMR = "basal_metabolism"
 ATTR_BODY = "body_type"
 ATTR_BODY_SCORE = "body_score"
+ATTR_BONES = "bone_mass"
+ATTR_FAT = "body_fat"
+ATTR_FATMASSTOGAIN = "fat_mass_to_gain"
+ATTR_FATMASSTOLOSE = "fat_mass_to_lose"
+ATTR_IDEAL = "ideal"
+ATTR_LBM = "lean_body_mass"
 ATTR_METABOLIC = "metabolic_age"
+ATTR_MUSCLE = "muscle_mass"
+ATTR_PROBLEM = "problem"
+ATTR_PROTEIN = "protein"
+ATTR_VISCERAL = "visceral_fat"
+ATTR_WATER = "water"
+
 UNIT_POUNDS = "lbs"
 
-# Defaults
-ATTR_PROBLEM = "problem"
-ATTR_SENSORS = "sensors"
 PROBLEM_NONE = "none"
-
-ATTR_MODEL = "model_miscale"
-
-DEFAULT_MIN_WEIGHT = 10
-DEFAULT_MAX_WEIGHT = 200
-DEFAULT_MIN_IMPEDANCE = 0
-DEFAULT_MAX_IMPEDANCE = 3000
-DEFAULT_MODEL = "181D"
 
 STARTUP_MESSAGE = f"""
 -------------------------------------------------------------------
@@ -65,3 +47,17 @@ If you have any issues with this you need to open an issue here:
 {ISSUE_URL}
 -------------------------------------------------------------------
 """
+
+CONSTRAINT_HEIGHT_MIN = 0
+CONSTRAINT_HEIGHT_MAX = 220
+CONSTRAINT_IMPEDANCE_MIN = 0
+CONSTRAINT_IMPEDANCE_MAX = 3000
+CONSTRAINT_WEIGHT_MIN = 10
+CONSTRAINT_WEIGHT_MAX = 200
+
+MIN = "min"
+MAX = "max"
+COMPONENT = "component"
+COORDINATORS = "coordinators"
+
+PLATFORMS: set[Platform] = set()

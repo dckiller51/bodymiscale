@@ -15,16 +15,15 @@ input_number:
     max: 3000
     step: 1
 
-bodymiscale:
-  test:
-    sensors:
-      weight: input_number.weight
-      impedance: input_number.impedance
-    height: 180
-    born: "1990-01-01"
-    gender: "male"
-    model_miscale: "181B"
+template:
+  - sensor:
+      - name: Weight
+        state: "{{ states('input_number.weight') }}"
+        unit_of_measurement: "kg"
+      - name: Impedance
+        state: "{{ states('input_number.impedance') }}"
+        unit_of_measurement: "ohm"
 
 # If you need to debug uncomment the line below (doc: https://www.home-assistant.io/integrations/debugpy/)
 debugpy:
-#  wait: true
+#   wait: true

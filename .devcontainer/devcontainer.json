@@ -1,10 +1,9 @@
-// See https://aka.ms/vscode-remote/devcontainer.json for format details.
 {
-  "image": "ludeeus/container:integration-debian",
-  "name": "Bodymiscale HA development",
+  "name": "Bodymiscale Development",
+  "image": "ghcr.io/ludeeus/devcontainer/integration:stable",
+  "postCreateCommand": "container install && pip install --ignore-installed -r requirements.txt",
   "context": "..",
   "appPort": ["9123:8123"],
-  "postCreateCommand": "container install",
   "extensions": [
     "ms-python.python",
     "github.vscode-pull-request-github",
@@ -14,11 +13,17 @@
   "settings": {
     "files.eol": "\n",
     "editor.tabSize": 4,
-    "terminal.integrated.shell.linux": "/bin/bash",
-    "python.pythonPath": "/usr/bin/python3",
+    "terminal.integrated.profiles.linux": {
+      "zsh": {
+        "path": "/usr/bin/zsh"
+      }
+    },
+    "terminal.integrated.defaultProfile.linux": "zsh",
+    "python.pythonPath": "/usr/local/python/bin/python",
     "python.analysis.autoSearchPaths": false,
     "python.linting.pylintEnabled": true,
     "python.linting.enabled": true,
+    "python.linting.pylintArgs": ["--disable", "import-error"],
     "python.formatting.provider": "black",
     "editor.formatOnPaste": false,
     "editor.formatOnSave": true,

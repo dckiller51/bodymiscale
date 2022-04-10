@@ -3,6 +3,12 @@ from functools import cached_property
 from typing import Union
 
 from .body_scales import BodyScale
+from .const import (
+    CONSTRAINT_HEIGHT_MAX,
+    CONSTRAINT_IMPEDANCE_MAX,
+    CONSTRAINT_WEIGHT_MAX,
+    CONSTRAINT_WEIGHT_MIN,
+)
 from .models import Gender
 
 
@@ -20,11 +26,11 @@ class BodyMetrics:
 
     def __init__(self, weight: float, height: int, age: int, gender: Gender):
         # Check for potential out of boundaries
-        if height > 220:
-            raise Exception("Height is too high (limit: >220cm)")
-        if weight < 10 or weight > 200:
+        if height > CONSTRAINT_HEIGHT_MAX:
+            raise Exception(f"Height is too high (limit: {CONSTRAINT_HEIGHT_MAX}cm)")
+        if not (CONSTRAINT_WEIGHT_MIN < weight < CONSTRAINT_WEIGHT_MAX):
             raise Exception(
-                "Weight is either too low or too high (limits: <10kg and >200kg)"
+                f"Weight not within {CONSTRAINT_WEIGHT_MIN} and {CONSTRAINT_WEIGHT_MAX} kg"
             )
         if age > 99:
             raise Exception("Age is too high (limit >99 years)")
@@ -149,8 +155,10 @@ class BodyMetricsImpedance(BodyMetrics):
         self, weight: float, height: int, age: int, gender: Gender, impedance: int
     ):
         super().__init__(weight, height, age, gender)
-        if impedance > 3000:
-            raise Exception("Impedance is too high (limit >3000ohm)")
+        if impedance > CONSTRAINT_IMPEDANCE_MAX:
+            raise Exception(
+                f"Impedance is too high (limit >{CONSTRAINT_IMPEDANCE_MAX}ohm)"
+            )
         self._impedance = impedance
         self._scale = BodyScale(age, height, gender, weight)
 
