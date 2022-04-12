@@ -4,7 +4,7 @@
   "documentation": "https://github.com/dckiller51/bodymiscale",
   "issue_tracker": "https://github.com/dckiller51/bodymiscale/issues",
   "dependencies": [],
-  "codeowners": ["@dckiller51, @edenhaus"],
+  "codeowners": ["@dckiller51", "@edenhaus"],
   "requirements": [],
   "iot_class": "calculated",
   "version": "2.1.0",
