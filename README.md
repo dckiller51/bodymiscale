@@ -64,79 +64,84 @@ The generated data is :
 <details>
   <summary><b>VERSION</b></summary>
 
+## v2.1.0
+
+- add config flow (thank you @edenhaus)
+Goodbye yaml file. Easily add your users. Click on the button above or go to your HA Configuration (Settings) -> Devices & Services -> Add -> Bodymiscale.
+
 ## v2.0.0
 
 Big update offered by @edenhaus. It offers us a better quality code and especially to be able to work in devcontainer.
 
-- Add code quality tools, which run with pre-commit
+- add code quality tools, which run with pre-commit
 - removed unused code (e.g. holtek)
 - use @cached_property to run certain calculation only once
 - adjust names and code to python coding styles
 - update ci actions
-- Add devcontainer for easier development
+- add devcontainer for easier development
 
 Thanks to you for the work done.
 
 ## v1.1.5
 
-- Convert weight from lbs to kgs if your scale is set to this unit (thank you @rale)
+- convert weight from lbs to kgs if your scale is set to this unit (thank you @rale)
 - added portuguese brazilian language support (thank you @hudsonbrendon)
 
 ## v1.1.4
 
-- Update getage function to correctly calculate age from DOB (thank you @borpin)
-- Use assignment expressions
+- update getage function to correctly calculate age from DOB (thank you @borpin)
+- use assignment expressions
 
 ## v1.1.3
 
-- Update readme: default integration in Hacs is available
-- Update iot_class (thank you @edenhaus)
+- update readme: default integration in Hacs is available
+- update iot_class (thank you @edenhaus)
 
 ## v1.1.2
 
-Update for default integration in Hacs
+- update for default integration in Hacs
 
 ## v1.1.1
 
-Update to fix startup errors (thank you @stefangries )
+- update to fix startup errors (thank you @stefangries )
 
 ## v1.1.0
 
-Adding body score (thank you @alinelena )
+- adding body score (thank you @alinelena )
 
 ## v1.0.0
 
-Update for the "181B" model: display the minimum score if the impedance sensor is unavailable.
+- update for the "181B" model: display the minimum score if the impedance sensor is unavailable.
 
 ## v0.0.8
 
-spelling update: Lack-exerscise => Lack-exercise
+- spelling update: Lack-exerscise => Lack-exercise
 
 ## v0.0.7
 
-- Update decimal by @typxxi (Thanks)
-- Update readme by @typxxi (Thanks)
+- update decimal by @typxxi (Thanks)
+- update readme by @typxxi (Thanks)
 
 ## v0.0.6
 
-- Use snake_case format for attribute names (thanks to Pavel Popov <https://github.com/dckiller51/bodymiscale/pull/13>)
+- use snake_case format for attribute names (thanks to Pavel Popov <https://github.com/dckiller51/bodymiscale/pull/13>)
 
 ## v0.0.5
 
-- Rename HomeAssistantType —> HomeAssistant for integrations n*- p* #49559
+- rename HomeAssistantType —> HomeAssistant for integrations n*- p* #49559
 
 ## v0.0.4
 
-- Fixed a startup error.
-- Update readme by @Ernst79 (Thanks)
+- fixed a startup error.
+- update readme by @Ernst79 (Thanks)
 
 ## v0.0.3
 
-Delete the units for the future custom card.
+- delete the units for the future custom card.
 
 ## v0.0.2
 
-Implantation of calculations. Thanks to lolouk44. I took the liberty of taking back these files.
+- implantation of calculations. Thanks to lolouk44. I took the liberty of taking back these files.
 
 ## v0.0.1
 
