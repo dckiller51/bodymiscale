@@ -61,7 +61,8 @@ The generated data is :
 
 ---
 
-## VERSION
+<details>
+  <summary><b>VERSION</b></summary>
 
 ## v2.0.0
 
