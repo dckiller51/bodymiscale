@@ -1,6 +1,5 @@
 """Sensor module."""
-from dataclasses import dataclass
-from typing import Any, Callable, Union
+from typing import Any, Callable, Mapping, Optional
 
 from homeassistant.components.sensor import (
     SensorEntity,
@@ -10,6 +9,7 @@ from homeassistant.components.sensor import (
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.typing import StateType
 
 from custom_components.bodymiscale.body_metrics import BodyMetricsImpedance
 from custom_components.bodymiscale.body_score import BodyScore
@@ -55,21 +55,22 @@ async def async_setup_entry(
                 key=ATTR_BMI,
                 icon="mdi:human",
             ),
-            lambda m: BodyScaleState(m.bmi, {ATTR_BMILABEL: m.bmi_label}),
+            lambda m: m.bmi,
+            lambda m: {ATTR_BMILABEL: m.bmi_label},
         ),
         BodyScaleSensor(
             coordinator,
             SensorEntityDescription(
                 key=ATTR_BMR,
             ),
-            lambda m: BodyScaleState(m.bmr, {}),
+            lambda m: m.bmr,
         ),
         BodyScaleSensor(
             coordinator,
             SensorEntityDescription(
                 key=ATTR_VISCERAL,
             ),
-            lambda m: BodyScaleState(m.visceral_fat, {}),
+            lambda m: m.visceral_fat,
         ),
         BodyScaleSensor(
             coordinator,
@@ -78,7 +79,8 @@ async def async_setup_entry(
                 icon="mdi:weight-kilogram",
                 native_unit_of_measurement="kg",
             ),
-            lambda m: BodyScaleState(m.weight, {ATTR_IDEAL: m.ideal_weight}),
+            lambda m: m.weight,
+            lambda m: {ATTR_IDEAL: m.ideal_weight},
         ),
     ]
 
@@ -90,21 +92,21 @@ async def async_setup_entry(
                     SensorEntityDescription(
                         key=ATTR_LBM,
                     ),
-                    lambda m: BodyScaleState(m.lbm_coefficient, {}),
+                    lambda m: m.lbm_coefficient,
                 ),
                 BodyScaleSensor(
                     coordinator,
                     SensorEntityDescription(
                         key=ATTR_FAT, native_unit_of_measurement="%"
                     ),
-                    lambda m: BodyScaleState(m.fat_percentage, {}),
+                    lambda m: m.fat_percentage,
                 ),
                 BodyScaleSensor(
                     coordinator,
                     SensorEntityDescription(
                         key=ATTR_PROTEIN, native_unit_of_measurement="%"
                     ),
-                    lambda m: BodyScaleState(m.protein_percentage, {}),
+                    lambda m: m.protein_percentage,
                 ),
                 BodyScaleSensor(
                     coordinator,
@@ -113,55 +115,47 @@ async def async_setup_entry(
                         icon="mdi:water-percent",
                         native_unit_of_measurement="%",
                     ),
-                    lambda m: BodyScaleState(m.water_percentage, {}),
+                    lambda m: m.water_percentage,
                 ),
                 BodyScaleSensor(
                     coordinator,
                     SensorEntityDescription(
                         key=ATTR_BONES,
                     ),
-                    lambda m: BodyScaleState(m.bone_mass, {}),
+                    lambda m: m.bone_mass,
                 ),
                 BodyScaleSensor(
                     coordinator,
                     SensorEntityDescription(
                         key=ATTR_MUSCLE,
                     ),
-                    lambda m: BodyScaleState(m.muscle_mass, {}),
+                    lambda m: m.muscle_mass,
                 ),
                 BodyScaleSensor(
                     coordinator,
                     SensorEntityDescription(
                         key=ATTR_BODY,
                     ),
-                    lambda m: BodyScaleState(m.body_type, {}),
+                    lambda m: m.body_type,
                 ),
                 BodyScaleSensor(
                     coordinator,
                     SensorEntityDescription(
                         key=ATTR_METABOLIC,
                     ),
-                    lambda m: BodyScaleState(m.metabolic_age, {}),
+                    lambda m: m.metabolic_age,
                 ),
                 BodyScaleSensor(
                     coordinator,
                     SensorEntityDescription(
                         key=ATTR_BODY_SCORE,
                     ),
-                    lambda m: BodyScaleState(BodyScore(m).body_score, {}),
+                    lambda m: BodyScore(m).body_score,
                 ),
             ]
         )
 
     async_add_entities(new_sensors)
-
-
-@dataclass
-class BodyScaleState:
-    """Body scale state object."""
-
-    state: Union[int, float, str]
-    attributes: dict[str, Any]
 
 
 class BodyScaleSensor(BodyScaleBaseEntity, SensorEntity):  # type: ignore[misc]
@@ -171,15 +165,19 @@ class BodyScaleSensor(BodyScaleBaseEntity, SensorEntity):  # type: ignore[misc]
         self,
         coordinator: BodyScaleCoordinator,
         entity_description: SensorEntityDescription,
-        get_state: Callable[[BodyMetricsImpedance], BodyScaleState],
+        get_state: Callable[[BodyMetricsImpedance], StateType],
+        get_attributes: Optional[
+            Callable[[BodyMetricsImpedance], Mapping[str, Any]]
+        ] = None,
     ):
         super().__init__(coordinator, entity_description)
         self.entity_description.state_class = SensorStateClass.MEASUREMENT
         self._get_state = get_state
+        self._get_attributes = get_attributes
 
     def _on_update(self) -> None:
         if self._coordinator.metrics:
-            state = self._get_state(self._coordinator.metrics)  # type: ignore[arg-type]
-            self._attr_native_value = state.state
-            if state.attributes:
-                self._attr_extra_state_attributes = state.attributes
+            self._attr_native_value = self._get_state(self._coordinator.metrics)  # type: ignore[arg-type]
+            if self._get_attributes:
+                self._attr_extra_state_attributes = self._get_attributes(self._coordinator.metrics)  # type: ignore[arg-type]
+            self.async_write_ha_state()
