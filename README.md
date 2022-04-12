@@ -67,7 +67,7 @@ The generated data is :
 ## v2.1.0
 
 - add config flow (thank you @edenhaus)
-Goodbye yaml file. Easily add your users. Click on the button above or go to your HA Configuration (Settings) -> Devices & Services -> Add -> Bodymiscale.
+  Goodbye yaml file. Easily add your users. Click on the button above or go to your HA Configuration (Settings) -> Devices & Services -> Add -> Bodymiscale.
 
 ## v2.0.0
 
