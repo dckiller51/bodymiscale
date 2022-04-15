@@ -14,6 +14,9 @@ from homeassistant.helpers.typing import StateType
 from custom_components.bodymiscale.body_metrics import BodyMetricsImpedance
 from custom_components.bodymiscale.body_score import BodyScore
 from custom_components.bodymiscale.coordinator import BodyScaleCoordinator
+from custom_components.bodymiscale.metrics import BodyScaleMetricsHandler
+from custom_components.bodymiscale.models import Metric
+from custom_components.bodymiscale.util import get_bmi_label, get_ideal_weight
 
 from .const import (
     ATTR_BMI,
@@ -32,8 +35,8 @@ from .const import (
     ATTR_WATER,
     CONF_SENSOR_IMPEDANCE,
     CONF_SENSOR_WEIGHT,
-    COORDINATORS,
     DOMAIN,
+    HANDLERS,
 )
 from .entity import BodyScaleBaseEntity
 
@@ -44,114 +47,115 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Add entities for passed config_entry in HA."""
-    coordinator: BodyScaleCoordinator = hass.data[DOMAIN][COORDINATORS][
+    handler: BodyScaleMetricsHandler = hass.data[DOMAIN][HANDLERS][
         config_entry.entry_id
     ]
 
     new_sensors = [
         BodyScaleSensor(
-            coordinator,
+            handler,
             SensorEntityDescription(
                 key=ATTR_BMI,
                 icon="mdi:human",
             ),
-            lambda m: m.bmi,
-            lambda m: {ATTR_BMILABEL: m.bmi_label},
+            Metric.BMI,
+            lambda state, _: {ATTR_BMILABEL: get_bmi_label(state)},
         ),
         BodyScaleSensor(
-            coordinator,
+            handler,
             SensorEntityDescription(
                 key=ATTR_BMR,
             ),
-            lambda m: m.bmr,
+            Metric.BMR,
         ),
         BodyScaleSensor(
-            coordinator,
+            handler,
             SensorEntityDescription(
                 key=ATTR_VISCERAL,
             ),
-            lambda m: m.visceral_fat,
+            Metric.VISCERAL_FAT,
         ),
         BodyScaleSensor(
-            coordinator,
+            handler,
             SensorEntityDescription(
                 key=CONF_SENSOR_WEIGHT,
                 icon="mdi:weight-kilogram",
                 native_unit_of_measurement="kg",
             ),
-            lambda m: m.weight,
-            lambda m: {ATTR_IDEAL: m.ideal_weight},
+            Metric.WEIGHT,
+            lambda _, config: {ATTR_IDEAL: get_ideal_weight(config)},
         ),
     ]
 
-    if CONF_SENSOR_IMPEDANCE in coordinator.config:
+    if CONF_SENSOR_IMPEDANCE in handler.config:
         new_sensors.extend(
             [
                 BodyScaleSensor(
-                    coordinator,
+                    handler,
                     SensorEntityDescription(
                         key=ATTR_LBM,
                     ),
-                    lambda m: m.lbm_coefficient,
+                    Metric.LBM,
                 ),
                 BodyScaleSensor(
-                    coordinator,
+                    handler,
                     SensorEntityDescription(
                         key=ATTR_FAT, native_unit_of_measurement="%"
                     ),
-                    lambda m: m.fat_percentage,
+                    Metric.FAT_PERCENTAGE,
                 ),
                 BodyScaleSensor(
-                    coordinator,
+                    handler,
                     SensorEntityDescription(
                         key=ATTR_PROTEIN, native_unit_of_measurement="%"
                     ),
-                    lambda m: m.protein_percentage,
+                    Metric.PROTEIN_PERCENTAGE,
                 ),
                 BodyScaleSensor(
-                    coordinator,
+                    handler,
                     SensorEntityDescription(
                         key=ATTR_WATER,
                         icon="mdi:water-percent",
                         native_unit_of_measurement="%",
                     ),
-                    lambda m: m.water_percentage,
+                    Metric.WATER_PERCENTAGE,
                 ),
                 BodyScaleSensor(
-                    coordinator,
+                    handler,
                     SensorEntityDescription(
                         key=ATTR_BONES,
                     ),
-                    lambda m: m.bone_mass,
+                    Metric.BONE_MASS,
                 ),
                 BodyScaleSensor(
-                    coordinator,
+                    handler,
                     SensorEntityDescription(
                         key=ATTR_MUSCLE,
                     ),
-                    lambda m: m.muscle_mass,
+                    Metric.MUSCLE_MASS,
                 ),
                 BodyScaleSensor(
-                    coordinator,
+                    handler,
                     SensorEntityDescription(
                         key=ATTR_BODY,
                     ),
-                    lambda m: m.body_type,
+                    Metric.BODY_TYPE,
                 ),
                 BodyScaleSensor(
-                    coordinator,
+                    handler,
                     SensorEntityDescription(
                         key=ATTR_METABOLIC,
                     ),
-                    lambda m: m.metabolic_age,
+                    Metric.METABOLIC_AGE,
                 ),
-                BodyScaleSensor(
-                    coordinator,
-                    SensorEntityDescription(
-                        key=ATTR_BODY_SCORE,
-                    ),
-                    lambda m: BodyScore(m).body_score,
-                ),
+                # todo
+                # BodyScaleSensor(
+                #    handler,
+                #    SensorEntityDescription(
+                #        key=ATTR_BODY_SCORE,
+                #    ),
+                #    lambda m: BodyScore(m).body_score,
+                # ),
             ]
         )
 
@@ -163,21 +167,29 @@ class BodyScaleSensor(BodyScaleBaseEntity, SensorEntity):  # type: ignore[misc]
 
     def __init__(
         self,
-        coordinator: BodyScaleCoordinator,
+        handler: BodyScaleMetricsHandler,
         entity_description: SensorEntityDescription,
-        get_state: Callable[[BodyMetricsImpedance], StateType],
+        metric: Metric,
         get_attributes: Optional[
-            Callable[[BodyMetricsImpedance], Mapping[str, Any]]
+            Callable[[StateType, Mapping[str, Any]], Mapping[str, Any]]
         ] = None,
     ):
-        super().__init__(coordinator, entity_description)
+        super().__init__(handler, entity_description)
         self.entity_description.state_class = SensorStateClass.MEASUREMENT
-        self._get_state = get_state
+        self._metric = metric
         self._get_attributes = get_attributes
 
-    def _on_update(self) -> None:
-        if self._coordinator.metrics:
-            self._attr_native_value = self._get_state(self._coordinator.metrics)  # type: ignore[arg-type]
+    async def async_added_to_hass(self) -> None:
+        """Set up the event listeners now that hass is ready."""
+        await super().async_added_to_hass()
+
+        def on_value(value: StateType) -> None:
+            self._attr_native_value = value
             if self._get_attributes:
-                self._attr_extra_state_attributes = self._get_attributes(self._coordinator.metrics)  # type: ignore[arg-type]
+                self._attr_extra_state_attributes = self._get_attributes(
+                    self._attr_native_value, self._handler.config
+                )
             self.async_write_ha_state()
+
+        self._handler.subscribe(self._metric, on_value)
+        # self.async_on_remove(self._handler.subscribe(self._metric, on_value))

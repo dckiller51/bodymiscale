@@ -1,5 +1,4 @@
 """Bodymiscale entity module."""
-from abc import abstractmethod
 from typing import Optional
 
 from homeassistant.const import CONF_NAME
@@ -7,7 +6,7 @@ from homeassistant.helpers.device_registry import DeviceEntryType
 from homeassistant.helpers.entity import DeviceInfo, Entity, EntityDescription
 
 from .const import DOMAIN, NAME, VERSION
-from .coordinator import BodyScaleCoordinator
+from .metrics import BodyScaleMetricsHandler
 
 
 class BodyScaleBaseEntity(Entity):  # type: ignore[misc]
@@ -17,12 +16,12 @@ class BodyScaleBaseEntity(Entity):  # type: ignore[misc]
 
     def __init__(
         self,
-        coordinator: BodyScaleCoordinator,
+        handler: BodyScaleMetricsHandler,
         entity_description: Optional[EntityDescription] = None,
     ):
         """Initialize the entity."""
         super().__init__()
-        self._coordinator = coordinator
+        self._handler = handler
         if entity_description:
             self.entity_description = entity_description
         elif not hasattr(self, "entity_description"):
@@ -33,7 +32,7 @@ class BodyScaleBaseEntity(Entity):  # type: ignore[misc]
         if not self.entity_description.key:
             raise ValueError('"entity_description.key" must be either set!')
 
-        name = coordinator.config[CONF_NAME]
+        name = handler.config[CONF_NAME]
         self._attr_unique_id = "_".join([DOMAIN, name, self.entity_description.key])
 
         if self.entity_description.name:
@@ -52,14 +51,3 @@ class BodyScaleBaseEntity(Entity):  # type: ignore[misc]
             name=NAME,
             sw_version=VERSION,
         )
-
-    @abstractmethod
-    def _on_update(self) -> None:
-        """Perform actions on update."""
-        raise NotImplementedError
-
-    async def async_added_to_hass(self) -> None:
-        """After being added to hass."""
-        await super().async_added_to_hass()
-
-        self.async_on_remove(self._coordinator.subscribe(self._on_update))

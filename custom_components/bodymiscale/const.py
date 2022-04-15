@@ -14,6 +14,7 @@ CONF_GENDER = "gender"
 CONF_HEIGHT = "height"
 CONF_SENSOR_IMPEDANCE = "impedance"
 CONF_SENSOR_WEIGHT = "weight"
+CONF_SCALE = "scale"
 
 ATTR_AGE = "age"
 ATTR_BMI = "bmi"
@@ -58,6 +59,6 @@ CONSTRAINT_WEIGHT_MAX = 200
 MIN = "min"
 MAX = "max"
 COMPONENT = "component"
-COORDINATORS = "coordinators"
+HANDLERS = "handlers"
 
 PLATFORMS: set[Platform] = {Platform.SENSOR}

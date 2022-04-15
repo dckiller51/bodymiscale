@@ -88,13 +88,18 @@ class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):  # type: ignore[misc, c
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
         """Handle a flow initialized by the user."""
+        errors = {}
         if user_input is not None:
-            return self._create_entry(user_input)
+            if user_input[CONF_HEIGHT] > CONSTRAINT_HEIGHT_MAX:
+                errors[CONF_HEIGHT] = "height_limit"
+            else:
+                return self._create_entry(user_input)
 
         user_input = {}
         return self.async_show_form(
             step_id="user",
             data_schema=_get_schema(user_input, is_options_handler=False),
+            errors=errors,
         )
 
     async def async_step_import(self, config: dict[str, Any]) -> FlowResult:

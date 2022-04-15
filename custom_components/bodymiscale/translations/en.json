@@ -6,6 +6,9 @@
     }
   },
   "config": {
+    "error": {
+      "height_limit": "Height is too high (limit: 220 cm)"
+    },
     "step": {
       "user": {
         "data": {
