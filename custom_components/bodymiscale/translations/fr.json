@@ -4,5 +4,39 @@
       "ok": "OK",
       "problem": "Probl\u00e8me"
     }
+  },
+  "config": {
+    "error": {
+      "invalid_date": "Date non valide"
+    },
+    "step": {
+      "user": {
+        "data": {
+          "name": "Nom",
+          "height": "Taille",
+          "birthday": "Anniversaire",
+          "gender": "Genre",
+          "weight": "Capteur de poids",
+          "impedance": "Capteur d\u0027 imp\u00e9dance"
+        },
+        "data_description": {
+          "impedance": "Si votre balance ne fournit pas l\u0027 imp\u00e9dance\u002C laissez ce champ vide."
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "height": "Taille",
+          "weight": "Capteur de poids",
+          "impedance": "Capteur d\u0027 imp\u00e9dance"
+        },
+        "data_description": {
+          "impedance": "Si votre balance ne fournit pas l\u0027 imp\u00e9dance\u002C laissez ce champ vide."
+        }
+      }
+    }
   }
 }
