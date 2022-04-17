@@ -7,6 +7,6 @@
   "codeowners": ["@dckiller51", "@edenhaus"],
   "requirements": [],
   "iot_class": "calculated",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "config_flow": true
 }
