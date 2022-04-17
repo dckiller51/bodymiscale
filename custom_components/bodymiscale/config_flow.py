@@ -4,6 +4,7 @@ from __future__ import annotations
 from types import MappingProxyType
 from typing import Any
 
+import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
 from homeassistant.config_entries import ConfigEntry, ConfigFlow, OptionsFlow
 from homeassistant.const import CONF_MODE, CONF_NAME, CONF_UNIT_OF_MEASUREMENT
@@ -61,7 +62,7 @@ def _get_schema(
             ): str,
             vol.Required(
                 CONF_BIRTHDAY, default=defaults.get(CONF_BIRTHDAY, vol.UNDEFINED)
-            ): selector({"date": {}}),
+            ): selector({"text": {"type": "date"}}),
             vol.Required(
                 CONF_GENDER, default=defaults.get(CONF_GENDER, vol.UNDEFINED)
             ): vol.In({gender: gender.value for gender in Gender}),
@@ -88,10 +89,18 @@ class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):  # type: ignore[misc, c
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
         """Handle a flow initialized by the user."""
+        errors = {}
         if user_input is not None:
-            return self._create_entry(user_input)
+            try:
+                cv.date(user_input[CONF_BIRTHDAY])
+            except vol.Invalid:
+                errors[CONF_BIRTHDAY] = "invalid_date"
 
-        user_input = {}
+            if not errors:
+                return self._create_entry(user_input)
+        else:
+            user_input = {}
+
         return self.async_show_form(
             step_id="user",
             data_schema=_get_schema(user_input, is_options_handler=False),

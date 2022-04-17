@@ -1,5 +1,8 @@
 {
   "config": {
+    "error": {
+      "invalid_date": "Ungültiges Datum"
+    },
     "step": {
       "user": {
         "data": {
@@ -10,7 +13,7 @@
           "impedance": "Impedanz sensor"
         },
         "data_description": {
-          "impedance": "Falls deine Waage keine Impedanz liefert, lasse das Feld leer."
+          "impedance": "Falls deine Waage keine Impedanz liefert, lasse dieses Feld leer."
         }
       }
     }
@@ -24,7 +27,7 @@
           "impedance": "Impedanz sensor"
         },
         "data_description": {
-          "impedance": "Falls deine Waage keine Impedanz liefert, lasse das Feld leer."
+          "impedance": "Falls deine Waage keine Impedanz liefert, lasse dieses Feld leer."
         }
       }
     }

@@ -6,6 +6,9 @@
     }
   },
   "config": {
+    "error": {
+      "invalid_date": "Invalid date"
+    },
     "step": {
       "user": {
         "data": {
