@@ -1,5 +1,5 @@
 {
   "name": "Bodymiscale",
-  "render_readme": true,
-  "homeassistant": "2022.4.0b0"
+  "homeassistant": "2022.4.0b0",
+  "render_readme": true
 }

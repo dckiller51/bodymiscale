@@ -1,12 +1,15 @@
 {
   "domain": "bodymiscale",
   "name": "BodyMiScale",
-  "documentation": "https://github.com/dckiller51/bodymiscale",
-  "issue_tracker": "https://github.com/dckiller51/bodymiscale/issues",
-  "dependencies": [],
-  "codeowners": ["@dckiller51", "@edenhaus"],
-  "requirements": [],
-  "iot_class": "calculated",
   "version": "2.1.1",
-  "config_flow": true
+  "codeowners": [
+    "@dckiller51",
+    "@edenhaus"
+  ],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://github.com/dckiller51/bodymiscale",
+  "iot_class": "calculated",
+  "issue_tracker": "https://github.com/dckiller51/bodymiscale/issues",
+  "requirements": []
 }

@@ -28,54 +28,51 @@ from .models import Gender
 
 
 @callback  # type: ignore[misc]
-def _get_schema(
-    defaults: dict[str, Any] | MappingProxyType[str, Any], is_options_handler: bool
+def _get_options_schema(
+    defaults: dict[str, Any] | MappingProxyType[str, Any]
 ) -> vol.Schema:
-    """Return bodymiscale schema."""
-
-    schema = {
-        vol.Required(
-            CONF_HEIGHT, default=defaults.get(CONF_HEIGHT, vol.UNDEFINED)
-        ): selector(
-            {
-                "number": {
-                    MIN: CONSTRAINT_HEIGHT_MIN,
-                    MAX: CONSTRAINT_HEIGHT_MAX,
-                    CONF_UNIT_OF_MEASUREMENT: "cm",
-                    CONF_MODE: "box",
+    """Return options schema."""
+    return vol.Schema(
+        {
+            vol.Required(
+                CONF_HEIGHT,
+                description={"suggested_value": defaults[CONF_HEIGHT]}
+                if CONF_HEIGHT in defaults
+                else None,
+            ): selector(
+                {
+                    "number": {
+                        MIN: CONSTRAINT_HEIGHT_MIN,
+                        MAX: CONSTRAINT_HEIGHT_MAX,
+                        CONF_UNIT_OF_MEASUREMENT: "cm",
+                        CONF_MODE: "box",
+                    }
                 }
-            }
-        ),
-        vol.Required(
-            CONF_SENSOR_WEIGHT, default=defaults.get(CONF_SENSOR_WEIGHT, vol.UNDEFINED)
-        ): selector({"entity": {"domain": "sensor"}}),
-        vol.Optional(
-            CONF_SENSOR_IMPEDANCE,
-            default=defaults.get(CONF_SENSOR_IMPEDANCE, vol.UNDEFINED),
-        ): selector({"entity": {"domain": "sensor"}}),
-    }
-
-    if not is_options_handler:
-        schema = {
+            ),
             vol.Required(
-                CONF_NAME, default=defaults.get(CONF_NAME, vol.UNDEFINED)
-            ): str,
-            vol.Required(
-                CONF_BIRTHDAY, default=defaults.get(CONF_BIRTHDAY, vol.UNDEFINED)
-            ): selector({"text": {"type": "date"}}),
-            vol.Required(
-                CONF_GENDER, default=defaults.get(CONF_GENDER, vol.UNDEFINED)
-            ): vol.In({gender: gender.value for gender in Gender}),
-            **schema,
+                CONF_SENSOR_WEIGHT,
+                description={"suggested_value": defaults[CONF_SENSOR_WEIGHT]}
+                if CONF_SENSOR_WEIGHT in defaults
+                else None,
+            ): selector({"entity": {"domain": "sensor"}}),
+            vol.Optional(
+                CONF_SENSOR_IMPEDANCE,
+                description={"suggested_value": defaults[CONF_SENSOR_IMPEDANCE]}
+                if CONF_SENSOR_IMPEDANCE in defaults
+                else None,
+            ): selector({"entity": {"domain": "sensor"}}),
         }
-
-    return vol.Schema(schema)
+    )
 
 
 class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):  # type: ignore[misc, call-arg]
     """Config flow for bodymiscale."""
 
-    VERSION = 1
+    VERSION = 2
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._data: dict[str, str] = {}
 
     @staticmethod
     @callback  # type: ignore[misc]
@@ -97,23 +94,44 @@ class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):  # type: ignore[misc, c
                 errors[CONF_BIRTHDAY] = "invalid_date"
 
             if not errors:
-                return self._create_entry(user_input)
+                self._async_abort_entries_match({CONF_NAME: user_input[CONF_NAME]})
+                self._data = user_input
+                return await self.async_step_options()
         else:
             user_input = {}
 
         return self.async_show_form(
             step_id="user",
-            data_schema=_get_schema(user_input, is_options_handler=False),
+            data_schema=vol.Schema(
+                {
+                    vol.Required(
+                        CONF_NAME, default=user_input.get(CONF_NAME, vol.UNDEFINED)
+                    ): str,
+                    vol.Required(
+                        CONF_BIRTHDAY,
+                        default=user_input.get(CONF_BIRTHDAY, vol.UNDEFINED),
+                    ): selector({"text": {"type": "date"}}),
+                    vol.Required(
+                        CONF_GENDER, default=user_input.get(CONF_GENDER, vol.UNDEFINED)
+                    ): vol.In({gender: gender.value for gender in Gender}),
+                }
+            ),
         )
 
-    async def async_step_import(self, config: dict[str, Any]) -> FlowResult:
-        """Handle a flow initialized by importing a config."""
-        return self._create_entry(config)
+    async def async_step_options(
+        self, user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
+        """Handle step options."""
+        if user_input is not None:
+            return self.async_create_entry(
+                title=self._data[CONF_NAME], data=self._data, options=user_input
+            )
 
-    def _create_entry(self, config: dict[str, Any]) -> FlowResult:
-        self._async_abort_entries_match({CONF_NAME: config[CONF_NAME]})
-
-        return self.async_create_entry(title=config[CONF_NAME], data=config)
+        user_input = {}
+        return self.async_show_form(
+            step_id="options",
+            data_schema=_get_options_schema(user_input),
+        )
 
 
 class BodyMiScaleOptionsFlowHandler(OptionsFlow):  # type: ignore[misc]
@@ -131,12 +149,12 @@ class BodyMiScaleOptionsFlowHandler(OptionsFlow):  # type: ignore[misc]
         if user_input is not None:
             return self.async_create_entry(
                 title=self._config_entry.title,
-                data={**self._config_entry.data, **user_input},
+                data=user_input,
             )
 
-        user_input = self._config_entry.data
+        user_input = self._config_entry.options
 
         return self.async_show_form(
             step_id="init",
-            data_schema=_get_schema(user_input, is_options_handler=True),
+            data_schema=_get_options_schema(user_input),
         )

@@ -48,6 +48,12 @@ repos:
       - id: detect-private-key
       - id: no-commit-to-branch
       - id: requirements-txt-fixer
+      - id: pretty-format-json
+        args:
+          - --autofix
+          - --no-ensure-ascii
+          - --top-keys=domain,name,version
+        exclude: \.(devcontainer|vscode)
       - id: mixed-line-ending
         args:
           - --fix=lf
@@ -56,6 +62,9 @@ repos:
     rev: v2.6.2
     hooks:
       - id: prettier
+        exclude_types:
+          - json
+          - python
   - repo: https://github.com/adrienverge/yamllint.git
     rev: v1.26.3
     hooks:
