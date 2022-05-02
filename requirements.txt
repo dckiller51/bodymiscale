@@ -1,6 +1,6 @@
 homeassistant>=2022.4.0.b0
 mypy==0.942
 pre-commit==2.18.1
-pylint==2.13.5
+pylint==2.13.8
 
 #pytest-homeassistant-custom-component==0.4.4
