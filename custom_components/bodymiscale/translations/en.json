@@ -17,9 +17,9 @@
       },
       "user": {
         "data": {
-          "name": "Name",
           "birthday": "Birthday",
-          "gender": "Gender"
+          "gender": "Gender",
+          "name": "Name"
         }
       }
     }

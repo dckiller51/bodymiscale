@@ -6,11 +6,11 @@
     "step": {
       "user": {
         "data": {
-          "name": "Nom",
           "birthday": "Anniversaire",
           "gender": "Genre",
           "height": "Taille",
           "impedance": "Capteur d' impédance",
+          "name": "Nom",
           "weight": "Capteur de poids"
         },
         "data_description": {
