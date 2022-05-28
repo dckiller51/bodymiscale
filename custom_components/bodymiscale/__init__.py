@@ -8,7 +8,7 @@ import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
 from awesomeversion import AwesomeVersion
 from cachetools import TTLCache
-from homeassistant.config_entries import SOURCE_IMPORT, ConfigEntry
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_NAME, CONF_SENSORS, STATE_OK, STATE_PROBLEM
 from homeassistant.const import __version__ as HA_VERSION
 from homeassistant.core import HomeAssistant
@@ -78,38 +78,6 @@ def is_ha_supported() -> bool:
     return False
 
 
-async def async_setup(hass: HomeAssistant, config: dict) -> bool:
-    """Set up component via yaml."""
-    if DOMAIN in config:
-        if not is_ha_supported():
-            return False
-
-        _LOGGER.warning(
-            "Configuration of the bodymiscale in YAML is deprecated "
-            "and will be removed future versions; Your existing "
-            "configuration has been imported into the UI automatically and can be "
-            "safely removed from your configuration.yaml file"
-        )
-
-        for name, conf in config[DOMAIN].items():
-            conf[CONF_NAME] = name
-            conf[CONF_SENSOR_WEIGHT] = conf[CONF_SENSORS][CONF_SENSOR_WEIGHT]
-            if CONF_SENSOR_IMPEDANCE in conf[CONF_SENSORS]:
-                conf[CONF_SENSOR_IMPEDANCE] = conf[CONF_SENSORS][CONF_SENSOR_IMPEDANCE]
-
-            del conf[CONF_SENSORS]
-
-            conf[CONF_BIRTHDAY] = conf.pop("born")
-
-            hass.async_create_task(
-                hass.config_entries.flow.async_init(
-                    DOMAIN, context={"source": SOURCE_IMPORT}, data=conf
-                )
-            )
-
-    return True
-
-
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up component via UI."""
     if not is_ha_supported():
@@ -126,13 +94,64 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         _LOGGER.info(STARTUP_MESSAGE)
 
     handler = hass.data[DOMAIN][HANDLERS][entry.entry_id] = BodyScaleMetricsHandler(
-        hass, entry.data
+        hass, {**entry.data, **entry.options}
     )
 
-    component = hass.data[DOMAIN][COMPONENT]
+    component: EntityComponent = hass.data[DOMAIN][COMPONENT]
     await component.async_add_entities([Bodymiscale(handler)])
 
     hass.config_entries.async_setup_platforms(entry, PLATFORMS)
+    # Reload entry when its updated.
+    entry.async_on_unload(entry.add_update_listener(async_reload_entry))
+
+    return True
+
+
+async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+    """Unload a config entry."""
+    unload_ok: bool = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+
+    if unload_ok:
+        component: EntityComponent = hass.data[DOMAIN][COMPONENT]
+        await component.async_prepare_reload()
+
+        del hass.data[DOMAIN][HANDLERS][entry.entry_id]
+        if len(hass.data[DOMAIN][HANDLERS]) == 0:
+            hass.data.pop(DOMAIN)
+
+    return unload_ok
+
+
+async def async_reload_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    """Reload the config entry when it changed."""
+    await hass.config_entries.async_reload(entry.entry_id)
+
+
+async def async_migrate_entry(_: HomeAssistant, config_entry: ConfigEntry) -> bool:
+    """Migrate old entry."""
+    _LOGGER.debug("Migrating from version %d", config_entry.version)
+
+    if config_entry.version == 1:
+        data = {**config_entry.data}
+        options = {
+            CONF_HEIGHT: data.pop(CONF_HEIGHT),
+            CONF_SENSOR_WEIGHT: data.pop(CONF_SENSOR_WEIGHT),
+        }
+        if CONF_SENSOR_IMPEDANCE in data:
+            options[CONF_SENSOR_IMPEDANCE] = data.pop(CONF_SENSOR_IMPEDANCE)
+
+        if config_entry.options:
+            options.update(config_entry.options)
+            options.pop(CONF_NAME)
+            options.pop(CONF_BIRTHDAY)
+            options.pop(CONF_GENDER)
+
+        config_entry.data = data
+        config_entry.options = options
+
+        config_entry.version = 2
+
+    _LOGGER.info("Migration to version %d successful", config_entry.version)
     return True
 
 
