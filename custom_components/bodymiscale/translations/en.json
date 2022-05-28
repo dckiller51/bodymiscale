@@ -1,26 +1,25 @@
 {
-  "state": {
-    "_": {
-      "ok": "OK",
-      "problem": "Problem"
-    }
-  },
   "config": {
     "error": {
+      "already_configured": "Already configured",
       "invalid_date": "Invalid date"
     },
     "step": {
-      "user": {
+      "options": {
         "data": {
-          "name": "Name",
           "height": "Height",
-          "birthday": "Birthday",
-          "gender": "Gender",
-          "weight": "Weight sensor",
-          "impedance": "Impedance sensor"
+          "impedance": "Impedance sensor",
+          "weight": "Weight sensor"
         },
         "data_description": {
           "impedance": "If your scale does not provide the impedance, leave this field empty."
+        }
+      },
+      "user": {
+        "data": {
+          "birthday": "Birthday",
+          "gender": "Gender",
+          "name": "Name"
         }
       }
     }
@@ -30,13 +29,19 @@
       "init": {
         "data": {
           "height": "Height",
-          "weight": "Weight sensor",
-          "impedance": "Impedance sensor"
+          "impedance": "Impedance sensor",
+          "weight": "Weight sensor"
         },
         "data_description": {
           "impedance": "If your scale does not provide the impedance, leave this field empty."
         }
       }
+    }
+  },
+  "state": {
+    "_": {
+      "ok": "OK",
+      "problem": "Problem"
     }
   }
 }

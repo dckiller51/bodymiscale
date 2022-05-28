@@ -1,10 +1,4 @@
 {
-  "state": {
-    "_": {
-      "ok": "OK",
-      "problem": "Probl\u00e8me"
-    }
-  },
   "config": {
     "error": {
       "invalid_date": "Date non valide"
@@ -12,15 +6,15 @@
     "step": {
       "user": {
         "data": {
-          "name": "Nom",
-          "height": "Taille",
           "birthday": "Anniversaire",
           "gender": "Genre",
-          "weight": "Capteur de poids",
-          "impedance": "Capteur d\u0027 imp\u00e9dance"
+          "height": "Taille",
+          "impedance": "Capteur d' impédance",
+          "name": "Nom",
+          "weight": "Capteur de poids"
         },
         "data_description": {
-          "impedance": "Si votre balance ne fournit pas l\u0027 imp\u00e9dance\u002C laissez ce champ vide."
+          "impedance": "Si votre balance ne fournit pas l' impédance, laissez ce champ vide."
         }
       }
     }
@@ -30,13 +24,19 @@
       "init": {
         "data": {
           "height": "Taille",
-          "weight": "Capteur de poids",
-          "impedance": "Capteur d\u0027 imp\u00e9dance"
+          "impedance": "Capteur d' impédance",
+          "weight": "Capteur de poids"
         },
         "data_description": {
-          "impedance": "Si votre balance ne fournit pas l\u0027 imp\u00e9dance\u002C laissez ce champ vide."
+          "impedance": "Si votre balance ne fournit pas l' impédance, laissez ce champ vide."
         }
       }
+    }
+  },
+  "state": {
+    "_": {
+      "ok": "OK",
+      "problem": "Problème"
     }
   }
 }
