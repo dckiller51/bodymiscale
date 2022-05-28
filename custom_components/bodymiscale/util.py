@@ -19,8 +19,8 @@ def check_value_constraints(value: float, minimum: float, maximum: float) -> flo
 def get_ideal_weight(config: Mapping[str, Any]) -> float:
     """Get ideal weight (just doing a reverse BMI, should be something better)."""
     if config[CONF_GENDER] == Gender.FEMALE:
-        return (config[CONF_HEIGHT] - 70) * 0.6
-    return (config[CONF_HEIGHT] - 80) * 0.7
+        return float(config[CONF_HEIGHT] - 70) * 0.6
+    return float(config[CONF_HEIGHT] - 80) * 0.7
 
 
 def get_bmi_label(bmi: float) -> str:  # pylint: disable=too-many-return-statements

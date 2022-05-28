@@ -62,3 +62,4 @@ COMPONENT = "component"
 HANDLERS = "handlers"
 
 PLATFORMS: set[Platform] = {Platform.SENSOR}
+UPDATE_DELAY = 2.0

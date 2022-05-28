@@ -11,19 +11,11 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import StateType
 
-from custom_components.bodymiscale.body_metrics import BodyMetricsImpedance
-from custom_components.bodymiscale.body_score import BodyScore
-from custom_components.bodymiscale.coordinator import BodyScaleCoordinator
-from custom_components.bodymiscale.metrics import BodyScaleMetricsHandler
-from custom_components.bodymiscale.models import Metric
-from custom_components.bodymiscale.util import get_bmi_label, get_ideal_weight
-
 from .const import (
     ATTR_BMI,
     ATTR_BMILABEL,
     ATTR_BMR,
     ATTR_BODY,
-    ATTR_BODY_SCORE,
     ATTR_BONES,
     ATTR_FAT,
     ATTR_IDEAL,
@@ -39,6 +31,9 @@ from .const import (
     HANDLERS,
 )
 from .entity import BodyScaleBaseEntity
+from .metrics import BodyScaleMetricsHandler
+from .models import Metric
+from .util import get_bmi_label, get_ideal_weight
 
 
 async def async_setup_entry(
@@ -191,5 +186,4 @@ class BodyScaleSensor(BodyScaleBaseEntity, SensorEntity):  # type: ignore[misc]
                 )
             self.async_write_ha_state()
 
-        self._handler.subscribe(self._metric, on_value)
-        # self.async_on_remove(self._handler.subscribe(self._metric, on_value))
+        self.async_on_remove(self._handler.subscribe(self._metric, on_value))

@@ -1,3 +1,4 @@
+"""Metrics module, which require impedance."""
 from typing import Any, Mapping
 
 from homeassistant.helpers.typing import StateType
@@ -15,7 +16,7 @@ def get_lbm(config: Mapping[str, Any], metrics: Mapping[Metric, StateType]) -> f
     lbm -= metrics[Metric.IMPEDANCE] * 0.0068
     lbm -= metrics[Metric.AGE] * 0.0542
 
-    return lbm
+    return float(lbm)
 
 
 def get_fat_percentage(
@@ -150,9 +151,10 @@ def get_fat_mass_to_ideal_weight(
 ) -> float:
     """Get missig mass to ideal weight."""
     weight = metrics[Metric.WEIGHT]
-    return weight * (
-        config[CONF_SCALE].get_fat_percentage(metrics[Metric.AGE])[2] / 100
-    ) - (weight * (metrics[Metric.FAT_PERCENTAGE] / 100))
+    return float(
+        weight * (config[CONF_SCALE].get_fat_percentage(metrics[Metric.AGE])[2] / 100)
+        - (weight * (metrics[Metric.FAT_PERCENTAGE] / 100))
+    )
 
 
 def get_body_type(

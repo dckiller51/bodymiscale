@@ -1,18 +1,19 @@
 """Models module."""
-from enum import Enum, auto
+from enum import Enum
 
-from homeassistant.backports.enum import StrEnum
-
-from custom_components.bodymiscale.const import (
+from .const import (
     ATTR_AGE,
     ATTR_BMI,
     ATTR_BMR,
     ATTR_BODY,
     ATTR_BONES,
+    ATTR_FAT,
     ATTR_LBM,
     ATTR_METABOLIC,
     ATTR_MUSCLE,
+    ATTR_PROTEIN,
     ATTR_VISCERAL,
+    ATTR_WATER,
     CONF_SENSOR_IMPEDANCE,
     CONF_SENSOR_WEIGHT,
 )
@@ -25,7 +26,7 @@ class Gender(str, Enum):
     FEMALE = "female"
 
 
-class Metric(StrEnum):
+class Metric(str, Enum):
     """Metric enum."""
 
     STATUS = "status"
@@ -36,11 +37,11 @@ class Metric(StrEnum):
     BMR = ATTR_BMR
     VISCERAL_FAT = ATTR_VISCERAL
     LBM = ATTR_LBM
-    FAT_PERCENTAGE = "fat_percentage"
-    WATER_PERCENTAGE = "water_percentage"
+    FAT_PERCENTAGE = ATTR_FAT
+    WATER_PERCENTAGE = ATTR_WATER
     BONE_MASS = ATTR_BONES
     MUSCLE_MASS = ATTR_MUSCLE
     METABOLIC_AGE = ATTR_METABOLIC
-    PROTEIN_PERCENTAGE = "protein_percentage"
+    PROTEIN_PERCENTAGE = ATTR_PROTEIN
     FAT_MASS_2_IDEAL_WEIGHT = "fat_mass_2_ideal_weight"
     BODY_TYPE = ATTR_BODY

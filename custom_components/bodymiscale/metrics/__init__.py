@@ -58,9 +58,9 @@ class MetricInfo:
     calculate: Callable[[Mapping[str, Any], Mapping[Metric, StateType]], StateType]
     decimals: Optional[int] = None  # Round decimals before passing to the subscribers
     depended_by: list[Metric] = field(default_factory=list, init=False)
-    subscribers: list[
-        Callable[[Mapping[str, Any], Mapping[Metric, StateType]], None]
-    ] = field(default_factory=list, init=False)
+    subscribers: list[Callable[[StateType], None]] = field(
+        default_factory=list, init=False
+    )
 
 
 _METRIC_DEPS: dict[Metric, MetricInfo] = {
@@ -154,6 +154,7 @@ class BodyScaleMetricsHandler:
 
     @property
     def config(self) -> Mapping[str, Any]:
+        """Return config."""
         return self._config
 
     def subscribe(
