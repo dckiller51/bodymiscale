@@ -16,6 +16,7 @@ from .const import (
     ATTR_BMILABEL,
     ATTR_BMR,
     ATTR_BODY,
+    ATTR_BODY_SCORE,
     ATTR_BONES,
     ATTR_FAT,
     ATTR_IDEAL,
@@ -143,14 +144,13 @@ async def async_setup_entry(
                     ),
                     Metric.METABOLIC_AGE,
                 ),
-                # todo
-                # BodyScaleSensor(
-                #    handler,
-                #    SensorEntityDescription(
-                #        key=ATTR_BODY_SCORE,
-                #    ),
-                #    lambda m: BodyScore(m).body_score,
-                # ),
+                BodyScaleSensor(
+                    handler,
+                    SensorEntityDescription(
+                        key=ATTR_BODY_SCORE,
+                    ),
+                    Metric.BODY_SCORE,
+                ),
             ]
         )
 

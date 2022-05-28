@@ -159,7 +159,7 @@ def get_fat_mass_to_ideal_weight(
 
 def get_body_type(
     config: Mapping[str, Any], metrics: Mapping[Metric, StateType]
-) -> int:
+) -> str:
     """Get body type (out of nine possible)."""
     fat = metrics[Metric.FAT_PERCENTAGE]
     muscle = metrics[Metric.MUSCLE_MASS]
@@ -172,9 +172,20 @@ def get_body_type(
     else:
         factor = 1
 
+    body_type = 1 + (factor * 3)
     if muscle > scale.muscle_mass[1]:
-        return 2 + (factor * 3)
-    if muscle < scale.muscle_mass[0]:
-        return factor * 3
+        body_type = 2 + (factor * 3)
+    elif muscle < scale.muscle_mass[0]:
+        body_type = factor * 3
 
-    return 1 + (factor * 3)
+    return [
+        "Obese",
+        "Overweight",
+        "Thick-set",
+        "Lack-exercise",
+        "Balanced",
+        "Balanced-muscular",
+        "Skinny",
+        "Balanced-skinny",
+        "Skinny-muscular",
+    ][body_type]

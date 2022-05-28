@@ -227,8 +227,4 @@ class Bodymiscale(BodyScaleBaseEntity):
             else:
                 attrib[ATTR_FATMASSTOGAIN] = value
 
-        # todo
-        # body_score = BodyScore(metrics)
-        # attrib[ATTR_BODY_SCORE] = f"{body_score.body_score:.0f}"
-
         return attrib

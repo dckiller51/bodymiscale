@@ -6,6 +6,7 @@ from .const import (
     ATTR_BMI,
     ATTR_BMR,
     ATTR_BODY,
+    ATTR_BODY_SCORE,
     ATTR_BONES,
     ATTR_FAT,
     ATTR_LBM,
@@ -45,3 +46,4 @@ class Metric(str, Enum):
     PROTEIN_PERCENTAGE = ATTR_PROTEIN
     FAT_MASS_2_IDEAL_WEIGHT = "fat_mass_2_ideal_weight"
     BODY_TYPE = ATTR_BODY
+    BODY_SCORE = ATTR_BODY_SCORE

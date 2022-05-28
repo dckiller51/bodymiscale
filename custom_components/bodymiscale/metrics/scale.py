@@ -11,14 +11,6 @@ class Scale:
         self._height = height
         self._gender = gender
 
-    @property
-    def bmi(self) -> list[float]:
-        """Get BMI."""
-        # Amazfit/new mi fit
-        # return [18.5, 24, 28]
-        # Old mi fit // amazfit for body figure
-        return [18.5, 25.0, 28.0, 32.0]
-
     def get_fat_percentage(self, age: int) -> list[float]:
         """Get fat percentage."""
 
@@ -102,88 +94,3 @@ class Scale:
 
         # will never happen but mypy required it
         raise NotImplementedError
-
-    @property
-    def water_percentage(self) -> list[float]:
-        """Get water percentage."""
-        if self._gender == Gender.MALE:
-            return [55.0, 65.1]
-
-        return [45.0, 60.1]
-
-    @property
-    def visceral_fat(self) -> list[float]:
-        """Get visceral fat."""
-        return [10.0, 15.0]
-
-    def get_bone_mass(self, weight: float) -> list[float]:
-        """Get bone mass."""
-        scales = [
-            {
-                Gender.MALE: {"min": 75.0, "scale": [2.0, 4.2]},
-                Gender.FEMALE: {"min": 60.0, "scale": [1.8, 3.9]},
-            },
-            {
-                Gender.MALE: {"min": 60.0, "scale": [1.9, 4.1]},
-                Gender.FEMALE: {"min": 45.0, "scale": [1.5, 3.8]},
-            },
-            {
-                Gender.MALE: {"min": 0.0, "scale": [1.6, 3.9]},
-                Gender.FEMALE: {"min": 0.0, "scale": [1.3, 3.6]},
-            },
-        ]
-
-        for scale in scales:
-            if weight >= scale[self._gender]["min"]:  # type: ignore
-                return scale[self._gender]["scale"]  # type: ignore
-
-        # will never happen but mypy required it
-        raise NotImplementedError
-
-    def get_bmr(self, age: int, weight: float) -> float:
-        """Get BMR."""
-        coefficients = {
-            Gender.MALE: {30: 21.6, 50: 20.07, 100: 19.35},
-            Gender.FEMALE: {30: 21.24, 50: 19.53, 100: 18.63},
-        }
-
-        for c_age, coefficient in coefficients[self._gender].items():
-            if age < c_age:
-                return weight * coefficient
-
-        # will never happen but mypy required it
-        raise NotImplementedError
-
-    @property
-    def protein_percentage(self) -> list[float]:
-        """Get protein percentage."""
-        return [16, 20]
-
-    @cached_property
-    def ideal_weight(self) -> list[float]:
-        """Get ideal weight scale (BMI scale converted to weights)."""
-        scales = []
-        for scale in self.bmi:
-            scales.append((scale * self._height) * self._height / 10000)
-        return scales
-
-    @property
-    def body_score(self) -> list[float]:
-        """Get body score."""
-        # very bad, bad, normal, good, better
-        return [50.0, 60.0, 80.0, 90.0]
-
-    @property
-    def body_type(self) -> list[str]:
-        """Get body type."""
-        return [
-            "obese",
-            "overweight",
-            "thick-set",
-            "lack-exercise",
-            "balanced",
-            "balanced-muscular",
-            "skinny",
-            "balanced-skinny",
-            "skinny-muscular",
-        ]

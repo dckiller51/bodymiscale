@@ -34,6 +34,7 @@ from ..const import (
     UNIT_POUNDS,
 )
 from ..models import Gender, Metric
+from .body_score import get_body_score
 from .impedance import (
     get_body_type,
     get_bone_mass,
@@ -100,6 +101,22 @@ _METRIC_DEPS: dict[Metric, MetricInfo] = {
     Metric.BODY_TYPE: MetricInfo(
         [Metric.MUSCLE_MASS, Metric.FAT_PERCENTAGE, Metric.AGE],
         get_body_type,
+    ),
+    Metric.BODY_SCORE: MetricInfo(
+        [
+            Metric.BMI,
+            Metric.FAT_PERCENTAGE,
+            Metric.AGE,
+            Metric.MUSCLE_MASS,
+            Metric.WATER_PERCENTAGE,
+            Metric.WEIGHT,
+            Metric.BONE_MASS,
+            Metric.BMR,
+            Metric.VISCERAL_FAT,
+            Metric.PROTEIN_PERCENTAGE,
+        ],
+        get_body_score,
+        0,
     ),
 }
 
