@@ -1,10 +1,4 @@
 {
-  "state": {
-    "_": {
-      "ok": "OK",
-      "problem": "Problema"
-    }
-  },
   "config": {
     "error": {
       "invalid_date": "Data inválida"
@@ -12,12 +6,12 @@
     "step": {
       "user": {
         "data": {
-          "name": "Nome",
-          "height": "Altura",
           "birthday": "Data de nascimento",
           "gender": "Gênero",
-          "weight": "Sensor de peso",
-          "impedance": "Sensor de impedância"
+          "height": "Altura",
+          "impedance": "Sensor de impedância",
+          "name": "Nome",
+          "weight": "Sensor de peso"
         },
         "data_description": {
           "impedance": "Se sua balança não fornecer a impedância, deixe este campo vazio."
@@ -30,13 +24,19 @@
       "init": {
         "data": {
           "height": "Altura",
-          "weight": "Sensor de peso",
-          "impedance": "Sensor de impedância"
+          "impedance": "Sensor de impedância",
+          "weight": "Sensor de peso"
         },
         "data_description": {
           "impedance": "Se sua balança não fornecer a impedância, deixe este campo vazio."
         }
       }
+    }
+  },
+  "state": {
+    "_": {
+      "ok": "OK",
+      "problem": "Problema"
     }
   }
 }
