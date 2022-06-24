@@ -1,7 +1,5 @@
 {
-  "appPort": [
-    "9123:8123"
-  ],
+  "appPort": ["9123:8123"],
   "context": "..",
   "extensions": [
     "ms-python.python",
@@ -22,10 +20,7 @@
     "python.analysis.autoSearchPaths": false,
     "python.formatting.provider": "black",
     "python.linting.enabled": true,
-    "python.linting.pylintArgs": [
-      "--disable",
-      "import-error"
-    ],
+    "python.linting.pylintArgs": ["--disable", "import-error"],
     "python.linting.pylintEnabled": true,
     "python.pythonPath": "/usr/local/python/bin/python",
     "terminal.integrated.defaultProfile.linux": "zsh",

@@ -88,9 +88,6 @@ class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):  # type: ignore[misc, c
         """Handle a flow initialized by the user."""
         errors = {}
         if user_input is not None:
-            if user_input[CONF_HEIGHT] > CONSTRAINT_HEIGHT_MAX:
-                errors[CONF_HEIGHT] = "height_limit"
-
             try:
                 cv.date(user_input[CONF_BIRTHDAY])
             except vol.Invalid:
@@ -126,7 +123,11 @@ class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):  # type: ignore[misc, c
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
         """Handle step options."""
+        errors = {}
         if user_input is not None:
+            if user_input[CONF_HEIGHT] > CONSTRAINT_HEIGHT_MAX:
+                errors[CONF_HEIGHT] = "height_limit"
+
             return self.async_create_entry(
                 title=self._data[CONF_NAME], data=self._data, options=user_input
             )
@@ -135,6 +136,7 @@ class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):  # type: ignore[misc, c
         return self.async_show_form(
             step_id="options",
             data_schema=_get_options_schema(user_input),
+            errors=errors,
         )
 
 

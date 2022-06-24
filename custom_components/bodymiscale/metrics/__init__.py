@@ -258,16 +258,16 @@ class BodyScaleMetricsHandler:
             new_statues.append(problem)
 
         if new_statues:
-            self._available_metrics[Metric.STATUS] = ", ".join(new_statues)
+            self._update_available_metric(Metric.STATUS, ", ".join(new_statues))
             return problem is None
 
-        self._available_metrics[Metric.STATUS] = PROBLEM_NONE
+        self._update_available_metric(Metric.STATUS, PROBLEM_NONE)
         return True
 
     def _update_available_metric(self, metric: Metric, state: StateType) -> None:
         old_state = self._available_metrics.get(metric, None)
         if old_state is not None and old_state == state:
-            _LOGGER.debug("No update required.")
+            _LOGGER.debug("No update required for %s.", metric)
             return
 
         self._available_metrics.setdefault(

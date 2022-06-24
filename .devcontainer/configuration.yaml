@@ -1,5 +1,10 @@
 default_config:
 
+logger:
+  default: info
+  logs:
+    custom_components.bodymiscale: debug
+
 # Example configuration.yaml entry
 input_number:
   weight:
