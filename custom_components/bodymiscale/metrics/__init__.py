@@ -67,7 +67,7 @@ class MetricInfo:
 _METRIC_DEPS: dict[Metric, MetricInfo] = {
     Metric.STATUS: MetricInfo([], lambda c, s: None),
     Metric.AGE: MetricInfo([], lambda c, s: None),
-    Metric.WEIGHT: MetricInfo([], lambda c, s: None),
+    Metric.WEIGHT: MetricInfo([], lambda c, s: None, 2),
     Metric.IMPEDANCE: MetricInfo([], lambda c, s: None),
     # require weight
     Metric.BMI: MetricInfo([Metric.WEIGHT], get_bmi, 1),
@@ -130,6 +130,15 @@ def _get_age(date: str) -> int:
     return age
 
 
+def _modify_state_for_subscriber(
+    metric_info: MetricInfo, state: StateType
+) -> StateType:
+    if isinstance(state, float) and metric_info.decimals is not None:
+        state = round(state, metric_info.decimals)
+
+    return state
+
+
 class BodyScaleMetricsHandler:
     """Body scale metrics handler."""
 
@@ -184,6 +193,13 @@ class BodyScaleMetricsHandler:
         def remove_listener() -> None:
             """Remove subscribtion."""
             self._dependencies[metric].subscribers.remove(callback_func)
+
+        # If a state is available call subscriber function with current state.
+        state = self._available_metrics.get(metric, None)
+        if state is not None:
+            callback_func(
+                _modify_state_for_subscriber(self._dependencies[metric], state)
+            )
 
         return remove_listener
 
@@ -277,10 +293,8 @@ class BodyScaleMetricsHandler:
         self._available_metrics[metric] = state
 
         metric_info = self._dependencies[metric]
-        if isinstance(state, float) and metric_info.decimals is not None:
-            state = round(state, metric_info.decimals)
         for subscriber in metric_info.subscribers:
-            subscriber(state)
+            subscriber(_modify_state_for_subscriber(metric_info, state))
 
         for depended in metric_info.depended_by:
             depended_info = self._dependencies[depended]
