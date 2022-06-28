@@ -1,20 +1,26 @@
 {
   "config": {
     "error": {
+      "already_configured": "Déjà configuré",
+      "height_limit": "La taille est trop élevée (limite : 220 cm)",											 											   
       "invalid_date": "Date non valide"
     },
     "step": {
-      "user": {
+      "options": {
         "data": {
-          "birthday": "Anniversaire",
-          "gender": "Genre",
           "height": "Taille",
           "impedance": "Capteur d' impédance",
-          "name": "Nom",
           "weight": "Capteur de poids"
         },
         "data_description": {
           "impedance": "Si votre balance ne fournit pas l' impédance, laissez ce champ vide."
+        }
+      },
+      "user": {
+        "data": {
+          "birthday": "Date d'anniversaire",
+          "gender": "Genre",
+          "name": "Nom"
         }
       }
     }
