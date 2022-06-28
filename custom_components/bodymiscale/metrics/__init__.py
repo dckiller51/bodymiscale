@@ -66,9 +66,9 @@ class MetricInfo:
 
 _METRIC_DEPS: dict[Metric, MetricInfo] = {
     Metric.STATUS: MetricInfo([], lambda c, s: None),
-    Metric.AGE: MetricInfo([], lambda c, s: None),
+    Metric.AGE: MetricInfo([], lambda c, s: None, 0),
     Metric.WEIGHT: MetricInfo([], lambda c, s: None, 2),
-    Metric.IMPEDANCE: MetricInfo([], lambda c, s: None),
+    Metric.IMPEDANCE: MetricInfo([], lambda c, s: None, 0),
     # require weight
     Metric.BMI: MetricInfo([Metric.WEIGHT], get_bmi, 1),
     Metric.BMR: MetricInfo([Metric.AGE, Metric.WEIGHT], get_bmr, 0),
