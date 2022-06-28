@@ -2,7 +2,7 @@
   "config": {
     "error": {
       "already_configured": "Já configurado",
-      "height_limit": "Altura é muito alta (limite: 220 cm)",									   
+      "height_limit": "Altura é muito alta (limite: 220 cm)",
       "invalid_date": "Data inválida"
     },
     "step": {
