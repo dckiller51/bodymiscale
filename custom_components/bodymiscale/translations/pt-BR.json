@@ -1,20 +1,26 @@
 {
   "config": {
     "error": {
+      "already_configured": "Já configurado",
+      "height_limit": "Altura é muito alta (limite: 220 cm)",									   
       "invalid_date": "Data inválida"
     },
     "step": {
-      "user": {
+      "options": {
         "data": {
-          "birthday": "Data de nascimento",
-          "gender": "Gênero",
           "height": "Altura",
           "impedance": "Sensor de impedância",
-          "name": "Nome",
           "weight": "Sensor de peso"
         },
         "data_description": {
           "impedance": "Se sua balança não fornecer a impedância, deixe este campo vazio."
+        }
+      },
+      "user": {
+        "data": {
+          "birthday": "Data de nascimento",
+          "gender": "Gênero",
+          "name": "Nome"
         }
       }
     }
