@@ -1,26 +1,26 @@
 {
-  "state": {
-    "_": {
-      "ok": "OK",
-      "problem": "Problema"
-    }
-  },
   "config": {
     "error": {
+      "already_configured": "Já configurado",
+      "height_limit": "Altura é muito alta (limite: 220 cm)",
       "invalid_date": "Data inválida"
     },
     "step": {
-      "user": {
+      "options": {
         "data": {
-          "name": "Nome",
           "height": "Altura",
-          "birthday": "Data de nascimento",
-          "gender": "Gênero",
-          "weight": "Sensor de peso",
-          "impedance": "Sensor de impedância"
+          "impedance": "Sensor de impedância",
+          "weight": "Sensor de peso"
         },
         "data_description": {
           "impedance": "Se sua balança não fornecer a impedância, deixe este campo vazio."
+        }
+      },
+      "user": {
+        "data": {
+          "birthday": "Data de nascimento",
+          "gender": "Gênero",
+          "name": "Nome"
         }
       }
     }
@@ -30,13 +30,19 @@
       "init": {
         "data": {
           "height": "Altura",
-          "weight": "Sensor de peso",
-          "impedance": "Sensor de impedância"
+          "impedance": "Sensor de impedância",
+          "weight": "Sensor de peso"
         },
         "data_description": {
           "impedance": "Se sua balança não fornecer a impedância, deixe este campo vazio."
         }
       }
+    }
+  },
+  "state": {
+    "_": {
+      "ok": "OK",
+      "problem": "Problema"
     }
   }
 }

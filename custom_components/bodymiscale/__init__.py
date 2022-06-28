@@ -1,52 +1,44 @@
 """Support for bodymiscale."""
+import asyncio
 import logging
-from typing import Any
+from functools import partial
+from typing import Any, MutableMapping, Optional
 
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
 from awesomeversion import AwesomeVersion
+from cachetools import TTLCache
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_NAME, CONF_SENSORS, STATE_OK, STATE_PROBLEM
 from homeassistant.const import __version__ as HA_VERSION
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import EntityDescription
 from homeassistant.helpers.entity_component import EntityComponent
+from homeassistant.helpers.typing import StateType
 
-from custom_components.bodymiscale.coordinator import BodyScaleCoordinator
+from custom_components.bodymiscale.metrics import BodyScaleMetricsHandler
+from custom_components.bodymiscale.models import Metric
+from custom_components.bodymiscale.util import get_bmi_label, get_ideal_weight
 
-from .body_metrics import BodyMetricsImpedance
-from .body_score import BodyScore
 from .const import (
-    ATTR_AGE,
-    ATTR_BMI,
     ATTR_BMILABEL,
-    ATTR_BMR,
-    ATTR_BODY,
-    ATTR_BODY_SCORE,
-    ATTR_BONES,
-    ATTR_FAT,
     ATTR_FATMASSTOGAIN,
     ATTR_FATMASSTOLOSE,
     ATTR_IDEAL,
-    ATTR_LBM,
-    ATTR_METABOLIC,
-    ATTR_MUSCLE,
     ATTR_PROBLEM,
-    ATTR_PROTEIN,
-    ATTR_VISCERAL,
-    ATTR_WATER,
     COMPONENT,
     CONF_BIRTHDAY,
     CONF_GENDER,
     CONF_HEIGHT,
     CONF_SENSOR_IMPEDANCE,
     CONF_SENSOR_WEIGHT,
-    COORDINATORS,
     DOMAIN,
+    HANDLERS,
     MIN_REQUIRED_HA_VERSION,
     PLATFORMS,
     PROBLEM_NONE,
     STARTUP_MESSAGE,
+    UPDATE_DELAY,
 )
 from .entity import BodyScaleBaseEntity
 
@@ -96,17 +88,17 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             DOMAIN,
             {
                 COMPONENT: EntityComponent(_LOGGER, DOMAIN, hass),
-                COORDINATORS: {},
+                HANDLERS: {},
             },
         )
         _LOGGER.info(STARTUP_MESSAGE)
 
-    coordinator = hass.data[DOMAIN][COORDINATORS][
-        entry.entry_id
-    ] = BodyScaleCoordinator(hass, {**entry.data, **entry.options})
+    handler = hass.data[DOMAIN][HANDLERS][entry.entry_id] = BodyScaleMetricsHandler(
+        hass, {**entry.data, **entry.options}
+    )
 
     component: EntityComponent = hass.data[DOMAIN][COMPONENT]
-    await component.async_add_entities([Bodymiscale(coordinator)])
+    await component.async_add_entities([Bodymiscale(handler)])
 
     hass.config_entries.async_setup_platforms(entry, PLATFORMS)
     # Reload entry when its updated.
@@ -123,8 +115,8 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         component: EntityComponent = hass.data[DOMAIN][COMPONENT]
         await component.async_prepare_reload()
 
-        del hass.data[DOMAIN][COORDINATORS][entry.entry_id]
-        if len(hass.data[DOMAIN][COORDINATORS]) == 0:
+        del hass.data[DOMAIN][HANDLERS][entry.entry_id]
+        if len(hass.data[DOMAIN][HANDLERS]) == 0:
             hass.data.pop(DOMAIN)
 
     return unload_ok
@@ -170,72 +162,69 @@ class Bodymiscale(BodyScaleBaseEntity):
     gender and impedance (if configured).
     """
 
-    def __init__(self, coordinator: BodyScaleCoordinator):
+    def __init__(self, handler: BodyScaleMetricsHandler):
         """Initialize the Bodymiscale component."""
         super().__init__(
-            coordinator,
+            handler,
             EntityDescription(
-                key="Bodymiscale", name=coordinator.config[CONF_NAME], icon="mdi:human"
+                key="bodymiscale", name=handler.config[CONF_NAME], icon="mdi:human"
             ),
         )
+        self._timer_handle: Optional[asyncio.TimerHandle] = None
+        self._available_metrics: MutableMapping[str, StateType] = TTLCache(
+            maxsize=len(Metric), ttl=60
+        )
 
-    def _on_update(self) -> None:
-        """Perform actions on update."""
-        if self._coordinator.problems == PROBLEM_NONE:
-            self._attr_state = STATE_OK
-        else:
-            self._attr_state = STATE_PROBLEM
-        self.async_write_ha_state()
+    async def async_added_to_hass(self) -> None:
+        """After being added to hass."""
+        await super().async_added_to_hass()
+
+        loop = asyncio.get_event_loop()
+
+        def on_value(value: StateType, *, metric: Metric) -> None:
+            if metric == Metric.STATUS:
+                self._attr_state = STATE_OK if value == PROBLEM_NONE else STATE_PROBLEM
+                self._available_metrics[ATTR_PROBLEM] = value
+            else:
+                self._available_metrics[metric.value] = value
+
+            if self._timer_handle is not None:
+                self._timer_handle.cancel()
+            self._timer_handle = loop.call_later(
+                UPDATE_DELAY, self.async_write_ha_state
+            )
+
+        remove_subscriptions = []
+        for metric in Metric:
+            remove_subscriptions.append(
+                self._handler.subscribe(metric, partial(on_value, metric=metric))
+            )
+
+        def on_remove() -> None:
+            for subscription in remove_subscriptions:
+                subscription()
+
+        self.async_on_remove(on_remove)
 
     @property
     def state_attributes(self) -> dict[str, Any]:
         """Return the attributes of the entity."""
         attrib = {
-            ATTR_PROBLEM: self._coordinator.problems,
-            CONF_HEIGHT: self._coordinator.config[CONF_HEIGHT],
-            CONF_GENDER: self._coordinator.config[CONF_GENDER].value,
-            ATTR_AGE: self._coordinator.config[ATTR_AGE],
-            CONF_SENSOR_WEIGHT: self._coordinator.weight,
+            CONF_HEIGHT: self._handler.config[CONF_HEIGHT],
+            CONF_GENDER: self._handler.config[CONF_GENDER].value,
+            ATTR_IDEAL: get_ideal_weight(self._handler.config),
+            **self._available_metrics,
         }
 
-        if CONF_SENSOR_IMPEDANCE in self._coordinator.config:
-            attrib[CONF_SENSOR_IMPEDANCE] = self._coordinator.impedance
+        if Metric.BMI.value in attrib:
+            attrib[ATTR_BMILABEL] = get_bmi_label(attrib[Metric.BMI.value])
 
-        metrics = self._coordinator.metrics
+        if Metric.FAT_MASS_2_IDEAL_WEIGHT.value in attrib:
+            value = attrib.pop(Metric.FAT_MASS_2_IDEAL_WEIGHT.value)
 
-        if metrics:
-            attrib[ATTR_BMI] = f"{metrics.bmi:.1f}"
-            attrib[ATTR_BMR] = f"{metrics.bmr:.0f}"
-            attrib[ATTR_VISCERAL] = f"{metrics.visceral_fat:.0f}"
-            attrib[ATTR_IDEAL] = f"{metrics.ideal_weight:.2f}"
-            attrib[ATTR_BMILABEL] = metrics.bmi_label
-
-            if isinstance(metrics, BodyMetricsImpedance):
-                bodyscale = [
-                    "Obese",
-                    "Overweight",
-                    "Thick-set",
-                    "Lack-exercise",
-                    "Balanced",
-                    "Balanced-muscular",
-                    "Skinny",
-                    "Balanced-skinny",
-                    "Skinny-muscular",
-                ]
-                attrib[ATTR_LBM] = f"{metrics.lbm_coefficient:.1f}"
-                attrib[ATTR_FAT] = f"{metrics.fat_percentage:.1f}"
-                attrib[ATTR_WATER] = f"{metrics.water_percentage:.1f}"
-                attrib[ATTR_BONES] = f"{metrics.bone_mass:.2f}"
-                attrib[ATTR_MUSCLE] = f"{metrics.muscle_mass:.2f}"
-                fat_mass_to_ideal = metrics.fat_mass_to_ideal
-                if fat_mass_to_ideal["type"] == "to_lose":
-                    attrib[ATTR_FATMASSTOLOSE] = f"{fat_mass_to_ideal['mass']:.2f}"
-                else:
-                    attrib[ATTR_FATMASSTOGAIN] = f"{fat_mass_to_ideal['mass']:.2f}"
-                attrib[ATTR_PROTEIN] = f"{metrics.protein_percentage:.1f}"
-                attrib[ATTR_BODY] = bodyscale[metrics.body_type]
-                attrib[ATTR_METABOLIC] = f"{metrics.metabolic_age:.0f}"
-                body_score = BodyScore(metrics)
-                attrib[ATTR_BODY_SCORE] = f"{body_score.body_score:.0f}"
+            if value < 0:
+                attrib[ATTR_FATMASSTOLOSE] = value * -1
+            else:
+                attrib[ATTR_FATMASSTOGAIN] = value
 
         return attrib

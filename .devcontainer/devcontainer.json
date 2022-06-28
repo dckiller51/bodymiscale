@@ -7,7 +7,7 @@
     "ryanluker.vscode-coverage-gutters",
     "ms-python.vscode-pylance"
   ],
-  "image": "ghcr.io/ludeeus/devcontainer/integration:stable",
+  "image": "ghcr.io/ludeeus/devcontainer/integration",
   "name": "Bodymiscale Development",
   "postCreateCommand": "container install && pip install --ignore-installed -r requirements.txt",
   "settings": {
