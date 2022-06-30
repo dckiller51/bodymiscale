@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## v3.0.0
+
+- #75 Create a sensor for each attribute @edenhaus
+- #75 Update pt-BR translation @dckiller51
+- #75 Update FR translation @dckiller51
+- #97 Bump pylint from 2.13.9 to 2.14.3 @dependabot
+- #96 Bump actions/setup-python from 3 to 4 @dependabot
+- #95 Bump mypy from 0.960 to 0.961 @dependabot
+- #80 remove yaml support + fix config flow options @edenhaus
+- #87 Bump pre-commit from 2.18.1 to 2.19.0 @dependabot
+- #84 Bump github/codeql-action from 1 to 2 @dependabot
+
 ## v2.1.1
 
 - fix for error for iOS users where the birthday selection was not displayed
