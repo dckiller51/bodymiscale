@@ -9,7 +9,7 @@
   ],
   "image": "ghcr.io/ludeeus/devcontainer/integration",
   "name": "Bodymiscale Development",
-  "postCreateCommand": "container install && pip install --ignore-installed -r requirements.txt",
+  "postCreateCommand": "container install && pip install --ignore-installed -r requirements.txt && pre-commit install --install-hooks",
   "settings": {
     "editor.formatOnPaste": false,
     "editor.formatOnSave": true,

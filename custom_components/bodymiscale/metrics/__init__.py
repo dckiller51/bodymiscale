@@ -59,9 +59,6 @@ class MetricInfo:
     calculate: Callable[[Mapping[str, Any], Mapping[Metric, StateType]], StateType]
     decimals: Optional[int] = None  # Round decimals before passing to the subscribers
     depended_by: list[Metric] = field(default_factory=list, init=False)
-    subscribers: list[Callable[[StateType], None]] = field(
-        default_factory=list, init=False
-    )
 
 
 _METRIC_DEPS: dict[Metric, MetricInfo] = {
@@ -156,6 +153,7 @@ class BodyScaleMetricsHandler:
             self._config[CONF_HEIGHT], self._config[CONF_GENDER]
         )
 
+        self._subscribers: dict[Metric, list[Callable[[StateType], None]]] = {}
         self._dependencies: dict[Metric, MetricInfo] = {}
         for key, value in _METRIC_DEPS.items():
             self._dependencies[key] = value
@@ -187,12 +185,14 @@ class BodyScaleMetricsHandler:
         self, metric: Metric, callback_func: Callable[[StateType], None]
     ) -> CALLBACK_TYPE:
         """Subscribe for changes."""
-        self._dependencies[metric].subscribers.append(callback_func)
+        self._subscribers.setdefault(metric, [])
+
+        self._subscribers[metric].append(callback_func)
 
         @callback  # type: ignore[misc]
         def remove_listener() -> None:
             """Remove subscribtion."""
-            self._dependencies[metric].subscribers.remove(callback_func)
+            self._subscribers[metric].remove(callback_func)
 
         # If a state is available call subscriber function with current state.
         state = self._available_metrics.get(metric, None)
@@ -293,8 +293,11 @@ class BodyScaleMetricsHandler:
         self._available_metrics[metric] = state
 
         metric_info = self._dependencies[metric]
-        for subscriber in metric_info.subscribers:
-            subscriber(_modify_state_for_subscriber(metric_info, state))
+        subscribers = self._subscribers[metric]
+        if subscribers:
+            subscriber_state = _modify_state_for_subscriber(metric_info, state)
+            for subscriber in subscribers:
+                subscriber(subscriber_state)
 
         for depended in metric_info.depended_by:
             depended_info = self._dependencies[depended]

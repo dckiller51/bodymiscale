@@ -10,15 +10,26 @@ input_number:
   weight:
     name: Weight
     initial: 70
-    min: 10
-    max: 200
-    step: 0.1
+    <<: &weight_options
+      min: 10
+      max: 200
+      step: 0.1
   impedance:
     name: Impedance
     initial: 400
-    min: 0
-    max: 3000
-    step: 1
+    <<: &impedance_options
+      min: 0
+      max: 3000
+      step: 1
+
+  weight_2:
+    name: Weight 2
+    initial: 80
+    <<: *weight_options
+  impedance_2:
+    name: Impedance 2
+    initial: 800
+    <<: *impedance_options
 
 template:
   - sensor:
@@ -27,6 +38,12 @@ template:
         unit_of_measurement: "kg"
       - name: Impedance
         state: "{{ states('input_number.impedance') }}"
+        unit_of_measurement: "ohm"
+      - name: Weight 2
+        state: "{{ states('input_number.weight_2') }}"
+        unit_of_measurement: "kg"
+      - name: Impedance 2
+        state: "{{ states('input_number.impedance_2') }}"
         unit_of_measurement: "ohm"
 
 # If you need to debug uncomment the line below (doc: https://www.home-assistant.io/integrations/debugpy/)
