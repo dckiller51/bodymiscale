@@ -293,7 +293,7 @@ class BodyScaleMetricsHandler:
         self._available_metrics[metric] = state
 
         metric_info = self._dependencies[metric]
-        subscribers = self._subscribers[metric]
+        subscribers = self._subscribers.get(metric, [])
         if subscribers:
             subscriber_state = _modify_state_for_subscriber(metric_info, state)
             for subscriber in subscribers:
