@@ -1,0 +1,47 @@
+{
+  "config": {
+    "error": {
+      "already_configured": "Już skonfigurowane",
+      "height_limit": "Podano za wysoki wzrost (limit: 220 cm)",
+      "invalid_date": "Błędna data"
+    },
+    "step": {
+      "options": {
+        "data": {
+          "height": "Wzrost",
+          "impedance": "Sensor impedancji",
+          "weight": "Sensor wagi"
+        },
+        "data_description": {
+          "impedance": "Jeśli waga nie podaje impedancji, pozostaw to pole puste."
+        }
+      },
+      "user": {
+        "data": {
+          "birthday": "Urodziny",
+          "gender": "Płeć",
+          "name": "Imię"
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "height": "Wzrost",
+          "impedance": "Sensor impedancji",
+          "weight": "Sensor wagi"
+        },
+        "data_description": {
+          "impedance": "Jeśli waga nie podaje impedancji, pozostaw to pole puste."
+        }
+      }
+    }
+  },
+  "state": {
+    "_": {
+      "problem": "Błąd"
+    }
+  }
+}
