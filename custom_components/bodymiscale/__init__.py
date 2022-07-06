@@ -94,7 +94,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         _LOGGER.info(STARTUP_MESSAGE)
 
     handler = hass.data[DOMAIN][HANDLERS][entry.entry_id] = BodyScaleMetricsHandler(
-        hass, {**entry.data, **entry.options}
+        hass, {**entry.data, **entry.options}, entry.entry_id
     )
 
     component: EntityComponent = hass.data[DOMAIN][COMPONENT]

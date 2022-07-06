@@ -50,4 +50,5 @@ class BodyScaleBaseEntity(Entity):  # type: ignore[misc]
             entry_type=DeviceEntryType.SERVICE,
             name=NAME,
             sw_version=VERSION,
+            identifiers={(DOMAIN, self._handler.config_entry_id)},
         )

@@ -142,7 +142,9 @@ def _modify_state_for_subscriber(
 class BodyScaleMetricsHandler:
     """Body scale metrics handler."""
 
-    def __init__(self, hass: HomeAssistant, config: dict[str, Any]):
+    def __init__(
+        self, hass: HomeAssistant, config: dict[str, Any], config_entry_id: str
+    ):
         self._available_metrics: MutableMapping[Metric, StateType] = TTLCache(
             maxsize=len(Metric), ttl=60
         )
@@ -151,6 +153,7 @@ class BodyScaleMetricsHandler:
             **config,
             CONF_GENDER: Gender(config[CONF_GENDER]),
         }
+        self._config_entry_id = config_entry_id
 
         self._config[CONF_SCALE] = Scale(
             self._config[CONF_HEIGHT], self._config[CONF_GENDER]
@@ -182,6 +185,11 @@ class BodyScaleMetricsHandler:
     def config(self) -> Mapping[str, Any]:
         """Return config."""
         return self._config
+
+    @property
+    def config_entry_id(self) -> str:
+        """Return config entry id."""
+        return self._config_entry_id
 
     def subscribe(
         self, metric: Metric, callback_func: Callable[[StateType], None]
