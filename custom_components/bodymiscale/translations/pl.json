@@ -42,7 +42,7 @@
   "state": {
     "_": {
       "ok": "OK",
-      "problem": "Problem"
+      "problem": "Błąd"
     }
   }
 }
