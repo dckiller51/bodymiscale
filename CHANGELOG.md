@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## v3.0.1
+
+- #104 fix Subscribe to correct handler
+- #100 added italian language support (thank you @mansellrace)
+- #103 added polish language support (thank you @LukaszP2)
+
 ## v3.0.0
 
 - #75 Create a sensor for each attribute @edenhaus
