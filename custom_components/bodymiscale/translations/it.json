@@ -1,0 +1,47 @@
+{
+  "config": {
+    "error": {
+      "already_configured": "Già configurato",
+      "height_limit": "Altezza troppo elevata (limite: 220 cm)",
+      "invalid_date": "Data non valida"
+    },
+    "step": {
+      "options": {
+        "data": {
+          "height": "Altezza",
+          "impedance": "Sensore impedenza",
+          "weight": "Sensore peso"
+        },
+        "data_description": {
+          "impedance": "Se la tua bilancia non fornisce il valore di impedenza lascia questo campo vuoto."
+        }
+      },
+      "user": {
+        "data": {
+          "birthday": "Data di nascita",
+          "gender": "Genere",
+          "name": "Nome"
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "height": "Altezza",
+          "impedance": "Sensore impedenza",
+          "weight": "Sensore peso"
+        },
+        "data_description": {
+          "impedance": "Se la tua bilancia non fornisce il valore di impedenza lascia questo campo vuoto."
+        }
+      }
+    }
+  },
+  "state": {
+    "_": {
+      "problem": "Problema"
+    }
+  }
+}
