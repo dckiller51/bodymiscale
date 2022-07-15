@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## v3.0.2
+
+- added romania language support (thank you @18rrs)
+
 ## v3.0.1
 
 - #104 fix Subscribe to correct handler

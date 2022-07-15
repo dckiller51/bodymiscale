@@ -1,0 +1,48 @@
+{
+  "config": {
+    "error": {
+      "already_configured": "Deja configurat",
+      "height_limit": "Înalțimea este prea mare (limita: 220 cm)",
+      "invalid_date": "Dată invalidă"
+    },
+    "step": {
+      "options": {
+        "data": {
+          "height": "Înalțime",
+          "impedance": "Senzor impedanță",
+          "weight": "Senzor greutate"
+        },
+        "data_description": {
+          "impedance": "Dacă cântarul dumneavoastra nu furnizează impedanță, lăsați câmpul necompletat."
+        }
+      },
+      "user": {
+        "data": {
+          "birthday": "Dată naștere",
+          "gender": "Gen",
+          "name": "Nume"
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "height": "Înalțime",
+          "impedance": "Senzor impedanță",
+          "weight": "Senzor greutate"
+        },
+        "data_description": {
+          "impedance": "Dacă cântarul dumneavoastra nu furnizează impedanță, lăsați câmpul necompletat."
+        }
+      }
+    }
+  },
+  "state": {
+    "_": {
+      "ok": "Bine",
+      "problem": "Problemă"
+    }
+  }
+}
