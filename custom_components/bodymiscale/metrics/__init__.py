@@ -2,9 +2,10 @@
 
 
 import logging
+from collections.abc import Mapping, MutableMapping
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any, Callable, Mapping, MutableMapping, Optional
+from typing import Any, Callable, Optional
 
 from cachetools import TTLCache
 from homeassistant.const import (

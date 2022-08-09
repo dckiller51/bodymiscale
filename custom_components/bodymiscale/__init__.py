@@ -1,8 +1,9 @@
 """Support for bodymiscale."""
 import asyncio
 import logging
+from collections.abc import MutableMapping
 from functools import partial
-from typing import Any, MutableMapping, Optional
+from typing import Any, Optional
 
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol

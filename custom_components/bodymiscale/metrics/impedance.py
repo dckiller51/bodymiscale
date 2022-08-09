@@ -1,5 +1,6 @@
 """Metrics module, which require impedance."""
-from typing import Any, Mapping
+from collections.abc import Mapping
+from typing import Any
 
 from homeassistant.helpers.typing import StateType
 

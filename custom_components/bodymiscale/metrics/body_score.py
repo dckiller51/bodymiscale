@@ -1,6 +1,7 @@
 """Body score module."""
 from collections import namedtuple
-from typing import Any, Mapping, Union
+from collections.abc import Mapping
+from typing import Any, Union
 
 from homeassistant.helpers.typing import StateType
 
