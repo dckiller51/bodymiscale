@@ -1,5 +1,6 @@
 """Sensor module."""
-from typing import Any, Callable, Mapping, Optional
+from collections.abc import Mapping
+from typing import Any, Callable, Optional
 
 from homeassistant.components.sensor import (
     SensorEntity,

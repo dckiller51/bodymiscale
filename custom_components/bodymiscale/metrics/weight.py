@@ -1,6 +1,7 @@
 """Metrics module, which require only weight."""
 
-from typing import Any, Mapping
+from collections.abc import Mapping
+from typing import Any
 
 from homeassistant.helpers.typing import StateType
 
