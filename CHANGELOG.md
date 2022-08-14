@@ -4,15 +4,19 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## v3.0.3
+
+- added Russian language support (thank you @glebsterx)
+
 ## v3.0.2
 
-- added romania language support (thank you @18rrs)
+- added Romania language support (thank you @18rrs)
 
 ## v3.0.1
 
 - #104 fix Subscribe to correct handler
-- #100 added italian language support (thank you @mansellrace)
-- #103 added polish language support (thank you @LukaszP2)
+- #100 added Italian language support (thank you @mansellrace)
+- #103 added Polish language support (thank you @LukaszP2)
 
 ## v3.0.0
 
@@ -53,7 +57,7 @@ Thanks to you for the work done.
 ## v1.1.5
 
 - convert weight from lbs to kgs if your scale is set to this unit (thank you @rale)
-- added portuguese brazilian language support (thank you @hudsonbrendon)
+- added Portuguese Brazilian language support (thank you @hudsonbrendon)
 
 ## v1.1.4
 
