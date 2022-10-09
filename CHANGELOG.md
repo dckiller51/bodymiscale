@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## v3.0.4
+
+- allow input type "input_number" in addition to "sensor" (thank you @erannave)
+
 ## v3.0.3
 
 - added Russian language support (thank you @glebsterx)
