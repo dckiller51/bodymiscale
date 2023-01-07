@@ -46,6 +46,7 @@ def get_bmi_label(bmi: float) -> str:  # pylint: disable=too-many-return-stateme
 
 
 def get_age(date: str) -> int:
+    """Get current age from birthdate."""
     born = datetime.strptime(date, "%Y-%m-%d")
     today = datetime.today()
     age = today.year - born.year
