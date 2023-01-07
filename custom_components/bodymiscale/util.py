@@ -44,6 +44,7 @@ def get_bmi_label(bmi: float) -> str:  # pylint: disable=too-many-return-stateme
         return "Severe obesity"
     return "Massive obesity"
 
+
 def get_age(date: str) -> int:
     born = datetime.strptime(date, "%Y-%m-%d")
     today = datetime.today()

@@ -19,7 +19,7 @@ from homeassistant.helpers.typing import StateType
 
 from custom_components.bodymiscale.metrics import BodyScaleMetricsHandler
 from custom_components.bodymiscale.models import Metric
-from custom_components.bodymiscale.util import get_bmi_label, get_ideal_weight, get_age
+from custom_components.bodymiscale.util import get_age, get_bmi_label, get_ideal_weight
 
 from .const import (
     ATTR_AGE,
