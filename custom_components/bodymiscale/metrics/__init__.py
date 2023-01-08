@@ -4,7 +4,6 @@
 import logging
 from collections.abc import Mapping, MutableMapping
 from dataclasses import dataclass, field
-from datetime import datetime
 from typing import Any, Callable, Optional
 
 from cachetools import TTLCache
@@ -19,6 +18,7 @@ from homeassistant.helpers.event import async_track_state_change_event
 from homeassistant.helpers.typing import StateType
 
 from custom_components.bodymiscale.metrics.scale import Scale
+from custom_components.bodymiscale.util import get_age
 
 from ..const import (
     CONF_BIRTHDAY,
@@ -117,15 +117,6 @@ _METRIC_DEPS: dict[Metric, MetricInfo] = {
         0,
     ),
 }
-
-
-def _get_age(date: str) -> int:
-    born = datetime.strptime(date, "%Y-%m-%d")
-    today = datetime.today()
-    age = today.year - born.year
-    if (today.month, today.day) < (born.month, born.day):
-        age -= 1
-    return age
 
 
 def _modify_state_for_subscriber(
@@ -296,7 +287,7 @@ class BodyScaleMetricsHandler:
             return
 
         self._available_metrics.setdefault(
-            Metric.AGE, _get_age(self._config[CONF_BIRTHDAY])
+            Metric.AGE, get_age(self._config[CONF_BIRTHDAY])
         )
 
         self._available_metrics[metric] = state

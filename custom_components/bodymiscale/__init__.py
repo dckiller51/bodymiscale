@@ -19,9 +19,10 @@ from homeassistant.helpers.typing import StateType
 
 from custom_components.bodymiscale.metrics import BodyScaleMetricsHandler
 from custom_components.bodymiscale.models import Metric
-from custom_components.bodymiscale.util import get_bmi_label, get_ideal_weight
+from custom_components.bodymiscale.util import get_age, get_bmi_label, get_ideal_weight
 
 from .const import (
+    ATTR_AGE,
     ATTR_BMILABEL,
     ATTR_FATMASSTOGAIN,
     ATTR_FATMASSTOLOSE,
@@ -214,6 +215,7 @@ class Bodymiscale(BodyScaleBaseEntity):
             CONF_HEIGHT: self._handler.config[CONF_HEIGHT],
             CONF_GENDER: self._handler.config[CONF_GENDER].value,
             ATTR_IDEAL: get_ideal_weight(self._handler.config),
+            ATTR_AGE: get_age(self._handler.config[CONF_BIRTHDAY]),
             **self._available_metrics,
         }
 

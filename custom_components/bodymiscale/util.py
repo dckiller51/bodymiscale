@@ -2,6 +2,7 @@
 
 
 from collections.abc import Mapping
+from datetime import datetime
 from typing import Any
 
 from .const import CONF_GENDER, CONF_HEIGHT
@@ -42,3 +43,13 @@ def get_bmi_label(bmi: float) -> str:  # pylint: disable=too-many-return-stateme
     if bmi < 40:
         return "Severe obesity"
     return "Massive obesity"
+
+
+def get_age(date: str) -> int:
+    """Get current age from birthdate."""
+    born = datetime.strptime(date, "%Y-%m-%d")
+    today = datetime.today()
+    age = today.year - born.year
+    if (today.month, today.day) < (born.month, born.day):
+        age -= 1
+    return age
