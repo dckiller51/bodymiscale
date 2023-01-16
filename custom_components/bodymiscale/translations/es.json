@@ -1,0 +1,48 @@
+{
+  "config": {
+    "error": {
+      "already_configured": "Ya configurado",
+      "height_limit": "La altura es demasiado alta (limite: 220 cm)",
+      "invalid_date": "Fecha invalida"
+    },
+    "step": {
+      "options": {
+        "data": {
+          "height": "Peso",
+          "impedance": "Sensor de immpedancia",
+          "weight": "Sensor de peso"
+        },
+        "data_description": {
+          "impedance": "Si su báscula no proporciona la impedancia, deje este campo vacío."
+        }
+      },
+      "user": {
+        "data": {
+          "birthday": "Cumpleaños",
+          "gender": "Genero",
+          "name": "Nombre"
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "height": "Peso",
+          "impedance": "Sensor de impedancia",
+          "weight": "Sensor de peso"
+        },
+        "data_description": {
+          "impedance": "Si su báscula no proporciona la impedancia, deje este campo vacío."
+        }
+      }
+    }
+  },
+  "state": {
+    "_": {
+      "ok": "OK",
+      "problem": "Problema"
+    }
+  }
+}

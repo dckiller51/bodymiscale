@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## v3.0.6
+
+- added Spanish language support (thank you @Xesquy)
+
 ## v3.0.5
 
 - moved the get_age function to utils (thank you @Gerto)
