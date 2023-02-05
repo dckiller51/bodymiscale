@@ -134,13 +134,6 @@ async def async_setup_entry(
                 BodyScaleSensor(
                     handler,
                     SensorEntityDescription(
-                        key=ATTR_BODY,
-                    ),
-                    Metric.BODY_TYPE,
-                ),
-                BodyScaleSensor(
-                    handler,
-                    SensorEntityDescription(
                         key=ATTR_METABOLIC,
                     ),
                     Metric.METABOLIC_AGE,

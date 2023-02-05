@@ -8,7 +8,7 @@
     "step": {
       "options": {
         "data": {
-          "height": "Peso",
+          "height": "Altura",
           "impedance": "Sensor de immpedancia",
           "weight": "Sensor de peso"
         },
@@ -29,7 +29,7 @@
     "step": {
       "init": {
         "data": {
-          "height": "Peso",
+          "height": "Altura",
           "impedance": "Sensor de impedancia",
           "weight": "Sensor de peso"
         },

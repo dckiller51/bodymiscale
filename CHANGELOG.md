@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## v3.0.7
+
+- remove sensor body type from sensor but still available as attribute in component
+- refactor: async_setup_platforms -> async_forward_entry_setups
+- fix Spanish translation (thank you @Nahuel-BM)
+
 ## v3.0.6
 
 - added Spanish language support (thank you @Xesquy)
