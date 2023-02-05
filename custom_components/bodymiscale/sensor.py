@@ -16,7 +16,6 @@ from .const import (
     ATTR_BMI,
     ATTR_BMILABEL,
     ATTR_BMR,
-    ATTR_BODY,
     ATTR_BODY_SCORE,
     ATTR_BONES,
     ATTR_FAT,
