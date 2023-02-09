@@ -3,6 +3,7 @@ from collections.abc import Mapping
 from typing import Any, Callable, Optional
 
 from homeassistant.components.sensor import (
+    SensorDeviceClass,
     SensorEntity,
     SensorEntityDescription,
     SensorStateClass,
@@ -77,6 +78,7 @@ async def async_setup_entry(
                 key=CONF_SENSOR_WEIGHT,
                 icon="mdi:weight-kilogram",
                 native_unit_of_measurement="kg",
+                device_class=SensorDeviceClass.WEIGHT,
             ),
             Metric.WEIGHT,
             lambda _, config: {ATTR_IDEAL: get_ideal_weight(config)},
