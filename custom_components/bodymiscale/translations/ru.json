@@ -39,10 +39,13 @@
       }
     }
   },
-  "state": {
+  "entity_component": {
     "_": {
-      "ok": "OK",
-      "problem": "Проблема"
+      "name": "bodymiscale",
+      "state": {
+        "ok": "OK",
+        "problem": "Проблема"
+      }
     }
   }
 }

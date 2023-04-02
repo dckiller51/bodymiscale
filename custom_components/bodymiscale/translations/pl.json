@@ -39,9 +39,13 @@
       }
     }
   },
-  "state": {
+  "entity_component": {
     "_": {
-      "problem": "Błąd"
+      "name": "bodymiscale",
+      "state": {
+        "ok": "OK",
+        "problem": "Błąd"
+      }
     }
   }
 }

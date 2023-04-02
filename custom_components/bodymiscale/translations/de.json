@@ -36,5 +36,14 @@
         }
       }
     }
+  },
+  "entity_component": {
+    "_": {
+      "name": "bodymiscale",
+      "state": {
+        "ok": "OK",
+        "problem": "Problem"
+      }
+    }
   }
 }

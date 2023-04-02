@@ -39,10 +39,13 @@
       }
     }
   },
-  "state": {
+  "entity_component": {
     "_": {
-      "ok": "Bine",
-      "problem": "Problemă"
+      "name": "bodymiscale",
+      "state": {
+        "ok": "Bine",
+        "problem": "Problemă"
+      }
     }
   }
 }
