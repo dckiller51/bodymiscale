@@ -53,6 +53,7 @@ async def async_setup_entry(
             SensorEntityDescription(
                 key=ATTR_BMI,
                 icon="mdi:human",
+                native_unit_of_measurement="kg/m2",
             ),
             Metric.BMI,
             lambda state, _: {ATTR_BMILABEL: get_bmi_label(state)},
