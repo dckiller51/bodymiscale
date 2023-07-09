@@ -9,7 +9,7 @@ from homeassistant.helpers.entity import (
     EntityDescription,
 )
 
-from .const import DOMAIN, NAME, VERSION
+from .const import DOMAIN, VERSION
 from .metrics import BodyScaleMetricsHandler
 
 
@@ -49,7 +49,7 @@ class BodyScaleBaseEntity(Entity):  # type: ignore[misc]
         """Return device specific attributes."""
         return DeviceInfo(
             entry_type=DeviceEntryType.SERVICE,
-            name=NAME,
+            name=self._handler.config[CONF_NAME],
             sw_version=VERSION,
             identifiers={(DOMAIN, self._handler.config_entry_id)},
         )
