@@ -1,11 +1,19 @@
 {
   "domain": "bodymiscale",
   "name": "BodyMiScale",
-  "codeowners": ["@dckiller51", "@edenhaus"],
+  "codeowners": [
+    "@dckiller51",
+    "@edenhaus"
+  ],
   "config_flow": true,
   "documentation": "https://github.com/dckiller51/bodymiscale",
   "iot_class": "calculated",
   "issue_tracker": "https://github.com/dckiller51/bodymiscale/issues",
-  "requirements": ["cachetools==5.1.0"],
+  "loggers": [
+    "custom_components.bodymiscale"
+  ],
+  "requirements": [
+    "cachetools==5.3.0"
+  ],
   "version": "3.0.7"
 }
