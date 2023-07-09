@@ -2,9 +2,9 @@
 
 
 import logging
-from collections.abc import Mapping, MutableMapping
+from collections.abc import Callable, Mapping, MutableMapping
 from dataclasses import dataclass, field
-from typing import Any, Callable, Optional
+from typing import Any
 
 from cachetools import TTLCache
 from homeassistant.const import (
@@ -58,7 +58,7 @@ class MetricInfo:
 
     depends_on: list[Metric]
     calculate: Callable[[Mapping[str, Any], Mapping[Metric, StateType]], StateType]
-    decimals: Optional[int] = None  # Round decimals before passing to the subscribers
+    decimals: int | None = None  # Round decimals before passing to the subscribers
     depended_by: list[Metric] = field(default_factory=list, init=False)
 
 

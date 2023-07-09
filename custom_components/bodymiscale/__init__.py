@@ -3,7 +3,7 @@ import asyncio
 import logging
 from collections.abc import MutableMapping
 from functools import partial
-from typing import Any, Optional
+from typing import Any
 
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
@@ -172,7 +172,7 @@ class Bodymiscale(BodyScaleBaseEntity):
                 key="bodymiscale", name=handler.config[CONF_NAME], icon="mdi:human"
             ),
         )
-        self._timer_handle: Optional[asyncio.TimerHandle] = None
+        self._timer_handle: asyncio.TimerHandle | None = None
         self._available_metrics: MutableMapping[str, StateType] = TTLCache(
             maxsize=len(Metric), ttl=60
         )

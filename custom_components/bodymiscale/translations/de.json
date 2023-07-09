@@ -23,6 +23,15 @@
       }
     }
   },
+  "entity_component": {
+    "_": {
+      "name": "bodymiscale",
+      "state": {
+        "ok": "OK",
+        "problem": "Problem"
+      }
+    }
+  },
   "options": {
     "step": {
       "init": {
@@ -34,15 +43,6 @@
         "data_description": {
           "impedance": "Falls deine Waage keine Impedanz liefert, lasse dieses Feld leer."
         }
-      }
-    }
-  },
-  "entity_component": {
-    "_": {
-      "name": "bodymiscale",
-      "state": {
-        "ok": "OK",
-        "problem": "Problem"
       }
     }
   }

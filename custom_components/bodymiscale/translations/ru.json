@@ -25,6 +25,15 @@
       }
     }
   },
+  "entity_component": {
+    "_": {
+      "name": "bodymiscale",
+      "state": {
+        "ok": "OK",
+        "problem": "Проблема"
+      }
+    }
+  },
   "options": {
     "step": {
       "init": {
@@ -36,15 +45,6 @@
         "data_description": {
           "impedance": "Если Ваши весы не измеряют сопротивление, оставьте это поле пустым."
         }
-      }
-    }
-  },
-  "entity_component": {
-    "_": {
-      "name": "bodymiscale",
-      "state": {
-        "ok": "OK",
-        "problem": "Проблема"
       }
     }
   }

@@ -1,7 +1,7 @@
 """Body score module."""
 from collections import namedtuple
 from collections.abc import Mapping
-from typing import Any, Union
+from typing import Any
 
 from homeassistant.helpers.typing import StateType
 
@@ -13,8 +13,8 @@ def _get_malus(
     data: float,
     min_data: float,
     max_data: float,
-    max_malus: Union[int, float],
-    min_malus: Union[int, float],
+    max_malus: int | float,
+    min_malus: int | float,
 ) -> float:
     result = ((data - max_data) / (min_data - max_data)) * float(max_malus - min_malus)
     if result >= 0.0:

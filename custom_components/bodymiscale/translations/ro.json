@@ -25,6 +25,15 @@
       }
     }
   },
+  "entity_component": {
+    "_": {
+      "name": "bodymiscale",
+      "state": {
+        "ok": "Bine",
+        "problem": "Problemă"
+      }
+    }
+  },
   "options": {
     "step": {
       "init": {
@@ -36,15 +45,6 @@
         "data_description": {
           "impedance": "Dacă cântarul dumneavoastra nu furnizează impedanță, lăsați câmpul necompletat."
         }
-      }
-    }
-  },
-  "entity_component": {
-    "_": {
-      "name": "bodymiscale",
-      "state": {
-        "ok": "Bine",
-        "problem": "Problemă"
       }
     }
   }

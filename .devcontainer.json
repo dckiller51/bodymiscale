@@ -1,0 +1,74 @@
+{
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "esbenp.prettier-vscode",
+        "github.vscode-pull-request-github",
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-vscode.makefile-tools",
+        "ryanluker.vscode-coverage-gutters",
+        "visualstudioexptteam.vscodeintellicode"
+      ],
+      "settings": {
+        "editor.formatOnPaste": false,
+        "editor.formatOnSave": true,
+        "editor.formatOnType": true,
+        "editor.tabSize": 4,
+        "files.eol": "\n",
+        "files.trimTrailingWhitespace": true,
+        "python.analysis.autoImportCompletions": true,
+        "python.analysis.autoSearchPaths": false,
+        "python.analysis.extraPaths": ["/home/vscode/.local/lib/python*/"],
+        "python.analysis.typeCheckingMode": "basic",
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "python.formatting.autopep8Path": "/usr/local/py-utils/bin/autopep8",
+        "python.formatting.blackPath": "/usr/local/py-utils/bin/black",
+        "python.formatting.provider": "black",
+        "python.formatting.yapfPath": "/usr/local/py-utils/bin/yapf",
+        "python.languageServer": "Pylance",
+        "python.linting.banditPath": "/usr/local/py-utils/bin/bandit",
+        "python.linting.enabled": true,
+        "python.linting.flake8Path": "/usr/local/py-utils/bin/flake8",
+        "python.linting.mypyEnabled": true,
+        "python.linting.mypyPath": "/usr/local/py-utils/bin/mypy",
+        "python.linting.pycodestylePath": "/usr/local/py-utils/bin/pycodestyle",
+        "python.linting.pydocstylePath": "/usr/local/py-utils/bin/pydocstyle",
+        "python.linting.pylintArgs": ["--disable", "import-error"],
+        "python.linting.pylintEnabled": true,
+        "python.linting.pylintPath": "/usr/local/py-utils/bin/pylint",
+        "python.pythonPath": "/usr/local/python/bin/python",
+        "python.testing.pytestEnabled": true,
+        "python.testing.unittestEnabled": false,
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        "terminal.integrated.profiles.linux": {
+          "zsh": {
+            "path": "/usr/bin/zsh"
+          }
+        }
+      }
+    }
+  },
+  "features": {
+    "rust": "latest"
+  },
+  "forwardPorts": [8123],
+  "image": "mcr.microsoft.com/devcontainers/python:3-bullseye",
+  "name": "Bodymiscale",
+  "portsAttributes": {
+    "0-8122": {
+      "label": "Auto-Forwarded - Other",
+      "onAutoForward": "ignore"
+    },
+    "8123": {
+      "label": "Home Assistant"
+    },
+    "8124-999999": {
+      "label": "Auto-Forwarded - Other",
+      "onAutoForward": "ignore"
+    }
+  },
+  "postCreateCommand": "scripts/setup",
+  "remoteUser": "vscode",
+  "runArgs": ["-e", "GIT_EDITOR=code --wait"]
+}

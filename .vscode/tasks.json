@@ -1,26 +1,27 @@
+// See https://code.visualstudio.com/docs/editor/tasks
 {
   "tasks": [
     {
-      "command": "container start",
-      "label": "Run Home Assistant on port 9123",
+      "command": "scripts/develop",
+      "label": "Run Home Assistant",
       "problemMatcher": [],
       "type": "shell"
     },
     {
-      "command": "container check",
-      "label": "Run Home Assistant configuration against /config",
+      "command": "scripts/setup",
+      "label": "Upgrade environment",
       "problemMatcher": [],
       "type": "shell"
     },
     {
-      "command": "container install",
-      "label": "Upgrade Home Assistant to latest dev",
+      "command": "scripts/test",
+      "label": "Run tests",
       "problemMatcher": [],
       "type": "shell"
     },
     {
-      "command": "container set-version",
-      "label": "Install a specific version of Home Assistant",
+      "command": "scripts/lint",
+      "label": "Run lint checks",
       "problemMatcher": [],
       "type": "shell"
     }

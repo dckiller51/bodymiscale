@@ -25,6 +25,15 @@
       }
     }
   },
+  "entity_component": {
+    "_": {
+      "name": "bodymiscale",
+      "state": {
+        "ok": "OK",
+        "problem": "Problème"
+      }
+    }
+  },
   "options": {
     "step": {
       "init": {
@@ -36,15 +45,6 @@
         "data_description": {
           "impedance": "Si votre balance ne fournit pas l' impédance, laissez ce champ vide."
         }
-      }
-    }
-  },
-  "entity_component": {
-    "_": {
-      "name": "bodymiscale",
-      "state": {
-        "ok": "OK",
-        "problem": "Problème"
       }
     }
   }
