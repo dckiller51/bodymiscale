@@ -25,6 +25,15 @@
       }
     }
   },
+  "entity_component": {
+    "_": {
+      "name": "bodymiscale",
+      "state": {
+        "ok": "OK",
+        "problem": "Błąd"
+      }
+    }
+  },
   "options": {
     "step": {
       "init": {
@@ -36,15 +45,6 @@
         "data_description": {
           "impedance": "Jeśli waga nie podaje impedancji, pozostaw to pole puste."
         }
-      }
-    }
-  },
-  "entity_component": {
-    "_": {
-      "name": "bodymiscale",
-      "state": {
-        "ok": "OK",
-        "problem": "Błąd"
       }
     }
   }

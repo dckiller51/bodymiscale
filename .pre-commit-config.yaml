@@ -56,12 +56,12 @@ repos:
           - --fix=lf
         stages: [manual]
   - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v3.0.0
+    rev: v2.7.1
     hooks:
       - id: prettier
         additional_dependencies:
-          - prettier@3.0.0
-          - prettier-plugin-sort-json@1.0.0
+          - prettier@2.7.1
+          - prettier-plugin-sort-json@0.0.3
         exclude_types:
           - python
         exclude: manifest\.json$

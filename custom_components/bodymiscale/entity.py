@@ -1,5 +1,4 @@
 """Bodymiscale entity module."""
-from typing import Optional
 
 from homeassistant.const import CONF_NAME
 from homeassistant.helpers.device_registry import DeviceEntryType
@@ -17,7 +16,7 @@ class BodyScaleBaseEntity(Entity):  # type: ignore[misc]
     def __init__(
         self,
         handler: BodyScaleMetricsHandler,
-        entity_description: Optional[EntityDescription] = None,
+        entity_description: EntityDescription | None = None,
     ):
         """Initialize the entity."""
         super().__init__()
@@ -44,7 +43,7 @@ class BodyScaleBaseEntity(Entity):  # type: ignore[misc]
             self._attr_name = f"{name} {self.entity_description.key.replace('_', ' ')}"
 
     @property
-    def device_info(self) -> Optional[DeviceInfo]:
+    def device_info(self) -> DeviceInfo | None:
         """Return device specific attributes."""
         return DeviceInfo(
             entry_type=DeviceEntryType.SERVICE,

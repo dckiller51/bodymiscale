@@ -19,9 +19,7 @@
         "files.trimTrailingWhitespace": true,
         "python.analysis.autoImportCompletions": true,
         "python.analysis.autoSearchPaths": false,
-        "python.analysis.extraPaths": [
-          "/home/vscode/.local/lib/python*/"
-        ],
+        "python.analysis.extraPaths": ["/home/vscode/.local/lib/python*/"],
         "python.analysis.typeCheckingMode": "basic",
         "python.defaultInterpreterPath": "/usr/local/bin/python",
         "python.formatting.autopep8Path": "/usr/local/py-utils/bin/autopep8",
@@ -36,10 +34,7 @@
         "python.linting.mypyPath": "/usr/local/py-utils/bin/mypy",
         "python.linting.pycodestylePath": "/usr/local/py-utils/bin/pycodestyle",
         "python.linting.pydocstylePath": "/usr/local/py-utils/bin/pydocstyle",
-        "python.linting.pylintArgs": [
-          "--disable",
-          "import-error"
-        ],
+        "python.linting.pylintArgs": ["--disable", "import-error"],
         "python.linting.pylintEnabled": true,
         "python.linting.pylintPath": "/usr/local/py-utils/bin/pylint",
         "python.pythonPath": "/usr/local/python/bin/python",
@@ -57,9 +52,7 @@
   "features": {
     "rust": "latest"
   },
-  "forwardPorts": [
-    8123
-  ],
+  "forwardPorts": [8123],
   "image": "mcr.microsoft.com/devcontainers/python:3-bullseye",
   "name": "Bodymiscale",
   "portsAttributes": {
@@ -77,8 +70,5 @@
   },
   "postCreateCommand": "scripts/setup",
   "remoteUser": "vscode",
-  "runArgs": [
-    "-e",
-    "GIT_EDITOR=code --wait"
-  ]
+  "runArgs": ["-e", "GIT_EDITOR=code --wait"]
 }
