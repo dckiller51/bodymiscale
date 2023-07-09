@@ -168,9 +168,7 @@ class Bodymiscale(BodyScaleBaseEntity):
         """Initialize the Bodymiscale component."""
         super().__init__(
             handler,
-            EntityDescription(
-                key="bodymiscale", name=handler.config[CONF_NAME], icon="mdi:human"
-            ),
+            EntityDescription(key="bodymiscale", name=None, icon="mdi:human"),
         )
         self._timer_handle: asyncio.TimerHandle | None = None
         self._available_metrics: MutableMapping[str, StateType] = TTLCache(
