@@ -2,9 +2,14 @@
 
 from homeassistant.const import CONF_NAME
 from homeassistant.helpers.device_registry import DeviceEntryType
-from homeassistant.helpers.entity import DeviceInfo, Entity, EntityDescription
+from homeassistant.helpers.entity import (
+    UNDEFINED,
+    DeviceInfo,
+    Entity,
+    EntityDescription,
+)
 
-from .const import DOMAIN, NAME, VERSION
+from .const import DOMAIN, VERSION
 from .metrics import BodyScaleMetricsHandler
 
 
@@ -12,6 +17,7 @@ class BodyScaleBaseEntity(Entity):  # type: ignore[misc]
     """Body scale base entity."""
 
     _attr_should_poll = False
+    _attr_has_entity_name = True
 
     def __init__(
         self,
@@ -34,20 +40,16 @@ class BodyScaleBaseEntity(Entity):  # type: ignore[misc]
         name = handler.config[CONF_NAME]
         self._attr_unique_id = "_".join([DOMAIN, name, self.entity_description.key])
 
-        if self.entity_description.name:
-            # Name provided, using the provided one
-            if not self.entity_description.name.lower().startswith(name.lower()):
-                # Entity name should start with configurated name
-                self._attr_name = f"{name} {self.entity_description.name}"
-        else:
-            self._attr_name = f"{name} {self.entity_description.key.replace('_', ' ')}"
+        if self.entity_description.name == UNDEFINED:
+            # Name not provided... get it from the key
+            self._attr_name = self.entity_description.key.replace("_", " ").capitalize()
 
     @property
     def device_info(self) -> DeviceInfo | None:
         """Return device specific attributes."""
         return DeviceInfo(
             entry_type=DeviceEntryType.SERVICE,
-            name=NAME,
+            name=self._handler.config[CONF_NAME],
             sw_version=VERSION,
             identifiers={(DOMAIN, self._handler.config_entry_id)},
         )
