@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## v3.0.8
+
+- #173 fixed naming after installing Core 2023.7.0 @edenhaus
+- add logger to manifest @edenhaus
+
 ## v3.0.7
 
 - remove sensor body type from sensor but still available as attribute in component
