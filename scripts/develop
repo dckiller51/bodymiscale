@@ -45,16 +45,16 @@ input_number:
 template:
   - sensor:
       - name: Weight
-        state: "{{ states('input_number.weight') }}"
+        state: \"{{ states('input_number.weight') }}\"
         unit_of_measurement: "kg"
       - name: Impedance
-        state: "{{ states('input_number.impedance') }}"
+        state: \"{{ states('input_number.impedance') }}\"
         unit_of_measurement: "ohm"
       - name: Weight 2
-        state: "{{ states('input_number.weight_2') }}"
+        state: \"{{ states('input_number.weight_2') }}\"
         unit_of_measurement: "kg"
       - name: Impedance 2
-        state: "{{ states('input_number.impedance_2') }}"
+        state: \"{{ states('input_number.impedance_2') }}\"
         unit_of_measurement: "ohm"
 
 # If you need to debug uncomment the line below (doc: https://www.home-assistant.io/integrations/debugpy/)
