@@ -54,13 +54,13 @@ def _get_options_schema(
                 description={"suggested_value": defaults[CONF_SENSOR_WEIGHT]}
                 if CONF_SENSOR_WEIGHT in defaults
                 else None,
-            ): selector({"entity": {"domain": ["sensor", "input_number"]}}),
+            ): selector({"entity": {"domain": ["sensor", "input_number", "number"]}}),
             vol.Optional(
                 CONF_SENSOR_IMPEDANCE,
                 description={"suggested_value": defaults[CONF_SENSOR_IMPEDANCE]}
                 if CONF_SENSOR_IMPEDANCE in defaults
                 else None,
-            ): selector({"entity": {"domain": ["sensor", "input_number"]}}),
+            ): selector({"entity": {"domain": ["sensor", "input_number", "number"]}}),
         }
     )
 
