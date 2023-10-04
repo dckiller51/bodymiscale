@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## v3.0.9
+
+- Move DeviceInfo from entity to device registry
+- Use shorthand attributes
+- allow input type "number" in addition to "sensor" and "input_number"
+
 ## v3.0.8
 
 - #173 fixed naming after installing Core 2023.7.0 @edenhaus
