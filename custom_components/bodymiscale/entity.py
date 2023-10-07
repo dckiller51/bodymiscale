@@ -33,11 +33,13 @@ class BodyScaleBaseEntity(Entity):  # type: ignore[misc]
             raise ValueError('"entity_description.key" must be either set!')
 
         name = handler.config[CONF_NAME]
-        self._attr_unique_id = "_".join([DOMAIN, name, self.entity_description.key])
+        self._attr_unique_id = self.entity_description.key
 
         if self.entity_description.name == UNDEFINED:
             # Name not provided... get it from the key
             self._attr_name = self.entity_description.key.replace("_", " ").capitalize()
+        else:
+            self._attr_name = self._handler.config[CONF_NAME]
         self._attr_device_info = DeviceInfo(
             entry_type=DeviceEntryType.SERVICE,
             name=self._handler.config[CONF_NAME],
