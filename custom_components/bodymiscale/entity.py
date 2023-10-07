@@ -32,7 +32,8 @@ class BodyScaleBaseEntity(Entity):  # type: ignore[misc]
         if not self.entity_description.key:
             raise ValueError('"entity_description.key" must be either set!')
 
-        self._attr_unique_id = self.entity_description.key
+        name = handler.config[CONF_NAME]
+        self._attr_unique_id = "_".join([DOMAIN, name, self.entity_description.key])
 
         if self.entity_description.name == UNDEFINED:
             # Name not provided... get it from the key
