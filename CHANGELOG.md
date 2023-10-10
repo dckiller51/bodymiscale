@@ -7,6 +7,9 @@ All notable changes to this project will be documented in this file.
 ## v3.1.0
 
 - update of the translation DE,EN,ES,FR,IT,PL,PT-BR,RO,RU
+- update state problems for using the strings.json file
+- update state body type for using the strings.json file
+- update state bmi label for using the strings.json file
 - #191 fixed naming
 
 ## v3.0.9

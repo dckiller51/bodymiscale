@@ -52,17 +52,17 @@
           "name": "Błąd",
           "state": {
             "none": "Brak",
-            "weight unavailable": "Waga niedostępna",
-            "impedance unavailable": "Impedancja niedostępna",
-            "weight unavailable, impedance unavailable": "Waga i impedancja niedostępne",
-            "weight low": "Niska waga",
-            "impedance low": "Niska impedancja",
-            "weight low, impedance low": "Waga i impedancja niskie",
-            "weight high": "Waga wysoka",
-            "impedance high": "Impedancja wysoka",
-            "weight high, impedance high": "Waga i impedancja wysoka",
-            "weight high, impedance low": "Waga wysoka a impedancja niska",
-            "weight low, impedance high": "Waga nizska a impedancja wysoka"
+            "weight_unavailable": "Waga niedostępna",
+            "impedance_unavailable": "Impedancja niedostępna",
+            "weight_unavailable_and_impedance_unavailable": "Waga i impedancja niedostępne",
+            "weight_low": "Niska waga",
+            "impedance_low": "Niska impedancja",
+            "weight_low_and_impedance_low": "Waga i impedancja niskie",
+            "weight_high": "Waga wysoka",
+            "impedance_high": "Impedancja wysoka",
+            "weight_high_and_impedance_high": "Waga i impedancja wysoka",
+            "weight_high_and_impedance_low": "Waga wysoka a impedancja niska",
+            "weight_low_and_impedance_high": "Waga nizska a impedancja wysoka"
           }
         },
         "impedance": { "name": "Impedancja" },
@@ -76,15 +76,15 @@
         "body_type": {
           "name": "Typ sylwetki",
           "state": {
-            "Obese": "Obese",
-            "Overweight": "Overweight",
-            "Thick-set": "Thick-set",
-            "Lack-exercise": "Lack-exercise",
-            "Balanced": "Balanced",
-            "Balanced-muscular": "Balanced-muscular",
-            "Skinny": "Skinny",
-            "Balanced-skinny": "Balanced-skinny",
-            "Skinny-muscular": "Skinny-muscular",
+            "obese": "Obese",
+            "overweight": "Overweight",
+            "thick_set": "Thick-set",
+            "lack_exercise": "Lack-exercise",
+            "balanced": "Balanced",
+            "balanced_muscular": "Balanced-muscular",
+            "skinny": "Skinny",
+            "balanced_skinny": "Balanced-skinny",
+            "skinny_muscular": "Skinny-muscular",
             "unavailable": "niedostępny"
           }
         },
@@ -92,13 +92,13 @@
         "bmi_label": {
           "name": "BMI label",
           "state": {
-            "Underweight": "Underweight",
-            "Normal or Healthy Weight": "Normal or Healthy Weight",
-            "Slight overweight": "Slight overweight",
-            "Overweight": "Overweight",
-            "Moderate obesity": "Moderate obesity",
-            "Severe obesity": "Severe obesity",
-            "Massive obesity": "Massive obesity",
+            "underweight": "Underweight",
+            "normal_or_healthy_weight": "Normal or Healthy Weight",
+            "slight_overweight": "Slight overweight",
+            "overweight": "Overweight",
+            "moderate_obesity": "Moderate obesity",
+            "severe_obesity": "Severe obesity",
+            "massive_obesity": "Massive obesity",
             "unavailable": "unavailable"
           }
         },

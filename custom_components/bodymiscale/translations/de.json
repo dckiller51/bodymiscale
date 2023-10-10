@@ -52,9 +52,9 @@
           "name": "Problem",
           "state": {
             "none": "keine",
-            "weight unavailable": "Gewichtsmessung nicht verfügbar",
-            "impedance unavailable": "Bioelektrische Impedanzmessung (Körperzusammensetzung) nicht verfügbar",
-            "weight unavailable, impedance unavailable": "Gewichts- und bioelektrische Impedanzmessung (Körperzusammensetzung) nicht verfügbar."
+            "weight_unavailable": "Gewichtsmessung nicht verfügbar",
+            "impedance_unavailable": "Bioelektrische Impedanzmessung (Körperzusammensetzung) nicht verfügbar",
+            "weight unavailable_and_impedance unavailable": "Gewichts- und bioelektrische Impedanzmessung (Körperzusammensetzung) nicht verfügbar."
           }
         },
         "impedance": { "name": "Zusammensetzung" },
@@ -68,15 +68,15 @@
         "body_type": {
           "name": "Körperbau",
           "state": {
-            "Obese": "fettleibig",
-            "Overweight": "Übergewicht",
-            "Thick-set": "stämmig",
-            "Lack-exercise": "Bewegungsmangel",
-            "Balanced": "ausgewogen",
-            "Balanced-muscular": "ausgewogen muskulös",
-            "Skinny": "schlank",
-            "Balanced-skinny": "ausgeglichen schlank",
-            "Skinny-muscular": "muskulös schlank",
+            "obese": "fettleibig",
+            "overweight": "Übergewicht",
+            "thick_set": "stämmig",
+            "lack_exercise": "Bewegungsmangel",
+            "balanced": "ausgewogen",
+            "balanced_muscular": "ausgewogen muskulös",
+            "skinny": "schlank",
+            "balanced_skinny": "ausgeglichen schlank",
+            "skinny_muscular": "muskulös schlank",
             "unavailable": "Nicht verfügbar"
           }
         },
@@ -84,13 +84,13 @@
         "bmi_label": {
           "name": "BMI Klassifikation",
           "state": {
-            "Underweight": "Untergewicht",
-            "Normal or Healthy Weight": "Normal - gesundes Gewicht",
-            "Slight overweight": "leichtes Übergewicht",
-            "Overweight": "Übergewicht",
-            "Moderate obesity": "moderate Fettleibigkeit",
-            "Severe obesity": "schwere Fettleibigkeit",
-            "Massive obesity": "massive Fettleibigkeit",
+            "underweight": "Untergewicht",
+            "normal_or_healthy_weight": "Normal - gesundes Gewicht",
+            "slight_overweight": "leichtes Übergewicht",
+            "overweight": "Übergewicht",
+            "moderate_obesity": "moderate Fettleibigkeit",
+            "severe_obesity": "schwere Fettleibigkeit",
+            "massive_obesity": "massive Fettleibigkeit",
             "unavailable": "Nicht verfügbar"
           }
         },

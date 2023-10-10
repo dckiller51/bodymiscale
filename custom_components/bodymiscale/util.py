@@ -31,18 +31,18 @@ def get_ideal_weight(config: Mapping[str, Any]) -> float:
 def get_bmi_label(bmi: float) -> str:  # pylint: disable=too-many-return-statements
     """Get BMI label."""
     if bmi < 18.5:
-        return "Underweight"
+        return "underweight"
     if bmi < 25:
-        return "Normal or Healthy Weight"
+        return "normal_or_healthy_weight"
     if bmi < 27:
-        return "Slight overweight"
+        return "slight overweight"
     if bmi < 30:
-        return "Overweight"
+        return "overweight"
     if bmi < 35:
-        return "Moderate obesity"
+        return "moderate_obesity"
     if bmi < 40:
-        return "Severe obesity"
-    return "Massive obesity"
+        return "severe_obesity"
+    return "massive_obesity"
 
 
 def get_age(date: str) -> int:

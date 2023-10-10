@@ -52,17 +52,17 @@
           "name": "Problema",
           "state": {
             "none": "Nessuno",
-            "weight unavailable": "Peso non disponibile",
-            "impedance unavailable": "Impedenza non disponibile",
-            "weight unavailable, impedance unavailable": "Peso non disponibile, impedenza non disponibile",
-            "weight low": "Peso basso",
-            "impedance low": "Impedenza bassa",
-            "weight low, impedance low": "Peso basso, impedenza bassa",
-            "weight high": "Peso alto",
+            "weight_unavailable": "Peso non disponibile",
+            "impedance_unavailable": "Impedenza non disponibile",
+            "weight_unavailable_and_impedance_unavailable": "Peso non disponibile, impedenza non disponibile",
+            "weight_low": "Peso basso",
+            "impedance_low": "Impedenza bassa",
+            "weight_low_and_impedance_low": "Peso basso, impedenza bassa",
+            "weight_high": "Peso alto",
             "impedance high": "Impedenza alta",
-            "weight high, impedance high": "Peso alto, impedenza alta",
-            "weight high, impedance low": "Peso alto, impedenza bassa",
-            "weight low, impedance high": "Peso basso, impedenza alta"
+            "weight_high_and_impedance_high": "Peso alto, impedenza alta",
+            "weight_high_and_impedance_low": "Peso alto, impedenza bassa",
+            "weight_low_and_impedance_high": "Peso basso, impedenza alta"
           }
         },
         "impedance": { "name": "Impedenza" },
@@ -76,15 +76,15 @@
         "body_type": {
           "name": "Tipo di corpo",
           "state": {
-            "Obese": "Obeso",
-            "Overweight": "Sovrappeso",
-            "Thick-set": "Spesso-impostato",
-            "Lack-exercise": "Manca-esercizio",
-            "Balanced": "Bilanciato",
-            "Balanced-muscular": "Bilanciato-muscoloso",
-            "Skinny": "Magro",
-            "Balanced-skinny": "Bilanciato-magro",
-            "Skinny-muscular": "Magro-muscoloso",
+            "obese": "Obeso",
+            "overweight": "Sovrappeso",
+            "thick_set": "Spesso-impostato",
+            "lack_exercise": "Manca-esercizio",
+            "balanced": "Bilanciato",
+            "balanced_muscular": "Bilanciato-muscoloso",
+            "skinny": "Magro",
+            "balanced_skinny": "Bilanciato-magro",
+            "skinny_muscular": "Magro-muscoloso",
             "unavailable": "non disponibile"
           }
         },
@@ -92,13 +92,13 @@
         "bmi_label": {
           "name": "BMI Categoria",
           "state": {
-            "Underweight": "Sottopeso",
-            "Normal or Healthy Weight": "Normale o Peso Sano",
-            "Slight overweight": "Leggermente in sovrappeso",
-            "Overweight": "Sovrappeso",
-            "Moderate obesity": "Obesità Moderata",
-            "Severe obesity": "Obesità Grave",
-            "Massive obesity": "Obesità Massiccia",
+            "underweight": "Sottopeso",
+            "normal_or_healthy_weight": "Normale o Peso Sano",
+            "slight_overweight": "Leggermente in sovrappeso",
+            "overweight": "Sovrappeso",
+            "moderate_obesity": "Obesità Moderata",
+            "severe_obesity": "Obesità Grave",
+            "massive_obesity": "Obesità Massiccia",
             "unavailable": "non disponibile"
           }
         },
