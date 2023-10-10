@@ -25,7 +25,22 @@
       }
     }
   },
-  "title": "BodyMiScale",
+  "entity": {
+    "sensor": {
+      "basal_metabolism": { "name": "Metabolismo basal" },
+      "bmi": { "name": "IMC" },
+      "body_fat": { "name": "Grasa corporal" },
+      "body_score": { "name": "Puntuación corporal" },
+      "bone_mass": { "name": "Masa ósea" },
+      "lean_body_mass": { "name": "Masa corporal magra" },
+      "metabolic_age": { "name": "Edad metabólica" },
+      "muscle_mass": { "name": "Masa muscular" },
+      "protein": { "name": "Proteína" },
+      "visceral_fat": { "name": "Grasa visceral" },
+      "water": { "name": "Agua" },
+      "weight": { "name": "Peso" }
+    }
+  },
   "entity_component": {
     "_": {
       "name": "bodymiscale",
@@ -34,93 +49,77 @@
         "problem": "Problema"
       },
       "state_attributes": {
-        "height": { "name": "Altura" },
-        "gender": {
-          "name": "Sexo",
-          "state": {
-            "male": "masculino",
-            "female": "femenino"
-          }
-        },
-        "ideal": { "name": "Ideal" },
         "age": { "name": "Edad" },
-        "weight": { "name": "Peso" },
-        "bmi": { "name": "IMC" },
         "basal_metabolism": { "name": "Metabolismo basal" },
-        "visceral_fat": { "name": "Grasa visceral" },
-        "problem": {
-          "name": "Problema",
+        "bmi": { "name": "IMC" },
+        "bmi_label": {
+          "name": "Etiqueta IMC",
           "state": {
-            "none": "Ninguno",
-            "weight_unavailable": "Peso no disponible",
-            "impedance_unavailable": "Impedancia no disponible",
-            "weight_unavailable_and_impedance_unavailable": "Peso no disponible, impedancia no disponible",
-            "weight_low": "Peso bajo",
-            "impedance_low": "Impedancia baja",
-            "weight_low_and_impedance_low": "Peso bajo, impedancia baja",
-            "weight_high": "Peso alto",
-            "impedance_high": "Impedancia alta",
-            "weight_high_and_impedance_high": "Peso alto, impedancia alta",
-            "weight_high_and_impedance_low": "Peso alto, impedancia baja",
-            "weight_low_and_impedance_high": "Peso bajo, impedancia alta"
+            "massive_obesity": "Obesidad masiva",
+            "moderate_ obesity": "Obesidad moderada",
+            "normal_or_healthy_weight": "Normal",
+            "overweight": "Sobrepeso",
+            "severe_obesity": "Obesidad severa",
+            "slight_overweight": "Ligero sobrepeso",
+            "unavailable": "no disponible",
+            "underweight": "Por debajo del peso normal"
           }
         },
-        "impedance": { "name": "Impedancia" },
-        "lean_body_mass": { "name": "Masa corporal magra" },
         "body_fat": { "name": "Grasa corporal" },
-        "water": { "name": "Agua" },
-        "bone_mass": { "name": "Masa ósea" },
-        "muscle_mass": { "name": "Masa muscular" },
-        "protein": { "name": "Proteína" },
         "body_score": { "name": "Puntuación corporal" },
         "body_type": {
           "name": "Tipo de cuerpo",
           "state": {
-            "obese": "Obeso",
-            "overweight": "Sobrepeso",
-            "thick_set": "Rechoncho",
-            "lack_exercise": "Falto de ejercicio",
             "balanced": "Equilibrado",
             "balanced_muscular": "Musculuso equilibrado",
-            "skinny": "Flaco",
             "balanced_skinny": "Flaco equilibrado",
-            "skinny_muscular": "Flaco musculoso",
-            "unavailable": "no disponible"
-          }
-        },
-        "metabolic_age": { "name": "Edad metabólica" },
-        "bmi_label": {
-          "name": "Etiqueta IMC",
-          "state": {
-            "underweight": "Por debajo del peso normal",
-            "normal_or_healthy_weight": "Normal",
-            "slight_overweight": "Ligero sobrepeso",
+            "lack_exercise": "Falto de ejercicio",
+            "obese": "Obeso",
             "overweight": "Sobrepeso",
-            "moderate_ obesity": "Obesidad moderada",
-            "severe_obesity": "Obesidad severa",
-            "massive_obesity": "Obesidad masiva",
+            "skinny": "Flaco",
+            "skinny_muscular": "Flaco musculoso",
+            "thick_set": "Rechoncho",
             "unavailable": "no disponible"
           }
         },
+        "bone_mass": { "name": "Masa ósea" },
+        "fat_mass_to_gain": { "name": "Masa grasa a ganar" },
         "fat_mass_to_lose": { "name": "Masa grasa a perder" },
-        "fat_mass_to_gain": { "name": "Masa grasa a ganar" }
+        "gender": {
+          "name": "Sexo",
+          "state": {
+            "female": "femenino",
+            "male": "masculino"
+          }
+        },
+        "height": { "name": "Altura" },
+        "ideal": { "name": "Ideal" },
+        "impedance": { "name": "Impedancia" },
+        "lean_body_mass": { "name": "Masa corporal magra" },
+        "metabolic_age": { "name": "Edad metabólica" },
+        "muscle_mass": { "name": "Masa muscular" },
+        "problem": {
+          "name": "Problema",
+          "state": {
+            "impedance_high": "Impedancia alta",
+            "impedance_low": "Impedancia baja",
+            "impedance_unavailable": "Impedancia no disponible",
+            "none": "Ninguno",
+            "weight_high": "Peso alto",
+            "weight_high_and_impedance_high": "Peso alto, impedancia alta",
+            "weight_high_and_impedance_low": "Peso alto, impedancia baja",
+            "weight_low": "Peso bajo",
+            "weight_low_and_impedance_high": "Peso bajo, impedancia alta",
+            "weight_low_and_impedance_low": "Peso bajo, impedancia baja",
+            "weight_unavailable": "Peso no disponible",
+            "weight_unavailable_and_impedance_unavailable": "Peso no disponible, impedancia no disponible"
+          }
+        },
+        "protein": { "name": "Proteína" },
+        "visceral_fat": { "name": "Grasa visceral" },
+        "water": { "name": "Agua" },
+        "weight": { "name": "Peso" }
       }
-    }
-  },
-  "entity": {
-    "sensor": {
-      "bmi": { "name": "IMC" },
-      "basal_metabolism": { "name": "Metabolismo basal" },
-      "visceral_fat": { "name": "Grasa visceral" },
-      "weight": { "name": "Peso"},
-      "lean_body_mass": { "name": "Masa corporal magra" },
-      "body_fat": { "name": "Grasa corporal" },
-      "protein": { "name": "Proteína" },
-      "water": { "name": "Agua" },
-      "bone_mass": { "name": "Masa ósea" },
-      "muscle_mass": { "name": "Masa muscular" },
-      "metabolic_age": { "name": "Edad metabólica" },
-      "body_score": { "name": "Puntuación corporal" }
     }
   },
   "options": {
@@ -136,5 +135,6 @@
         }
       }
     }
-  }
+  },
+  "title": "BodyMiScale"
 }

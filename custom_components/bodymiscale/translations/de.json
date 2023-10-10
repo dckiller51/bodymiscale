@@ -25,7 +25,22 @@
       }
     }
   },
-  "title": "BodyMiScale",
+  "entity": {
+    "sensor": {
+      "basal_metabolism": { "name": "Grundumsatz" },
+      "bmi": { "name": "BMI" },
+      "body_fat": { "name": "Körperfett" },
+      "body_score": { "name": "Körperbewertung" },
+      "bone_mass": { "name": "Knochenmasse" },
+      "lean_body_mass": { "name": "Magere Körpermasse" },
+      "metabolic_age": { "name": "stoffwechselbedingtes Körperalter" },
+      "muscle_mass": { "name": "Muskelmasse" },
+      "protein": { "name": "Protein" },
+      "visceral_fat": { "name": "Bauchfett" },
+      "water": { "name": "Wasser" },
+      "weight": { "name": "Gewicht" }
+    }
+  },
   "entity_component": {
     "_": {
       "name": "bodymiscale",
@@ -34,85 +49,69 @@
         "problem": "Problem"
       },
       "state_attributes": {
-        "height": { "name": "Körpergröße" },
-        "gender": {
-          "name": "Geschlecht",
-          "state": {
-            "male": "männl.",
-            "female": "weibl."
-          }
-        },
-        "ideal": { "name": "Idealgewicht" },
         "age": { "name": "Alter" },
-        "weight": { "name": "Gewicht" },
-        "bmi": { "name": "BMI" },
         "basal_metabolism": { "name": "Grundumsatz" },
-        "visceral_fat": { "name": "Bauchfett" },
-        "problem": {
-          "name": "Problem",
+        "bmi": { "name": "BMI" },
+        "bmi_label": {
+          "name": "BMI Klassifikation",
           "state": {
-            "none": "keine",
-            "weight_unavailable": "Gewichtsmessung nicht verfügbar",
-            "impedance_unavailable": "Bioelektrische Impedanzmessung (Körperzusammensetzung) nicht verfügbar",
-            "weight unavailable_and_impedance unavailable": "Gewichts- und bioelektrische Impedanzmessung (Körperzusammensetzung) nicht verfügbar."
+            "massive_obesity": "massive Fettleibigkeit",
+            "moderate_obesity": "moderate Fettleibigkeit",
+            "normal_or_healthy_weight": "Normal - gesundes Gewicht",
+            "overweight": "Übergewicht",
+            "severe_obesity": "schwere Fettleibigkeit",
+            "slight_overweight": "leichtes Übergewicht",
+            "unavailable": "Nicht verfügbar",
+            "underweight": "Untergewicht"
           }
         },
-        "impedance": { "name": "Zusammensetzung" },
-        "lean_body_mass": { "name": "Magere Körpermasse" },
         "body_fat": { "name": "Körperfett" },
-        "water": { "name": "Wasser" },
-        "bone_mass": { "name": "Knochenmasse" },
-        "muscle_mass": { "name": "Muskelmasse" },
-        "protein": { "name": "Protein" },
         "body_score": { "name": "Körperbewertung" },
         "body_type": {
           "name": "Körperbau",
           "state": {
-            "obese": "fettleibig",
-            "overweight": "Übergewicht",
-            "thick_set": "stämmig",
-            "lack_exercise": "Bewegungsmangel",
             "balanced": "ausgewogen",
             "balanced_muscular": "ausgewogen muskulös",
-            "skinny": "schlank",
             "balanced_skinny": "ausgeglichen schlank",
-            "skinny_muscular": "muskulös schlank",
-            "unavailable": "Nicht verfügbar"
-          }
-        },
-        "metabolic_age": { "name": "stoffwechselbedingtes Körperalter" },
-        "bmi_label": {
-          "name": "BMI Klassifikation",
-          "state": {
-            "underweight": "Untergewicht",
-            "normal_or_healthy_weight": "Normal - gesundes Gewicht",
-            "slight_overweight": "leichtes Übergewicht",
+            "lack_exercise": "Bewegungsmangel",
+            "obese": "fettleibig",
             "overweight": "Übergewicht",
-            "moderate_obesity": "moderate Fettleibigkeit",
-            "severe_obesity": "schwere Fettleibigkeit",
-            "massive_obesity": "massive Fettleibigkeit",
+            "skinny": "schlank",
+            "skinny_muscular": "muskulös schlank",
+            "thick_set": "stämmig",
             "unavailable": "Nicht verfügbar"
           }
         },
+        "bone_mass": { "name": "Knochenmasse" },
+        "fat_mass_to_gain": { "name": "Fettmasse zu gewinnen" },
         "fat_mass_to_lose": { "name": "Fettmasse zu verlieren" },
-        "fat_mass_to_gain": { "name": "Fettmasse zu gewinnen" }
+        "gender": {
+          "name": "Geschlecht",
+          "state": {
+            "female": "weibl.",
+            "male": "männl."
+          }
+        },
+        "height": { "name": "Körpergröße" },
+        "ideal": { "name": "Idealgewicht" },
+        "impedance": { "name": "Zusammensetzung" },
+        "lean_body_mass": { "name": "Magere Körpermasse" },
+        "metabolic_age": { "name": "stoffwechselbedingtes Körperalter" },
+        "muscle_mass": { "name": "Muskelmasse" },
+        "problem": {
+          "name": "Problem",
+          "state": {
+            "impedance_unavailable": "Bioelektrische Impedanzmessung (Körperzusammensetzung) nicht verfügbar",
+            "none": "keine",
+            "weight unavailable_and_impedance unavailable": "Gewichts- und bioelektrische Impedanzmessung (Körperzusammensetzung) nicht verfügbar.",
+            "weight_unavailable": "Gewichtsmessung nicht verfügbar"
+          }
+        },
+        "protein": { "name": "Protein" },
+        "visceral_fat": { "name": "Bauchfett" },
+        "water": { "name": "Wasser" },
+        "weight": { "name": "Gewicht" }
       }
-    }
-  },
-  "entity": {
-    "sensor": {
-      "bmi": { "name": "BMI" },
-      "basal_metabolism": { "name": "Grundumsatz" },
-      "visceral_fat": { "name": "Bauchfett" },
-      "weight": { "name": "Gewicht"},
-      "lean_body_mass": { "name": "Magere Körpermasse" },
-      "body_fat": { "name": "Körperfett" },
-      "protein": { "name": "Protein" },
-      "water": { "name": "Wasser" },
-      "bone_mass": { "name": "Knochenmasse" },
-      "muscle_mass": { "name": "Muskelmasse" },
-      "metabolic_age": { "name": "stoffwechselbedingtes Körperalter" },
-      "body_score": { "name": "Körperbewertung" }
     }
   },
   "options": {
@@ -128,5 +127,6 @@
         }
       }
     }
-  }
+  },
+  "title": "BodyMiScale"
 }

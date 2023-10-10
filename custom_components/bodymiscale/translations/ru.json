@@ -25,7 +25,22 @@
       }
     }
   },
-  "title": "BodyMiScale",
+  "entity": {
+    "sensor": {
+      "basal_metabolism": { "name": "Базальный метаболизм" },
+      "bmi": { "name": "Индекс BMI" },
+      "body_fat": { "name": "Жировая ткань" },
+      "body_score": { "name": "Оценка тела" },
+      "bone_mass": { "name": "Костная масса" },
+      "lean_body_mass": { "name": "Сухая масса тела" },
+      "metabolic_age": { "name": "Метаболический возраст" },
+      "muscle_mass": { "name": "Мышечная масса" },
+      "protein": { "name": "Белки" },
+      "visceral_fat": { "name": "Висцеральный жир" },
+      "water": { "name": "Вода" },
+      "weight": { "name": "Вес" }
+    }
+  },
   "entity_component": {
     "_": {
       "name": "bodymiscale",
@@ -34,93 +49,77 @@
         "problem": "Проблема"
       },
       "state_attributes": {
-        "height": { "name": "Рост" },
-        "gender": {
-          "name": "Пол",
-          "state": {
-            "male": "мужской",
-            "female": "женский"
-          }
-        },
-        "ideal": { "name": "Идеальный вес" },
         "age": { "name": "Возраст" },
-        "weight": { "name": "Вес" },
-        "bmi": { "name": "Индекс BMI" },
         "basal_metabolism": { "name": "Базальный метаболизм" },
-        "visceral_fat": { "name": "Висцеральный жир" },
-        "problem": {
-          "name": "Проблема",
+        "bmi": { "name": "Индекс BMI" },
+        "bmi_label": {
+          "name": "Интерпретация BMI",
           "state": {
-            "none": "Нет",
-            "weight_unavailable": "Вес недоступен",
-            "impedance_unavailable": "Биоимпеданс недоступен",
-            "weight_unavailable_and_impedance_unavailable": "Вес и биоимпеданс недоступны",
-            "weight_low": "Низкий вес",
-            "impedance_low": "Низкий биоимпеданс",
-            "weight_low_and_impedance_low": "Низкие вес и биоимпеданс",
-            "weight_high": "Высокий вес",
-            "impedance_high": "Высокий биоимпеданс",
-            "weight_high_and_impedance_high": "Высокие вес и биоимпеданс",
-            "weight_high_and_impedance_low": "Высокий вес, низкий биоимпеданс",
-            "weight_low_and_impedance_high": "Низкий вес, высокий биоимпеданс"
+            "massive_obesity": "Ожирение 3й степени",
+            "moderate_obesity": "Ожирение 1й степени",
+            "normal_or_healthy_weight": "Нормальный вес",
+            "overweight": "Лишний вес",
+            "severe_obesity": "Ожирение 2й степени",
+            "slight_overweight": "Избыточный вес",
+            "unavailable": "недоступен",
+            "underweight": "Недостаточный вес"
           }
         },
-        "impedance": { "name": "Импеданс" },
-        "lean_body_mass": { "name": "Сухая масса тела" },
         "body_fat": { "name": "Жировая ткань" },
-        "water": { "name": "Вода" },
-        "bone_mass": { "name": "Костная масса" },
-        "muscle_mass": { "name": "Мышечная масса" },
-        "protein": { "name": "Белки" },
         "body_score": { "name": "Оценка тела" },
         "body_type": {
           "name": "Тип тела",
           "state": {
-            "obese": "Ожирение",
-            "overweight": "Лишний вес",
-            "thick_set": "Коренастый",
-            "lack_exercise": "Недостаток упражнений",
             "balanced": "Оптимальный",
             "balanced_muscular": "Мускулистый",
-            "skinny": "Тощий",
             "balanced_skinny": "Худощавый",
-            "skinny_muscular": "Подтянуто-мускулистый",
-            "unavailable": "недоступен"
-          }
-        },
-        "metabolic_age": { "name": "Метаболический возраст" },
-        "bmi_label": {
-          "name": "Интерпретация BMI",
-          "state": {
-            "underweight": "Недостаточный вес",
-            "normal_or_healthy_weight": "Нормальный вес",
-            "slight_overweight": "Избыточный вес",
+            "lack_exercise": "Недостаток упражнений",
+            "obese": "Ожирение",
             "overweight": "Лишний вес",
-            "moderate_obesity": "Ожирение 1й степени",
-            "severe_obesity": "Ожирение 2й степени",
-            "massive_obesity": "Ожирение 3й степени",
+            "skinny": "Тощий",
+            "skinny_muscular": "Подтянуто-мускулистый",
+            "thick_set": "Коренастый",
             "unavailable": "недоступен"
           }
         },
+        "bone_mass": { "name": "Костная масса" },
+        "fat_mass_to_gain": { "name": "Набираемая жировая масса" },
         "fat_mass_to_lose": { "name": "Потеря жировой массы" },
-        "fat_mass_to_gain": { "name": "Набираемая жировая масса" }
+        "gender": {
+          "name": "Пол",
+          "state": {
+            "female": "женский",
+            "male": "мужской"
+          }
+        },
+        "height": { "name": "Рост" },
+        "ideal": { "name": "Идеальный вес" },
+        "impedance": { "name": "Импеданс" },
+        "lean_body_mass": { "name": "Сухая масса тела" },
+        "metabolic_age": { "name": "Метаболический возраст" },
+        "muscle_mass": { "name": "Мышечная масса" },
+        "problem": {
+          "name": "Проблема",
+          "state": {
+            "impedance_high": "Высокий биоимпеданс",
+            "impedance_low": "Низкий биоимпеданс",
+            "impedance_unavailable": "Биоимпеданс недоступен",
+            "none": "Нет",
+            "weight_high": "Высокий вес",
+            "weight_high_and_impedance_high": "Высокие вес и биоимпеданс",
+            "weight_high_and_impedance_low": "Высокий вес, низкий биоимпеданс",
+            "weight_low": "Низкий вес",
+            "weight_low_and_impedance_high": "Низкий вес, высокий биоимпеданс",
+            "weight_low_and_impedance_low": "Низкие вес и биоимпеданс",
+            "weight_unavailable": "Вес недоступен",
+            "weight_unavailable_and_impedance_unavailable": "Вес и биоимпеданс недоступны"
+          }
+        },
+        "protein": { "name": "Белки" },
+        "visceral_fat": { "name": "Висцеральный жир" },
+        "water": { "name": "Вода" },
+        "weight": { "name": "Вес" }
       }
-    }
-  },
-  "entity": {
-    "sensor": {
-      "bmi": { "name": "Индекс BMI" },
-      "basal_metabolism": { "name": "Базальный метаболизм" },
-      "visceral_fat": { "name": "Висцеральный жир" },
-      "weight": { "name": "Вес"},
-      "lean_body_mass": { "name": "Сухая масса тела" },
-      "body_fat": { "name": "Жировая ткань" },
-      "protein": { "name": "Белки" },
-      "water": { "name": "Вода" },
-      "bone_mass": { "name": "Костная масса" },
-      "muscle_mass": { "name": "Мышечная масса" },
-      "metabolic_age": { "name": "Метаболический возраст" },
-      "body_score": { "name": "Оценка тела" }
     }
   },
   "options": {
@@ -136,5 +135,6 @@
         }
       }
     }
-  }
+  },
+  "title": "BodyMiScale"
 }

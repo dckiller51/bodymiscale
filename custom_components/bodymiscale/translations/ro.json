@@ -25,7 +25,22 @@
       }
     }
   },
-  "title": "BodyMiScale",
+  "entity": {
+    "sensor": {
+      "basal_metabolism": { "name": "Metabolismul bazal" },
+      "bmi": { "name": "IMC" },
+      "body_fat": { "name": "Grăsime corporală" },
+      "body_score": { "name": "Scor corporal" },
+      "bone_mass": { "name": "Masă osoasă" },
+      "lean_body_mass": { "name": "Masă corporală slabă" },
+      "metabolic_age": { "name": "Vârsta metabolică" },
+      "muscle_mass": { "name": "Masă musculară" },
+      "protein": { "name": "Proteină" },
+      "visceral_fat": { "name": "Grasime viscerala" },
+      "water": { "name": "Apă" },
+      "weight": { "name": "Greutate" }
+    }
+  },
   "entity_component": {
     "_": {
       "name": "bodymiscale",
@@ -34,93 +49,77 @@
         "problem": "Problemă"
       },
       "state_attributes": {
-        "height": { "name": "Înălţime" },
-        "gender": {
-          "name": "Gen",
-          "state": {
-            "male": "masculin",
-            "female": "feminin"
-          }
-        },
-        "ideal": { "name": "Ideal" },
         "age": { "name": "Vârstă" },
-        "weight": { "name": "Greutate" },
-        "bmi": { "name": "IMC" },
         "basal_metabolism": { "name": "Metabolismul bazal" },
-        "visceral_fat": { "name": "Grasime viscerala" },
-        "problem": {
-          "name": "Problemă",
+        "bmi": { "name": "IMC" },
+        "bmi_label": {
+          "name": "Eticheta IMC",
           "state": {
-            "none": "Nimic",
-            "weight_unavailable": "Greutate indisponibilă",
-            "impedance_unavailable": "Impedanță indisponibilă",
-            "weight_unavailable_and_impedance_unavailable": "Greutate indisponibilă, impedanță indisponibilă",
-            "weight_low": "Greutate redusă",
-            "impedance_low": "Impedanță scăzută",
-            "weight_low_and_impedance_low": "Greutate redusă, impedanță scăzută",
-            "weight_high": "Greutate mare",
-            "impedance_high": "Impedanță mare",
-            "weight_high_and_impedance_high": "Greutate mare, impedanță mare",
-            "weight_high_and_impedance_low": "Greutate mare, impedanță scăzută",
-            "weight_low_and_impedance_high": "Greutate redusă, impedanță ridicată"
+            "massive_obesity": "Obezitate masivă",
+            "moderate_obesity": "Obezitate moderată",
+            "normal_or_healthy_weight": "Greutate normală sau sănătoasă",
+            "overweight": "Supraponderal",
+            "severe_obesity": "Obezitate severă",
+            "slight_overweight": "Ușor supraponderal",
+            "unavailable": "indisponibil",
+            "underweight": "Subponderal"
           }
         },
-        "impedance": { "name": "Impedanță" },
-        "lean_body_mass": { "name": "Masă corporală slabă" },
         "body_fat": { "name": "Grăsime corporală" },
-        "water": { "name": "Apă" },
-        "bone_mass": { "name": "Masă osoasă" },
-        "muscle_mass": { "name": "Masă musculară" },
-        "protein": { "name": "Proteină" },
         "body_score": { "name": "Scor corporal" },
         "body_type": {
           "name": "Tipul corpului",
           "state": {
-            "obese": "Obez",
-            "overweight": "Supraponderal",
-            "thick_set": "Îndesat",
-            "lack_exercise": "Lipsa-exercițiu",
             "balanced": "Echilibrat",
             "balanced_muscular": "Balanced-muscular",
-            "skinny": "Slab",
             "balanced_skinny": "Slab-echilibrat",
-            "skinny_muscular": "Slab-muscular",
-            "unavailable": "indisponibil"
-          }
-        },
-        "metabolic_age": { "name": "Vârsta metabolică" },
-        "bmi_label": {
-          "name": "Eticheta IMC",
-          "state": {
-            "underweight": "Subponderal",
-            "normal_or_healthy_weight": "Greutate normală sau sănătoasă",
-            "slight_overweight": "Ușor supraponderal",
+            "lack_exercise": "Lipsa-exercițiu",
+            "obese": "Obez",
             "overweight": "Supraponderal",
-            "moderate_obesity": "Obezitate moderată",
-            "severe_obesity": "Obezitate severă",
-            "massive_obesity": "Obezitate masivă",
+            "skinny": "Slab",
+            "skinny_muscular": "Slab-muscular",
+            "thick_set": "Îndesat",
             "unavailable": "indisponibil"
           }
         },
+        "bone_mass": { "name": "Masă osoasă" },
+        "fat_mass_to_gain": { "name": "Masa grasă pentru a câștiga" },
         "fat_mass_to_lose": { "name": "Masă grasă pentru a pierde" },
-        "fat_mass_to_gain": { "name": "Masa grasă pentru a câștiga" }
+        "gender": {
+          "name": "Gen",
+          "state": {
+            "female": "feminin",
+            "male": "masculin"
+          }
+        },
+        "height": { "name": "Înălţime" },
+        "ideal": { "name": "Ideal" },
+        "impedance": { "name": "Impedanță" },
+        "lean_body_mass": { "name": "Masă corporală slabă" },
+        "metabolic_age": { "name": "Vârsta metabolică" },
+        "muscle_mass": { "name": "Masă musculară" },
+        "problem": {
+          "name": "Problemă",
+          "state": {
+            "impedance_high": "Impedanță mare",
+            "impedance_low": "Impedanță scăzută",
+            "impedance_unavailable": "Impedanță indisponibilă",
+            "none": "Nimic",
+            "weight_high": "Greutate mare",
+            "weight_high_and_impedance_high": "Greutate mare, impedanță mare",
+            "weight_high_and_impedance_low": "Greutate mare, impedanță scăzută",
+            "weight_low": "Greutate redusă",
+            "weight_low_and_impedance_high": "Greutate redusă, impedanță ridicată",
+            "weight_low_and_impedance_low": "Greutate redusă, impedanță scăzută",
+            "weight_unavailable": "Greutate indisponibilă",
+            "weight_unavailable_and_impedance_unavailable": "Greutate indisponibilă, impedanță indisponibilă"
+          }
+        },
+        "protein": { "name": "Proteină" },
+        "visceral_fat": { "name": "Grasime viscerala" },
+        "water": { "name": "Apă" },
+        "weight": { "name": "Greutate" }
       }
-    }
-  },
-  "entity": {
-    "sensor": {
-      "bmi": { "name": "IMC" },
-      "basal_metabolism": { "name": "Metabolismul bazal" },
-      "visceral_fat": { "name": "Grasime viscerala" },
-      "weight": { "name": "Greutate"},
-      "lean_body_mass": { "name": "Masă corporală slabă" },
-      "body_fat": { "name": "Grăsime corporală" },
-      "protein": { "name": "Proteină" },
-      "water": { "name": "Apă" },
-      "bone_mass": { "name": "Masă osoasă" },
-      "muscle_mass": { "name": "Masă musculară" },
-      "metabolic_age": { "name": "Vârsta metabolică" },
-      "body_score": { "name": "Scor corporal" }
     }
   },
   "options": {
@@ -136,5 +135,6 @@
         }
       }
     }
-  }
+  },
+  "title": "BodyMiScale"
 }
