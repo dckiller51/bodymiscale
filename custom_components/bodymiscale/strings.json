@@ -1,16 +1,16 @@
 {
   "config": {
     "error": {
-      "already_configured": "Already configured",
-      "height_limit": "Height is too high (limit: 220 cm)",
-      "invalid_date": "Invalid date"
+      "already_configured": "[%key:common::config_flow::error::already_configured%]",
+      "height_limit": "[%key:common::config_flow::error::height_limit%]",
+      "invalid_date": "[%key:common::config_flow::error::invalid_date%]"
     },
     "step": {
       "options": {
         "data": {
-          "height": "Height",
-          "impedance": "Impedance sensor",
-          "weight": "Weight sensor"
+          "height": "[%key:common::config_flow::data::height%]",
+          "impedance": "[%key:common::config_flow::data::impedance%]",
+          "weight": "[%key:common::config_flow::data::weight%]"
         },
         "data_description": {
           "impedance": "If your scale does not provide the impedance, leave this field empty."
@@ -18,9 +18,9 @@
       },
       "user": {
         "data": {
-          "birthday": "Birthday",
-          "gender": "Gender",
-          "name": "Name"
+          "birthday": "[%key:common::config_flow::data::birthday%]",
+          "gender": "[%key:common::config_flow::data::gender%]",
+          "name": "[%key:common::config_flow::data::name%]"
         }
       }
     }
@@ -28,10 +28,10 @@
   "title": "BodyMiScale",
   "entity_component": {
     "_": {
-      "name": "bodymiscale",
+      "name": "[%key:component::bodymiscale::title%]",
       "state": {
-        "ok": "OK",
-        "problem": "Problem"
+        "ok": "[%key:component::binary_sensor::entity_component::problem::state::off%]",
+        "problem": "[%key:component::binary_sensor::entity_component::problem::state::on%]"
       },
       "state_attributes": {
         "height": { "name": "Height" },
@@ -102,34 +102,30 @@
             "unavailable": "unavailable"
           }
         },
-        "fat_mass_to_lose": { "name": "Fat mass to lose" },
-        "fat_mass_to_gain": { "name": "Fat mass to gain" }
+        "fat_mass_to_lose": { "name": "Fat mass to lose" }
       }
     }
   },
   "entity": {
     "sensor": {
-      "bmi": { "name": "BMI" },
-      "basal_metabolism": { "name": "Basal metabolism" },
-      "visceral_fat": { "name": "Visceral fat" },
-      "weight": { "name": "Weight"},
-      "lean_body_mass": { "name": "Lean body mass" },
-      "body_fat": { "name": "Body fat" },
-      "protein": { "name": "Protein" },
-      "water": { "name": "Water" },
-      "bone_mass": { "name": "Bone mass" },
-      "muscle_mass": { "name": "Muscle mass" },
-      "metabolic_age": { "name": "Metabolic age" },
-      "body_score": { "name": "Body score" }
+      "basal_metabolism": { 
+        "name": "[%key:component::sensor::entity_component::basal_metabolism::name%]"
+      },
+      "bmi": {
+        "name": "[%key:component::sensor::entity_component::bmi::name%]"
+      },
+      "body_fat": {
+        "name": "[%key:component::sensor::entity_component::body_fat::name%]"
+      }
     }
   },
   "options": {
     "step": {
       "init": {
         "data": {
-          "height": "Height",
-          "impedance": "Impedance sensor",
-          "weight": "Weight sensor"
+          "height": "[%key:common::config_flow::data::height%]",
+          "impedance": "[%key:common::config_flow::data::impedance%]",
+          "weight": "[%key:common::config_flow::data::weight%]"
         },
         "data_description": {
           "impedance": "If your scale does not provide the impedance, leave this field empty."

@@ -25,13 +25,102 @@
       }
     }
   },
+  "title": "BodyMiScale",
   "entity_component": {
     "_": {
       "name": "bodymiscale",
       "state": {
         "ok": "OK",
         "problem": "Problème"
+      },
+      "state_attributes": {
+        "height": { "name": "Taille" },
+        "gender": {
+          "name": "Genre",
+          "state": {
+            "male": "homme",
+            "female": "femme"
+          }
+        },
+        "ideal": { "name": "Poids idéal" },
+        "age": { "name": "Age" },
+        "weight": { "name": "Poids" },
+        "bmi": { "name": "IMC" },
+        "basal_metabolism": { "name": "Métabolisme de base" },
+        "visceral_fat": { "name": "Graisse viscérale" },
+        "problem": {
+          "name": "Problème",
+          "state": {
+            "none": "Aucun",
+            "weight unavailable": "Poids indisponible",
+            "impedance unavailable": "Impédance indisponible",
+            "weight unavailable, impedance unavailable": "Poids indisponible, impédance indisponible",
+            "weight low": "Poids faible",
+            "impedance low": "Impédance faible",
+            "weight low, impedance low": "Poids faible, impédance faible",
+            "weight high": "Poids élevé",
+            "impedance high": "Impédance élevé",
+            "weight high, impedance high": "Poids élevé, impédance élevé",
+            "weight high, impedance low": "Poids élevé, impédance faible",
+            "weight low, impedance high": "Poids faible, impédance élevé"
+          }
+        },
+        "impedance": { "name": "Impédance" },
+        "lean_body_mass": { "name": "Masse corporelle mince" },
+        "body_fat": { "name": "Graisse corporelle" },
+        "water": { "name": "Eau" },
+        "bone_mass": { "name": "Masse osseuse" },
+        "muscle_mass": { "name": "Masse musculaire" },
+        "protein": { "name": "Protéine" },
+        "body_score": { "name": "Score corporel" },
+        "body_type": {
+          "name": "Corpulence",
+          "state": {
+            "Obese": "Obèse",
+            "Overweight": "Surpoids",
+            "Thick-set": "Trapu",
+            "Lack-exercise": "Manque d'exercice",
+            "Balanced": "Équilibré",
+            "Balanced-muscular": "Musclé équilibré",
+            "Skinny": "Maigre",
+            "Balanced-skinny": "Équilibré maigre",
+            "Skinny-muscular": "Maigre musclé",
+            "unavailable": "indisponible"
+          }
+        },
+        "metabolic_age": { "name":"Age corporel" },
+        "bmi_label": {
+          "name": "Étiquette IMC",
+          "state": {
+            "Underweight": "Insuffisance pondérale",
+            "Normal or Healthy Weight": "Normal - poids de santé",
+            "Slight overweight": "Léger surpoids",
+            "Overweight": "Surpoids",
+            "Moderate obesity": "Obésité modérée",
+            "Severe obesity": "Obésité sévère",
+            "Massive obesity": "Obésité massive",
+            "unavailable": "indisponible"
+          }
+        },
+        "fat_mass_to_lose": { "name": "Masse grasse à perdre" },
+        "fat_mass_to_gain": { "name": "Masse grasse à gagner" }
       }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "bmi": { "name": "IMC" },
+      "basal_metabolism": { "name": "Métabolisme de base" },
+      "visceral_fat": { "name": "Graisse viscérale" },
+      "weight": { "name": "Poids"},
+      "lean_body_mass": { "name": "Masse corporelle mince" },
+      "body_fat": { "name": "Graisse corporelle" },
+      "protein": { "name": "Protéine" },
+      "water": { "name": "Water" },
+      "bone_mass": { "name": "Masse osseuse" },
+      "muscle_mass": { "name": "Masse musculaire" },
+      "metabolic_age": { "name": "Age corporel" },
+      "body_score": { "name": "Score corporel" }
     }
   },
   "options": {

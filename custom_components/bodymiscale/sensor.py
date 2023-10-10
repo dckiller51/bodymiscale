@@ -52,6 +52,7 @@ async def async_setup_entry(
             handler,
             SensorEntityDescription(
                 key=ATTR_BMI,
+                translation_key="bmi",
                 icon="mdi:human",
             ),
             Metric.BMI,
@@ -61,6 +62,7 @@ async def async_setup_entry(
             handler,
             SensorEntityDescription(
                 key=ATTR_BMR,
+                translation_key="basal_metabolism",
             ),
             Metric.BMR,
         ),
@@ -68,6 +70,7 @@ async def async_setup_entry(
             handler,
             SensorEntityDescription(
                 key=ATTR_VISCERAL,
+                translation_key="visceral_fat",
             ),
             Metric.VISCERAL_FAT,
         ),
@@ -75,6 +78,7 @@ async def async_setup_entry(
             handler,
             SensorEntityDescription(
                 key=CONF_SENSOR_WEIGHT,
+                translation_key="weight",
                 icon="mdi:weight-kilogram",
                 native_unit_of_measurement="kg",
             ),
@@ -90,20 +94,25 @@ async def async_setup_entry(
                     handler,
                     SensorEntityDescription(
                         key=ATTR_LBM,
+                        translation_key="lean_body_mass",
                     ),
                     Metric.LBM,
                 ),
                 BodyScaleSensor(
                     handler,
                     SensorEntityDescription(
-                        key=ATTR_FAT, native_unit_of_measurement="%"
+                        key=ATTR_FAT,
+                        translation_key="body_fat",
+                        native_unit_of_measurement="%",
                     ),
                     Metric.FAT_PERCENTAGE,
                 ),
                 BodyScaleSensor(
                     handler,
                     SensorEntityDescription(
-                        key=ATTR_PROTEIN, native_unit_of_measurement="%"
+                        key=ATTR_PROTEIN,
+                        translation_key="protein",
+                        native_unit_of_measurement="%",
                     ),
                     Metric.PROTEIN_PERCENTAGE,
                 ),
@@ -111,6 +120,7 @@ async def async_setup_entry(
                     handler,
                     SensorEntityDescription(
                         key=ATTR_WATER,
+                        translation_key="water",
                         icon="mdi:water-percent",
                         native_unit_of_measurement="%",
                     ),
@@ -120,6 +130,7 @@ async def async_setup_entry(
                     handler,
                     SensorEntityDescription(
                         key=ATTR_BONES,
+                        translation_key="bone_mass",
                     ),
                     Metric.BONE_MASS,
                 ),
@@ -127,6 +138,7 @@ async def async_setup_entry(
                     handler,
                     SensorEntityDescription(
                         key=ATTR_MUSCLE,
+                        translation_key="muscle_mass",
                     ),
                     Metric.MUSCLE_MASS,
                 ),
@@ -134,6 +146,7 @@ async def async_setup_entry(
                     handler,
                     SensorEntityDescription(
                         key=ATTR_METABOLIC,
+                        translation_key="metabolic_age",
                     ),
                     Metric.METABOLIC_AGE,
                 ),
@@ -141,6 +154,7 @@ async def async_setup_entry(
                     handler,
                     SensorEntityDescription(
                         key=ATTR_BODY_SCORE,
+                        translation_key="body_score",
                     ),
                     Metric.BODY_SCORE,
                 ),

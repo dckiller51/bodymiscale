@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## v3.1.0
+
+- update of the translation DE,EN,ES,FR,IT,PL,PT-BR,RO,RU
+- #191 fixed naming
+
 ## v3.0.9
 
 - Move DeviceInfo from entity to device registry
