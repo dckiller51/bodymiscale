@@ -3,6 +3,7 @@
     "error": {
       "already_configured": "Deja configurat",
       "height_limit": "Înalțimea este prea mare (limita: 220 cm)",
+      "height_low": "Înalțimea este prea joasă (min : 50 cm)",
       "invalid_date": "Dată invalidă"
     },
     "step": {

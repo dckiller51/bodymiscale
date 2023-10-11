@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - update state problems for translation
 - update state body type for translation
 - update state bmi label for translation
+- #122 add a height limit low
 - #191 fixed naming
 
 ## v3.0.9

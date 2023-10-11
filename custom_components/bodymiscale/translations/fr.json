@@ -3,6 +3,7 @@
     "error": {
       "already_configured": "Déjà configuré",
       "height_limit": "La taille est trop élevée (limite : 220 cm)",
+      "height_low": "La taille est trop basse (min : 50 cm)",
       "invalid_date": "Date non valide"
     },
     "step": {

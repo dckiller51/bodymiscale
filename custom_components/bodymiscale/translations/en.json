@@ -3,6 +3,7 @@
     "error": {
       "already_configured": "Already configured",
       "height_limit": "Height is too high (limit: 220 cm)",
+      "height_low": "Height is too low (min : 50 cm)",
       "invalid_date": "Invalid date"
     },
     "step": {

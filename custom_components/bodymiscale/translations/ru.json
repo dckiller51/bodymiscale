@@ -3,6 +3,7 @@
     "error": {
       "already_configured": "Уже настроено",
       "height_limit": "Рост слишком большой (предел: 220 см)",
+      "height_low": "Рост слишком низкая (min : 50 см)",
       "invalid_date": "Неверная дата"
     },
     "step": {

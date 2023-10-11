@@ -3,6 +3,7 @@
     "error": {
       "already_configured": "Już skonfigurowane",
       "height_limit": "Podano za wysoki wzrost (limit: 220 cm)",
+      "height_low": "Wzrost uznano za zbyt niski (min : 50 cm)",
       "invalid_date": "Błędna data"
     },
     "step": {
