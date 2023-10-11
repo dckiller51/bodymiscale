@@ -35,6 +35,33 @@
       },
       "body_fat": {
         "name": "[%key:component::sensor::entity_component::body_fat::name%]"
+      },
+      "body_score": {
+        "name": "[%key:component::sensor::entity_component::body_score::name%]"
+      },
+      "bone_mass": {
+        "name": "[%key:component::sensor::entity_component::bone_mass::name%]"
+      },
+      "lean_body_mass": {
+        "name": "[%key:component::sensor::entity_component::lean_body_mass::name%]"
+      },
+      "metabolic_age": {
+        "name": "[%key:component::sensor::entity_component::metabolic_age::name%]"
+      },
+      "muscle_mass": {
+        "name": "[%key:component::sensor::entity_component::muscle_mass::name%]"
+      },
+      "protein": {
+        "name": "[%key:component::sensor::entity_component::protein::name%]"
+      },
+      "visceral_fat": {
+        "name": "[%key:component::sensor::entity_component::visceral_fat::name%]"
+      },
+      "water": {
+        "name": "[%key:component::sensor::entity_component::water::name%]"
+      },
+      "weight": {
+        "name": "[%key:component::sensor::entity_component::weight::name%]"
       }
     }
   },
