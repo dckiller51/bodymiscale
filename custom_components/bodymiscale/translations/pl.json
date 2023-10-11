@@ -25,7 +25,22 @@
       }
     }
   },
-  "title": "BodyMiScale",
+  "entity": {
+    "sensor": {
+      "basal_metabolism": { "name": "Basal metabolism" },
+      "bmi": { "name": "BMI" },
+      "body_fat": { "name": "Body fat" },
+      "body_score": { "name": "Wynik ciała" },
+      "bone_mass": { "name": "Bone mass" },
+      "lean_body_mass": { "name": "Beztłuszczowa masa ciała" },
+      "metabolic_age": { "name": "Wiek metaboliczny" },
+      "muscle_mass": { "name": "Muscle mass" },
+      "protein": { "name": "Protein" },
+      "visceral_fat": { "name": "Visceral fat" },
+      "water": { "name": "Water" },
+      "weight": { "name": "Waga" }
+    }
+  },
   "entity_component": {
     "_": {
       "name": "bodymiscale",
@@ -34,93 +49,77 @@
         "problem": "Błąd"
       },
       "state_attributes": {
-        "height": { "name": "Wzrost" },
-        "gender": {
-          "name": "Płeć",
-          "state": {
-            "male": "męska",
-            "female": "żeńska"
-          }
-        },
-        "ideal": { "name": "Ideal" },
         "age": { "name": "Wiek" },
-        "weight": { "name": "Waga" },
-        "bmi": { "name": "BMI" },
         "basal_metabolism": { "name": "Basal metabolism" },
-        "visceral_fat": { "name": "Visceral fat" },
-        "problem": {
-          "name": "Błąd",
+        "bmi": { "name": "BMI" },
+        "bmi_label": {
+          "name": "BMI label",
           "state": {
-            "none": "Brak",
-            "weight_unavailable": "Waga niedostępna",
-            "impedance_unavailable": "Impedancja niedostępna",
-            "weight_unavailable_and_impedance_unavailable": "Waga i impedancja niedostępne",
-            "weight_low": "Niska waga",
-            "impedance_low": "Niska impedancja",
-            "weight_low_and_impedance_low": "Waga i impedancja niskie",
-            "weight_high": "Waga wysoka",
-            "impedance_high": "Impedancja wysoka",
-            "weight_high_and_impedance_high": "Waga i impedancja wysoka",
-            "weight_high_and_impedance_low": "Waga wysoka a impedancja niska",
-            "weight_low_and_impedance_high": "Waga nizska a impedancja wysoka"
+            "massive_obesity": "Massive obesity",
+            "moderate_obesity": "Moderate obesity",
+            "normal_or_healthy_weight": "Normal or Healthy Weight",
+            "overweight": "Overweight",
+            "severe_obesity": "Severe obesity",
+            "slight_overweight": "Slight overweight",
+            "unavailable": "unavailable",
+            "underweight": "Underweight"
           }
         },
-        "impedance": { "name": "Impedancja" },
-        "lean_body_mass": { "name": "Beztłuszczowa masa ciała" },
         "body_fat": { "name": "Body fat" },
-        "water": { "name": "Water" },
-        "bone_mass": { "name": "Bone mass" },
-        "muscle_mass": { "name": "Muscle mass" },
-        "protein": { "name": "Protein" },
         "body_score": { "name": "Wynik ciała" },
         "body_type": {
           "name": "Typ sylwetki",
           "state": {
-            "obese": "Obese",
-            "overweight": "Overweight",
-            "thick_set": "Thick-set",
-            "lack_exercise": "Lack-exercise",
             "balanced": "Balanced",
             "balanced_muscular": "Balanced-muscular",
-            "skinny": "Skinny",
             "balanced_skinny": "Balanced-skinny",
+            "lack_exercise": "Lack-exercise",
+            "obese": "Obese",
+            "overweight": "Overweight",
+            "skinny": "Skinny",
             "skinny_muscular": "Skinny-muscular",
+            "thick_set": "Thick-set",
             "unavailable": "niedostępny"
           }
         },
-        "metabolic_age": { "name": "Wiek metaboliczny" },
-        "bmi_label": {
-          "name": "BMI label",
+        "bone_mass": { "name": "Bone mass" },
+        "fat_mass_to_gain": { "name": "Masa tłuszczowa do zdobycia" },
+        "fat_mass_to_lose": { "name": "Masa tłuszczowa do stracenia" },
+        "gender": {
+          "name": "Płeć",
           "state": {
-            "underweight": "Underweight",
-            "normal_or_healthy_weight": "Normal or Healthy Weight",
-            "slight_overweight": "Slight overweight",
-            "overweight": "Overweight",
-            "moderate_obesity": "Moderate obesity",
-            "severe_obesity": "Severe obesity",
-            "massive_obesity": "Massive obesity",
-            "unavailable": "unavailable"
+            "female": "żeńska",
+            "male": "męska"
           }
         },
-        "fat_mass_to_lose": { "name": "Masa tłuszczowa do stracenia" },
-        "fat_mass_to_gain": { "name": "Masa tłuszczowa do zdobycia" }
+        "height": { "name": "Wzrost" },
+        "ideal": { "name": "Ideal" },
+        "impedance": { "name": "Impedancja" },
+        "lean_body_mass": { "name": "Beztłuszczowa masa ciała" },
+        "metabolic_age": { "name": "Wiek metaboliczny" },
+        "muscle_mass": { "name": "Muscle mass" },
+        "problem": {
+          "name": "Błąd",
+          "state": {
+            "impedance_high": "Impedancja wysoka",
+            "impedance_low": "Niska impedancja",
+            "impedance_unavailable": "Impedancja niedostępna",
+            "none": "Brak",
+            "weight_high": "Waga wysoka",
+            "weight_high_and_impedance_high": "Waga i impedancja wysoka",
+            "weight_high_and_impedance_low": "Waga wysoka a impedancja niska",
+            "weight_low": "Niska waga",
+            "weight_low_and_impedance_high": "Waga nizska a impedancja wysoka",
+            "weight_low_and_impedance_low": "Waga i impedancja niskie",
+            "weight_unavailable": "Waga niedostępna",
+            "weight_unavailable_and_impedance_unavailable": "Waga i impedancja niedostępne"
+          }
+        },
+        "protein": { "name": "Protein" },
+        "visceral_fat": { "name": "Visceral fat" },
+        "water": { "name": "Water" },
+        "weight": { "name": "Waga" }
       }
-    }
-  },
-  "entity": {
-    "sensor": {
-      "bmi": { "name": "BMI" },
-      "basal_metabolism": { "name": "Basal metabolism" },
-      "visceral_fat": { "name": "Visceral fat" },
-      "weight": { "name": "Waga"},
-      "lean_body_mass": { "name": "Beztłuszczowa masa ciała" },
-      "body_fat": { "name": "Body fat" },
-      "protein": { "name": "Protein" },
-      "water": { "name": "Water" },
-      "bone_mass": { "name": "Bone mass" },
-      "muscle_mass": { "name": "Muscle mass" },
-      "metabolic_age": { "name": "Wiek metaboliczny" },
-      "body_score": { "name": "Wynik ciała" }
     }
   },
   "options": {
@@ -136,5 +135,6 @@
         }
       }
     }
-  }
+  },
+  "title": "BodyMiScale"
 }

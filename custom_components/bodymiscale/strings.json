@@ -25,7 +25,19 @@
       }
     }
   },
-  "title": "BodyMiScale",
+  "entity": {
+    "sensor": {
+      "basal_metabolism": {
+        "name": "[%key:component::sensor::entity_component::basal_metabolism::name%]"
+      },
+      "bmi": {
+        "name": "[%key:component::sensor::entity_component::bmi::name%]"
+      },
+      "body_fat": {
+        "name": "[%key:component::sensor::entity_component::body_fat::name%]"
+      }
+    }
+  },
   "entity_component": {
     "_": {
       "name": "[%key:component::bodymiscale::title%]",
@@ -34,88 +46,75 @@
         "problem": "[%key:component::binary_sensor::entity_component::problem::state::on%]"
       },
       "state_attributes": {
-        "height": { "name": "Height" },
-        "gender": {
-          "name": "Gender",
-          "state": {
-            "male": "male",
-            "female": "female"
-          }
-        },
-        "ideal": { "name": "Ideal" },
         "age": { "name": "Age" },
-        "weight": { "name": "Weight" },
-        "bmi": { "name": "BMI" },
         "basal_metabolism": { "name": "Basal metabolism" },
-        "visceral_fat": { "name": "Visceral fat" },
-        "problem": {
-          "name": "Problem",
+        "bmi": { "name": "BMI" },
+        "bmi_label": {
+          "name": "BMI label",
           "state": {
-            "none": "None",
-            "weight_unavailable": "Weight unavailable",
-            "impedance_unavailable": "Impedance unavailable",
-            "weight_unavailable_and_impedance_unavailable": "Weight unavailable, impedance unavailable",
-            "weight_low": "Weight low",
-            "impedance_low": "Impedance low",
-            "weight_low_and_impedance_low": "Weight low, impedance low",
-            "weight_high": "Weight high",
-            "impedance_high": "Impedance high",
-            "weight_high_and_impedance_high": "Weight high, impedance high",
-            "weight_high_and_impedance_low": "Weight high, impedance low",
-            "weight_low_and_impedance_high": "Weight low, impedance high"
+            "massive_obesity": "Massive obesity",
+            "moderate_obesity": "Moderate obesity",
+            "normal_or_healthy_weight": "Normal or Healthy Weight",
+            "overweight": "Overweight",
+            "severe_obesity": "Severe obesity",
+            "slight_overweight": "Slight overweight",
+            "unavailable": "unavailable",
+            "underweight": "Underweight"
           }
         },
-        "impedance": { "name": "Impedance" },
-        "lean_body_mass": { "name": "Lean body mass" },
         "body_fat": { "name": "Body fat" },
-        "water": { "name": "Water" },
-        "bone_mass": { "name": "Bone mass" },
-        "muscle_mass": { "name": "Muscle mass" },
-        "protein": { "name": "Protein" },
         "body_score": { "name": "Body score" },
         "body_type": {
           "name": "Body type",
           "state": {
-            "obese": "Obese",
-            "overweight": "Overweight",
-            "thick_set": "Thick-set",
-            "lack_exercise": "Lack-exercise",
             "balanced": "Balanced",
             "balanced_muscular": "Balanced-muscular",
-            "skinny": "Skinny",
             "balanced_skinny": "Balanced-skinny",
-            "skinny_muscular": "Skinny-muscular",
-            "unavailable": "unavailable"
-          }
-        },
-        "metabolic_age": { "name": "Metabolic age" },
-        "bmi_label": {
-          "name": "BMI label",
-          "state": {
-            "underweight": "Underweight",
-            "normal_or_healthy_weight": "Normal or Healthy Weight",
-            "slight_overweight": "Slight overweight",
+            "lack_exercise": "Lack-exercise",
+            "obese": "Obese",
             "overweight": "Overweight",
-            "moderate_obesity": "Moderate obesity",
-            "severe_obesity": "Severe obesity",
-            "massive_obesity": "Massive obesity",
+            "skinny": "Skinny",
+            "skinny_muscular": "Skinny-muscular",
+            "thick_set": "Thick-set",
             "unavailable": "unavailable"
           }
         },
-        "fat_mass_to_lose": { "name": "Fat mass to lose" }
-      }
-    }
-  },
-  "entity": {
-    "sensor": {
-      "basal_metabolism": { 
-        "name": "[%key:component::sensor::entity_component::basal_metabolism::name%]"
-      },
-      "bmi": {
-        "name": "[%key:component::sensor::entity_component::bmi::name%]"
-      },
-      "body_fat": {
-        "name": "[%key:component::sensor::entity_component::body_fat::name%]"
+        "bone_mass": { "name": "Bone mass" },
+        "fat_mass_to_lose": { "name": "Fat mass to lose" },
+        "gender": {
+          "name": "Gender",
+          "state": {
+            "female": "female",
+            "male": "male"
+          }
+        },
+        "height": { "name": "Height" },
+        "ideal": { "name": "Ideal" },
+        "impedance": { "name": "Impedance" },
+        "lean_body_mass": { "name": "Lean body mass" },
+        "metabolic_age": { "name": "Metabolic age" },
+        "muscle_mass": { "name": "Muscle mass" },
+        "problem": {
+          "name": "Problem",
+          "state": {
+            "impedance_high": "Impedance high",
+            "impedance_low": "Impedance low",
+            "impedance_unavailable": "Impedance unavailable",
+            "none": "None",
+            "weight_high": "Weight high",
+            "weight_high_and_impedance_high": "Weight high, impedance high",
+            "weight_high_and_impedance_low": "Weight high, impedance low",
+            "weight_low": "Weight low",
+            "weight_low_and_impedance_high": "Weight low, impedance high",
+            "weight_low_and_impedance_low": "Weight low, impedance low",
+            "weight_unavailable": "Weight unavailable",
+            "weight_unavailable_and_impedance_unavailable": "Weight unavailable, impedance unavailable"
+          }
+        },
+        "protein": { "name": "Protein" },
+        "visceral_fat": { "name": "Visceral fat" },
+        "water": { "name": "Water" },
+        "weight": { "name": "Weight" }
       }
     }
   },
@@ -132,5 +131,6 @@
         }
       }
     }
-  }
+  },
+  "title": "BodyMiScale"
 }
