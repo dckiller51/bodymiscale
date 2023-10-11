@@ -180,13 +180,13 @@ def get_body_type(
         body_type = factor * 3
 
     return [
-        "Obese",
-        "Overweight",
-        "Thick-set",
-        "Lack-exercise",
-        "Balanced",
-        "Balanced-muscular",
-        "Skinny",
-        "Balanced-skinny",
-        "Skinny-muscular",
+        "obese",
+        "overweight",
+        "thick_set",
+        "lack_exercise",
+        "balanced",
+        "balanced_muscular",
+        "skinny",
+        "balanced_skinny",
+        "skinny_muscular",
     ][body_type]

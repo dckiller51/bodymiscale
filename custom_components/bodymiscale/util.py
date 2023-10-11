@@ -35,7 +35,7 @@ def get_bmi_label(bmi: float) -> str:  # pylint: disable=too-many-return-stateme
     if bmi < 25:
         return "normal_or_healthy_weight"
     if bmi < 27:
-        return "slight overweight"
+        return "slight_overweight"
     if bmi < 30:
         return "overweight"
     if bmi < 35:

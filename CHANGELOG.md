@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## v3.1.1
+
+- update state body type for translation
+- update state bmi label for translation
+
 ## v3.1.0
 
 - update of the translation DE,EN,ES,FR,IT,PL,PT-BR,RO,RU
