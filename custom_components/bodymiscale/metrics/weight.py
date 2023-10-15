@@ -46,20 +46,15 @@ def get_visceral_fat(
     weight = metrics[Metric.WEIGHT]
     age = metrics[Metric.AGE]
 
-    if config[CONF_GENDER] == Gender.FEMALE:
-        if weight > (13 - (height * 0.5)) * -1:
-            subsubcalc = ((height * 1.45) + (height * 0.1158) * height) - 120
-            subcalc = weight * 500 / subsubcalc
-            vfal = (subcalc - 6) + (age * 0.07)
+    if config[CONF_GENDER] == Gender.MALE:
+        if (height < weight * 1.6 + 63.0):
+            vfal = age * 0.15 + ((weight * 305.0) /((height * 0.0826 * height - height * 0.4) + 48.0) - 2.9)
         else:
-            subcalc = 0.691 + (height * -0.0024) + (height * -0.0024)
-            vfal = (((height * 0.027) - (subcalc * weight)) * -1) + (age * 0.07) - age
+            vfal = age * 0.15 + (weight * (height * -0.0015 + 0.765) - height * 0.143) - 5.0
     else:
-        if height < weight * 1.6:
-            subcalc = ((height * 0.4) - (height * (height * 0.0826))) * -1
-            vfal = ((weight * 305) / (subcalc + 48)) - 2.9 + (age * 0.15)
+        if (weight <= height * 0.5 - 13.0):
+            vfal = age * 0.07 + (weight * (height * -0.0024 + 0.691) - height * 0.027) - 10.5
         else:
-            subcalc = 0.765 + height * -0.0015
-            vfal = (((height * 0.143) - (weight * subcalc)) * -1) + (age * 0.15) - 5.0
+            vfal = age * 0.07 + ((weight * 500.0) / ((height * 1.45 + height * 0.1158 * height) - 120.0) - 6.0)
 
     return check_value_constraints(vfal, 1, 50)
