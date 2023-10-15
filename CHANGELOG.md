@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## v3.1.2
+
+- #27 #181 fixes the problem of visceral fat result
+
 ## v3.1.1
 
 - update state body type for translation
