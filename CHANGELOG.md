@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## v2023.11.0
+
+- ❗ The minimum version of HASS has been raised to 2023.9.0
+- added Simple Chinese language support (thank you @5high)
+- Change of version number. Calendar version management, consisting of year, month and patch number.
+
 ## v3.1.2
 
 - #27 #181 fixes the problem of visceral fat result

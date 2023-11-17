@@ -2,10 +2,10 @@
 
 from homeassistant.const import Platform
 
-MIN_REQUIRED_HA_VERSION = "2023.9"
+MIN_REQUIRED_HA_VERSION = "2023.9.0"
 NAME = "BodyMiScale"
 DOMAIN = "bodymiscale"
-VERSION = "3.1.2"
+VERSION = "2023.11.0"
 
 ISSUE_URL = "https://github.com/dckiller51/bodymiscale/issues"
 
