@@ -1,0 +1,141 @@
+{
+  "config": {
+    "error": {
+      "already_configured": "已配置",
+      "height_limit": "身高過高（限制：220 釐米）",
+      "height_low": "身高太低（最低：50 釐米）",
+      "invalid_date": "無效日期"
+    },
+    "step": {
+      "options": {
+        "data": {
+          "height": "身高",
+          "impedance": "阻抗傳感器",
+          "weight": "體重傳感器"
+        },
+        "data_description": {
+          "impedance": "如果您的體計不提供阻抗值，請將此欄位留空。"
+        }
+      },
+      "user": {
+        "data": {
+          "birthday": "生日",
+          "gender": "性別",
+          "name": "姓名"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "basal_metabolism": { "name": "基礎代謝" },
+      "bmi": { "name": "BMI指數" },
+      "body_fat": { "name": "體脂率" },
+      "body_score": { "name": "體質評分" },
+      "bone_mass": { "name": "骨量" },
+      "lean_body_mass": { "name": "瘦體重" },
+      "metabolic_age": { "name": "代謝年齡" },
+      "muscle_mass": { "name": "肌肉量" },
+      "protein": { "name": "蛋白質" },
+      "visceral_fat": { "name": "內臟脂肪" },
+      "water": { "name": "水分" },
+      "weight": { "name": "體重" }
+    }
+  },
+  "entity_component": {
+    "_": {
+      "name": "小米體脂計",
+      "state": {
+        "ok": "正常",
+        "problem": "問題"
+      },
+      "state_attributes": {
+        "age": { "name": "年齡" },
+        "basal_metabolism": { "name": "基礎代謝" },
+        "bmi": { "name": "BMI指數" },
+        "bmi_label": {
+          "name": "BMI 分類",
+          "state": {
+            "massive_obesity": "極重度肥胖",
+            "moderate_obesity": "中度肥胖",
+            "normal_or_healthy_weight": "正常或健康體重",
+            "overweight": "超重",
+            "severe_obesity": "重度肥胖",
+            "slight_overweight": "輕度超重",
+            "unavailable": "不可用",
+            "underweight": "體重不足"
+          }
+        },
+        "body_fat": { "name": "體脂率" },
+        "body_score": { "name": "體質評分" },
+        "body_type": {
+          "name": "體型",
+          "state": {
+            "balanced": "均衡",
+            "balanced_muscular": "均衡-肌肉型",
+            "balanced_skinny": "均衡-瘦型",
+            "lack_exercise": "缺乏鍛鍊",
+            "obese": "肥胖",
+            "overweight": "超重",
+            "skinny": "瘦型",
+            "skinny_muscular": "瘦型-肌肉型",
+            "thick_set": "豐滿",
+            "unavailable": "不可用"
+          }
+        },
+        "bone_mass": { "name": "骨量" },
+        "fat_mass_to_gain": { "name": "獲得脂肪質量" },
+        "fat_mass_to_lose": { "name": "減少脂肪質量" },
+        "gender": {
+          "name": "性別",
+          "state": {
+            "female": "女性",
+            "male": "男性"
+          }
+        },
+        "height": { "name": "身高" },
+        "ideal": { "name": "理想" },
+        "impedance": { "name": "阻抗" },
+        "lean_body_mass": { "name": "瘦體重" },
+        "metabolic_age": { "name": "代謝年齡" },
+        "muscle_mass": { "name": "肌肉量" },
+        "problem": {
+          "name": "問題",
+          "state": {
+            "impedance_high": "阻抗高",
+            "impedance_low": "阻抗低",
+            "impedance_unavailable": "阻抗不可用",
+            "none": "無",
+            "weight_high": "體重高",
+            "weight_high_and_impedance_high": "體重高，阻抗高",
+            "weight_high_and_impedance_low": "體重高，阻抗低",
+            "weight_low": "體重低",
+            "weight_low_and_impedance_high": "體重低，阻抗高",
+            "weight_low_and_impedance_low": "體重低，阻抗低",
+            "weight_unavailable": "體重不可用",
+            "weight_unavailable_and_impedance_unavailable": "體重不可用，阻抗不可用"
+          }
+        },
+        "protein": { "name": "蛋白質" },
+        "visceral_fat": { "name": "內臟脂肪" },
+        "water": { "name": "水分" },
+        "weight": { "name": "體重" }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "height": "身高",
+          "impedance": "阻抗傳感器",
+          "weight": "體重傳感器"
+        },
+        "data_description": {
+          "impedance": "如果您的體秤不提供阻抗值，請將此欄位留空。"
+        }
+      }
+    }
+  },
+  "title": "小米體脂計"
+}

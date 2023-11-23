@@ -4,7 +4,11 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
-## v2023.11.0
+## 2023.11.1
+
+- added Traditional Chinese language support (thank you @yauyauwind)
+
+## 2023.11.0
 
 - ❗ The minimum version of HASS has been raised to 2023.9.0
 - added Simple Chinese language support (thank you @5high)
