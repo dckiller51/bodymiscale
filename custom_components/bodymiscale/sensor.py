@@ -81,7 +81,7 @@ async def async_setup_entry(
                 translation_key="weight",
                 icon="mdi:weight-kilogram",
                 native_unit_of_measurement="kg",
-                SensorDeviceClass.WEIGHT,
+                device_class="weight",
             ),
             Metric.WEIGHT,
             lambda _, config: {ATTR_IDEAL: get_ideal_weight(config)},
