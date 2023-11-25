@@ -3,11 +3,16 @@ from collections.abc import Callable, Mapping
 from typing import Any
 
 from homeassistant.components.sensor import (
+    SensorDeviceClass,
     SensorEntity,
     SensorEntityDescription,
     SensorStateClass,
 )
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import (
+    PERCENTAGE,
+    UnitOfMass,
+)
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import StateType
@@ -63,6 +68,8 @@ async def async_setup_entry(
             SensorEntityDescription(
                 key=ATTR_BMR,
                 translation_key="basal_metabolism",
+                suggested_display_precision=0,
+                native_unit_of_measurement="kcal",
             ),
             Metric.BMR,
         ),
@@ -71,6 +78,7 @@ async def async_setup_entry(
             SensorEntityDescription(
                 key=ATTR_VISCERAL,
                 translation_key="visceral_fat",
+                suggested_display_precision=0,
             ),
             Metric.VISCERAL_FAT,
         ),
@@ -79,8 +87,8 @@ async def async_setup_entry(
             SensorEntityDescription(
                 key=CONF_SENSOR_WEIGHT,
                 translation_key="weight",
-                icon="mdi:weight-kilogram",
-                native_unit_of_measurement="kg",
+                native_unit_of_measurement=UnitOfMass.KILOGRAMS,
+                device_class=SensorDeviceClass.WEIGHT,
             ),
             Metric.WEIGHT,
             lambda _, config: {ATTR_IDEAL: get_ideal_weight(config)},
@@ -103,7 +111,7 @@ async def async_setup_entry(
                     SensorEntityDescription(
                         key=ATTR_FAT,
                         translation_key="body_fat",
-                        native_unit_of_measurement="%",
+                        native_unit_of_measurement=PERCENTAGE,
                     ),
                     Metric.FAT_PERCENTAGE,
                 ),
@@ -112,7 +120,7 @@ async def async_setup_entry(
                     SensorEntityDescription(
                         key=ATTR_PROTEIN,
                         translation_key="protein",
-                        native_unit_of_measurement="%",
+                        native_unit_of_measurement=PERCENTAGE,
                     ),
                     Metric.PROTEIN_PERCENTAGE,
                 ),
@@ -122,7 +130,7 @@ async def async_setup_entry(
                         key=ATTR_WATER,
                         translation_key="water",
                         icon="mdi:water-percent",
-                        native_unit_of_measurement="%",
+                        native_unit_of_measurement=PERCENTAGE,
                     ),
                     Metric.WATER_PERCENTAGE,
                 ),
@@ -131,6 +139,8 @@ async def async_setup_entry(
                     SensorEntityDescription(
                         key=ATTR_BONES,
                         translation_key="bone_mass",
+                        native_unit_of_measurement=UnitOfMass.KILOGRAMS,
+                        device_class=SensorDeviceClass.WEIGHT,
                     ),
                     Metric.BONE_MASS,
                 ),
@@ -139,6 +149,8 @@ async def async_setup_entry(
                     SensorEntityDescription(
                         key=ATTR_MUSCLE,
                         translation_key="muscle_mass",
+                        native_unit_of_measurement=UnitOfMass.KILOGRAMS,
+                        device_class=SensorDeviceClass.WEIGHT,
                     ),
                     Metric.MUSCLE_MASS,
                 ),
@@ -147,6 +159,7 @@ async def async_setup_entry(
                     SensorEntityDescription(
                         key=ATTR_METABOLIC,
                         translation_key="metabolic_age",
+                        suggested_display_precision=0,
                     ),
                     Metric.METABOLIC_AGE,
                 ),
@@ -155,6 +168,7 @@ async def async_setup_entry(
                     SensorEntityDescription(
                         key=ATTR_BODY_SCORE,
                         translation_key="body_score",
+                        suggested_display_precision=0,
                     ),
                     Metric.BODY_SCORE,
                 ),
