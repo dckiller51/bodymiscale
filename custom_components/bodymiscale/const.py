@@ -5,7 +5,7 @@ from homeassistant.const import Platform
 MIN_REQUIRED_HA_VERSION = "2023.9.0"
 NAME = "BodyMiScale"
 DOMAIN = "bodymiscale"
-VERSION = "2023.11.1"
+VERSION = "2023.11.2"
 
 ISSUE_URL = "https://github.com/dckiller51/bodymiscale/issues"
 
@@ -35,7 +35,7 @@ ATTR_PROTEIN = "protein"
 ATTR_VISCERAL = "visceral_fat"
 ATTR_WATER = "water"
 
-UNIT_POUNDS = "lbs"
+UNIT_POUNDS = "lb"
 
 PROBLEM_NONE = "none"
 

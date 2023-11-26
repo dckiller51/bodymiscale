@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## 2023.11.2
+
+- corrects the calculation problem when the main weight sensor is in pound "lb".
+- add: "weight" device class for weight sensor, muscle mass sensor and bone mass sensor (thank you @5high, @impankratov)
+- add: "KILOGRAMS" native unit of measurement for weight sensor, muscle mass sensor and bone mass sensor.
+  You can change the measurement units directly in the sensor. The conversion is automatic. There will be no impact on the results.
+- add: "kcal" native unit of measurement for basal metabolism sensor.
+- add: "PERCENTAGE" native unit of measurement for body fat sensor, protein sensor and water sensor.
+- add display precision at "0" to display integer values for the following sensors:
+  - basal metabolism
+  - visceral fat
+  - metabolic age
+  - body score
+
 ## 2023.11.1
 
 - added Traditional Chinese language support (thank you @yauyauwind)

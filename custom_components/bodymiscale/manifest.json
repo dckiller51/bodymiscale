@@ -15,5 +15,5 @@
   "requirements": [
     "cachetools==5.3.0"
   ],
-  "version": "2023.11.1"
+  "version": "2023.11.2"
 }
