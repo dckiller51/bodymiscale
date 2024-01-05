@@ -2,7 +2,7 @@
 
 from homeassistant.const import Platform
 
-MIN_REQUIRED_HA_VERSION = "2023.9.0"
+MIN_REQUIRED_HA_VERSION = "2024.1.0"
 NAME = "BodyMiScale"
 DOMAIN = "bodymiscale"
 VERSION = "2023.11.2"
