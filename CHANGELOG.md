@@ -4,15 +4,19 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
-## 2024.01.2
+## 2024.1.3
+
+- (Sorry, tired) Correction following incorrect handling of the minimal version of HASS.
+
+## 2024.1.2
 
 - Correction following incorrect handling of the minimal version of HASS.
 
-## 2024.01.1
+## 2024.1.1
 
 - version number patch
 
-## 2024.01.0
+## 2024.1.0
 
 - #218 Set state_class as class variable after installing Core 2024.1 beta @edenhaus
 
