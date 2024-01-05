@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## 2024.01.2
+
+- Correction following incorrect handling of the minimal version of HASS.
+
 ## 2024.01.1
 
 - version number patch
