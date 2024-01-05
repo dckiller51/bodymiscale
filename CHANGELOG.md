@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## 2024.01.1
+
+- version number patch
+
 ## 2024.01.0
 
 - #218 Set state_class as class variable after installing Core 2024.1 beta @edenhaus
