@@ -178,6 +178,8 @@ async def async_setup_entry(
 class BodyScaleSensor(BodyScaleBaseEntity, SensorEntity):  # type: ignore[misc]
     """Body scale sensor."""
 
+    _attr_state_class = SensorStateClass.MEASUREMENT
+
     def __init__(
         self,
         handler: BodyScaleMetricsHandler,
@@ -187,7 +189,6 @@ class BodyScaleSensor(BodyScaleBaseEntity, SensorEntity):  # type: ignore[misc]
         | (Callable[[StateType, Mapping[str, Any]], Mapping[str, Any]]) = None,
     ):
         super().__init__(handler, entity_description)
-        self.entity_description.state_class = SensorStateClass.MEASUREMENT
         self._metric = metric
         self._get_attributes = get_attributes
 
