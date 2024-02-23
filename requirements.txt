@@ -2,6 +2,6 @@ cachetools==5.3.2
 homeassistant>=2023.7.0.b0
 mypy==1.8.0
 pre-commit==3.6.0
-pylint==3.0.3
+pylint==3.0.4
 types-cachetools
 #pytest-homeassistant-custom-component==0.4.4
