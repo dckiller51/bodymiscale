@@ -1,4 +1,5 @@
 """Models module."""
+
 from enum import Enum
 
 from .const import (
