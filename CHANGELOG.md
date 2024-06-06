@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## 2024.6.0
+
+- remove group.py.
+
 ## 2024.1.3
 
 - (Sorry, tired) Correction following incorrect handling of the minimal version of HASS.
