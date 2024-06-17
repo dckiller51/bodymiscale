@@ -1,4 +1,5 @@
 """Metrics module, which require impedance."""
+
 from collections.abc import Mapping
 from typing import Any
 

@@ -1,6 +1,5 @@
 """Metrics module."""
 
-
 import logging
 from collections.abc import Callable, Mapping, MutableMapping
 from dataclasses import dataclass, field
