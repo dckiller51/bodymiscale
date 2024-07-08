@@ -100,6 +100,8 @@ async def async_setup_entry(
                     SensorEntityDescription(
                         key=ATTR_LBM,
                         translation_key="lean_body_mass",
+                        native_unit_of_measurement=UnitOfMass.KILOGRAMS,
+                        device_class=SensorDeviceClass.WEIGHT,
                     ),
                     Metric.LBM,
                 ),
