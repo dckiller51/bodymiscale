@@ -39,7 +39,8 @@
       "protein": { "name": "Protein" },
       "visceral_fat": { "name": "Bauchfett" },
       "water": { "name": "Wasser" },
-      "weight": { "name": "Gewicht" }
+      "weight": { "name": "Gewicht" },
+      "last_measurement_time": { "name": "Letzte Messung" }
     }
   },
   "entity_component": {
@@ -111,7 +112,8 @@
         "protein": { "name": "Protein" },
         "visceral_fat": { "name": "Bauchfett" },
         "water": { "name": "Wasser" },
-        "weight": { "name": "Gewicht" }
+        "weight": { "name": "Gewicht" },
+        "last_measurement_time": { "name": "Letzte Messung" }
       }
     }
   },

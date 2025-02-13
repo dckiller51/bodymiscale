@@ -39,7 +39,8 @@
       "protein": { "name": "Proteină" },
       "visceral_fat": { "name": "Grasime viscerala" },
       "water": { "name": "Apă" },
-      "weight": { "name": "Greutate" }
+      "weight": { "name": "Greutate" },
+      "last_measurement_time": { "name": "Ultima măsurătoare" }
     }
   },
   "entity_component": {
@@ -119,7 +120,8 @@
         "protein": { "name": "Proteină" },
         "visceral_fat": { "name": "Grasime viscerala" },
         "water": { "name": "Apă" },
-        "weight": { "name": "Greutate" }
+        "weight": { "name": "Greutate" },
+        "last_measurement_time": { "name": "Ultima măsurătoare" }
       }
     }
   },

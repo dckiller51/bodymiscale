@@ -1,4 +1,4 @@
-"""Sensor module."""
+from datetime import datetime
 from collections.abc import Callable, Mapping
 from typing import Any
 
@@ -28,6 +28,7 @@ from .const import (
     ATTR_PROTEIN,
     ATTR_VISCERAL,
     ATTR_WATER,
+    ATTR_LAST_MEASUREMENT_TIME,
     CONF_SENSOR_IMPEDANCE,
     CONF_SENSOR_WEIGHT,
     DOMAIN,
@@ -39,15 +40,42 @@ from .models import Metric
 from .util import get_bmi_label, get_ideal_weight
 
 
+class BodyScaleTimestampSensor(BodyScaleBaseEntity, SensorEntity):
+    """Timestamp sensor for the last weight measurement, displaying date and time."""
+
+    _attr_state_class = None  # Prevent display as 'X minutes ago'
+    
+    def __init__(self, handler: BodyScaleMetricsHandler):
+        """Initialize the timestamp sensor."""
+        super().__init__(handler, SensorEntityDescription(
+            key=ATTR_LAST_MEASUREMENT_TIME,
+            translation_key="last_weight_update_time",
+            icon="mdi:calendar-clock",
+        ))
+        self._attr_device_class = None  # Disable timestamp class
+        self._last_weight = None  # To store the previous weight measurement
+
+    async def async_added_to_hass(self) -> None:
+        """Set up event listener when added to Home Assistant."""
+        await super().async_added_to_hass()
+        self.async_on_remove(self._handler.subscribe(Metric.WEIGHT, self.on_value))
+
+    def on_value(self, new_state):
+        """Update sensor value when a new weight measurement is received."""
+        current_weight = new_state
+        # Always update the timestamp when a new weight value is received
+        self._attr_native_value = datetime.now().strftime("%Y-%m-%d %H:%M")
+        self._last_weight = current_weight  # Save the new weight to ensure it is always updated
+        self.async_write_ha_state()
+
+
 async def async_setup_entry(
     hass: HomeAssistant,
     config_entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Add entities for passed config_entry in HA."""
-    handler: BodyScaleMetricsHandler = hass.data[DOMAIN][HANDLERS][
-        config_entry.entry_id
-    ]
+    handler: BodyScaleMetricsHandler = hass.data[DOMAIN][HANDLERS][config_entry.entry_id]
 
     new_sensors = [
         BodyScaleSensor(
@@ -91,6 +119,9 @@ async def async_setup_entry(
             lambda _, config: {ATTR_IDEAL: get_ideal_weight(config)},
         ),
     ]
+
+    # Ajouter un capteur pour l'horodatage de la mise à jour du poids
+    new_sensors.append(BodyScaleTimestampSensor(handler))
 
     if CONF_SENSOR_IMPEDANCE in handler.config:
         new_sensors.extend(
@@ -205,3 +236,4 @@ class BodyScaleSensor(BodyScaleBaseEntity, SensorEntity):  # type: ignore[misc]
             self.async_write_ha_state()
 
         self.async_on_remove(self._handler.subscribe(self._metric, on_value))
+        

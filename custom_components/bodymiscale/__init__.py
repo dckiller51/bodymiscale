@@ -4,6 +4,7 @@ import logging
 from collections.abc import MutableMapping
 from functools import partial
 from typing import Any
+from datetime import datetime
 
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
@@ -28,6 +29,7 @@ from .const import (
     ATTR_FATMASSTOLOSE,
     ATTR_IDEAL,
     ATTR_PROBLEM,
+    ATTR_LAST_MEASUREMENT_TIME,
     COMPONENT,
     CONF_BIRTHDAY,
     CONF_GENDER,
@@ -188,6 +190,8 @@ class Bodymiscale(BodyScaleBaseEntity):
             else:
                 self._available_metrics[metric.value] = value
 
+            self._last_time = datetime.now().strftime("%Y-%m-%d %H:%M")
+
             if self._timer_handle is not None:
                 self._timer_handle.cancel()
             self._timer_handle = loop.call_later(
@@ -214,6 +218,7 @@ class Bodymiscale(BodyScaleBaseEntity):
             CONF_GENDER: self._handler.config[CONF_GENDER].value,
             ATTR_IDEAL: get_ideal_weight(self._handler.config),
             ATTR_AGE: get_age(self._handler.config[CONF_BIRTHDAY]),
+            ATTR_LAST_MEASUREMENT_TIME: self._last_time,
             **self._available_metrics,
         }
 

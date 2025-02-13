@@ -39,7 +39,8 @@
       "protein": { "name": "Protein" },
       "visceral_fat": { "name": "Visceral fat" },
       "water": { "name": "Water" },
-      "weight": { "name": "Waga" }
+      "weight": { "name": "Waga" },
+      "last_measurement_time": { "name": "Ostatni pomiar" }
     }
   },
   "entity_component": {
@@ -119,7 +120,8 @@
         "protein": { "name": "Protein" },
         "visceral_fat": { "name": "Visceral fat" },
         "water": { "name": "Water" },
-        "weight": { "name": "Waga" }
+        "weight": { "name": "Waga" },
+        "last_measurement_time": { "name": "Ostatni pomiar" }
       }
     }
   },

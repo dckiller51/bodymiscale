@@ -39,7 +39,8 @@
       "protein": { "name": "Белки" },
       "visceral_fat": { "name": "Висцеральный жир" },
       "water": { "name": "Вода" },
-      "weight": { "name": "Вес" }
+      "weight": { "name": "Вес" },
+      "last_measurement_time": { "name": "Последнее измерение" }
     }
   },
   "entity_component": {
@@ -119,7 +120,8 @@
         "protein": { "name": "Белки" },
         "visceral_fat": { "name": "Висцеральный жир" },
         "water": { "name": "Вода" },
-        "weight": { "name": "Вес" }
+        "weight": { "name": "Вес" },
+        "last_measurement_time": { "name": "Последнее измерение" }
       }
     }
   },

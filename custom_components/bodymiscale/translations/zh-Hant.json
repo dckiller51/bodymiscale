@@ -39,7 +39,8 @@
       "protein": { "name": "蛋白質" },
       "visceral_fat": { "name": "內臟脂肪" },
       "water": { "name": "水分" },
-      "weight": { "name": "體重" }
+      "weight": { "name": "體重" },
+      "last_measurement_time": { "name": "最後測量時間" }
     }
   },
   "entity_component": {
@@ -119,7 +120,8 @@
         "protein": { "name": "蛋白質" },
         "visceral_fat": { "name": "內臟脂肪" },
         "water": { "name": "水分" },
-        "weight": { "name": "體重" }
+        "weight": { "name": "體重" },
+        "last_measurement_time": { "name": "最後測量時間" }
       }
     }
   },

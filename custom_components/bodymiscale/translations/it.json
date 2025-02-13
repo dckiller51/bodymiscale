@@ -39,7 +39,8 @@
       "protein": { "name": "Proteine" },
       "visceral_fat": { "name": "Grasso viscerale" },
       "water": { "name": "Acqua" },
-      "weight": { "name": "Peso" }
+      "weight": { "name": "Peso" },
+      "last_measurement_time": { "name": "Ultima misurazione" }
     }
   },
   "entity_component": {
@@ -119,7 +120,8 @@
         "protein": { "name": "Proteine" },
         "visceral_fat": { "name": "Grasso viscerale" },
         "water": { "name": "Acqua" },
-        "weight": { "name": "Peso" }
+        "weight": { "name": "Peso" },
+        "last_measurement_time": { "name": "Ultima misurazione" }
       }
     }
   },

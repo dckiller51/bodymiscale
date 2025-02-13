@@ -34,6 +34,7 @@ ATTR_PROBLEM = "problem"
 ATTR_PROTEIN = "protein"
 ATTR_VISCERAL = "visceral_fat"
 ATTR_WATER = "water"
+ATTR_LAST_MEASUREMENT_TIME = "last_measurement_time"
 
 UNIT_POUNDS = "lb"
 
