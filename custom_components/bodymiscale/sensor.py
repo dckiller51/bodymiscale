@@ -1,3 +1,4 @@
+"""Sensor module."""
 from datetime import datetime
 from collections.abc import Callable, Mapping
 from typing import Any
@@ -75,7 +76,9 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Add entities for passed config_entry in HA."""
-    handler: BodyScaleMetricsHandler = hass.data[DOMAIN][HANDLERS][config_entry.entry_id]
+    handler: BodyScaleMetricsHandler = hass.data[DOMAIN][HANDLERS][
+        config_entry.entry_id
+    ]
 
     new_sensors = [
         BodyScaleSensor(
