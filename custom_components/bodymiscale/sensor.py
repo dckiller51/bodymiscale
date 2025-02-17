@@ -1,4 +1,5 @@
 """Sensor module."""
+
 from collections.abc import Callable, Mapping
 from typing import Any
 
@@ -185,8 +186,9 @@ class BodyScaleSensor(BodyScaleBaseEntity, SensorEntity):  # type: ignore[misc]
         handler: BodyScaleMetricsHandler,
         entity_description: SensorEntityDescription,
         metric: Metric,
-        get_attributes: None
-        | (Callable[[StateType, Mapping[str, Any]], Mapping[str, Any]]) = None,
+        get_attributes: None | (
+            Callable[[StateType, Mapping[str, Any]], Mapping[str, Any]]
+        ) = None,
     ):
         super().__init__(handler, entity_description)
         self._metric = metric

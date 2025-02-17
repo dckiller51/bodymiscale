@@ -1,4 +1,5 @@
 """Support for bodymiscale."""
+
 import asyncio
 import logging
 from collections.abc import MutableMapping

@@ -1,4 +1,5 @@
 """Body scale module."""
+
 from functools import cached_property
 
 from ..models import Gender
