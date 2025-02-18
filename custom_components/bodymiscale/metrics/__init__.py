@@ -25,8 +25,8 @@ from ..const import (
     CONF_GENDER,
     CONF_HEIGHT,
     CONF_SCALE,
-    CONF_SENSOR_IMPEDANCE,
-    CONF_SENSOR_WEIGHT,
+    CONF_IMPEDANCE_SENSOR,
+    CONF_WEIGHT_SENSOR,
     CONSTRAINT_IMPEDANCE_MAX,
     CONSTRAINT_IMPEDANCE_MIN,
     CONSTRAINT_WEIGHT_MAX,
@@ -157,9 +157,9 @@ class BodyScaleMetricsHandler:
                 info_dep = self._dependencies[dep]
                 info_dep.depended_by.append(key)
 
-        sensors = [self._config[CONF_SENSOR_WEIGHT]]
-        if CONF_SENSOR_IMPEDANCE in self._config:
-            sensors.append(self._config[CONF_SENSOR_IMPEDANCE])
+        sensors = [self._config[CONF_WEIGHT_SENSOR]]
+        if CONF_IMPEDANCE_SENSOR in self._config:
+            sensors.append(self._config[CONF_IMPEDANCE_SENSOR])
 
         self._remove_listener = async_track_state_change_event(
             self._hass,
@@ -222,17 +222,17 @@ class BodyScaleMetricsHandler:
         if value != STATE_UNAVAILABLE:
             value = float(value)
 
-        if entity_id == self._config[CONF_SENSOR_WEIGHT]:
+        if entity_id == self._config[CONF_WEIGHT_SENSOR]:
             if self._is_valid(
-                CONF_SENSOR_WEIGHT, value, CONSTRAINT_WEIGHT_MIN, CONSTRAINT_WEIGHT_MAX
+                CONF_WEIGHT_SENSOR, value, CONSTRAINT_WEIGHT_MIN, CONSTRAINT_WEIGHT_MAX
             ):
                 if new_state.attributes.get(ATTR_UNIT_OF_MEASUREMENT) == UNIT_POUNDS:
                     value = value * 0.45359237
 
                 self._update_available_metric(Metric.WEIGHT, value)
-        elif entity_id == self._config.get(CONF_SENSOR_IMPEDANCE, None):
+        elif entity_id == self._config.get(CONF_IMPEDANCE_SENSOR, None):
             if self._is_valid(
-                CONF_SENSOR_IMPEDANCE,
+                CONF_IMPEDANCE_SENSOR,
                 value,
                 CONSTRAINT_IMPEDANCE_MIN,
                 CONSTRAINT_IMPEDANCE_MAX,

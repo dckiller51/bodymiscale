@@ -1,7 +1,7 @@
 {
   "name": "Bodymiscale",
   "domains": ["sensor"],
-  "homeassistant": "beta.2025.02.12",
+  "homeassistant": "2024.9.0",
   "iot_class": "local_polling",
   "filename": "custom_components/bodymiscale/__init__.py",
   "zip_release": false,

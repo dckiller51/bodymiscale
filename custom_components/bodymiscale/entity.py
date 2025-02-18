@@ -22,6 +22,7 @@ class BodyScaleBaseEntity(Entity):  # type: ignore[misc]
         """Initialize the entity."""
         super().__init__()
         self._handler = handler
+
         if entity_description:
             self.entity_description = entity_description
         elif not hasattr(self, "entity_description"):
@@ -48,3 +49,4 @@ class BodyScaleBaseEntity(Entity):  # type: ignore[misc]
             sw_version=VERSION,
             identifiers={(DOMAIN, self._handler.config_entry_id)},
         )
+        
