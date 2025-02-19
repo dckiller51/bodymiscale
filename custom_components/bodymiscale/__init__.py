@@ -176,6 +176,7 @@ class Bodymiscale(BodyScaleBaseEntity):
         self._available_metrics: MutableMapping[str, StateType] = TTLCache(
             maxsize=len(Metric), ttl=60  # Cache for available metrics with TTL
         )
+        self._last_time = None
 
     async def async_added_to_hass(self) -> None:
         """After being added to hass."""

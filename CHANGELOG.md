@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## 2025.2.19-beta
+
+Fix: AttributeError: A critical `AttributeError` was discovered and fixed in the Bodymiscale integration. 'Bodymiscale' object has no attribute '_last_time'.
+
 ## 2025.2.18-beta
 
 * **Improved:** README presentation for better readability.
