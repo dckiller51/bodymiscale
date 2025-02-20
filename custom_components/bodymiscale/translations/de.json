@@ -95,7 +95,7 @@
           }
         },
         "height": { "name": "Körpergröße" },
-        "ideal": { "name": "Idealgewicht" },
+        "ideal_weight": { "name": "Idealgewicht" },
         "impedance": { "name": "Zusammensetzung" },
         "lean_body_mass": { "name": "Magere Körpermasse" },
         "metabolic_age": { "name": "stoffwechselbedingtes Körperalter" },

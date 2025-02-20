@@ -95,7 +95,7 @@
           }
         },
         "height": { "name": "Cintura" },
-        "ideal": { "name": "Ideal" },
+        "ideal_weight": { "name": "Ideal peso" },
         "impedance": { "name": "Impedance" },
         "lean_body_mass": { "name": "Massa corporal magra" },
         "metabolic_age": { "name": "Idade metabólica" },

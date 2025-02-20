@@ -95,7 +95,7 @@
           }
         },
         "height": { "name": "Taille" },
-        "ideal": { "name": "Poids idéal" },
+        "ideal_weight": { "name": "Poids idéal" },
         "impedance": { "name": "Impédance" },
         "lean_body_mass": { "name": "Masse corporelle mince" },
         "metabolic_age": { "name": "Age corporel" },

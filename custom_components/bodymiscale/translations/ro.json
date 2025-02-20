@@ -95,7 +95,7 @@
           }
         },
         "height": { "name": "Înălţime" },
-        "ideal": { "name": "Ideal" },
+        "ideal_weight": { "name": "Ideal greutate" },
         "impedance": { "name": "Impedanță" },
         "lean_body_mass": { "name": "Masă corporală slabă" },
         "metabolic_age": { "name": "Vârsta metabolică" },

@@ -95,7 +95,7 @@
           }
         },
         "height": { "name": "身高" },
-        "ideal": { "name": "理想" },
+        "ideal_weight": { "name": "理想" },
         "impedance": { "name": "阻抗" },
         "lean_body_mass": { "name": "瘦体重" },
         "metabolic_age": { "name": "代谢年龄" },

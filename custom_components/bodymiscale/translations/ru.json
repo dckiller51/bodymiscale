@@ -95,7 +95,7 @@
           }
         },
         "height": { "name": "Рост" },
-        "ideal": { "name": "Идеальный вес" },
+        "ideal_weight": { "name": "Идеальный вес" },
         "impedance": { "name": "Импеданс" },
         "lean_body_mass": { "name": "Сухая масса тела" },
         "metabolic_age": { "name": "Метаболический возраст" },
