@@ -1,4 +1,5 @@
 """Body score module."""
+
 from collections import namedtuple
 from collections.abc import Mapping
 from typing import Any

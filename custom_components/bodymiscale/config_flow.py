@@ -1,4 +1,5 @@
 """Config flow to configure the bodymiscale integration."""
+
 from __future__ import annotations
 
 from types import MappingProxyType
@@ -29,16 +30,18 @@ from .models import Gender
 
 @callback  # type: ignore[misc]
 def _get_options_schema(
-    defaults: dict[str, Any] | MappingProxyType[str, Any]
+    defaults: dict[str, Any] | MappingProxyType[str, Any],
 ) -> vol.Schema:
     """Return options schema."""
     return vol.Schema(
         {
             vol.Required(
                 CONF_HEIGHT,
-                description={"suggested_value": defaults[CONF_HEIGHT]}
-                if CONF_HEIGHT in defaults
-                else None,
+                description=(
+                    {"suggested_value": defaults[CONF_HEIGHT]}
+                    if CONF_HEIGHT in defaults
+                    else None
+                ),
             ): selector(
                 {
                     "number": {
@@ -51,15 +54,19 @@ def _get_options_schema(
             ),
             vol.Required(
                 CONF_SENSOR_WEIGHT,
-                description={"suggested_value": defaults[CONF_SENSOR_WEIGHT]}
-                if CONF_SENSOR_WEIGHT in defaults
-                else None,
+                description=(
+                    {"suggested_value": defaults[CONF_SENSOR_WEIGHT]}
+                    if CONF_SENSOR_WEIGHT in defaults
+                    else None
+                ),
             ): selector({"entity": {"domain": ["sensor", "input_number", "number"]}}),
             vol.Optional(
                 CONF_SENSOR_IMPEDANCE,
-                description={"suggested_value": defaults[CONF_SENSOR_IMPEDANCE]}
-                if CONF_SENSOR_IMPEDANCE in defaults
-                else None,
+                description=(
+                    {"suggested_value": defaults[CONF_SENSOR_IMPEDANCE]}
+                    if CONF_SENSOR_IMPEDANCE in defaults
+                    else None
+                ),
             ): selector({"entity": {"domain": ["sensor", "input_number", "number"]}}),
         }
     )
