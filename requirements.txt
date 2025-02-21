@@ -1,4 +1,4 @@
-cachetools==5.3.3
+cachetools==5.5.2
 homeassistant>=2023.7.0.b0
 mypy==1.15.0
 pre-commit==3.6.0
