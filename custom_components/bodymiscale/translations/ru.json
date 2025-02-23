@@ -33,14 +33,14 @@
       "body_fat": { "name": "Жировая ткань" },
       "body_score": { "name": "Оценка тела" },
       "bone_mass": { "name": "Костная масса" },
+      "last_measurement_time": { "name": "Последнее измерение" },
       "lean_body_mass": { "name": "Сухая масса тела" },
       "metabolic_age": { "name": "Метаболический возраст" },
       "muscle_mass": { "name": "Мышечная масса" },
       "protein": { "name": "Белки" },
       "visceral_fat": { "name": "Висцеральный жир" },
       "water": { "name": "Вода" },
-      "weight": { "name": "Вес" },
-      "last_measurement_time": { "name": "Последнее измерение" }
+      "weight": { "name": "Вес" }
     }
   },
   "entity_component": {
@@ -95,8 +95,9 @@
           }
         },
         "height": { "name": "Рост" },
-        "ideal_weight": { "name": "Идеальный вес" },
+        "ideal": { "name": "Идеальный вес" },
         "impedance": { "name": "Импеданс" },
+        "last_measurement_time": { "name": "Последнее измерение" },
         "lean_body_mass": { "name": "Сухая масса тела" },
         "metabolic_age": { "name": "Метаболический возраст" },
         "muscle_mass": { "name": "Мышечная масса" },
@@ -120,8 +121,7 @@
         "protein": { "name": "Белки" },
         "visceral_fat": { "name": "Висцеральный жир" },
         "water": { "name": "Вода" },
-        "weight": { "name": "Вес" },
-        "last_measurement_time": { "name": "Последнее измерение" }
+        "weight": { "name": "Вес" }
       }
     }
   },

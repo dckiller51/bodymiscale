@@ -33,14 +33,14 @@
       "body_fat": { "name": "Grăsime corporală" },
       "body_score": { "name": "Scor corporal" },
       "bone_mass": { "name": "Masă osoasă" },
+      "last_measurement_time": { "name": "Ultima măsurătoare" },
       "lean_body_mass": { "name": "Masă corporală slabă" },
       "metabolic_age": { "name": "Vârsta metabolică" },
       "muscle_mass": { "name": "Masă musculară" },
       "protein": { "name": "Proteină" },
       "visceral_fat": { "name": "Grasime viscerala" },
       "water": { "name": "Apă" },
-      "weight": { "name": "Greutate" },
-      "last_measurement_time": { "name": "Ultima măsurătoare" }
+      "weight": { "name": "Greutate" }
     }
   },
   "entity_component": {
@@ -95,8 +95,9 @@
           }
         },
         "height": { "name": "Înălţime" },
-        "ideal_weight": { "name": "Ideal greutate" },
+        "ideal": { "name": "Ideal greutate" },
         "impedance": { "name": "Impedanță" },
+        "last_measurement_time": { "name": "Ultima măsurătoare" },
         "lean_body_mass": { "name": "Masă corporală slabă" },
         "metabolic_age": { "name": "Vârsta metabolică" },
         "muscle_mass": { "name": "Masă musculară" },
@@ -120,8 +121,7 @@
         "protein": { "name": "Proteină" },
         "visceral_fat": { "name": "Grasime viscerala" },
         "water": { "name": "Apă" },
-        "weight": { "name": "Greutate" },
-        "last_measurement_time": { "name": "Ultima măsurătoare" }
+        "weight": { "name": "Greutate" }
       }
     }
   },

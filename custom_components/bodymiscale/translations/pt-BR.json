@@ -33,14 +33,14 @@
       "body_fat": { "name": "Gordura corporal" },
       "body_score": { "name": "Escore corporal" },
       "bone_mass": { "name": "Massa óssea" },
+      "last_measurement_time": { "name": "Última medição" },
       "lean_body_mass": { "name": "Massa corporal magra" },
       "metabolic_age": { "name": "Idade metabólica" },
       "muscle_mass": { "name": "Massa muscular" },
       "protein": { "name": "Proteína" },
       "visceral_fat": { "name": "Gordura visceral" },
       "water": { "name": "Água" },
-      "weight": { "name": "Peso" },
-      "last_measurement_time": { "name": "Última medição" }
+      "weight": { "name": "Peso" }
     }
   },
   "entity_component": {
@@ -95,8 +95,9 @@
           }
         },
         "height": { "name": "Cintura" },
-        "ideal_weight": { "name": "Ideal peso" },
+        "ideal": { "name": "Ideal peso" },
         "impedance": { "name": "Impedance" },
+        "last_measurement_time": { "name": "Última medição" },
         "lean_body_mass": { "name": "Massa corporal magra" },
         "metabolic_age": { "name": "Idade metabólica" },
         "muscle_mass": { "name": "Massa muscular" },
@@ -120,8 +121,7 @@
         "protein": { "name": "Proteína" },
         "visceral_fat": { "name": "Gordura visceral" },
         "water": { "name": "Água" },
-        "weight": { "name": "Peso" },
-        "last_measurement_time": { "name": "Última medição" }
+        "weight": { "name": "Peso" }
       }
     }
   },

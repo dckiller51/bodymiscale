@@ -33,14 +33,14 @@
       "body_fat": { "name": "Body fat" },
       "body_score": { "name": "Body score" },
       "bone_mass": { "name": "Bone mass" },
+      "last_measurement_time": { "name": "Last measurement time" },
       "lean_body_mass": { "name": "Lean body mass" },
       "metabolic_age": { "name": "Metabolic age" },
       "muscle_mass": { "name": "Muscle mass" },
       "protein": { "name": "Protein" },
       "visceral_fat": { "name": "Visceral fat" },
       "water": { "name": "Water" },
-      "weight": { "name": "Weight" },
-      "last_measurement_time": { "name": "Last measurement time" }
+      "weight": { "name": "Weight" }
     }
   },
   "entity_component": {
@@ -95,8 +95,9 @@
           }
         },
         "height": { "name": "Height" },
-        "ideal_weight": { "name": "Ideal weight" },
+        "ideal": { "name": "Ideal weight" },
         "impedance": { "name": "Impedance" },
+        "last_measurement_time": { "name": "Last measurement time" },
         "lean_body_mass": { "name": "Lean body mass" },
         "metabolic_age": { "name": "Metabolic age" },
         "muscle_mass": { "name": "Muscle mass" },
@@ -120,8 +121,7 @@
         "protein": { "name": "Protein" },
         "visceral_fat": { "name": "Visceral fat" },
         "water": { "name": "Water" },
-        "weight": { "name": "Weight" },
-        "last_measurement_time": { "name": "Last measurement time" }
+        "weight": { "name": "Weight" }
       }
     }
   },

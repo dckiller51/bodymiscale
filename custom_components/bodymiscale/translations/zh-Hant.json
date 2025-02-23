@@ -33,14 +33,14 @@
       "body_fat": { "name": "體脂率" },
       "body_score": { "name": "體質評分" },
       "bone_mass": { "name": "骨量" },
+      "last_measurement_time": { "name": "最後測量時間" },
       "lean_body_mass": { "name": "瘦體重" },
       "metabolic_age": { "name": "代謝年齡" },
       "muscle_mass": { "name": "肌肉量" },
       "protein": { "name": "蛋白質" },
       "visceral_fat": { "name": "內臟脂肪" },
       "water": { "name": "水分" },
-      "weight": { "name": "體重" },
-      "last_measurement_time": { "name": "最後測量時間" }
+      "weight": { "name": "體重" }
     }
   },
   "entity_component": {
@@ -95,8 +95,9 @@
           }
         },
         "height": { "name": "身高" },
-        "ideal_weight": { "name": "理想" },
+        "ideal": { "name": "理想" },
         "impedance": { "name": "阻抗" },
+        "last_measurement_time": { "name": "最後測量時間" },
         "lean_body_mass": { "name": "瘦體重" },
         "metabolic_age": { "name": "代謝年齡" },
         "muscle_mass": { "name": "肌肉量" },
@@ -120,8 +121,7 @@
         "protein": { "name": "蛋白質" },
         "visceral_fat": { "name": "內臟脂肪" },
         "water": { "name": "水分" },
-        "weight": { "name": "體重" },
-        "last_measurement_time": { "name": "最後測量時間" }
+        "weight": { "name": "體重" }
       }
     }
   },

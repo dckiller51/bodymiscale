@@ -33,14 +33,14 @@
       "body_fat": { "name": "Grasso corporeo" },
       "body_score": { "name": "Punteggio corpo" },
       "bone_mass": { "name": "Massa ossea" },
+      "last_measurement_time": { "name": "Ultima misurazione" },
       "lean_body_mass": { "name": "Massa corporea magra" },
       "metabolic_age": { "name": "Età metabolica" },
       "muscle_mass": { "name": "Massa muscolare" },
       "protein": { "name": "Proteine" },
       "visceral_fat": { "name": "Grasso viscerale" },
       "water": { "name": "Acqua" },
-      "weight": { "name": "Peso" },
-      "last_measurement_time": { "name": "Ultima misurazione" }
+      "weight": { "name": "Peso" }
     }
   },
   "entity_component": {
@@ -95,8 +95,9 @@
           }
         },
         "height": { "name": "Altezza" },
-        "ideal_weight": { "name": "Ideale" },
+        "ideal": { "name": "Ideale" },
         "impedance": { "name": "Impedenza" },
+        "last_measurement_time": { "name": "Ultima misurazione" },
         "lean_body_mass": { "name": "Massa corporea magra" },
         "metabolic_age": { "name": "Età metabolica" },
         "muscle_mass": { "name": "Massa muscolare" },
@@ -120,8 +121,7 @@
         "protein": { "name": "Proteine" },
         "visceral_fat": { "name": "Grasso viscerale" },
         "water": { "name": "Acqua" },
-        "weight": { "name": "Peso" },
-        "last_measurement_time": { "name": "Ultima misurazione" }
+        "weight": { "name": "Peso" }
       }
     }
   },

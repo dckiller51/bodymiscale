@@ -33,14 +33,14 @@
       "body_fat": { "name": "Graisse corporelle" },
       "body_score": { "name": "Score corporel" },
       "bone_mass": { "name": "Masse osseuse" },
+      "last_measurement_time": { "name": "Dernière mesure" },
       "lean_body_mass": { "name": "Masse corporelle mince" },
       "metabolic_age": { "name": "Age corporel" },
       "muscle_mass": { "name": "Masse musculaire" },
       "protein": { "name": "Protéine" },
       "visceral_fat": { "name": "Graisse viscérale" },
       "water": { "name": "Water" },
-      "weight": { "name": "Poids" },
-      "last_measurement_time": { "name": "Dernière mesure" }
+      "weight": { "name": "Poids" }
     }
   },
   "entity_component": {
@@ -95,8 +95,9 @@
           }
         },
         "height": { "name": "Taille" },
-        "ideal_weight": { "name": "Poids idéal" },
+        "ideal": { "name": "Poids idéal" },
         "impedance": { "name": "Impédance" },
+        "last_measurement_time": { "name": "Dernière mesure" },
         "lean_body_mass": { "name": "Masse corporelle mince" },
         "metabolic_age": { "name": "Age corporel" },
         "muscle_mass": { "name": "Masse musculaire" },
@@ -120,8 +121,7 @@
         "protein": { "name": "Protéine" },
         "visceral_fat": { "name": "Graisse viscérale" },
         "water": { "name": "Eau" },
-        "weight": { "name": "Poids" },
-        "last_measurement_time": { "name": "Dernière mesure" }
+        "weight": { "name": "Poids" }
       }
     }
   },
