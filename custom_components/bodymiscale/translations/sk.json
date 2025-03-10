@@ -1,0 +1,141 @@
+{
+  "config": {
+    "error": {
+      "already_configured": "Už nakonfigurované",
+      "height_limit": "Výška je príliš vysoká (limit: 220 cm)",
+      "height_low": "Výška je príliš nízka (min: 50 cm)",
+      "invalid_date": "Neplatný dátum"
+    },
+    "step": {
+      "options": {
+        "data": {
+          "height": "Výška",
+          "impedance": "Senzor impedancie",
+          "weight": "Senzor hmotnosti"
+        },
+        "data_description": {
+          "impedance": "Ak vaša váha neposkytuje impedanciu, nechajte toto pole prázdne."
+        }
+      },
+      "user": {
+        "data": {
+          "birthday": "Narodeniny",
+          "gender": "Pohlavie",
+          "name": "Meno"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "basal_metabolism": { "name": "Bazálny metabolizmus" },
+      "bmi": { "name": "BMI" },
+      "body_fat": { "name": "Telesný tuk" },
+      "body_score": { "name": "Skóre tela" },
+      "bone_mass": { "name": "Kostná hmota" },
+      "lean_body_mass": { "name": "Čistá telesná hmota" },
+      "metabolic_age": { "name": "Metabolický vek" },
+      "muscle_mass": { "name": "Svalová hmota" },
+      "protein": { "name": "Proteín" },
+      "visceral_fat": { "name": "Viscerálny tuk" },
+      "water": { "name": "Voda" },
+      "weight": { "name": "Hmotnosť" }
+    }
+  },
+  "entity_component": {
+    "_": {
+      "name": "bodymiscale",
+      "state": {
+        "ok": "OK",
+        "problem": "Problém"
+      },
+      "state_attributes": {
+        "age": { "name": "Vek" },
+        "basal_metabolism": { "name": "Bazálny metabolizmus" },
+        "bmi": { "name": "BMI" },
+        "bmi_label": {
+          "name": "BMI označenie",
+          "state": {
+            "massive_obesity": "Masívna obezita",
+            "moderate_obesity": "Mierna obezita",
+            "normal_or_healthy_weight": "Normálna alebo zdravá hmotnosť",
+            "overweight": "Nadváha",
+            "severe_obesity": "Závažná obezita",
+            "slight_overweight": "Mierna nadváha",
+            "unavailable": "Nedostupné",
+            "underweight": "Podváha"
+          }
+        },
+        "body_fat": { "name": "Telesný tuk" },
+        "body_score": { "name": "Skóre tela" },
+        "body_type": {
+          "name": "Typ tela",
+          "state": {
+            "balanced": "Vyvážený",
+            "balanced_muscular": "Vyvážený-svalnatý",
+            "balanced_skinny": "Vyvážený-chudý",
+            "lack_exercise": "Nedostatok-pohybu",
+            "obese": "Obezita",
+            "overweight": "Nadváha",
+            "skinny": "Chudý",
+            "skinny_muscular": "Chudý-svalnatý",
+            "thick_set": "Hrubý",
+            "unavailable": "Nedostupné"
+          }
+        },
+        "bone_mass": { "name": "Kostná hmota" },
+        "fat_mass_to_gain": { "name": "Tuková hmota na pribratie" },
+        "fat_mass_to_lose": { "name": "Tuková hmota na schudnutie" },
+        "gender": {
+          "name": "Pohlavie",
+          "state": {
+            "female": "žena",
+            "male": "muž"
+          }
+        },
+        "height": { "name": "Výška" },
+        "ideal": { "name": "Ideál" },
+        "impedance": { "name": "Impedancia" },
+        "lean_body_mass": { "name": "Čistá telesná hmota" },
+        "metabolic_age": { "name": "Metabolický vek" },
+        "muscle_mass": { "name": "Svalová hmota" },
+        "problem": {
+          "name": "Problém",
+          "state": {
+            "impedance_high": "Vysoká impedancia",
+            "impedance_low": "Nízka impedancia",
+            "impedance_unavailable": "Impedancia nedostupná",
+            "none": "Žiadny",
+            "weight_high": "Vysoká hmotnosť",
+            "weight_high_and_impedance_high": "Vysoká hmotnosť, vysoká impedancia",
+            "weight_high_and_impedance_low": "Vysoká hmotnosť, nízka impedancia",
+            "weight_low": "Nízka hmotnosť",
+            "weight_low_and_impedance_high": "Nízka hmotnosť, vysoká impedancia",
+            "weight_low_and_impedance_low": "Nízka hmotnosť, nízka impedancia",
+            "weight_unavailable": "Hmotnosť nedostupná",
+            "weight_unavailable_and_impedance_unavailable": "Hmotnosť nedostupná, impedancia nedostupná"
+          }
+        },
+        "protein": { "name": "Proteín" },
+        "visceral_fat": { "name": "Viscerálny tuk" },
+        "water": { "name": "Voda" },
+        "weight": { "name": "Hmotnosť" }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "height": "Výška",
+          "impedance": "Senzor impedancie",
+          "weight": "Senzor hmotnosti"
+        },
+        "data_description": {
+          "impedance": "Ak vaša váha neposkytuje impedanciu, nechajte toto pole prázdne."
+        }
+      }
+    }
+  },
+  "title": "BodyMiScale"
+}
