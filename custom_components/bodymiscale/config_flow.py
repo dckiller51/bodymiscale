@@ -30,14 +30,16 @@ from .models import Gender
 
 @callback
 def _get_options_schema(
-    defaults: dict[str, Any] | MappingProxyType[str, Any]
+    defaults: dict[str, Any] | MappingProxyType[str, Any],
 ) -> vol.Schema:
     """Return options schema."""
     return vol.Schema(
         {
             vol.Required(
                 CONF_HEIGHT,
-                description={"suggested_value": defaults.get(CONF_HEIGHT)},  # Suggested height value
+                description={
+                    "suggested_value": defaults.get(CONF_HEIGHT)
+                },  # Suggested height value
             ): selector(
                 {
                     "number": {
@@ -50,12 +52,20 @@ def _get_options_schema(
             ),
             vol.Required(
                 CONF_WEIGHT_SENSOR,
-                description={"suggested_value": defaults.get(CONF_WEIGHT_SENSOR)},  # Suggested weight sensor
-            ): selector({"entity": {"domain": ["sensor", "input_number", "number"]}}),  # Selector for weight sensor
+                description={
+                    "suggested_value": defaults.get(CONF_WEIGHT_SENSOR)
+                },  # Suggested weight sensor
+            ): selector(
+                {"entity": {"domain": ["sensor", "input_number", "number"]}}
+            ),  # Selector for weight sensor
             vol.Optional(
                 CONF_IMPEDANCE_SENSOR,
-                description={"suggested_value": defaults.get(CONF_IMPEDANCE_SENSOR)},  # Suggested impedance sensor
-            ): selector({"entity": {"domain": ["sensor", "input_number", "number"]}}),  # Selector for impedance sensor
+                description={
+                    "suggested_value": defaults.get(CONF_IMPEDANCE_SENSOR)
+                },  # Suggested impedance sensor
+            ): selector(
+                {"entity": {"domain": ["sensor", "input_number", "number"]}}
+            ),  # Selector for impedance sensor
         }
     )
 
@@ -89,7 +99,9 @@ class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):
                 errors[CONF_BIRTHDAY] = "invalid_date"  # Set error if date is invalid
 
             if not errors:  # If no errors
-                self._async_abort_entries_match({CONF_NAME: user_input[CONF_NAME]})  # Abort if entry with same name exists
+                self._async_abort_entries_match(
+                    {CONF_NAME: user_input[CONF_NAME]}
+                )  # Abort if entry with same name exists
                 self._data = user_input  # Store the user input
                 return await self.async_step_options()  # Proceed to the options step
         else:
@@ -101,15 +113,25 @@ class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):
             data_schema=vol.Schema(  # Schema for the user step
                 {
                     vol.Required(
-                        CONF_NAME, default=user_input.get(CONF_NAME, vol.UNDEFINED)  # Name field
+                        CONF_NAME,
+                        default=user_input.get(CONF_NAME, vol.UNDEFINED),  # Name field
                     ): str,
                     vol.Required(
                         CONF_BIRTHDAY,
-                        default=user_input.get(CONF_BIRTHDAY, vol.UNDEFINED),  # Date of birth field
-                    ): selector({"text": {"type": "date"}}),  # Date selector
+                        default=user_input.get(
+                            CONF_BIRTHDAY, vol.UNDEFINED
+                        ),  # Date of birth field
+                    ): selector(
+                        {"text": {"type": "date"}}
+                    ),  # Date selector
                     vol.Required(
-                        CONF_GENDER, default=user_input.get(CONF_GENDER, vol.UNDEFINED)  # Gender field
-                    ): vol.In({gender: gender.value for gender in Gender}),  # Gender selector
+                        CONF_GENDER,
+                        default=user_input.get(
+                            CONF_GENDER, vol.UNDEFINED
+                        ),  # Gender field
+                    ): vol.In(
+                        {gender: gender.value for gender in Gender}
+                    ),  # Gender selector
                 }
             ),
         )
@@ -127,7 +149,9 @@ class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):
 
             if not errors:  # If no errors
                 return self.async_create_entry(
-                    title=self._data[CONF_NAME], data=self._data, options=user_input  # Create the config entry
+                    title=self._data[CONF_NAME],
+                    data=self._data,
+                    options=user_input,  # Create the config entry
                 )
 
         user_input = {}  # Initialize user input
@@ -162,4 +186,3 @@ class BodyMiScaleOptionsFlowHandler(OptionsFlow):
             step_id="init",
             data_schema=_get_options_schema(user_input),  # Schema for the options
         )
-    

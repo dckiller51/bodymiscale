@@ -20,9 +20,13 @@ def check_value_constraints(value: float, minimum: float, maximum: float) -> flo
 def get_ideal_weight(config: Mapping[str, Any]) -> float:
     """Get ideal weight (just doing a reverse BMI, should be something better)."""  # Calculate ideal weight (using a simplified formula)
     if config[CONF_GENDER] == Gender.FEMALE:  # If gender is female
-        ideal = float(config[CONF_HEIGHT] - 70) * 0.6  # Calculate ideal weight for females
+        ideal = (
+            float(config[CONF_HEIGHT] - 70) * 0.6
+        )  # Calculate ideal weight for females
     else:  # If gender is male
-        ideal = float(config[CONF_HEIGHT] - 80) * 0.7  # Calculate ideal weight for males
+        ideal = (
+            float(config[CONF_HEIGHT] - 80) * 0.7
+        )  # Calculate ideal weight for males
 
     return round(ideal, 0)  # Round the ideal weight to the nearest whole number
 
@@ -49,6 +53,9 @@ def get_age(date: str) -> int:
     born = datetime.strptime(date, "%Y-%m-%d")  # Parse the birthdate string
     today = datetime.today()  # Get today's date
     age = today.year - born.year  # Calculate the age
-    if (today.month, today.day) < (born.month, born.day):  # Adjust if birthday hasn't occurred yet this year
+    if (today.month, today.day) < (
+        born.month,
+        born.day,
+    ):  # Adjust if birthday hasn't occurred yet this year
         age -= 1
     return age  # Return the calculated age

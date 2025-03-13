@@ -5,7 +5,7 @@ from homeassistant.const import Platform
 # Versioning and Metadata
 NAME = "Bodymiscale"
 DOMAIN = "bodymiscale"
-VERSION = "2025.2.19-beta"
+VERSION = "2025.3.0-beta"
 MIN_REQUIRED_HA_VERSION = "2023.9.0"
 ISSUE_URL = "https://github.com/dckiller51/bodymiscale/issues"
 

@@ -1,4 +1,5 @@
 """Models module."""
+
 from enum import Enum
 
 from .const import (
@@ -47,4 +48,3 @@ class Metric(str, Enum):
     FAT_MASS_2_IDEAL_WEIGHT = "fat_mass_2_ideal_weight"
     BODY_TYPE = ATTR_BODY
     BODY_SCORE = ATTR_BODY_SCORE
-    

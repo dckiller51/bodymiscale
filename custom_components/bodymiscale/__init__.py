@@ -3,9 +3,9 @@
 import asyncio
 import logging
 from collections.abc import MutableMapping
+from datetime import datetime
 from functools import partial
 from typing import Any
-from datetime import datetime
 
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
@@ -29,8 +29,8 @@ from .const import (
     ATTR_FATMASSTOGAIN,
     ATTR_FATMASSTOLOSE,
     ATTR_IDEAL,
-    ATTR_PROBLEM,
     ATTR_LAST_MEASUREMENT_TIME,
+    ATTR_PROBLEM,
     COMPONENT,
     CONF_BIRTHDAY,
     CONF_GENDER,
@@ -51,15 +51,23 @@ _LOGGER = logging.getLogger(__name__)
 
 SCHEMA_SENSORS = vol.Schema(
     {
-        vol.Required(CONF_WEIGHT_SENSOR): cv.entity_id,  # Required weight sensor entity ID
-        vol.Optional(CONF_IMPEDANCE_SENSOR): cv.entity_id,  # Optional impedance sensor entity ID
+        vol.Required(
+            CONF_WEIGHT_SENSOR
+        ): cv.entity_id,  # Required weight sensor entity ID
+        vol.Optional(
+            CONF_IMPEDANCE_SENSOR
+        ): cv.entity_id,  # Optional impedance sensor entity ID
     }
 )
 
 BODYMISCALE_SCHEMA = vol.Schema(
     {
-        vol.Required(CONF_SENSORS): vol.Schema(SCHEMA_SENSORS),  # Required sensors configuration
-        vol.Required(CONF_HEIGHT): cv.positive_int,  # Required height (positive integer)
+        vol.Required(CONF_SENSORS): vol.Schema(
+            SCHEMA_SENSORS
+        ),  # Required sensors configuration
+        vol.Required(
+            CONF_HEIGHT
+        ): cv.positive_int,  # Required height (positive integer)
         vol.Required("born"): cv.string,  # Required date of birth (string)
         vol.Required(CONF_GENDER): cv.string,  # Required gender (string)
     },
@@ -67,7 +75,8 @@ BODYMISCALE_SCHEMA = vol.Schema(
 )
 
 CONFIG_SCHEMA = vol.Schema(
-    {DOMAIN: {cv.string: BODYMISCALE_SCHEMA}}, extra=vol.ALLOW_EXTRA  # Configuration schema for the integration
+    {DOMAIN: {cv.string: BODYMISCALE_SCHEMA}},
+    extra=vol.ALLOW_EXTRA,  # Configuration schema for the integration
 )
 
 
@@ -92,28 +101,40 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         hass.data.setdefault(
             DOMAIN,
             {
-                COMPONENT: EntityComponent(_LOGGER, DOMAIN, hass),  # Initialize the entity component
+                COMPONENT: EntityComponent(
+                    _LOGGER, DOMAIN, hass
+                ),  # Initialize the entity component
                 HANDLERS: {},  # Dictionary to store metric handlers
             },
         )
         _LOGGER.info(STARTUP_MESSAGE)  # Log the startup message
 
     handler = hass.data[DOMAIN][HANDLERS][entry.entry_id] = BodyScaleMetricsHandler(
-        hass, {**entry.data, **entry.options}, entry.entry_id  # Create a metrics handler
+        hass,
+        {**entry.data, **entry.options},
+        entry.entry_id,  # Create a metrics handler
     )
 
     component: EntityComponent = hass.data[DOMAIN][COMPONENT]
-    await component.async_add_entities([Bodymiscale(handler)])  # Add the Bodymiscale entity
+    await component.async_add_entities(
+        [Bodymiscale(handler)]
+    )  # Add the Bodymiscale entity
 
-    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)  # Forward entry setup to platforms
-    entry.async_on_unload(entry.add_update_listener(async_reload_entry))  # Add listener for entry updates
+    await hass.config_entries.async_forward_entry_setups(
+        entry, PLATFORMS
+    )  # Forward entry setup to platforms
+    entry.async_on_unload(
+        entry.add_update_listener(async_reload_entry)
+    )  # Add listener for entry updates
 
     return True
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
-    unload_ok: bool = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)  # Unload platforms
+    unload_ok: bool = await hass.config_entries.async_unload_platforms(
+        entry, PLATFORMS
+    )  # Unload platforms
 
     if unload_ok:
         component: EntityComponent = hass.data[DOMAIN][COMPONENT]
@@ -133,16 +154,22 @@ async def async_reload_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
 
 async def async_migrate_entry(_: HomeAssistant, config_entry: ConfigEntry) -> bool:
     """Migrate old entry."""
-    _LOGGER.debug("Migrating from version %d", config_entry.version)  # Log migration start
+    _LOGGER.debug(
+        "Migrating from version %d", config_entry.version
+    )  # Log migration start
 
     if config_entry.version == 1:  # Migration from version 1
         data = {**config_entry.data}  # Copy the data
         options = {
             CONF_HEIGHT: data.pop(CONF_HEIGHT),  # Extract height from data
-            CONF_WEIGHT_SENSOR: data.pop(CONF_WEIGHT_SENSOR),  # Extract weight sensor from data
+            CONF_WEIGHT_SENSOR: data.pop(
+                CONF_WEIGHT_SENSOR
+            ),  # Extract weight sensor from data
         }
         if CONF_IMPEDANCE_SENSOR in data:
-            options[CONF_IMPEDANCE_SENSOR] = data.pop(CONF_IMPEDANCE_SENSOR)  # Extract impedance sensor
+            options[CONF_IMPEDANCE_SENSOR] = data.pop(
+                CONF_IMPEDANCE_SENSOR
+            )  # Extract impedance sensor
 
         if config_entry.options:  # Update options if they exist
             options.update(config_entry.options)
@@ -155,7 +182,9 @@ async def async_migrate_entry(_: HomeAssistant, config_entry: ConfigEntry) -> bo
 
         config_entry.version = 2  # Update config entry version
 
-    _LOGGER.info("Migration to version %d successful", config_entry.version)  # Log migration success
+    _LOGGER.info(
+        "Migration to version %d successful", config_entry.version
+    )  # Log migration success
     return True
 
 
@@ -170,9 +199,13 @@ class Bodymiscale(BodyScaleBaseEntity):
         """Initialize the Bodymiscale component."""
         super().__init__(
             handler,
-            EntityDescription(key="bodymiscale", name=None, icon="mdi:human"),  # Set entity description
+            EntityDescription(
+                key="bodymiscale", name=None, icon="mdi:human"
+            ),  # Set entity description
         )
-        self._timer_handle: asyncio.TimerHandle | None = None  # Timer handle for delayed state updates
+        self._timer_handle: asyncio.TimerHandle | None = (
+            None  # Timer handle for delayed state updates
+        )
         self._available_metrics: MutableMapping[str, StateType] = TTLCache(
             maxsize=len(Metric), ttl=60  # Cache for available metrics with TTL
         )
@@ -184,14 +217,20 @@ class Bodymiscale(BodyScaleBaseEntity):
 
         loop = asyncio.get_event_loop()
 
-        def on_value(value: StateType, *, metric: Metric) -> None:  # Callback for metric updates
+        def on_value(
+            value: StateType, *, metric: Metric
+        ) -> None:  # Callback for metric updates
             if metric == Metric.STATUS:  # Update status attribute
-                self._attr_state = STATE_OK if value == PROBLEM_NONE else STATE_PROBLEM  # Set entity state
+                self._attr_state = (
+                    STATE_OK if value == PROBLEM_NONE else STATE_PROBLEM
+                )  # Set entity state
                 self._available_metrics[ATTR_PROBLEM] = value  # Store problem state
             else:
                 self._available_metrics[metric.value] = value  # Store metric value
 
-            self._last_time = datetime.now().strftime("%Y-%m-%d %H:%M")  # Store the last measurement time
+            self._last_time = datetime.now().strftime(
+                "%Y-%m-%d %H:%M"
+            )  # Store the last measurement time
 
             if self._timer_handle is not None:  # Cancel any existing timer
                 self._timer_handle.cancel()
@@ -202,7 +241,9 @@ class Bodymiscale(BodyScaleBaseEntity):
         remove_subscriptions = []  # List to store unsubscribe functions
         for metric in Metric:  # Subscribe to all metrics
             remove_subscriptions.append(
-                self._handler.subscribe(metric, partial(on_value, metric=metric))  # Subscribe to metric changes
+                self._handler.subscribe(
+                    metric, partial(on_value, metric=metric)
+                )  # Subscribe to metric changes
             )
 
         def on_remove() -> None:  # Callback for entity removal
@@ -215,19 +256,33 @@ class Bodymiscale(BodyScaleBaseEntity):
     def state_attributes(self) -> dict[str, Any]:
         """Return the attributes of the entity."""
         attrib = {
-            CONF_HEIGHT: self._handler.config[CONF_HEIGHT],  # Store height in attributes
-            CONF_GENDER: self._handler.config[CONF_GENDER].value,  # Store gender in attributes
-            ATTR_IDEAL: get_ideal_weight(self._handler.config),  # Calculate and store ideal weight
-            ATTR_AGE: get_age(self._handler.config[CONF_BIRTHDAY]),  # Calculate and store age
+            CONF_HEIGHT: self._handler.config[
+                CONF_HEIGHT
+            ],  # Store height in attributes
+            CONF_GENDER: self._handler.config[
+                CONF_GENDER
+            ].value,  # Store gender in attributes
+            ATTR_IDEAL: get_ideal_weight(
+                self._handler.config
+            ),  # Calculate and store ideal weight
+            ATTR_AGE: get_age(
+                self._handler.config[CONF_BIRTHDAY]
+            ),  # Calculate and store age
             ATTR_LAST_MEASUREMENT_TIME: self._last_time,  # Store last measurement time
             **self._available_metrics,  # Add all available metrics to attributes
         }
 
         if Metric.BMI.value in attrib:  # If BMI is available
-            attrib[ATTR_BMILABEL] = get_bmi_label(attrib[Metric.BMI.value])  # Calculate and store BMI label
+            attrib[ATTR_BMILABEL] = get_bmi_label(
+                attrib[Metric.BMI.value]
+            )  # Calculate and store BMI label
 
-        if Metric.FAT_MASS_2_IDEAL_WEIGHT.value in attrib:  # If fat mass to ideal weight is available
-            value = attrib.pop(Metric.FAT_MASS_2_IDEAL_WEIGHT.value)  # Get the value and remove it
+        if (
+            Metric.FAT_MASS_2_IDEAL_WEIGHT.value in attrib
+        ):  # If fat mass to ideal weight is available
+            value = attrib.pop(
+                Metric.FAT_MASS_2_IDEAL_WEIGHT.value
+            )  # Get the value and remove it
 
             if value < 0:  # If value is negative (fat mass to lose)
                 attrib[ATTR_FATMASSTOLOSE] = value * -1  # Store fat mass to lose
@@ -235,4 +290,3 @@ class Bodymiscale(BodyScaleBaseEntity):
                 attrib[ATTR_FATMASSTOGAIN] = value  # Store fat mass to gain
 
         return attrib
-    

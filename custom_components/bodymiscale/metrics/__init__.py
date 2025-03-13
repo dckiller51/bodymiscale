@@ -1,6 +1,5 @@
 """Metrics module."""
 
-
 import logging
 from collections.abc import Callable, Mapping, MutableMapping
 from dataclasses import dataclass, field
@@ -24,8 +23,8 @@ from ..const import (
     CONF_BIRTHDAY,
     CONF_GENDER,
     CONF_HEIGHT,
-    CONF_SCALE,
     CONF_IMPEDANCE_SENSOR,
+    CONF_SCALE,
     CONF_WEIGHT_SENSOR,
     CONSTRAINT_IMPEDANCE_MAX,
     CONSTRAINT_IMPEDANCE_MIN,

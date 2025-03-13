@@ -1,7 +1,7 @@
 """Sensor module."""
 
-from datetime import datetime
 from collections.abc import Callable, Mapping
+from datetime import datetime
 from typing import Any
 
 from homeassistant.components.sensor import (
@@ -24,13 +24,13 @@ from .const import (
     ATTR_BONES,
     ATTR_FAT,
     ATTR_IDEAL,
+    ATTR_LAST_MEASUREMENT_TIME,
     ATTR_LBM,
     ATTR_METABOLIC,
     ATTR_MUSCLE,
     ATTR_PROTEIN,
     ATTR_VISCERAL,
     ATTR_WATER,
-    ATTR_LAST_MEASUREMENT_TIME,
     CONF_IMPEDANCE_SENSOR,
     CONF_WEIGHT_SENSOR,
     DOMAIN,
@@ -48,8 +48,12 @@ class BodyScaleTimestampSensor(BodyScaleBaseEntity, SensorEntity):
     """Timestamp sensor for the last weight measurement, displaying date and time."""
 
     _attr_state_class = None
-    
-    def __init__(self, handler: BodyScaleMetricsHandler, entity_description: SensorEntityDescription):
+
+    def __init__(
+        self,
+        handler: BodyScaleMetricsHandler,
+        entity_description: SensorEntityDescription,
+    ):
         """Initialize the timestamp sensor."""
         super().__init__(handler, entity_description)
         self._attr_device_class = None
@@ -127,9 +131,7 @@ async def async_setup_entry(
         icon="mdi:calendar-clock",
     )
 
-    new_sensors.append(
-        BodyScaleTimestampSensor(handler, timestamp_description)
-    )
+    new_sensors.append(BodyScaleTimestampSensor(handler, timestamp_description))
 
     if CONF_IMPEDANCE_SENSOR in handler.config:
         new_sensors.extend(
@@ -224,7 +226,9 @@ class BodyScaleSensor(BodyScaleBaseEntity, SensorEntity):  # type: ignore[misc]
         handler: BodyScaleMetricsHandler,
         entity_description: SensorEntityDescription,
         metric: Metric,
-        get_attributes: Callable[[StateType, Mapping[str, Any]], Mapping[str, Any]] | None = None,
+        get_attributes: (
+            Callable[[StateType, Mapping[str, Any]], Mapping[str, Any]] | None
+        ) = None,
     ):
         super().__init__(handler, entity_description)
         self._metric = metric

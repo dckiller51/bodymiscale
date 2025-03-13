@@ -49,4 +49,3 @@ class BodyScaleBaseEntity(Entity):  # type: ignore[misc]
             sw_version=VERSION,
             identifiers={(DOMAIN, self._handler.config_entry_id)},
         )
-        
