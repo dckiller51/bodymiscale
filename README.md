@@ -125,6 +125,10 @@ Bodymiscale calculates the following data:
 - **Why are some values missing?** You must have an impedance sensor configured for Bodymiscale to calculate lean body mass, body fat mass, etc.
 - **How accurate is the data?** Bodymiscale uses standard formulas, but the accuracy of measurements depends on your scale and its configuration.
 
+## Configuration ESPHome pour Xiaomi Mi Scale
+
+For a detailed ESPHome configuration to integrate a Xiaomi Mi Scale with data persistence and multi-user management, please refer to the [esphome_config folder](esphome_config/).
+
 ## Useful links
 
 - [Lovelace Card for Bodymiscale](https://github.com/dckiller51/lovelace-body-miscale-card)
