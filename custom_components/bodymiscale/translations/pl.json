@@ -28,17 +28,17 @@
   },
   "entity": {
     "sensor": {
-      "basal_metabolism": { "name": "Basal metabolism" },
+      "basal_metabolism": { "name": "Podstawowa przemiana materii" },
       "bmi": { "name": "BMI" },
-      "body_fat": { "name": "Body fat" },
+      "body_fat": { "name": "Tkanina tłuszczowa" },
       "body_score": { "name": "Wynik ciała" },
-      "bone_mass": { "name": "Bone mass" },
+      "bone_mass": { "name": "Masa kości" },
       "lean_body_mass": { "name": "Beztłuszczowa masa ciała" },
       "metabolic_age": { "name": "Wiek metaboliczny" },
-      "muscle_mass": { "name": "Muscle mass" },
-      "protein": { "name": "Protein" },
-      "visceral_fat": { "name": "Visceral fat" },
-      "water": { "name": "Water" },
+      "muscle_mass": { "name": "Masa mięśniowa" },
+      "protein": { "name": "Białko" },
+      "visceral_fat": { "name": "Tłuszcz trzewny" },
+      "water": { "name": "Woda" },
       "weight": { "name": "Waga" }
     }
   },
@@ -51,39 +51,39 @@
       },
       "state_attributes": {
         "age": { "name": "Wiek" },
-        "basal_metabolism": { "name": "Basal metabolism" },
+        "basal_metabolism": { "name": "Podstawowa przemiana materii" },
         "bmi": { "name": "BMI" },
         "bmi_label": {
-          "name": "BMI label",
+          "name": "Etykieta BMI",
           "state": {
-            "massive_obesity": "Massive obesity",
-            "moderate_obesity": "Moderate obesity",
-            "normal_or_healthy_weight": "Normal or Healthy Weight",
-            "overweight": "Overweight",
-            "severe_obesity": "Severe obesity",
-            "slight_overweight": "Slight overweight",
-            "unavailable": "unavailable",
-            "underweight": "Underweight"
+            "massive_obesity": "Ogromna otyłość",
+            "moderate_obesity": "Umiarkowana otyłość",
+            "normal_or_healthy_weight": "Normalna lub zdrowa waga",
+            "overweight": "Nadwaga",
+            "severe_obesity": "Ciężka otyłość",
+            "slight_overweight": "Niewielka nadwaga",
+            "unavailable": "niedostępny",
+            "underweight": "Niedowaga"
           }
         },
-        "body_fat": { "name": "Body fat" },
+        "body_fat": { "name": "Tkanina tłuszczowa" },
         "body_score": { "name": "Wynik ciała" },
         "body_type": {
           "name": "Typ sylwetki",
           "state": {
-            "balanced": "Balanced",
-            "balanced_muscular": "Balanced-muscular",
-            "balanced_skinny": "Balanced-skinny",
-            "lack_exercise": "Lack-exercise",
-            "obese": "Obese",
-            "overweight": "Overweight",
-            "skinny": "Skinny",
-            "skinny_muscular": "Skinny-muscular",
-            "thick_set": "Thick-set",
+            "balanced": "Zrównoważona",
+            "balanced_muscular": "Zrównoważona muskularna",
+            "balanced_skinny": "Zrównoważona chuda",
+            "lack_exercise": "Brak ćwiczeń",
+            "obese": "Otyła",
+            "overweight": "Nadwaga",
+            "skinny": "Chuda",
+            "skinny_muscular": "Chuda muskularna",
+            "thick_set": "Krępa",
             "unavailable": "niedostępny"
           }
         },
-        "bone_mass": { "name": "Bone mass" },
+        "bone_mass": { "name": "Masa kości" },
         "fat_mass_to_gain": { "name": "Masa tłuszczowa do zdobycia" },
         "fat_mass_to_lose": { "name": "Masa tłuszczowa do stracenia" },
         "gender": {
@@ -94,11 +94,11 @@
           }
         },
         "height": { "name": "Wzrost" },
-        "ideal": { "name": "Ideal" },
+        "ideal": { "name": "Waga idealna" },
         "impedance": { "name": "Impedancja" },
         "lean_body_mass": { "name": "Beztłuszczowa masa ciała" },
         "metabolic_age": { "name": "Wiek metaboliczny" },
-        "muscle_mass": { "name": "Muscle mass" },
+        "muscle_mass": { "name": "Masa mięśniowa" },
         "problem": {
           "name": "Błąd",
           "state": {
@@ -116,9 +116,9 @@
             "weight_unavailable_and_impedance_unavailable": "Waga i impedancja niedostępne"
           }
         },
-        "protein": { "name": "Protein" },
-        "visceral_fat": { "name": "Visceral fat" },
-        "water": { "name": "Water" },
+        "protein": { "name": "Białko" },
+        "visceral_fat": { "name": "Tłuszcz trzewny" },
+        "water": { "name": "Woda" },
         "weight": { "name": "Waga" }
       }
     }
