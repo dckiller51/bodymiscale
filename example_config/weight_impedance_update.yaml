@@ -1,0 +1,344 @@
+blueprint:
+  name: "Creation and Management of User Sensors for BodyMiScale"
+  description: "Updates user entities based on weight measurements from the scale, filtering by user-defined weight ranges."
+  domain: automation
+  input:
+    weight_sensor:
+      name: "Weight Sensor"
+      description: "Select the weight sensor (ESPHome or BLE Monitor)"
+      selector:
+        entity:
+          domain: sensor
+    impedance_sensor:
+      name: "Impedance Sensor"
+      description: "Select the impedance sensor (ESPHome or BLE Monitor)"
+      selector:
+        entity:
+          domain: sensor
+    last_time_sensor:
+      name: "Last Time Sensor"
+      description: "Select the last time sensor (ESPHome or BLE Monitor)"
+      selector:
+        entity:
+          domain: sensor
+
+    num_users:
+      name: "Number of Users"
+      description: "Select the number of users to track"
+      selector:
+        select:
+          options:
+            - "1"
+            - "2"
+            - "3"
+            - "4"
+            - "5"
+          translation_key: "num_users"
+
+    ## User 1 (Always required)
+    user1_name:
+      name: "User 1 Name"
+      selector:
+        text: {}
+
+    user1_min_weight:
+      name: "User 1 Min Weight"
+      selector:
+        number:
+          min: 1
+          max: 200
+          unit_of_measurement: "kg"
+      default: 1
+
+    user1_max_weight:
+      name: "User 1 Max Weight"
+      selector:
+        number:
+          min: 1
+          max: 200
+          unit_of_measurement: "kg"
+      default: 100
+
+    user1_weight:
+      name: "User 1 Weight Entity"
+      selector:
+        entity:
+          domain: input_number
+
+    user1_impedance:
+      name: "User 1 Impedance Entity"
+      selector:
+        entity:
+          domain: input_number
+
+    user1_last_time:
+      name: "User 1 Last Measurement Time"
+      selector:
+        entity:
+          domain: input_datetime
+
+    ## User 2 (Conditionnel)
+    user2_name:
+      name: "User 2 Name"
+      selector:
+        text: {}
+      default: ""
+    user2_min_weight:
+      name: "User 2 Min Weight"
+      selector:
+        number:
+          min: 1
+          max: 200
+          unit_of_measurement: "kg"
+      default: 1
+    user2_max_weight:
+      name: "User 2 Max Weight"
+      selector:
+        number:
+          min: 1
+          max: 200
+          unit_of_measurement: "kg"
+      default: 100
+    user2_weight:
+      name: "User 2 Weight Entity"
+      selector:
+        entity:
+          domain: input_number
+      default: ""
+    user2_impedance:
+      name: "User 2 Impedance Entity"
+      selector:
+        entity:
+          domain: input_number
+      default: ""
+    user2_last_time:
+      name: "User 2 Last Measurement Time"
+      selector:
+        entity:
+          domain: input_datetime
+      default: ""
+
+    ## user 3 (Conditionnel)
+    user3_name:
+      name: "user 3 Name"
+      selector:
+        text: {}
+      default: ""
+    user3_min_weight:
+      name: "user 3 Min Weight"
+      selector:
+        number:
+          min: 1
+          max: 200
+          unit_of_measurement: "kg"
+      default: 1
+    user3_max_weight:
+      name: "user 3 Max Weight"
+      selector:
+        number:
+          min: 1
+          max: 200
+          unit_of_measurement: "kg"
+      default: 100
+    user3_weight:
+      name: "user 3 Weight Entity"
+      selector:
+        entity:
+          domain: input_number
+      default: ""
+    user3_impedance:
+      name: "user 3 Impedance Entity"
+      selector:
+        entity:
+          domain: input_number
+      default: ""
+    user3_last_time:
+      name: "user 3 Last Measurement Time"
+      selector:
+        entity:
+          domain: input_datetime
+      default: ""
+
+    ## user 4 (Conditionnel)
+    user4_name:
+      name: "user 4 Name"
+      selector:
+        text: {}
+      default: ""
+    user4_min_weight:
+      name: "user 4 Min Weight"
+      selector:
+        number:
+          min: 1
+          max: 200
+          unit_of_measurement: "kg"
+      default: 1
+    user4_max_weight:
+      name: "user 4 Max Weight"
+      selector:
+        number:
+          min: 1
+          max: 200
+          unit_of_measurement: "kg"
+      default: 100
+    user4_weight:
+      name: "user 4 Weight Entity"
+      selector:
+        entity:
+          domain: input_number
+      default: ""
+    user4_impedance:
+      name: "user 4 Impedance Entity"
+      selector:
+        entity:
+          domain: input_number
+      default: ""
+    user4_last_time:
+      name: "user 4 Last Measurement Time"
+      selector:
+        entity:
+          domain: input_datetime
+      default: ""
+
+    ## user 5 (Conditionnel)
+    user5_name:
+      name: "user 5 Name"
+      selector:
+        text: {}
+      default: ""
+    user5_min_weight:
+      name: "user 5 Min Weight"
+      selector:
+        number:
+          min: 1
+          max: 200
+          unit_of_measurement: "kg"
+      default: 1
+    user5_max_weight:
+      name: "user 5 Max Weight"
+      selector:
+        number:
+          min: 1
+          max: 200
+          unit_of_measurement: "kg"
+      default: 100
+    user5_weight:
+      name: "user 5 Weight Entity"
+      selector:
+        entity:
+          domain: input_number
+      default: ""
+    user5_impedance:
+      name: "user 5 Impedance Entity"
+      selector:
+        entity:
+          domain: input_number
+      default: ""
+    user5_last_time:
+      name: "user 5 Last Measurement Time"
+      selector:
+        entity:
+          domain: input_datetime
+      default: ""
+
+variables:
+  weight_sensor: !input weight_sensor
+  impedance_sensor: !input impedance_sensor
+  last_time_sensor: !input last_time_sensor
+  num_users: !input num_users
+  users:
+    - enabled: true
+      name: !input user1_name
+      min_weight: !input user1_min_weight
+      max_weight: !input user1_max_weight
+      weight: !input user1_weight
+      impedance: !input user1_impedance
+      last_time: !input user1_last_time
+    - enabled: "{{ num_users | int >= 2 }}"
+      name: !input user2_name
+      min_weight: !input user2_min_weight
+      max_weight: !input user2_max_weight
+      weight: !input user2_weight
+      impedance: !input user2_impedance
+      last_time: !input user2_last_time
+    - enabled: "{{ num_users | int >= 3 }}"
+      name: !input user3_name
+      min_weight: !input user3_min_weight
+      max_weight: !input user3_max_weight
+      weight: !input user3_weight
+      impedance: !input user3_impedance
+      last_time: !input user3_last_time
+    - enabled: "{{ num_users | int >= 4 }}"
+      name: !input user4_name
+      min_weight: !input user4_min_weight
+      max_weight: !input user4_max_weight
+      weight: !input user4_weight
+      impedance: !input user4_impedance
+      last_time: !input user4_last_time
+    - enabled: "{{ num_users | int >= 5 }}"
+      name: !input user5_name
+      min_weight: !input user5_min_weight
+      max_weight: !input user5_max_weight
+      weight: !input user5_weight
+      impedance: !input user5_impedance
+      last_time: !input user5_last_time
+
+trigger:
+  - platform: state
+    entity_id: !input weight_sensor
+
+action:
+  - delay: "00:00:15"
+
+  - variables:
+      weight: "{{ states(weight_sensor) | float(0) }}"
+      impedance: "{{ states(impedance_sensor) | float(0) }}"
+      last_time: "{{ states(last_time_sensor) | as_datetime | as_local }}"
+
+  - condition: template
+    value_template: "{{ weight != 0 and weight != 'unknown' and weight != 'unavailable' }}"
+
+  - repeat:
+      count: "{{ num_users | int }}"
+      sequence:
+        - variables:
+            user: "{{ users[repeat.index - 1] }}"
+            user_name: "{{ user.name }}"
+            user_min_weight: "{{ user.min_weight }}"
+            user_max_weight: "{{ user.max_weight }}"
+            user_weight: "{{ user.weight }}"
+            user_impedance: "{{ user.impedance }}"
+            user_last_time: "{{ user.last_time }}"
+
+        - condition: template
+          value_template: "{{ user.enabled and user_min_weight <= weight <= user_max_weight }}"
+
+        - choose:
+            - conditions:
+                - "{{ user_weight != '' }}"
+              sequence:
+                - service: input_number.set_value
+                  target:
+                    entity_id: "{{ user_weight }}"
+                  data:
+                    value: "{{ weight }}"
+
+        - choose:
+            - conditions:
+                - "{{ user_impedance != '' and impedance | float(0) != 0 }}"
+              sequence:
+                - service: input_number.set_value
+                  target:
+                    entity_id: "{{ user_impedance }}"
+                  data:
+                    value: "{{ impedance }}"
+
+        - choose:
+            - conditions:
+                - "{{ user_last_time != '' and last_time != none }}"
+              sequence:
+                - service: input_datetime.set_datetime
+                  target:
+                    entity_id: "{{ user_last_time }}"
+                  data:
+                    datetime: "{{ last_time }}"
