@@ -8,19 +8,24 @@ blueprint:
       description: "Select the weight sensor (ESPHome or BLE Monitor)"
       selector:
         entity:
-          domain: sensor
+          filter:
+            domain: sensor
     impedance_sensor:
       name: "Impedance Sensor"
       description: "Select the impedance sensor (ESPHome or BLE Monitor)"
       selector:
         entity:
-          domain: sensor
+          filter:
+            domain: sensor
+      default: ""
     last_time_sensor:
       name: "Last Time Sensor"
       description: "Select the last time sensor (ESPHome or BLE Monitor)"
       selector:
         entity:
-          domain: sensor
+          filter:
+            domain: sensor
+      default: ""
 
     num_users:
       name: "Number of Users"
@@ -33,7 +38,6 @@ blueprint:
             - "3"
             - "4"
             - "5"
-          translation_key: "num_users"
 
     ## User 1 (Always required)
     user1_name:
@@ -63,19 +67,24 @@ blueprint:
       name: "User 1 Weight Entity"
       selector:
         entity:
-          domain: input_number
+          filter:
+            domain: input_number
 
     user1_impedance:
       name: "User 1 Impedance Entity"
       selector:
         entity:
-          domain: input_number
+          filter:
+            domain: input_number
+      default: ""
 
     user1_last_time:
       name: "User 1 Last Measurement Time"
       selector:
         entity:
-          domain: input_datetime
+          filter:
+            domain: input_datetime
+      default: ""
 
     ## User 2 (Conditionnel)
     user2_name:
@@ -103,19 +112,22 @@ blueprint:
       name: "User 2 Weight Entity"
       selector:
         entity:
-          domain: input_number
+          filter:
+            domain: input_number
       default: ""
     user2_impedance:
       name: "User 2 Impedance Entity"
       selector:
         entity:
-          domain: input_number
+          filter:
+            domain: input_number
       default: ""
     user2_last_time:
       name: "User 2 Last Measurement Time"
       selector:
         entity:
-          domain: input_datetime
+          filter:
+            domain: input_datetime
       default: ""
 
     ## user 3 (Conditionnel)
@@ -144,19 +156,22 @@ blueprint:
       name: "user 3 Weight Entity"
       selector:
         entity:
-          domain: input_number
+          filter:
+            domain: input_number
       default: ""
     user3_impedance:
       name: "user 3 Impedance Entity"
       selector:
         entity:
-          domain: input_number
+          filter:
+            domain: input_number
       default: ""
     user3_last_time:
       name: "user 3 Last Measurement Time"
       selector:
         entity:
-          domain: input_datetime
+          filter:
+            domain: input_datetime
       default: ""
 
     ## user 4 (Conditionnel)
@@ -185,19 +200,22 @@ blueprint:
       name: "user 4 Weight Entity"
       selector:
         entity:
-          domain: input_number
+          filter:
+            domain: input_number
       default: ""
     user4_impedance:
       name: "user 4 Impedance Entity"
       selector:
         entity:
-          domain: input_number
+          filter:
+            domain: input_number
       default: ""
     user4_last_time:
       name: "user 4 Last Measurement Time"
       selector:
         entity:
-          domain: input_datetime
+          filter:
+            domain: input_datetime
       default: ""
 
     ## user 5 (Conditionnel)
@@ -226,19 +244,22 @@ blueprint:
       name: "user 5 Weight Entity"
       selector:
         entity:
-          domain: input_number
+          filter:
+            domain: input_number
       default: ""
     user5_impedance:
       name: "user 5 Impedance Entity"
       selector:
         entity:
-          domain: input_number
+          filter:
+            domain: input_number
       default: ""
     user5_last_time:
       name: "user 5 Last Measurement Time"
       selector:
         entity:
-          domain: input_datetime
+          filter:
+            domain: input_datetime
       default: ""
 
 variables:
@@ -284,7 +305,7 @@ variables:
       last_time: !input user5_last_time
 
 trigger:
-  - platform: state
+  - trigger: state
     entity_id: !input weight_sensor
 
 action:
@@ -293,7 +314,12 @@ action:
   - variables:
       weight: "{{ states(weight_sensor) | float(0) }}"
       impedance: "{{ states(impedance_sensor) | float(0) }}"
-      last_time: "{{ states(last_time_sensor) | as_datetime | as_local }}"
+      last_time: >-
+        {% if last_time_sensor != '' and states(last_time_sensor) not in ['unavailable', 'unknown', 'none'] and states(last_time_sensor) is defined %}
+          {{ states(last_time_sensor) | as_datetime | as_local }}
+        {% else %}
+          none
+        {% endif %}
 
   - condition: template
     value_template: "{{ weight != 0 and weight != 'unknown' and weight != 'unavailable' }}"
@@ -317,7 +343,7 @@ action:
             - conditions:
                 - "{{ user_weight != '' }}"
               sequence:
-                - service: input_number.set_value
+                - action: input_number.set_value
                   target:
                     entity_id: "{{ user_weight }}"
                   data:
@@ -327,7 +353,7 @@ action:
             - conditions:
                 - "{{ user_impedance != '' and impedance | float(0) != 0 }}"
               sequence:
-                - service: input_number.set_value
+                - action: input_number.set_value
                   target:
                     entity_id: "{{ user_impedance }}"
                   data:
@@ -335,9 +361,9 @@ action:
 
         - choose:
             - conditions:
-                - "{{ user_last_time != '' and last_time != none }}"
+                - "{{ user_last_time != '' and last_time != none and last_time is defined}}"
               sequence:
-                - service: input_datetime.set_datetime
+                - action: input_datetime.set_datetime
                   target:
                     entity_id: "{{ user_last_time }}"
                   data:
