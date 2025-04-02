@@ -1,6 +1,6 @@
 esphome:
   name: xiaomi-miscale
-  friendly_name: xiaomi_miscale 
+  friendly_name: xiaomi_miscale
 
 esp32:
   board: esp32dev
@@ -12,7 +12,7 @@ wifi:
   password: !secret wpa2
   fast_connect: true
 
-captive_portal:  
+captive_portal:
 
 logger:
 
@@ -57,7 +57,7 @@ number:
     min_value: 0
     max_value: 200
     step: 0.1
-    unit_of_measurement: 'kg'
+    unit_of_measurement: "kg"
     internal: true
 
   - platform: template
@@ -68,9 +68,9 @@ number:
     min_value: 0
     max_value: 1000
     step: 0.1
-    unit_of_measurement: 'ohm'
+    unit_of_measurement: "ohm"
     internal: true
-  
+
   - platform: template
     name: "Last Time Measurement Num ${user1_name}"
     id: last_time_measurement_num_user1
@@ -90,7 +90,7 @@ number:
     min_value: 0
     max_value: 200
     step: 0.1
-    unit_of_measurement: 'kg'
+    unit_of_measurement: "kg"
     internal: true
 
   - platform: template
@@ -101,7 +101,7 @@ number:
     min_value: 0
     max_value: 1000
     step: 0.1
-    unit_of_measurement: 'ohm'
+    unit_of_measurement: "ohm"
     internal: true
 
   - platform: template
@@ -136,7 +136,7 @@ number:
   #  step: 0.1
   #  unit_of_measurement: 'ohm'
   #  internal: true
-  
+
   #- platform: template
   #  name: "Last Time Measurement Num ${user3_name}"
   #  id: last_time_measurement_num_user3
@@ -169,7 +169,7 @@ number:
   #  step: 0.1
   #  unit_of_measurement: 'ohm'
   #  internal: true
-  
+
   #- platform: template
   #  name: "Last Time Measurement Num ${user4_name}"
   #  id: last_time_measurement_num_user4
@@ -202,7 +202,7 @@ number:
   #  step: 0.1
   #  unit_of_measurement: 'ohm'
   #  internal: true
-  
+
   #- platform: template
   #  name: "Last Time Measurement Num ${user5_name}"
   #  id: last_time_measurement_num_user5
@@ -218,54 +218,54 @@ sensor:
   - platform: template
     name: "Weight ${user1_name}"
     id: weight_user1
-    unit_of_measurement: 'kg'
+    unit_of_measurement: "kg"
     icon: mdi:scale-bathroom
     accuracy_decimals: 2
     state_class: measurement
-    lambda: 'return id(weight_num_user1).state;'
+    lambda: "return id(weight_num_user1).state;"
 
   # Impedance sensor User 1
   - platform: template
     name: "Impedance ${user1_name}"
     id: impedance_user1
-    unit_of_measurement: 'ohm'
+    unit_of_measurement: "ohm"
     icon: mdi:omega
     state_class: measurement
     accuracy_decimals: 0
-    lambda: 'return id(impedance_num_user1).state;'
+    lambda: "return id(impedance_num_user1).state;"
 
   # Last Measurement Time sensor User 1
   - platform: template
     name: "Last Time Measurement ${user1_name}"
     id: last_time_measurement_user1
-    lambda: 'return id(last_time_measurement_num_user1).state;'
+    lambda: "return id(last_time_measurement_num_user1).state;"
     device_class: timestamp
 
   # Weight sensor User 2
   - platform: template
     name: "Weight ${user2_name}"
     id: weight_user2
-    unit_of_measurement: 'kg'
+    unit_of_measurement: "kg"
     icon: mdi:scale-bathroom
     state_class: measurement
     accuracy_decimals: 2
-    lambda: 'return id(weight_num_user2).state;'
+    lambda: "return id(weight_num_user2).state;"
 
   # Impedance sensor User 2
   - platform: template
     name: "Impedance ${user2_name}"
     id: impedance_user2
-    unit_of_measurement: 'ohm'
+    unit_of_measurement: "ohm"
     icon: mdi:omega
     state_class: measurement
     accuracy_decimals: 0
-    lambda: 'return id(impedance_num_user2).state;'
+    lambda: "return id(impedance_num_user2).state;"
 
-  # Last Measurement Time sensor User 2 
+  # Last Measurement Time sensor User 2
   - platform: template
     name: "Last Time Measurement ${user2_name}"
     id: last_time_measurement_user2
-    lambda: 'return id(last_time_measurement_num_user2).state;'
+    lambda: "return id(last_time_measurement_num_user2).state;"
     device_class: timestamp
 
   # Weight sensor User 3
@@ -315,7 +315,7 @@ sensor:
   #  accuracy_decimals: 0
   #  lambda: 'return id(impedance_num_user4).state;'
 
-  # Last Measurement Time sensor user 4 
+  # Last Measurement Time sensor user 4
   #- platform: template
   #  name: "Last Time Measurement ${user4_name}"
   #  id: last_time_measurement_user4
@@ -342,7 +342,7 @@ sensor:
   #  accuracy_decimals: 0
   #  lambda: 'return id(impedance_num_user5).state;'
 
-  # Last Measurement Time sensor user 5 
+  # Last Measurement Time sensor user 5
   #- platform: template
   #  name: "Last Time Measurement ${user5_name}"
   #  id: last_time_measurement_user5
@@ -363,20 +363,20 @@ sensor:
               then:
                 - number.set:
                     id: weight_num_user1
-                    value: !lambda 'return id(xiaomi_weight).state;'
+                    value: !lambda "return id(xiaomi_weight).state;"
                 - number.set:
                     id: last_time_measurement_num_user1
-                    value: !lambda 'return id(esptime).now().timestamp;'
+                    value: !lambda "return id(esptime).now().timestamp;"
           - if:
               condition:
                 lambda: 'return (id(xiaomi_weight).state >= atof("${weight_user2_min}")) && (id(xiaomi_weight).state <= atof("${weight_user2_max}"));'
               then:
                 - number.set:
                     id: weight_num_user2
-                    value: !lambda 'return id(xiaomi_weight).state;'
+                    value: !lambda "return id(xiaomi_weight).state;"
                 - number.set:
                     id: last_time_measurement_num_user2
-                    value: !lambda 'return id(esptime).now().timestamp;'
+                    value: !lambda "return id(esptime).now().timestamp;"
           #- if:
           #    condition:
           #      lambda: 'return (id(xiaomi_weight).state >= atof("${weight_user3_min}")) && (id(xiaomi_weight).state <= atof("${weight_user3_max}"));'
@@ -419,14 +419,14 @@ sensor:
               then:
                 - number.set:
                     id: impedance_num_user1
-                    value: !lambda 'return id(xiaomi_impedance).state;'
+                    value: !lambda "return id(xiaomi_impedance).state;"
           - if:
               condition:
                 lambda: 'return (id(xiaomi_weight).state >= atof("${weight_user2_min}")) && (id(xiaomi_weight).state <= atof("${weight_user2_max}"));'
               then:
                 - number.set:
                     id: impedance_num_user2
-                    value: !lambda 'return id(xiaomi_impedance).state;'
+                    value: !lambda "return id(xiaomi_impedance).state;"
           #- if:
           #    condition:
           #      lambda: 'return (id(xiaomi_weight).state >= atof("${weight_user3_min}")) && (id(xiaomi_weight).state <= atof("${weight_user3_max}"));'
