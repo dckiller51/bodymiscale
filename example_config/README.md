@@ -4,31 +4,31 @@ This project provides two example ESPHome configurations to integrate a Xiaomi M
 
 ## Example 1: Complete Management by ESPHome
 
-* **File:** `esphome_configuration.yaml`
-* **Description:** This example demonstrates how to configure ESPHome to manage all sensors (weight, impedance, last weighing time) directly. ESPHome is responsible for data persistence and associating measurements with users based on weight ranges.
-* **Advantages:**
-  * Autonomy: ESPHome handles all logic, reducing the load on Home Assistant.
-  * Data Persistence: Data is retained even after an ESPHome restart.
-* **Usage:** Ideal for users who want a robust and self-contained solution.
+- **File:** `esphome_configuration.yaml`
+- **Description:** This example demonstrates how to configure ESPHome to manage all sensors (weight, impedance, last weighing time) directly. ESPHome is responsible for data persistence and associating measurements with users based on weight ranges.
+- **Advantages:**
+  - Autonomy: ESPHome handles all logic, reducing the load on Home Assistant.
+  - Data Persistence: Data is retained even after an ESPHome restart.
+- **Usage:** Ideal for users who want a robust and self-contained solution.
 
 ## Example 2: ESPHome or BLE Monitor + Home Assistant (User Management by HA)
 
-* **Files:**
-  * `esphome_base_configuration.yaml`: Basic ESPHome configuration to provide raw data to Home Assistant.
-  * `weight_impedance_update.yaml`: Home Assistant configuration to manage user logic.
-* **Description:** This example demonstrates how to configure ESPHome to provide raw data (weight, impedance, last weighing time) to Home Assistant. Home Assistant is then used to manage user logic (measurement association, user data persistence).
-[![Open your Home Assistant instance and show the blueprint import dialog with a specific blueprint pre-filled.](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https://github.com/dckiller51/bodymiscale/blob/main/example_config/weight_impedance_update.yaml)
-* **Advantages:**
-  * Flexibility: Allows for extensive customization of user management in Home Assistant.
-  * Home Assistant Integration: Leverages Home Assistant's features for user data management.
-* **Usage:** Ideal for users who want advanced customization of user management in Home Assistant.
+- **Files:**
+  - `esphome_base_configuration.yaml`: Basic ESPHome configuration to provide raw data to Home Assistant.
+  - `weight_impedance_update.yaml`: Home Assistant configuration to manage user logic.
+- **Description:** This example demonstrates how to configure ESPHome to provide raw data (weight, impedance, last weighing time) to Home Assistant. Home Assistant is then used to manage user logic (measurement association, user data persistence).
+  [![Open your Home Assistant instance and show the blueprint import dialog with a specific blueprint pre-filled.](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https://github.com/dckiller51/bodymiscale/blob/main/example_config/weight_impedance_update.yaml)
+- **Advantages:**
+  - Flexibility: Allows for extensive customization of user management in Home Assistant.
+  - Home Assistant Integration: Leverages Home Assistant's features for user data management.
+- **Usage:** Ideal for users who want advanced customization of user management in Home Assistant.
 
 ## Common Features
 
-* **Multi-User Management:** Both examples support managing multiple users (up to 5).
-* **Data Persistence:** Data is retained even after an ESPHome restart (in Example 1) or a Home Assistant restart (in Example 2).
-* **Flexibility for Scales Without Impedance:** Users can easily adapt the configurations to their scales.
-* **Weight Range Filtering:** Measurements are associated with users based on configurable weight ranges.
+- **Multi-User Management:** Both examples support managing multiple users (up to 5).
+- **Data Persistence:** Data is retained even after an ESPHome restart (in Example 1) or a Home Assistant restart (in Example 2).
+- **Flexibility for Scales Without Impedance:** Users can easily adapt the configurations to their scales.
+- **Weight Range Filtering:** Measurements are associated with users based on configurable weight ranges.
 
 ## Configuration
 
@@ -43,8 +43,8 @@ This project provides two example ESPHome configurations to integrate a Xiaomi M
 
 This directory contains the following configuration files:
 
-* **`esphome_configuration.yaml`:** Complete ESPHome configuration to manage all sensors directly.
-* **`esphome_base_configuration.yaml`:** Basic ESPHome configuration to provide raw data to Home Assistant (used in Example 2).
-* **`weight_impedance_update.yaml`:** Home Assistant configuration to manage user logic (used in Example 2).
+- **`esphome_configuration.yaml`:** Complete ESPHome configuration to manage all sensors directly.
+- **`esphome_base_configuration.yaml`:** Basic ESPHome configuration to provide raw data to Home Assistant (used in Example 2).
+- **`weight_impedance_update.yaml`:** Home Assistant configuration to manage user logic (used in Example 2).
 
 Please refer to these files for detailed code examples and specific configurations.
