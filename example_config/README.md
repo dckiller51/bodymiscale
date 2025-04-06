@@ -36,7 +36,7 @@ This project offers three example configurations for integrating a Xiaomi Mi Sca
 
 **Interactive Notification Screenshot:**
 
-![Screenshot of Interactive Scale Notification](example_config\screenshot_phone_notification.jpg)
+![Screenshot of Interactive Scale Notification](/example_config/screenshot_phone_notification.jpg)
 
 ## Common Features
 
