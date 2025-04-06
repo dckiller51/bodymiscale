@@ -1,0 +1,591 @@
+blueprint:
+  name: Interactive Notification User Selection and Weight Data Update
+  description: |
+    Sends an interactive notification to select who is on the scale and updates their weight data.
+    Additionally, you can create or update an input_datetime to automatically record the date and time of your last weigh-in.
+  #Envoie une notification interactive pour sélectionner qui est sur la balance et met à jour ses données de poids.
+  #De plus, vous pouvez créer ou mettre à jour un input_datetime pour enregistrer automatiquement la date et l'heure de votre dernière pesée.
+  domain: automation
+  input:
+    notify_device:
+      name: Mobile App Device to Notify
+      description: |
+        The device ID of your mobile app to send the notification to.
+        Tip: To reply without unlocking your phone, make sure notifications are enabled on the lock screen.
+      #L'ID de l'appareil de votre application mobile auquel envoyer la notification.
+      #Astuce : pour pouvoir répondre sans déverrouiller votre téléphone, assurez-vous que les notifications sont activées sur l'écran de verrouillage.
+      selector:
+        device:
+          filter:
+            integration: mobile_app
+    title_notify:
+      name: Notification Title
+      selector:
+        text: {}
+      description: |
+        The title of the notification. Example: Connected scale
+      #Le titre de la notification. Exemple: Balance connectée
+    message_notify:
+      name: Notification Message
+      selector:
+        text: {}
+      description: |
+        The main message of the notification. Example: Who is on the scale with a weight of
+        Result: Who is on the scale with a weight of [Weight] kg?
+      #Le message principal de la notification. Exemple: Qui est sur la balance avec un poids de 
+      #Résultat : Qui est la balance avec un poids de [Poids] kg ?.
+    response_timeout_seconds:
+      name: Notification Response Timeout (Seconds)
+      default: 60
+      selector:
+        number:
+          mode: slider
+          min: 10
+          max: 300
+          step: 10
+          unit_of_measurement: seconds
+      description: The number of seconds to wait for a response to the interactive notification.
+      #Le nombre de secondes à attendre pour une réponse à la notification interactive
+    weight_sensor:
+      name: Weight Sensor Entity
+      description: The entity ID of your weight sensor.
+      #L'ID d'entité de votre capteur de poids.
+      selector:
+        entity:
+          filter:
+            domain: sensor
+    impedance_sensor:
+      name: Impedance Sensor Entity (Optional)
+      description: The entity ID of your impedance sensor (if available).
+      #L'ID d'entité de votre capteur d'impédance (si disponible).
+      selector:
+        entity:
+          filter:
+            domain: sensor
+      default: ""
+
+    user1_name:
+      name: User 1 Name
+      selector:
+        text: {}
+      description: Name of User 1.
+      #Nom de l'utilisateur 1.
+    user1_weight:
+      name: User 1 Weight Input Number
+      selector:
+        entity:
+          filter:
+            domain: input_number
+      description: Entity ID of the input_number for User 1's weight.
+      #ID d'entité du input_number pour le poids de l'utilisateur 1.
+    user1_impedance:
+      name: User 1 Impedance Input Number (Optional)
+      selector:
+        entity:
+          filter:
+            domain: input_number
+      default: ""
+      description: Entity ID of the input_number for User 1's impedance.
+      #ID d'entité du input_number pour l'impédance de l'utilisateur 1.
+    user1_last_time:
+      name: User 1 Last Weigh-in (Optional)
+      selector:
+        entity:
+          filter:
+            domain: input_datetime
+      default: ""
+      description: Entity ID of the input_datetime for User 1's last weigh-in.
+      #ID d'entité de la date et de l'heure d'entrée pour la dernière pesée de l'utilisateur 1.
+
+    user2_name:
+      name: User 2 Name (Optional)
+      selector:
+        text: {}
+      default: ""
+      description: Name of User 2.
+      #Nom de l'utilisateur 2.
+    user2_weight:
+      name: User 2 Weight Input Number (Optional)
+      selector:
+        entity:
+          filter:
+            domain: input_number
+      default: ""
+      description: Entity ID of the input_number for User 2's weight.
+      #ID d'entité du input_number pour le poids de l'utilisateur 2.
+    user2_impedance:
+      name: User 2 Impedance Input Number (Optional)
+      selector:
+        entity:
+          filter:
+            domain: input_number
+      default: ""
+      description: Entity ID of the input_number for User 2's impedance.
+      #ID d'entité du input_number pour l'impédance de l'utilisateur 2.
+    user2_last_time:
+      name: User 2 Last Weigh-in (Optional)
+      selector:
+        entity:
+          filter:
+            domain: input_datetime
+      default: ""
+      description: Entity ID of the input_datetime for User 2's last weigh-in
+      #ID d'entité de la date et de l'heure d'entrée pour la dernière pesée de l'utilisateur 2
+
+    user3_name:
+      name: User 3 Name (Optional)
+      selector:
+        text: {}
+      default: ""
+      description: Name of User 3.
+      #Nom de l'utilisateur 3.
+    user3_weight:
+      name: User 3 Weight Input Number (Optional)
+      selector:
+        entity:
+          filter:
+            domain: input_number
+      default: ""
+      description: Entity ID of the input_number for User 3's weight.
+      #ID d'entité du input_number pour le poids de l'utilisateur 3.
+    user3_impedance:
+      name: User 3 Impedance Input Number (Optional)
+      selector:
+        entity:
+          filter:
+            domain: input_number
+      default: ""
+      description: Entity ID of the input_number for User 3's impedance.
+      #ID d'entité du input_number pour l'impédance de l'utilisateur 3.
+    user3_last_time:
+      name: User 3 Last Weigh-in (Optional)
+      selector:
+        entity:
+          filter:
+            domain: input_datetime
+      default: ""
+      description: Entity ID of the input_datetime for User 3's last weigh-in
+      #ID d'entité de la date et de l'heure d'entrée pour la dernière pesée de l'utilisateur 3
+
+    split_weight_threshold:
+      name: Split Weight Threshold (Optional for Group 2) 
+      selector:
+        number:
+          mode: slider
+          min: 0
+          max: 300
+          step: 1
+          unit_of_measurement: kg
+      default: 0
+      description: If weight is above/below this, show Group 2 users. 
+      #Si le poids est supérieur ou inférieur à ce seuil, afficher les utilisateurs du groupe 2.
+
+    split_weight_direction:
+      name: Split Weight Direction (Optional for Group 2)
+      selector:
+        select:
+          options:
+            - "below"
+            - "above"
+      default: above
+      description: Show Group 2 users if weight is above or below the threshold.
+      #Afficher les utilisateurs du groupe 2 si le poids est supérieur ou inférieur au seuil.
+
+    user4_name:
+      name: User 4 Name (Optional - Group 2)
+      selector:
+        text: {}
+      default: ""
+      description: Name of User 4.
+      #Nom de l'utilisateur 4.
+    user4_weight:
+      name: User 4 Weight Input Number (Optional - Group 2)
+      selector:
+        entity:
+          filter:
+            domain: input_number
+      default: ""
+      description: Entity ID of the input_number for User 4's weight.
+      #ID d'entité du input_number pour le poids de l'utilisateur 4.
+    user4_impedance:
+      name: User 4 Impedance Input Number (Optional - Group 2)
+      selector:
+        entity:
+          filter:
+            domain: input_number
+      default: ""
+      description: Entity ID of the input_number for User 4's impedance.
+      #ID d'entité du input_number pour l'impédance de l'utilisateur 4.
+    user4_last_time:
+      name: User 4 Last Weigh-in (Optional - Group 2)
+      selector:
+        entity:
+          filter:
+            domain: input_datetime
+      default: ""
+      description: Entity ID of the input_datetime for User 4's last weigh-in.
+      #ID d'entité de la date et de l'heure d'entrée pour la dernière pesée de l'utilisateur 4
+
+    ## user 5 (Conditional)
+    user5_name:
+      name: User 5 Name (Optional - Group 2)
+      selector:
+        text: {}
+      default: ""
+      description: Name of User 5.
+      #Nom de l'utilisateur 5.
+    user5_weight:
+      name: User 5 Weight Input Number (Optional - Group 2)
+      selector:
+        entity:
+          filter:
+            domain: input_number
+      default: ""
+      description: Entity ID of the input_number for User 5's weight.
+      #ID d'entité du input_number pour le poids de 5'utilisateur 1.
+    user5_impedance:
+      name: User 5 Impedance Input Number (Optional - Group 2)
+      selector:
+        entity:
+          filter:
+            domain: input_number
+      default: ""
+      description: Entity ID of the input_number for User 5's impedance.
+      #ID d'entité du input_number pour l'impédance de l'utilisateur 5.
+    user5_last_time:
+      name: User 5 Last Weigh-in (Optional - Group 2)
+      selector:
+        entity:
+          filter:
+            domain: input_datetime
+      default: ""
+      description: Entity ID of the input_datetime for User 5's last weigh-in.
+      #ID d'entité de la date et de l'heure d'entrée pour la dernière pesée de l'utilisateur 5
+
+    ## user 6 (Conditional)
+    user6_name:
+      name: User 6 Name (Optional - Group 2)
+      selector:
+        text: {}
+      default: ""
+      description: Name of User 6.
+      #Nom de l'utilisateur 6.
+    user6_weight:
+      name: User 6 Weight Input Number (Optional - Group 2)
+      selector:
+        entity:
+          filter:
+            domain: input_number
+      default: ""
+      description: Entity ID of the input_number for User 6's weight.
+      #ID d'entité du input_number pour le poids de l'utilisateur 6.
+    user6_impedance:
+      name: User 6 Impedance Input Number (Optional - Group 2)
+      selector:
+        entity:
+          filter:
+            domain: input_number
+      default: ""
+      description: Entity ID of the input_number for User 6's impedance.
+      #ID d'entité du input_number pour l'impédance de l'utilisateur 6.
+    user6_last_time:
+      name: User 6 Last Weigh-in (Optional - Group 2)
+      selector:
+        entity:
+          filter:
+            domain: input_datetime
+      default: ""
+      description: Entity ID of the input_datetime for User 6's last weigh-in.
+      #ID d'entité de la date et de l'heure d'entrée pour la dernière pesée de l'utilisateur 6
+
+variables:
+  title_notify: !input title_notify
+  message_notify: !input message_notify
+  response_timeout_seconds: !input response_timeout_seconds
+  weight_sensor: !input weight_sensor
+  impedance_sensor: !input impedance_sensor
+  split_weight_threshold: !input split_weight_threshold
+  split_weight_direction: !input split_weight_direction
+  weight: "{{ states(weight_sensor) | float(0) }}"
+  user1_name: !input user1_name
+  user1_weight: !input user1_weight
+  user1_impedance: !input user1_impedance
+  user1_last_time: !input user1_last_time
+  user2_name: !input user2_name
+  user2_weight: !input user2_weight
+  user2_impedance: !input user2_impedance
+  user2_last_time: !input user2_last_time
+  user3_name: !input user3_name
+  user3_weight: !input user3_weight
+  user3_impedance: !input user3_impedance
+  user3_last_time: !input user3_last_time
+  user4_name: !input user4_name
+  user4_weight: !input user4_weight
+  user4_impedance: !input user4_impedance
+  user4_last_time: !input user4_last_time
+  user5_name: !input user5_name
+  user5_weight: !input user5_weight
+  user5_impedance: !input user5_impedance
+  user5_last_time: !input user5_last_time
+  user6_name: !input user6_name
+  user6_weight: !input user6_weight
+  user6_impedance: !input user6_impedance
+  user6_last_time: !input user6_last_time
+
+  has_group2_users_configured: >
+    {{ user4_name != '' or user5_name != '' or user6_name != '' }}
+
+trigger:
+  - trigger: state
+    entity_id: !input weight_sensor
+
+action:
+  - delay: "00:00:15"
+
+  - variables:
+      notification_id: "{{ context.id }}"
+      current_weight: "{{ states(weight_sensor) | float(0) }}"
+      impedance: "{{ states(impedance_sensor) | float(0) }}"
+      group2_condition: >
+        {{ (user4_name | string != '' or user5_name | string != '' or user6_name | string != '') and (
+            (split_weight_direction == 'below' and current_weight <= split_weight_threshold | float(0)) or
+            (split_weight_direction == 'above' and current_weight > split_weight_threshold | float(0))
+        ) }}
+      notification_actions: >
+        {% set actions_list = [] %}
+        {% if group2_condition %}
+          {% if user4_name | string != '' %}
+            {% set actions_list = actions_list + [{'action': user4_name | lower | replace(' ', '_'), 'title': user4_name}] %}
+          {% endif %}
+          {% if user5_name | string != '' %}
+            {% set actions_list = actions_list + [{'action': user5_name | lower | replace(' ', '_'), 'title': user5_name}] %}
+          {% endif %}
+          {% if user6_name | string != '' %}
+            {% set actions_list = actions_list + [{'action': user6_name | lower | replace(' ', '_'), 'title': user6_name}] %}
+          {% endif %}
+        {% else %}
+          {% if user1_name | string != '' %}
+            {% set actions_list = actions_list + [{'action': user1_name | lower | replace(' ', '_'), 'title': user1_name}] %}
+          {% endif %}
+          {% if user2_name | string != '' %}
+            {% set actions_list = actions_list + [{'action': user2_name | lower | replace(' ', '_'), 'title': user2_name}] %}
+          {% endif %}
+          {% if user3_name | string != '' %}
+            {% set actions_list = actions_list + [{'action': user3_name | lower | replace(' ', '_'), 'title': user3_name}] %}
+          {% endif %}
+        {% endif %}
+        {{ actions_list }}
+  - condition: template
+    value_template: "{{ current_weight != 0 }}"
+  - if: "{{ notification_actions | length > 0 }}"
+    then:
+      - domain: mobile_app
+        type: notify
+        device_id: !input notify_device
+        message: "{{ message_notify }} {{ current_weight }} kg ?"
+        title: "{{ title_notify }}"
+        data:
+          actions: "{{ notification_actions }}"
+      - wait_for_trigger:
+          - trigger: event
+            event_type: mobile_app_notification_action
+            event_data:
+              action: "{{ user1_name | lower | replace(' ', '_') }}"
+          - trigger: event
+            event_type: mobile_app_notification_action
+            event_data:
+              action: "{{ user2_name | lower | replace(' ', '_') }}"
+          - trigger: event
+            event_type: mobile_app_notification_action
+            event_data:
+              action: "{{ user3_name | lower | replace(' ', '_') }}"
+          - trigger: event
+            event_type: mobile_app_notification_action
+            event_data:
+              action: "{{ user4_name | lower | replace(' ', '_') }}"
+          - trigger: event
+            event_type: mobile_app_notification_action
+            event_data:
+              action: "{{ user5_name | lower | replace(' ', '_') }}"
+          - trigger: event
+            event_type: mobile_app_notification_action
+            event_data:
+              action: "{{ user6_name | lower | replace(' ', '_') }}"
+        timeout: >
+          {{ '00:{:02d}:{:02d}'.format((response_timeout_seconds | int(0)) // 60, (response_timeout_seconds | int(0)) % 60) }}
+        continue_on_timeout: false
+      - choose:
+        - conditions:
+            - condition: template
+              value_template: "{{ wait.trigger.event.data.action == (user1_name | lower | replace(' ', '_')) }}"
+          sequence:
+            - action: input_number.set_value
+              target:
+                entity_id: "{{ user1_weight }}"
+              data:
+                value: "{{ current_weight }}"
+            - choose:
+                - conditions:
+                    - condition: template
+                      value_template: "{{ user1_impedance != '' and impedance_sensor is defined and impedance_sensor != '' and states(impedance_sensor) not in ['unavailable', 'unknown'] }}"
+                  sequence:
+                    - action: input_number.set_value
+                      target:
+                        entity_id: "{{ user1_impedance }}"
+                      data:
+                        value: "{{ impedance }}"
+            - choose:
+                - conditions:
+                    - condition: template
+                      value_template: "{{ user1_last_time != '' }}"
+                  sequence:
+                    - action: input_datetime.set_datetime
+                      target:
+                        entity_id: "{{ user1_last_time }}"
+                      data:
+                        datetime: "{{ now().isoformat() }}"
+        - conditions:
+            - condition: template
+              value_template: "{{ wait.trigger.event.data.action == (user2_name | lower | replace(' ', '_')) }}"
+          sequence:
+            - action: input_number.set_value
+              target:
+                entity_id: "{{ user2_weight }}"
+              data:
+                value: "{{ current_weight }}"
+            - choose:
+                - conditions:
+                    - condition: template
+                      value_template: "{{ user2_impedance != '' and impedance_sensor is defined and impedance_sensor != '' and states(impedance_sensor) not in ['unavailable', 'unknown'] }}"
+                  sequence:
+                    - action: input_number.set_value
+                      target:
+                        entity_id: "{{ user2_impedance }}"
+                      data:
+                        value: "{{ impedance }}"
+            - choose:
+                - conditions:
+                    - condition: template
+                      value_template: "{{ user2_last_time != '' }}"
+                  sequence:
+                    - action: input_datetime.set_datetime
+                      target:
+                        entity_id: "{{ user2_last_time }}"
+                      data:
+                        datetime: "{{ now().isoformat() }}"
+        - conditions:
+            - condition: template
+              value_template: "{{ wait.trigger.event.data.action == (user3_name | lower | replace(' ', '_')) }}"
+          sequence:
+            - action: input_number.set_value
+              target:
+                entity_id: "{{ user3_weight }}"
+              data:
+                value: "{{ current_weight }}"
+            - choose:
+                - conditions:
+                    - condition: template
+                      value_template: "{{ user3_impedance != '' and impedance_sensor is defined and impedance_sensor != '' and states(impedance_sensor) not in ['unavailable', 'unknown'] }}"
+                  sequence:
+                    - action: input_number.set_value
+                      target:
+                        entity_id: "{{ user3_impedance }}"
+                      data:
+                        value: "{{ impedance }}"
+            - choose:
+                - conditions:
+                    - condition: template
+                      value_template: "{{ user3_last_time != '' }}"
+                  sequence:
+                    - action: input_datetime.set_datetime
+                      target:
+                        entity_id: "{{ user3_last_time }}"
+                      data:
+                        datetime: "{{ now().isoformat() }}"
+        - conditions:
+            - condition: template
+              value_template: "{{ wait.trigger.event.data.action == (user4_name | lower | replace(' ', '_')) }}"
+          sequence:
+            - action: input_number.set_value
+              target:
+                entity_id: "{{ user4_weight }}"
+              data:
+                value: "{{ current_weight }}"
+            - choose:
+                - conditions:
+                    - condition: template
+                      value_template: "{{ user4_impedance != '' and impedance_sensor is defined and impedance_sensor != '' and states(impedance_sensor) not in ['unavailable', 'unknown'] }}"
+                  sequence:
+                    - action: input_number.set_value
+                      target:
+                        entity_id: "{{ user4_impedance }}"
+                      data:
+                        value: "{{ impedance }}"
+            - choose:
+                - conditions:
+                    - condition: template
+                      value_template: "{{ user4_last_time != '' }}"
+                  sequence:
+                    - action: input_datetime.set_datetime
+                      target:
+                        entity_id: "{{ user4_last_time }}"
+                      data:
+                        datetime: "{{ now().isoformat() }}"
+        - conditions:
+            - condition: template
+              value_template: "{{ wait.trigger.event.data.action == (user5_name | lower | replace(' ', '_')) }}"
+          sequence:
+            - action: input_number.set_value
+              target:
+                entity_id: "{{ user5_weight }}"
+              data:
+                value: "{{ current_weight }}"
+            - choose:
+                - conditions:
+                    - condition: template
+                      value_template: "{{ user5_impedance != '' and impedance_sensor is defined and impedance_sensor != '' and states(impedance_sensor) not in ['unavailable', 'unknown'] }}"
+                  sequence:
+                    - action: input_number.set_value
+                      target:
+                        entity_id: "{{ user5_impedance }}"
+                      data:
+                        value: "{{ impedance }}"
+            - choose:
+                - conditions:
+                    - condition: template
+                      value_template: "{{ user5_last_time != '' }}"
+                  sequence:
+                    - action: input_datetime.set_datetime
+                      target:
+                        entity_id: "{{ user5_last_time }}"
+                      data:
+                        datetime: "{{ now().isoformat() }}"
+        - conditions:
+            - condition: template
+              value_template: "{{ wait.trigger.event.data.action == (user6_name | lower | replace(' ', '_')) }}"
+          sequence:
+            - action: input_number.set_value
+              target:
+                entity_id: "{{ user6_weight }}"
+              data:
+                value: "{{ current_weight }}"
+            - choose:
+                - conditions:
+                    - condition: template
+                      value_template: "{{ user6_impedance != '' and impedance_sensor is defined and impedance_sensor != '' and states(impedance_sensor) not in ['unavailable', 'unknown'] }}"
+                  sequence:
+                    - action: input_number.set_value
+                      target:
+                        entity_id: "{{ user6_impedance }}"
+                      data:
+                        value: "{{ impedance }}"
+            - choose:
+                - conditions:
+                    - condition: template
+                      value_template: "{{ user6_last_time != '' }}"
+                  sequence:
+                    - action: input_datetime.set_datetime
+                      target:
+                        entity_id: "{{ user6_last_time }}"
+                      data:
+                        datetime: "{{ now().isoformat() }}"
