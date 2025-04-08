@@ -1,6 +1,8 @@
 """Metrics module."""
 
+
 import logging
+from datetime import datetime
 from collections.abc import Callable, Mapping, MutableMapping
 from dataclasses import dataclass, field
 from typing import Any
@@ -15,6 +17,7 @@ from homeassistant.core import CALLBACK_TYPE, Event, HomeAssistant, State, callb
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.event import async_track_state_change_event
 from homeassistant.helpers.typing import StateType
+from homeassistant.util.dt import get_time_zone
 
 from custom_components.bodymiscale.metrics.scale import Scale
 from custom_components.bodymiscale.util import get_age
@@ -25,6 +28,7 @@ from ..const import (
     CONF_HEIGHT,
     CONF_SCALE,
     CONF_SENSOR_IMPEDANCE,
+    CONF_SENSOR_LAST_MEASUREMENT_TIME,
     CONF_SENSOR_WEIGHT,
     CONSTRAINT_IMPEDANCE_MAX,
     CONSTRAINT_IMPEDANCE_MIN,
@@ -115,6 +119,7 @@ _METRIC_DEPS: dict[Metric, MetricInfo] = {
         get_body_score,
         0,
     ),
+    Metric.LAST_MEASUREMENT_TIME: MetricInfo([], lambda c, s: None),
 }
 
 
@@ -159,6 +164,8 @@ class BodyScaleMetricsHandler:
         sensors = [self._config[CONF_SENSOR_WEIGHT]]
         if CONF_SENSOR_IMPEDANCE in self._config:
             sensors.append(self._config[CONF_SENSOR_IMPEDANCE])
+        if CONF_SENSOR_LAST_MEASUREMENT_TIME in self._config:
+            sensors.append(self._config[CONF_SENSOR_LAST_MEASUREMENT_TIME])
 
         self._remove_listener = async_track_state_change_event(
             self._hass,
@@ -218,25 +225,48 @@ class BodyScaleMetricsHandler:
         if value == STATE_UNKNOWN:
             return
 
-        if value != STATE_UNAVAILABLE:
-            value = float(value)
-
         if entity_id == self._config[CONF_SENSOR_WEIGHT]:
-            if self._is_valid(
-                CONF_SENSOR_WEIGHT, value, CONSTRAINT_WEIGHT_MIN, CONSTRAINT_WEIGHT_MAX
-            ):
-                if new_state.attributes.get(ATTR_UNIT_OF_MEASUREMENT) == UNIT_POUNDS:
-                    value = value * 0.45359237
-
-                self._update_available_metric(Metric.WEIGHT, value)
+            if value != STATE_UNAVAILABLE:
+                try:
+                    value = float(value)
+                    if self._is_valid(
+                        CONF_SENSOR_WEIGHT, value, CONSTRAINT_WEIGHT_MIN, CONSTRAINT_WEIGHT_MAX
+                    ):
+                        if new_state.attributes.get(ATTR_UNIT_OF_MEASUREMENT) == UNIT_POUNDS:
+                            value = value * 0.45359237
+                        self._update_available_metric(Metric.WEIGHT, value)
+                except ValueError as e:
+                    _LOGGER.warning(f"Could not convert state of {entity_id} to float: {value}, Error: {e}")
+                    return
         elif entity_id == self._config.get(CONF_SENSOR_IMPEDANCE, None):
-            if self._is_valid(
-                CONF_SENSOR_IMPEDANCE,
-                value,
-                CONSTRAINT_IMPEDANCE_MIN,
-                CONSTRAINT_IMPEDANCE_MAX,
-            ):
-                self._update_available_metric(Metric.IMPEDANCE, value)
+            if value != STATE_UNAVAILABLE:
+                try:
+                    value = float(value)
+                    if self._is_valid(
+                        CONF_SENSOR_IMPEDANCE,
+                        value,
+                        CONSTRAINT_IMPEDANCE_MIN,
+                        CONSTRAINT_IMPEDANCE_MAX,
+                    ):
+                        self._update_available_metric(Metric.IMPEDANCE, value)
+                except ValueError as e:
+                    _LOGGER.warning(f"Could not convert state of {entity_id} to float: {value}, Error: {e}")
+                    return
+        elif entity_id == self._config.get(CONF_SENSOR_LAST_MEASUREMENT_TIME):
+            if self._is_valid(CONF_SENSOR_LAST_MEASUREMENT_TIME, value, None, None):
+                try:
+                    last_measurement_time_datetime = datetime.fromisoformat(value)
+                    local_tz = get_time_zone(self._hass.config.time_zone)
+                    last_measurement_time_datetime = last_measurement_time_datetime.replace(tzinfo=local_tz)
+                    self._update_available_metric(Metric.LAST_MEASUREMENT_TIME, last_measurement_time_datetime)
+                except ValueError:
+                    _LOGGER.warning(
+                        f"Could not convert state of {entity_id} ('{value}') to datetime."
+                    )
+                    self._update_available_metric(Metric.STATUS, f"{CONF_SENSOR_LAST_MEASUREMENT_TIME}_invalid")
+                    return
+            else:
+                return
         else:
             raise HomeAssistantError(
                 f"Unknown reading from sensor {entity_id}: {value}"
@@ -252,10 +282,16 @@ class BodyScaleMetricsHandler:
         problem = None
         if state == STATE_UNAVAILABLE:
             problem = f"{name_sensor}_unavailable"
-        elif state < constraint_min:
-            problem = f"{name_sensor}_low"
-        elif state > constraint_max:
-            problem = f"{name_sensor}_high"
+        elif name_sensor != CONF_SENSOR_LAST_MEASUREMENT_TIME:
+            if constraint_min is not None and state < constraint_min:
+                problem = f"{name_sensor}_low"
+            elif constraint_max is not None and state > constraint_max:
+                problem = f"{name_sensor}_high"
+        elif name_sensor == CONF_SENSOR_LAST_MEASUREMENT_TIME:
+            try:
+                datetime.fromisoformat(state)
+            except ValueError:
+                problem = f"{name_sensor}_invalid"
 
         new_statues = []
         for status in self._available_metrics.get(Metric.STATUS, "").split("_and_"):

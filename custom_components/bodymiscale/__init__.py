@@ -34,6 +34,7 @@ from .const import (
     CONF_GENDER,
     CONF_HEIGHT,
     CONF_SENSOR_IMPEDANCE,
+    CONF_SENSOR_LAST_MEASUREMENT_TIME,
     CONF_SENSOR_WEIGHT,
     DOMAIN,
     HANDLERS,
@@ -51,6 +52,7 @@ SCHEMA_SENSORS = vol.Schema(
     {
         vol.Required(CONF_SENSOR_WEIGHT): cv.entity_id,
         vol.Optional(CONF_SENSOR_IMPEDANCE): cv.entity_id,
+        vol.Optional(CONF_SENSOR_LAST_MEASUREMENT_TIME): cv.entity_id,
     }
 )
 
