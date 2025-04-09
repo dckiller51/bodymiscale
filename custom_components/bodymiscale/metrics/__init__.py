@@ -291,8 +291,8 @@ class BodyScaleMetricsHandler:
         self,
         name_sensor: str,
         state: StateType,
-        constraint_min: Optional[int],
-        constraint_max: Optional[int],
+        constraint_min: int | None,
+        constraint_max: int | None,
     ) -> bool:
         problem = None
         if state == STATE_UNAVAILABLE:
