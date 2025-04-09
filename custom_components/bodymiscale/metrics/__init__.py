@@ -4,7 +4,7 @@ import logging
 from collections.abc import Callable, Mapping, MutableMapping
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any
+from typing import Any, Optional
 
 from cachetools import TTLCache
 from homeassistant.const import (
@@ -291,8 +291,8 @@ class BodyScaleMetricsHandler:
         self,
         name_sensor: str,
         state: StateType,
-        constraint_min: int,
-        constraint_max: int,
+        constraint_min: Optional[int],
+        constraint_max: Optional[int],
     ) -> bool:
         problem = None
         if state == STATE_UNAVAILABLE:
