@@ -174,9 +174,7 @@ class Bodymiscale(BodyScaleBaseEntity):
             EntityDescription(key="bodymiscale", name=None, icon="mdi:human"),
         )
         self._timer_handle: asyncio.TimerHandle | None = None
-        self._available_metrics: MutableMapping[str, StateType] = TTLCache(
-            maxsize=len(Metric), ttl=60
-        )
+        self._available_metrics: MutableMapping[str, StateType] = {}
 
     async def async_added_to_hass(self) -> None:
         """After being added to hass."""

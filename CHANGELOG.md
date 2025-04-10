@@ -6,6 +6,8 @@ All notable changes to this project will be documented in this file.
 
 ## 2025.4.0
 
+- **Fix:** Ensure Bodymiscale entity attributes (including metrics and last measurement time) persist correctly. The internal `TTLCache` used for storing entity attributes has been replaced with a standard dictionary to prevent data loss when only the last measurement time sensor updates.
+- **Refactor:** The `TTLCache` in `BodyScaleMetricsHandler` (in `metrics.py`) is now used solely for internal optimization of metric calculations and distribution.
 - **Added:** Ability to integrate your latest weight sensor. This integration creates a new sensor `last_measurement_time` and adds an attribute to the `Bodymiscale` component to display the last measurement time.
 - **Updated:** Polish translation (thank you @witold-gren).
 - **Added:** Slovakia language support (thank you @milandzuris).
