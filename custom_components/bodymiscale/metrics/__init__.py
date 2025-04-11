@@ -244,10 +244,12 @@ class BodyScaleMetricsHandler:
                     ):
                         problem = (
                             "low"
-                            if CONSTRAINT_WEIGHT_MIN is not None and value_float < CONSTRAINT_WEIGHT_MIN
+                            if CONSTRAINT_WEIGHT_MIN is not None
+                            and value_float < CONSTRAINT_WEIGHT_MIN
                             else (
                                 "high"
-                                if CONSTRAINT_WEIGHT_MAX is not None and value_float > CONSTRAINT_WEIGHT_MAX
+                                if CONSTRAINT_WEIGHT_MAX is not None
+                                and value_float > CONSTRAINT_WEIGHT_MAX
                                 else "invalid"
                             )
                         )
@@ -289,10 +291,12 @@ class BodyScaleMetricsHandler:
                     ):
                         problem = (
                             "low"
-                            if CONSTRAINT_IMPEDANCE_MIN is not None and value_float < CONSTRAINT_IMPEDANCE_MIN
+                            if CONSTRAINT_IMPEDANCE_MIN is not None
+                            and value_float < CONSTRAINT_IMPEDANCE_MIN
                             else (
                                 "high"
-                                if CONSTRAINT_IMPEDANCE_MAX is not None and value_float > CONSTRAINT_IMPEDANCE_MAX
+                                if CONSTRAINT_IMPEDANCE_MAX is not None
+                                and value_float > CONSTRAINT_IMPEDANCE_MAX
                                 else "invalid"
                             )
                         )
@@ -352,46 +356,52 @@ class BodyScaleMetricsHandler:
             self._trigger_dependent_recalculation()
 
     def _add_sensor_problem(self, entity_id: str, error_type: str) -> None:
-            """Adds a specific sensor problem to the status while maintaining order and without duplicates."""
-            sensor_key = None
-            if entity_id == self._config[CONF_SENSOR_WEIGHT]:
-                sensor_key = "weight"
-            elif entity_id == self._config.get(CONF_SENSOR_IMPEDANCE):
-                sensor_key = "impedance"
-            elif entity_id == self._config.get(CONF_SENSOR_LAST_MEASUREMENT_TIME):
-                sensor_key = "last_time"
+        """Adds a specific sensor problem to the status while maintaining order and without duplicates."""
+        sensor_key = None
+        if entity_id == self._config[CONF_SENSOR_WEIGHT]:
+            sensor_key = "weight"
+        elif entity_id == self._config.get(CONF_SENSOR_IMPEDANCE):
+            sensor_key = "impedance"
+        elif entity_id == self._config.get(CONF_SENSOR_LAST_MEASUREMENT_TIME):
+            sensor_key = "last_time"
 
-            if sensor_key:
-                problem_string = f"{sensor_key}_{error_type}"
-                current_status = self._status
-                status_parts = [s.strip() for s in current_status.split("_and_") if s.strip() and s.strip() != PROBLEM_NONE]
+        if sensor_key:
+            problem_string = f"{sensor_key}_{error_type}"
+            current_status = self._status
+            status_parts = [
+                s.strip()
+                for s in current_status.split("_and_")
+                if s.strip() and s.strip() != PROBLEM_NONE
+            ]
 
-                if problem_string not in status_parts:
-                    status_parts.append(problem_string)
+            if problem_string not in status_parts:
+                status_parts.append(problem_string)
 
-                ordered_problems = []
-                weight_problems = []
-                impedance_problems = []
-                last_time_problems = []
-                other_problems = []
+            ordered_problems = []
+            weight_problems = []
+            impedance_problems = []
+            last_time_problems = []
+            other_problems = []
 
-                for part in sorted(list(set(status_parts))):
-                    if part.startswith("weight_"):
-                        weight_problems.append(part)
-                    elif part.startswith("impedance_"):
-                        impedance_problems.append(part)
-                    elif part.startswith("last_time_"):
-                        last_time_problems.append(part)
-                    else:
-                        other_problems.append(part)
+            for part in sorted(list(set(status_parts))):
+                if part.startswith("weight_"):
+                    weight_problems.append(part)
+                elif part.startswith("impedance_"):
+                    impedance_problems.append(part)
+                elif part.startswith("last_time_"):
+                    last_time_problems.append(part)
+                else:
+                    other_problems.append(part)
 
-                ordered_problems.extend(weight_problems)
-                ordered_problems.extend(impedance_problems)
-                ordered_problems.extend(last_time_problems)
-                ordered_problems.extend(other_problems)
+            ordered_problems.extend(weight_problems)
+            ordered_problems.extend(impedance_problems)
+            ordered_problems.extend(last_time_problems)
+            ordered_problems.extend(other_problems)
 
-                final_status = "_and_".join(ordered_problems)
-                self._update_available_metric(Metric.STATUS, final_status if final_status else PROBLEM_NONE)
+            final_status = "_and_".join(ordered_problems)
+            self._update_available_metric(
+                Metric.STATUS, final_status if final_status else PROBLEM_NONE
+            )
 
     def _remove_sensor_problem(self, sensor_config_key: str) -> None:
         """Removes a specific sensor problem from the status."""
@@ -411,7 +421,9 @@ class BodyScaleMetricsHandler:
                 if s.strip() and not s.startswith(f"{sensor_key}_")
             ]
             final_status = "_and_".join(status_parts)
-            self._update_available_metric(Metric.STATUS, final_status if final_status else PROBLEM_NONE)
+            self._update_available_metric(
+                Metric.STATUS, final_status if final_status else PROBLEM_NONE
+            )
 
     def _is_valid(
         self,
@@ -480,7 +492,8 @@ class BodyScaleMetricsHandler:
                 for depended in metric_info.depended_by:
                     depended_info = self._dependencies.get(depended)
                     if depended_info and all(
-                        dep in self._available_metrics for dep in depended_info.depends_on
+                        dep in self._available_metrics
+                        for dep in depended_info.depends_on
                     ):
                         value = depended_info.calculate(
                             self._config, self._available_metrics
