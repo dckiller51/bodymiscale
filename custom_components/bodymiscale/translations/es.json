@@ -11,10 +11,12 @@
         "data": {
           "height": "Altura",
           "impedance": "Sensor de immpedancia",
+          "last_measurement_time": "Sensor de la última hora de pesaje",
           "weight": "Sensor de peso"
         },
         "data_description": {
-          "impedance": "Si su báscula no proporciona la impedancia, deje este campo vacío."
+          "impedance": "Si su báscula no proporciona la impedancia, deje este campo vacío.",
+          "last_measurement_time": "Deje este campo en blanco si no tiene un sensor para la última hora de pesaje."
         }
       },
       "user": {
@@ -33,6 +35,7 @@
       "body_fat": { "name": "Grasa corporal" },
       "body_score": { "name": "Puntuación corporal" },
       "bone_mass": { "name": "Masa ósea" },
+      "last_measurement_time": { "name": "Última hora de pesaje" },
       "lean_body_mass": { "name": "Masa corporal magra" },
       "metabolic_age": { "name": "Edad metabólica" },
       "muscle_mass": { "name": "Masa muscular" },
@@ -96,6 +99,7 @@
         "height": { "name": "Altura" },
         "ideal": { "name": "Ideal" },
         "impedance": { "name": "Impedancia" },
+        "last_measurement_time": { "name": "Última hora de pesaje" },
         "lean_body_mass": { "name": "Masa corporal magra" },
         "metabolic_age": { "name": "Edad metabólica" },
         "muscle_mass": { "name": "Masa muscular" },
@@ -129,10 +133,12 @@
         "data": {
           "height": "Altura",
           "impedance": "Sensor de immpedancia",
+          "last_measurement_time": "Sensor de la última hora de pesaje",
           "weight": "Sensor de peso"
         },
         "data_description": {
-          "impedance": "Si su báscula no proporciona la impedancia, deje este campo vacío."
+          "impedance": "Si su báscula no proporciona la impedancia, deje este campo vacío.",
+          "last_measurement_time": "Deje este campo en blanco si no tiene un sensor para la última hora de pesaje."
         }
       }
     }
