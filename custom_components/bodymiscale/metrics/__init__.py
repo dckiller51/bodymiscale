@@ -137,6 +137,7 @@ class BodyScaleMetricsHandler:
     def __init__(
         self, hass: HomeAssistant, config: dict[str, Any], config_entry_id: str
     ):
+        self._status: str = PROBLEM_NONE
         self._available_metrics: MutableMapping[Metric, StateType] = TTLCache(
             maxsize=len(Metric), ttl=60
         )
@@ -229,35 +230,37 @@ class BodyScaleMetricsHandler:
         impedance_updated_valid = False
 
         if entity_id == self._config[CONF_SENSOR_WEIGHT]:
-            if value != STATE_UNAVAILABLE:
+            if value == STATE_UNAVAILABLE:
+                self._remove_sensor_problem(CONF_SENSOR_WEIGHT)
+                problem = "unavailable"
+            else:
                 try:
-                    value = float(value)
-                    if self._is_valid(
+                    value_float = float(value)
+                    if not self._is_valid(
                         CONF_SENSOR_WEIGHT,
-                        value,
+                        value_float,
                         CONSTRAINT_WEIGHT_MIN,
                         CONSTRAINT_WEIGHT_MAX,
                     ):
+                        problem = (
+                            "low"
+                            if CONSTRAINT_WEIGHT_MIN is not None and value_float < CONSTRAINT_WEIGHT_MIN
+                            else (
+                                "high"
+                                if CONSTRAINT_WEIGHT_MAX is not None and value_float > CONSTRAINT_WEIGHT_MAX
+                                else "invalid"
+                            )
+                        )
+                    else:
                         if (
                             new_state.attributes.get(ATTR_UNIT_OF_MEASUREMENT)
                             == UNIT_POUNDS
                         ):
-                            value = value * 0.45359237
-                        if self._update_available_metric(Metric.WEIGHT, value):
+                            value_float = value_float * 0.45359237
+                        if self._update_available_metric(Metric.WEIGHT, value_float):
                             weight_updated_valid = True
                         self._remove_sensor_problem(CONF_SENSOR_WEIGHT)
-                    else:
-                        problem = (
-                            "low"
-                            if CONSTRAINT_WEIGHT_MIN is not None
-                            and value < CONSTRAINT_WEIGHT_MIN
-                            else (
-                                "high"
-                                if CONSTRAINT_WEIGHT_MAX is not None
-                                and value > CONSTRAINT_WEIGHT_MAX
-                                else "invalid"
-                            )
-                        )
+
                 except ValueError as e:
                     _LOGGER.warning(
                         "Could not convert state of %s to float: %s, Error: %s",
@@ -265,37 +268,39 @@ class BodyScaleMetricsHandler:
                         value,
                         e,
                     )
+                    self._remove_sensor_problem(CONF_SENSOR_WEIGHT)
                     problem = "invalid_format"
-            else:
-                problem = "unavailable"
+
             if problem:
                 self._add_sensor_problem(entity_id, problem)
 
         elif entity_id == self._config.get(CONF_SENSOR_IMPEDANCE, None):
-            if value != STATE_UNAVAILABLE:
+            if value == STATE_UNAVAILABLE:
+                self._remove_sensor_problem(CONF_SENSOR_IMPEDANCE)
+                problem = "unavailable"
+            else:
                 try:
-                    value = float(value)
-                    if self._is_valid(
+                    value_float = float(value)
+                    if not self._is_valid(
                         CONF_SENSOR_IMPEDANCE,
-                        value,
+                        value_float,
                         CONSTRAINT_IMPEDANCE_MIN,
                         CONSTRAINT_IMPEDANCE_MAX,
                     ):
-                        if self._update_available_metric(Metric.IMPEDANCE, value):
-                            impedance_updated_valid = True
-                        self._remove_sensor_problem(CONF_SENSOR_IMPEDANCE)
-                    else:
                         problem = (
                             "low"
-                            if CONSTRAINT_IMPEDANCE_MIN is not None
-                            and value < CONSTRAINT_IMPEDANCE_MIN
+                            if CONSTRAINT_IMPEDANCE_MIN is not None and value_float < CONSTRAINT_IMPEDANCE_MIN
                             else (
                                 "high"
-                                if CONSTRAINT_IMPEDANCE_MAX is not None
-                                and value > CONSTRAINT_WEIGHT_MAX
+                                if CONSTRAINT_IMPEDANCE_MAX is not None and value_float > CONSTRAINT_IMPEDANCE_MAX
                                 else "invalid"
                             )
-                        )  # Typo ici, corrigé CONSTRAINT_WEIGHT_MAX -> CONSTRAINT_IMPEDANCE_MAX
+                        )
+                    else:
+                        if self._update_available_metric(Metric.IMPEDANCE, value_float):
+                            impedance_updated_valid = True
+                        self._remove_sensor_problem(CONF_SENSOR_IMPEDANCE)
+
                 except ValueError as e:
                     _LOGGER.warning(
                         "Could not convert state of %s to float: %s, Error: %s",
@@ -303,14 +308,17 @@ class BodyScaleMetricsHandler:
                         value,
                         e,
                     )
+                    self._remove_sensor_problem(CONF_SENSOR_IMPEDANCE)
                     problem = "invalid_format"
-            else:
-                problem = "unavailable"
+
             if problem:
                 self._add_sensor_problem(entity_id, problem)
 
         elif entity_id == self._config.get(CONF_SENSOR_LAST_MEASUREMENT_TIME):
-            if self._is_valid(CONF_SENSOR_LAST_MEASUREMENT_TIME, value, None, None):
+            if value == STATE_UNAVAILABLE:
+                self._remove_sensor_problem(CONF_SENSOR_LAST_MEASUREMENT_TIME)
+                problem = "unavailable"
+            elif self._is_valid(CONF_SENSOR_LAST_MEASUREMENT_TIME, value, None, None):
                 try:
                     last_measurement_time_datetime = datetime.fromisoformat(value)
                     local_tz = get_time_zone(self._hass.config.time_zone)
@@ -324,7 +332,8 @@ class BodyScaleMetricsHandler:
                     self._trigger_dependent_recalculation()
                 except ValueError:
                     problem = "invalid_format"
-            else:
+            elif value != STATE_UNAVAILABLE:
+                self._remove_sensor_problem(CONF_SENSOR_LAST_MEASUREMENT_TIME)
                 problem = "invalid"
             if problem:
                 self._add_sensor_problem(entity_id, problem)
@@ -343,50 +352,46 @@ class BodyScaleMetricsHandler:
             self._trigger_dependent_recalculation()
 
     def _add_sensor_problem(self, entity_id: str, error_type: str) -> None:
-        """Adds a specific sensor problem to the status while maintaining order and filtering 'weight_test_invalid'."""
-        sensor_key = None
-        if entity_id == self._config[CONF_SENSOR_WEIGHT]:
-            sensor_key = "weight"
-        elif entity_id == self._config.get(CONF_SENSOR_IMPEDANCE):
-            sensor_key = "impedance"
-        elif entity_id == self._config.get(CONF_SENSOR_LAST_MEASUREMENT_TIME):
-            sensor_key = "last_time"
+            """Adds a specific sensor problem to the status while maintaining order and without duplicates."""
+            sensor_key = None
+            if entity_id == self._config[CONF_SENSOR_WEIGHT]:
+                sensor_key = "weight"
+            elif entity_id == self._config.get(CONF_SENSOR_IMPEDANCE):
+                sensor_key = "impedance"
+            elif entity_id == self._config.get(CONF_SENSOR_LAST_MEASUREMENT_TIME):
+                sensor_key = "last_time"
 
-        if sensor_key:
-            problem_string = f"{sensor_key}_{error_type}"
-            current_status = self._available_metrics.get(Metric.STATUS, "")
-            status_parts = [
-                s.strip()
-                for s in current_status.split("_and_")
-                if s.strip() and not s.startswith(f"{sensor_key}_")
-            ]
-            status_parts.append(problem_string)
+            if sensor_key:
+                problem_string = f"{sensor_key}_{error_type}"
+                current_status = self._status
+                status_parts = [s.strip() for s in current_status.split("_and_") if s.strip() and s.strip() != PROBLEM_NONE]
 
-            ordered_problems = []
-            weight_problem = None
-            impedance_problem = None
-            last_time_problem = None
-            other_problems = []
+                if problem_string not in status_parts:
+                    status_parts.append(problem_string)
 
-            for part in sorted(list(set(status_parts))):
-                if part.startswith("weight_"):
-                    weight_problem = part
-                elif part.startswith("impedance_"):
-                    impedance_problem = part
-                elif part.startswith("last_time_"):
-                    last_time_problem = part
-                else:
-                    other_problems.append(part)
+                ordered_problems = []
+                weight_problems = []
+                impedance_problems = []
+                last_time_problems = []
+                other_problems = []
 
-            if weight_problem:
-                ordered_problems.append(weight_problem)
-            if impedance_problem:
-                ordered_problems.append(impedance_problem)
-            if last_time_problem:
-                ordered_problems.append(last_time_problem)
-            ordered_problems.extend(sorted(other_problems))
+                for part in sorted(list(set(status_parts))):
+                    if part.startswith("weight_"):
+                        weight_problems.append(part)
+                    elif part.startswith("impedance_"):
+                        impedance_problems.append(part)
+                    elif part.startswith("last_time_"):
+                        last_time_problems.append(part)
+                    else:
+                        other_problems.append(part)
 
-            self._update_available_metric(Metric.STATUS, "_and_".join(ordered_problems))
+                ordered_problems.extend(weight_problems)
+                ordered_problems.extend(impedance_problems)
+                ordered_problems.extend(last_time_problems)
+                ordered_problems.extend(other_problems)
+
+                final_status = "_and_".join(ordered_problems)
+                self._update_available_metric(Metric.STATUS, final_status if final_status else PROBLEM_NONE)
 
     def _remove_sensor_problem(self, sensor_config_key: str) -> None:
         """Removes a specific sensor problem from the status."""
@@ -399,16 +404,14 @@ class BodyScaleMetricsHandler:
             sensor_key = "last_time"
 
         if sensor_key:
-            current_status = self._available_metrics.get(Metric.STATUS, "")
+            current_status = self._status
             status_parts = [
                 s.strip()
                 for s in current_status.split("_and_")
                 if s.strip() and not s.startswith(f"{sensor_key}_")
             ]
-            if status_parts:
-                self._update_available_metric(Metric.STATUS, "_and_".join(status_parts))
-            else:
-                self._update_available_metric(Metric.STATUS, PROBLEM_NONE)
+            final_status = "_and_".join(status_parts)
+            self._update_available_metric(Metric.STATUS, final_status if final_status else PROBLEM_NONE)
 
     def _is_valid(
         self,
@@ -431,57 +434,56 @@ class BodyScaleMetricsHandler:
             return False
         return True
 
-    def _update_available_metric(self, metric: Metric, state: StateType) -> bool:
-        """Update the available metric and return True if updated."""
+    def _update_available_metric(self, metric: Metric, state: StateType) -> None:
         old_state = self._available_metrics.get(metric, None)
         if old_state is not None and old_state == state:
             _LOGGER.debug("No update required for %s.", metric)
-            return False
+            return
 
         self._available_metrics.setdefault(
             Metric.AGE, get_age(self._config[CONF_BIRTHDAY])
         )
-        self._available_metrics[metric] = state
-        self._notify_subscribers(
-            metric, state
-        )  # Ensure subscribers are notified immediately
-        return True
 
-    def _notify_subscribers(self, metric: Metric, state: StateType) -> None:
-        """Notify subscribers of a metric change."""
+        self._available_metrics[metric] = state
+
+        if metric == Metric.STATUS:
+            if self._status != state:
+                self._status = state
+                subscribers = self._subscribers.get(metric, [])
+                if subscribers:
+                    metric_info = self._dependencies[metric]
+                    subscriber_state = _modify_state_for_subscriber(metric_info, state)
+                    for subscriber in subscribers:
+                        subscriber(subscriber_state)
+        else:
+            metric_info = self._dependencies[metric]
+            subscribers = self._subscribers.get(metric, [])
+            if subscribers:
+                subscriber_state = _modify_state_for_subscriber(metric_info, state)
+                for subscriber in subscribers:
+                    subscriber(subscriber_state)
+
         metric_info = self._dependencies[metric]
-        subscribers = self._subscribers.get(metric, [])
-        if subscribers:
-            subscriber_state = _modify_state_for_subscriber(metric_info, state)
-            for subscriber in subscribers:
-                subscriber(subscriber_state)
+        for depended in metric_info.depended_by:
+            depended_info = self._dependencies[depended]
+            if all(dep in self._available_metrics for dep in depended_info.depends_on):
+                value = depended_info.calculate(self._config, self._available_metrics)
+                if value is not None:
+                    self._update_available_metric(depended, value)
 
     def _trigger_dependent_recalculation(self) -> None:
-        """Trigger recalculation of metrics that depend on weight and/or impedance."""
-        weight_valid = Metric.WEIGHT in self._available_metrics
-        impedance_valid = (
-            CONF_SENSOR_IMPEDANCE not in self._config
-            or Metric.IMPEDANCE in self._available_metrics
-        )
-
-        if weight_valid or impedance_valid:
-            _LOGGER.debug(f"Available metrics: {self._available_metrics}")
-            for metric, info in self._dependencies.items():
-                if metric not in [
-                    Metric.WEIGHT,
-                    Metric.IMPEDANCE,
-                    Metric.STATUS,
-                    Metric.AGE,
-                    Metric.LAST_MEASUREMENT_TIME,
-                ]:
-                    _LOGGER.debug(
-                        f"Checking dependencies for {metric}: {info.depends_on}"
-                    )
-                    if all(
-                        dep in self._available_metrics
-                        for dep in info.depends_on
-                        if dep != Metric.LAST_MEASUREMENT_TIME
+        """Trigger recalculation for metrics that depend on the updated metric."""
+        updated_metrics = list(self._available_metrics.keys())
+        for metric in updated_metrics:
+            metric_info = self._dependencies.get(metric)
+            if metric_info:
+                for depended in metric_info.depended_by:
+                    depended_info = self._dependencies.get(depended)
+                    if depended_info and all(
+                        dep in self._available_metrics for dep in depended_info.depends_on
                     ):
-                        value = info.calculate(self._config, self._available_metrics)
+                        value = depended_info.calculate(
+                            self._config, self._available_metrics
+                        )
                         if value is not None:
-                            self._update_available_metric(metric, value)
+                            self._update_available_metric(depended, value)
