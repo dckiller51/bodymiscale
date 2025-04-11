@@ -9,7 +9,6 @@ from typing import Any
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
 from awesomeversion import AwesomeVersion
-from cachetools import TTLCache
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_NAME, CONF_SENSORS, STATE_OK, STATE_PROBLEM
 from homeassistant.const import __version__ as HA_VERSION
