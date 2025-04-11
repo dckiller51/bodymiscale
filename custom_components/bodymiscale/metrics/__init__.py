@@ -1,11 +1,10 @@
 """Metrics module."""
 
-
 import logging
-from datetime import datetime
 from collections.abc import Callable, Mapping, MutableMapping
 from dataclasses import dataclass, field
-from typing import Any
+from datetime import datetime
+from typing import Any, Optional
 
 from cachetools import TTLCache
 from homeassistant.const import (
@@ -234,9 +233,15 @@ class BodyScaleMetricsHandler:
                 try:
                     value = float(value)
                     if self._is_valid(
-                        CONF_SENSOR_WEIGHT, value, CONSTRAINT_WEIGHT_MIN, CONSTRAINT_WEIGHT_MAX
+                        CONF_SENSOR_WEIGHT,
+                        value,
+                        CONSTRAINT_WEIGHT_MIN,
+                        CONSTRAINT_WEIGHT_MAX,
                     ):
-                        if new_state.attributes.get(ATTR_UNIT_OF_MEASUREMENT) == UNIT_POUNDS:
+                        if (
+                            new_state.attributes.get(ATTR_UNIT_OF_MEASUREMENT)
+                            == UNIT_POUNDS
+                        ):
                             value = value * 0.45359237
                         if self._update_available_metric(Metric.WEIGHT, value):
                             weight_updated_valid = True
@@ -363,6 +368,8 @@ class BodyScaleMetricsHandler:
         self,
         name_sensor: str,
         state: StateType,
+        constraint_min: int | None,
+        constraint_max: int | None,
         constraint_min: int | None,
         constraint_max: int | None,
     ) -> bool:

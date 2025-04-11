@@ -32,7 +32,7 @@ blueprint:
       description: |
         The main message of the notification. Example: Who is on the scale with a weight of
         Result: Who is on the scale with a weight of [Weight] kg?
-      #Le message principal de la notification. Exemple: Qui est sur la balance avec un poids de 
+      #Le message principal de la notification. Exemple: Qui est sur la balance avec un poids de
       #Résultat : Qui est la balance avec un poids de [Poids] kg ?.
     response_timeout_seconds:
       name: Notification Response Timeout (Seconds)
@@ -168,7 +168,7 @@ blueprint:
       #ID d'entité de la date et de l'heure d'entrée pour la dernière pesée de l'utilisateur 3
 
     split_weight_threshold:
-      name: Split Weight Threshold (Optional for Group 2) 
+      name: Split Weight Threshold (Optional for Group 2)
       selector:
         number:
           mode: slider
@@ -177,7 +177,7 @@ blueprint:
           step: 1
           unit_of_measurement: kg
       default: 0
-      description: If weight is above/below this, show Group 2 users. 
+      description: If weight is above/below this, show Group 2 users.
       #Si le poids est supérieur ou inférieur à ce seuil, afficher les utilisateurs du groupe 2.
 
     split_weight_direction:
@@ -415,177 +415,177 @@ action:
           {{ '00:{:02d}:{:02d}'.format((response_timeout_seconds | int(0)) // 60, (response_timeout_seconds | int(0)) % 60) }}
         continue_on_timeout: false
       - choose:
-        - conditions:
-            - condition: template
-              value_template: "{{ wait.trigger.event.data.action == (user1_name | lower | replace(' ', '_')) }}"
-          sequence:
-            - action: input_number.set_value
-              target:
-                entity_id: "{{ user1_weight }}"
-              data:
-                value: "{{ current_weight }}"
-            - choose:
-                - conditions:
-                    - condition: template
-                      value_template: "{{ user1_impedance != '' and impedance_sensor is defined and impedance_sensor != '' and states(impedance_sensor) not in ['unavailable', 'unknown'] }}"
-                  sequence:
-                    - action: input_number.set_value
-                      target:
-                        entity_id: "{{ user1_impedance }}"
-                      data:
-                        value: "{{ impedance }}"
-            - choose:
-                - conditions:
-                    - condition: template
-                      value_template: "{{ user1_last_time != '' }}"
-                  sequence:
-                    - action: input_datetime.set_datetime
-                      target:
-                        entity_id: "{{ user1_last_time }}"
-                      data:
-                        datetime: "{{ now().isoformat() }}"
-        - conditions:
-            - condition: template
-              value_template: "{{ wait.trigger.event.data.action == (user2_name | lower | replace(' ', '_')) }}"
-          sequence:
-            - action: input_number.set_value
-              target:
-                entity_id: "{{ user2_weight }}"
-              data:
-                value: "{{ current_weight }}"
-            - choose:
-                - conditions:
-                    - condition: template
-                      value_template: "{{ user2_impedance != '' and impedance_sensor is defined and impedance_sensor != '' and states(impedance_sensor) not in ['unavailable', 'unknown'] }}"
-                  sequence:
-                    - action: input_number.set_value
-                      target:
-                        entity_id: "{{ user2_impedance }}"
-                      data:
-                        value: "{{ impedance }}"
-            - choose:
-                - conditions:
-                    - condition: template
-                      value_template: "{{ user2_last_time != '' }}"
-                  sequence:
-                    - action: input_datetime.set_datetime
-                      target:
-                        entity_id: "{{ user2_last_time }}"
-                      data:
-                        datetime: "{{ now().isoformat() }}"
-        - conditions:
-            - condition: template
-              value_template: "{{ wait.trigger.event.data.action == (user3_name | lower | replace(' ', '_')) }}"
-          sequence:
-            - action: input_number.set_value
-              target:
-                entity_id: "{{ user3_weight }}"
-              data:
-                value: "{{ current_weight }}"
-            - choose:
-                - conditions:
-                    - condition: template
-                      value_template: "{{ user3_impedance != '' and impedance_sensor is defined and impedance_sensor != '' and states(impedance_sensor) not in ['unavailable', 'unknown'] }}"
-                  sequence:
-                    - action: input_number.set_value
-                      target:
-                        entity_id: "{{ user3_impedance }}"
-                      data:
-                        value: "{{ impedance }}"
-            - choose:
-                - conditions:
-                    - condition: template
-                      value_template: "{{ user3_last_time != '' }}"
-                  sequence:
-                    - action: input_datetime.set_datetime
-                      target:
-                        entity_id: "{{ user3_last_time }}"
-                      data:
-                        datetime: "{{ now().isoformat() }}"
-        - conditions:
-            - condition: template
-              value_template: "{{ wait.trigger.event.data.action == (user4_name | lower | replace(' ', '_')) }}"
-          sequence:
-            - action: input_number.set_value
-              target:
-                entity_id: "{{ user4_weight }}"
-              data:
-                value: "{{ current_weight }}"
-            - choose:
-                - conditions:
-                    - condition: template
-                      value_template: "{{ user4_impedance != '' and impedance_sensor is defined and impedance_sensor != '' and states(impedance_sensor) not in ['unavailable', 'unknown'] }}"
-                  sequence:
-                    - action: input_number.set_value
-                      target:
-                        entity_id: "{{ user4_impedance }}"
-                      data:
-                        value: "{{ impedance }}"
-            - choose:
-                - conditions:
-                    - condition: template
-                      value_template: "{{ user4_last_time != '' }}"
-                  sequence:
-                    - action: input_datetime.set_datetime
-                      target:
-                        entity_id: "{{ user4_last_time }}"
-                      data:
-                        datetime: "{{ now().isoformat() }}"
-        - conditions:
-            - condition: template
-              value_template: "{{ wait.trigger.event.data.action == (user5_name | lower | replace(' ', '_')) }}"
-          sequence:
-            - action: input_number.set_value
-              target:
-                entity_id: "{{ user5_weight }}"
-              data:
-                value: "{{ current_weight }}"
-            - choose:
-                - conditions:
-                    - condition: template
-                      value_template: "{{ user5_impedance != '' and impedance_sensor is defined and impedance_sensor != '' and states(impedance_sensor) not in ['unavailable', 'unknown'] }}"
-                  sequence:
-                    - action: input_number.set_value
-                      target:
-                        entity_id: "{{ user5_impedance }}"
-                      data:
-                        value: "{{ impedance }}"
-            - choose:
-                - conditions:
-                    - condition: template
-                      value_template: "{{ user5_last_time != '' }}"
-                  sequence:
-                    - action: input_datetime.set_datetime
-                      target:
-                        entity_id: "{{ user5_last_time }}"
-                      data:
-                        datetime: "{{ now().isoformat() }}"
-        - conditions:
-            - condition: template
-              value_template: "{{ wait.trigger.event.data.action == (user6_name | lower | replace(' ', '_')) }}"
-          sequence:
-            - action: input_number.set_value
-              target:
-                entity_id: "{{ user6_weight }}"
-              data:
-                value: "{{ current_weight }}"
-            - choose:
-                - conditions:
-                    - condition: template
-                      value_template: "{{ user6_impedance != '' and impedance_sensor is defined and impedance_sensor != '' and states(impedance_sensor) not in ['unavailable', 'unknown'] }}"
-                  sequence:
-                    - action: input_number.set_value
-                      target:
-                        entity_id: "{{ user6_impedance }}"
-                      data:
-                        value: "{{ impedance }}"
-            - choose:
-                - conditions:
-                    - condition: template
-                      value_template: "{{ user6_last_time != '' }}"
-                  sequence:
-                    - action: input_datetime.set_datetime
-                      target:
-                        entity_id: "{{ user6_last_time }}"
-                      data:
-                        datetime: "{{ now().isoformat() }}"
+          - conditions:
+              - condition: template
+                value_template: "{{ wait.trigger.event.data.action == (user1_name | lower | replace(' ', '_')) }}"
+            sequence:
+              - action: input_number.set_value
+                target:
+                  entity_id: "{{ user1_weight }}"
+                data:
+                  value: "{{ current_weight }}"
+              - choose:
+                  - conditions:
+                      - condition: template
+                        value_template: "{{ user1_impedance != '' and impedance_sensor is defined and impedance_sensor != '' and states(impedance_sensor) not in ['unavailable', 'unknown'] }}"
+                    sequence:
+                      - action: input_number.set_value
+                        target:
+                          entity_id: "{{ user1_impedance }}"
+                        data:
+                          value: "{{ impedance }}"
+              - choose:
+                  - conditions:
+                      - condition: template
+                        value_template: "{{ user1_last_time != '' }}"
+                    sequence:
+                      - action: input_datetime.set_datetime
+                        target:
+                          entity_id: "{{ user1_last_time }}"
+                        data:
+                          datetime: "{{ now().isoformat() }}"
+          - conditions:
+              - condition: template
+                value_template: "{{ wait.trigger.event.data.action == (user2_name | lower | replace(' ', '_')) }}"
+            sequence:
+              - action: input_number.set_value
+                target:
+                  entity_id: "{{ user2_weight }}"
+                data:
+                  value: "{{ current_weight }}"
+              - choose:
+                  - conditions:
+                      - condition: template
+                        value_template: "{{ user2_impedance != '' and impedance_sensor is defined and impedance_sensor != '' and states(impedance_sensor) not in ['unavailable', 'unknown'] }}"
+                    sequence:
+                      - action: input_number.set_value
+                        target:
+                          entity_id: "{{ user2_impedance }}"
+                        data:
+                          value: "{{ impedance }}"
+              - choose:
+                  - conditions:
+                      - condition: template
+                        value_template: "{{ user2_last_time != '' }}"
+                    sequence:
+                      - action: input_datetime.set_datetime
+                        target:
+                          entity_id: "{{ user2_last_time }}"
+                        data:
+                          datetime: "{{ now().isoformat() }}"
+          - conditions:
+              - condition: template
+                value_template: "{{ wait.trigger.event.data.action == (user3_name | lower | replace(' ', '_')) }}"
+            sequence:
+              - action: input_number.set_value
+                target:
+                  entity_id: "{{ user3_weight }}"
+                data:
+                  value: "{{ current_weight }}"
+              - choose:
+                  - conditions:
+                      - condition: template
+                        value_template: "{{ user3_impedance != '' and impedance_sensor is defined and impedance_sensor != '' and states(impedance_sensor) not in ['unavailable', 'unknown'] }}"
+                    sequence:
+                      - action: input_number.set_value
+                        target:
+                          entity_id: "{{ user3_impedance }}"
+                        data:
+                          value: "{{ impedance }}"
+              - choose:
+                  - conditions:
+                      - condition: template
+                        value_template: "{{ user3_last_time != '' }}"
+                    sequence:
+                      - action: input_datetime.set_datetime
+                        target:
+                          entity_id: "{{ user3_last_time }}"
+                        data:
+                          datetime: "{{ now().isoformat() }}"
+          - conditions:
+              - condition: template
+                value_template: "{{ wait.trigger.event.data.action == (user4_name | lower | replace(' ', '_')) }}"
+            sequence:
+              - action: input_number.set_value
+                target:
+                  entity_id: "{{ user4_weight }}"
+                data:
+                  value: "{{ current_weight }}"
+              - choose:
+                  - conditions:
+                      - condition: template
+                        value_template: "{{ user4_impedance != '' and impedance_sensor is defined and impedance_sensor != '' and states(impedance_sensor) not in ['unavailable', 'unknown'] }}"
+                    sequence:
+                      - action: input_number.set_value
+                        target:
+                          entity_id: "{{ user4_impedance }}"
+                        data:
+                          value: "{{ impedance }}"
+              - choose:
+                  - conditions:
+                      - condition: template
+                        value_template: "{{ user4_last_time != '' }}"
+                    sequence:
+                      - action: input_datetime.set_datetime
+                        target:
+                          entity_id: "{{ user4_last_time }}"
+                        data:
+                          datetime: "{{ now().isoformat() }}"
+          - conditions:
+              - condition: template
+                value_template: "{{ wait.trigger.event.data.action == (user5_name | lower | replace(' ', '_')) }}"
+            sequence:
+              - action: input_number.set_value
+                target:
+                  entity_id: "{{ user5_weight }}"
+                data:
+                  value: "{{ current_weight }}"
+              - choose:
+                  - conditions:
+                      - condition: template
+                        value_template: "{{ user5_impedance != '' and impedance_sensor is defined and impedance_sensor != '' and states(impedance_sensor) not in ['unavailable', 'unknown'] }}"
+                    sequence:
+                      - action: input_number.set_value
+                        target:
+                          entity_id: "{{ user5_impedance }}"
+                        data:
+                          value: "{{ impedance }}"
+              - choose:
+                  - conditions:
+                      - condition: template
+                        value_template: "{{ user5_last_time != '' }}"
+                    sequence:
+                      - action: input_datetime.set_datetime
+                        target:
+                          entity_id: "{{ user5_last_time }}"
+                        data:
+                          datetime: "{{ now().isoformat() }}"
+          - conditions:
+              - condition: template
+                value_template: "{{ wait.trigger.event.data.action == (user6_name | lower | replace(' ', '_')) }}"
+            sequence:
+              - action: input_number.set_value
+                target:
+                  entity_id: "{{ user6_weight }}"
+                data:
+                  value: "{{ current_weight }}"
+              - choose:
+                  - conditions:
+                      - condition: template
+                        value_template: "{{ user6_impedance != '' and impedance_sensor is defined and impedance_sensor != '' and states(impedance_sensor) not in ['unavailable', 'unknown'] }}"
+                    sequence:
+                      - action: input_number.set_value
+                        target:
+                          entity_id: "{{ user6_impedance }}"
+                        data:
+                          value: "{{ impedance }}"
+              - choose:
+                  - conditions:
+                      - condition: template
+                        value_template: "{{ user6_last_time != '' }}"
+                    sequence:
+                      - action: input_datetime.set_datetime
+                        target:
+                          entity_id: "{{ user6_last_time }}"
+                        data:
+                          datetime: "{{ now().isoformat() }}"
