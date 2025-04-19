@@ -3,8 +3,8 @@ blueprint:
   description: |
     Sends an interactive notification to select who is on the scale and updates their weight data.
     Additionally, you can create or update an input_datetime to automatically record the date and time of your last weigh-in.
-  #Envoie une notification interactive pour sélectionner qui est sur la balance et met à jour ses données de poids.
-  #De plus, vous pouvez créer ou mettre à jour un input_datetime pour enregistrer automatiquement la date et l'heure de votre dernière pesée.
+  # Envoie une notification interactive pour sélectionner qui est sur la balance et met à jour ses données de poids.
+  # De plus, vous pouvez créer ou mettre à jour un input_datetime pour enregistrer automatiquement la date et l'heure de votre dernière pesée.
   domain: automation
   input:
     notify_device:
@@ -12,8 +12,8 @@ blueprint:
       description: |
         The device ID of your mobile app to send the notification to.
         Tip: To reply without unlocking your phone, make sure notifications are enabled on the lock screen.
-      #L'ID de l'appareil de votre application mobile auquel envoyer la notification.
-      #Astuce : pour pouvoir répondre sans déverrouiller votre téléphone, assurez-vous que les notifications sont activées sur l'écran de verrouillage.
+      # L'ID de l'appareil de votre application mobile auquel envoyer la notification.
+      # Astuce : pour pouvoir répondre sans déverrouiller votre téléphone, assurez-vous que les notifications sont activées sur l'écran de verrouillage.
       selector:
         device:
           filter:
@@ -24,7 +24,7 @@ blueprint:
         text: {}
       description: |
         The title of the notification. Example: Connected scale
-      #Le titre de la notification. Exemple: Balance connectée
+      # Le titre de la notification. Exemple: Balance connectée
     message_notify:
       name: Notification Message
       selector:
@@ -32,8 +32,8 @@ blueprint:
       description: |
         The main message of the notification. Example: Who is on the scale with a weight of
         Result: Who is on the scale with a weight of [Weight] kg?
-      #Le message principal de la notification. Exemple: Qui est sur la balance avec un poids de
-      #Résultat : Qui est la balance avec un poids de [Poids] kg ?.
+      # Le message principal de la notification. Exemple: Qui est sur la balance avec un poids de
+      # Résultat : Qui est la balance avec un poids de [Poids] kg ?.
     response_timeout_seconds:
       name: Notification Response Timeout (Seconds)
       default: 60
@@ -45,11 +45,11 @@ blueprint:
           step: 10
           unit_of_measurement: seconds
       description: The number of seconds to wait for a response to the interactive notification.
-      #Le nombre de secondes à attendre pour une réponse à la notification interactive
+      # Le nombre de secondes à attendre pour une réponse à la notification interactive
     weight_sensor:
       name: Weight Sensor Entity
       description: The entity ID of your weight sensor.
-      #L'ID d'entité de votre capteur de poids.
+      # L'ID d'entité de votre capteur de poids.
       selector:
         entity:
           filter:
@@ -57,7 +57,7 @@ blueprint:
     impedance_sensor:
       name: Impedance Sensor Entity (Optional)
       description: The entity ID of your impedance sensor (if available).
-      #L'ID d'entité de votre capteur d'impédance (si disponible).
+      # L'ID d'entité de votre capteur d'impédance (si disponible).
       selector:
         entity:
           filter:
@@ -69,7 +69,7 @@ blueprint:
       selector:
         text: {}
       description: Name of User 1.
-      #Nom de l'utilisateur 1.
+      # Nom de l'utilisateur 1.
     user1_weight:
       name: User 1 Weight Input Number
       selector:
@@ -77,7 +77,7 @@ blueprint:
           filter:
             domain: input_number
       description: Entity ID of the input_number for User 1's weight.
-      #ID d'entité du input_number pour le poids de l'utilisateur 1.
+      # ID d'entité du input_number pour le poids de l'utilisateur 1.
     user1_impedance:
       name: User 1 Impedance Input Number (Optional)
       selector:
@@ -86,7 +86,7 @@ blueprint:
             domain: input_number
       default: ""
       description: Entity ID of the input_number for User 1's impedance.
-      #ID d'entité du input_number pour l'impédance de l'utilisateur 1.
+      # ID d'entité du input_number pour l'impédance de l'utilisateur 1.
     user1_last_time:
       name: User 1 Last Weigh-in (Optional)
       selector:
@@ -95,7 +95,7 @@ blueprint:
             domain: input_datetime
       default: ""
       description: Entity ID of the input_datetime for User 1's last weigh-in.
-      #ID d'entité de la date et de l'heure d'entrée pour la dernière pesée de l'utilisateur 1.
+      # ID d'entité de la date et de l'heure d'entrée pour la dernière pesée de l'utilisateur 1.
     user1_enable_assistance_mode:
       name: User 1 Enable Weight Assistance Mode (Optional)
       selector:
@@ -104,8 +104,8 @@ blueprint:
       description: |
         Turn on assistance mode if you are weighing an item while holding it (e.g., a pet or infant).
         This will allow you to select a user and subtract their weight from the total weight.
-      #Activer le mode d'assistance si vous pesez un objet tout en le tenant (par ex., un animal ou un bébé).
-      #Cela vous permettra de sélectionner un utilisateur et de soustraire son poids du poids total.
+      # Activer le mode d'assistance si vous pesez un objet tout en le tenant (par ex., un animal ou un bébé).
+      # Cela vous permettra de sélectionner un utilisateur et de soustraire son poids du poids total.
     user1_source_weight_entity:
       name: User 1 Weight Input for the Person (Optional)
       selector:
@@ -114,7 +114,7 @@ blueprint:
             domain: input_number
       default: ""
       description: Select the input_number entity containing the weight of the person holding the object.
-      #Sélectionnez l'entité input_number contenant le poids de la personne tenant l'objet.
+      # Sélectionnez l'entité input_number contenant le poids de la personne tenant l'objet.
 
     user2_name:
       name: User 2 Name (Optional)
@@ -122,7 +122,7 @@ blueprint:
         text: {}
       default: ""
       description: Name of User 2.
-      #Nom de l'utilisateur 2.
+      # Nom de l'utilisateur 2.
     user2_weight:
       name: User 2 Weight Input Number (Optional)
       selector:
@@ -131,7 +131,7 @@ blueprint:
             domain: input_number
       default: ""
       description: Entity ID of the input_number for User 2's weight.
-      #ID d'entité du input_number pour le poids de l'utilisateur 2.
+      # ID d'entité du input_number pour le poids de l'utilisateur 2.
     user2_impedance:
       name: User 2 Impedance Input Number (Optional)
       selector:
@@ -140,7 +140,7 @@ blueprint:
             domain: input_number
       default: ""
       description: Entity ID of the input_number for User 2's impedance.
-      #ID d'entité du input_number pour l'impédance de l'utilisateur 2.
+      # ID d'entité du input_number pour l'impédance de l'utilisateur 2.
     user2_last_time:
       name: User 2 Last Weigh-in (Optional)
       selector:
@@ -149,7 +149,7 @@ blueprint:
             domain: input_datetime
       default: ""
       description: Entity ID of the input_datetime for User 2's last weigh-in
-      #ID d'entité de la date et de l'heure d'entrée pour la dernière pesée de l'utilisateur 2
+      # ID d'entité de la date et de l'heure d'entrée pour la dernière pesée de l'utilisateur 2
     user2_enable_assistance_mode:
       name: User 2 Enable Weight Assistance Mode (Optional)
       selector:
@@ -158,8 +158,8 @@ blueprint:
       description: |
         Turn on assistance mode if you are weighing an item while holding it (e.g., a pet or infant).
         This will allow you to select a user and subtract their weight from the total weight.
-      #Activer le mode d'assistance si vous pesez un objet tout en le tenant (par ex., un animal ou un bébé).
-      #Cela vous permettra de sélectionner un utilisateur et de soustraire son poids du poids total.
+      # Activer le mode d'assistance si vous pesez un objet tout en le tenant (par ex., un animal ou un bébé).
+      # Cela vous permettra de sélectionner un utilisateur et de soustraire son poids du poids total.
     user2_source_weight_entity:
       name: User 2 Weight Input for the Person (Optional)
       selector:
@@ -168,7 +168,7 @@ blueprint:
             domain: input_number
       default: ""
       description: Select the input_number entity containing the weight of the person holding the object.
-      #Sélectionnez l'entité input_number contenant le poids de la personne tenant l'objet.
+      # Sélectionnez l'entité input_number contenant le poids de la personne tenant l'objet.
 
     user3_name:
       name: User 3 Name (Optional)
@@ -176,7 +176,7 @@ blueprint:
         text: {}
       default: ""
       description: Name of User 3.
-      #Nom de l'utilisateur 3.
+      # Nom de l'utilisateur 3.
     user3_weight:
       name: User 3 Weight Input Number (Optional)
       selector:
@@ -185,7 +185,7 @@ blueprint:
             domain: input_number
       default: ""
       description: Entity ID of the input_number for User 3's weight.
-      #ID d'entité du input_number pour le poids de l'utilisateur 3.
+      # ID d'entité du input_number pour le poids de l'utilisateur 3.
     user3_impedance:
       name: User 3 Impedance Input Number (Optional)
       selector:
@@ -194,7 +194,7 @@ blueprint:
             domain: input_number
       default: ""
       description: Entity ID of the input_number for User 3's impedance.
-      #ID d'entité du input_number pour l'impédance de l'utilisateur 3.
+      # ID d'entité du input_number pour l'impédance de l'utilisateur 3.
     user3_last_time:
       name: User 3 Last Weigh-in (Optional)
       selector:
@@ -203,7 +203,7 @@ blueprint:
             domain: input_datetime
       default: ""
       description: Entity ID of the input_datetime for User 3's last weigh-in
-      #ID d'entité de la date et de l'heure d'entrée pour la dernière pesée de l'utilisateur 3
+      # ID d'entité de la date et de l'heure d'entrée pour la dernière pesée de l'utilisateur 3
     user3_enable_assistance_mode:
       name: User 3 Enable Weight Assistance Mode (Optional)
       selector:
@@ -212,8 +212,8 @@ blueprint:
       description: |
         Turn on assistance mode if you are weighing an item while holding it (e.g., a pet or infant).
         This will allow you to select a user and subtract their weight from the total weight.
-      #Activer le mode d'assistance si vous pesez un objet tout en le tenant (par ex., un animal ou un bébé).
-      #Cela vous permettra de sélectionner un utilisateur et de soustraire son poids du poids total.
+      # Activer le mode d'assistance si vous pesez un objet tout en le tenant (par ex., un animal ou un bébé).
+      # Cela vous permettra de sélectionner un utilisateur et de soustraire son poids du poids total.
     user3_source_weight_entity:
       name: User 3 Weight Input for the Person (Optional)
       selector:
@@ -222,7 +222,7 @@ blueprint:
             domain: input_number
       default: ""
       description: Select the input_number entity containing the weight of the person holding the object.
-      #Sélectionnez l'entité input_number contenant le poids de la personne tenant l'objet.
+      # Sélectionnez l'entité input_number contenant le poids de la personne tenant l'objet.
 
     split_weight_threshold:
       name: Split Weight Threshold (Optional for Group 2)
@@ -235,7 +235,7 @@ blueprint:
           unit_of_measurement: kg
       default: 0
       description: If weight is above/below this, show Group 2 users.
-      #Si le poids est supérieur ou inférieur à ce seuil, afficher les utilisateurs du groupe 2.
+      # Si le poids est supérieur ou inférieur à ce seuil, afficher les utilisateurs du groupe 2.
 
     split_weight_direction:
       name: Split Weight Direction (Optional for Group 2)
@@ -246,7 +246,7 @@ blueprint:
             - "above"
       default: above
       description: Show Group 2 users if weight is above or below the threshold.
-      #Afficher les utilisateurs du groupe 2 si le poids est supérieur ou inférieur au seuil.
+      # Afficher les utilisateurs du groupe 2 si le poids est supérieur ou inférieur au seuil.
 
     user4_name:
       name: User 4 Name (Optional - Group 2)
@@ -254,7 +254,7 @@ blueprint:
         text: {}
       default: ""
       description: Name of User 4.
-      #Nom de l'utilisateur 4.
+      # Nom de l'utilisateur 4.
     user4_weight:
       name: User 4 Weight Input Number (Optional - Group 2)
       selector:
@@ -263,7 +263,7 @@ blueprint:
             domain: input_number
       default: ""
       description: Entity ID of the input_number for User 4's weight.
-      #ID d'entité du input_number pour le poids de l'utilisateur 4.
+      # ID d'entité du input_number pour le poids de l'utilisateur 4.
     user4_impedance:
       name: User 4 Impedance Input Number (Optional - Group 2)
       selector:
@@ -272,7 +272,7 @@ blueprint:
             domain: input_number
       default: ""
       description: Entity ID of the input_number for User 4's impedance.
-      #ID d'entité du input_number pour l'impédance de l'utilisateur 4.
+      # ID d'entité du input_number pour l'impédance de l'utilisateur 4.
     user4_last_time:
       name: User 4 Last Weigh-in (Optional - Group 2)
       selector:
@@ -281,7 +281,7 @@ blueprint:
             domain: input_datetime
       default: ""
       description: Entity ID of the input_datetime for User 4's last weigh-in.
-      #ID d'entité de la date et de l'heure d'entrée pour la dernière pesée de l'utilisateur 4
+      # ID d'entité de la date et de l'heure d'entrée pour la dernière pesée de l'utilisateur 4
     user4_enable_assistance_mode:
       name: User 4 Enable Weight Assistance Mode (Optional - Group 2)
       selector:
@@ -290,8 +290,8 @@ blueprint:
       description: |
         Turn on assistance mode if you are weighing an item while holding it (e.g., a pet or infant).
         This will allow you to select a user and subtract their weight from the total weight.
-      #Activer le mode d'assistance si vous pesez un objet tout en le tenant (par ex., un animal ou un bébé).
-      #Cela vous permettra de sélectionner un utilisateur et de soustraire son poids du poids total.
+      # Activer le mode d'assistance si vous pesez un objet tout en le tenant (par ex., un animal ou un bébé).
+      # Cela vous permettra de sélectionner un utilisateur et de soustraire son poids du poids total.
     user4_source_weight_entity:
       name: User 4 Weight Input for the Person (Optional - Group 2)
       selector:
@@ -300,7 +300,7 @@ blueprint:
             domain: input_number
       default: ""
       description: Select the input_number entity containing the weight of the person holding the object.
-      #Sélectionnez l'entité input_number contenant le poids de la personne tenant l'objet.
+      # Sélectionnez l'entité input_number contenant le poids de la personne tenant l'objet.
 
     ## user 5 (Conditional)
     user5_name:
@@ -309,7 +309,7 @@ blueprint:
         text: {}
       default: ""
       description: Name of User 5.
-      #Nom de l'utilisateur 5.
+      # Nom de l'utilisateur 5.
     user5_weight:
       name: User 5 Weight Input Number (Optional - Group 2)
       selector:
@@ -318,7 +318,7 @@ blueprint:
             domain: input_number
       default: ""
       description: Entity ID of the input_number for User 5's weight.
-      #ID d'entité du input_number pour le poids de 5'utilisateur 1.
+      # ID d'entité du input_number pour le poids de 5'utilisateur 1.
     user5_impedance:
       name: User 5 Impedance Input Number (Optional - Group 2)
       selector:
@@ -327,7 +327,7 @@ blueprint:
             domain: input_number
       default: ""
       description: Entity ID of the input_number for User 5's impedance.
-      #ID d'entité du input_number pour l'impédance de l'utilisateur 5.
+      # ID d'entité du input_number pour l'impédance de l'utilisateur 5.
     user5_last_time:
       name: User 5 Last Weigh-in (Optional - Group 2)
       selector:
@@ -336,7 +336,7 @@ blueprint:
             domain: input_datetime
       default: ""
       description: Entity ID of the input_datetime for User 5's last weigh-in.
-      #ID d'entité de la date et de l'heure d'entrée pour la dernière pesée de l'utilisateur 5
+      # ID d'entité de la date et de l'heure d'entrée pour la dernière pesée de l'utilisateur 5
     user5_enable_assistance_mode:
       name: User 5 Enable Weight Assistance Mode (Optional - Group 2)
       selector:
@@ -345,8 +345,8 @@ blueprint:
       description: |
         Turn on assistance mode if you are weighing an item while holding it (e.g., a pet or infant).
         This will allow you to select a user and subtract their weight from the total weight.
-      #Activer le mode d'assistance si vous pesez un objet tout en le tenant (par ex., un animal ou un bébé).
-      #Cela vous permettra de sélectionner un utilisateur et de soustraire son poids du poids total.
+      # Activer le mode d'assistance si vous pesez un objet tout en le tenant (par ex., un animal ou un bébé).
+      # Cela vous permettra de sélectionner un utilisateur et de soustraire son poids du poids total.
     user5_source_weight_entity:
       name: User 5 Weight Input for the Person (Optional - Group 2)
       selector:
@@ -355,7 +355,7 @@ blueprint:
             domain: input_number
       default: ""
       description: Select the input_number entity containing the weight of the person holding the object.
-      #Sélectionnez l'entité input_number contenant le poids de la personne tenant l'objet.
+      # Sélectionnez l'entité input_number contenant le poids de la personne tenant l'objet.
 
     ## user 6 (Conditional)
     user6_name:
@@ -364,7 +364,7 @@ blueprint:
         text: {}
       default: ""
       description: Name of User 6.
-      #Nom de l'utilisateur 6.
+      # Nom de l'utilisateur 6.
     user6_weight:
       name: User 6 Weight Input Number (Optional - Group 2)
       selector:
@@ -373,7 +373,7 @@ blueprint:
             domain: input_number
       default: ""
       description: Entity ID of the input_number for User 6's weight.
-      #ID d'entité du input_number pour le poids de l'utilisateur 6.
+      # ID d'entité du input_number pour le poids de l'utilisateur 6.
     user6_impedance:
       name: User 6 Impedance Input Number (Optional - Group 2)
       selector:
@@ -382,7 +382,7 @@ blueprint:
             domain: input_number
       default: ""
       description: Entity ID of the input_number for User 6's impedance.
-      #ID d'entité du input_number pour l'impédance de l'utilisateur 6.
+      # ID d'entité du input_number pour l'impédance de l'utilisateur 6.
     user6_last_time:
       name: User 6 Last Weigh-in (Optional - Group 2)
       selector:
@@ -391,7 +391,7 @@ blueprint:
             domain: input_datetime
       default: ""
       description: Entity ID of the input_datetime for User 6's last weigh-in.
-      #ID d'entité de la date et de l'heure d'entrée pour la dernière pesée de l'utilisateur 6
+      # ID d'entité de la date et de l'heure d'entrée pour la dernière pesée de l'utilisateur 6
     user6_enable_assistance_mode:
       name: User 6 Enable Weight Assistance Mode (Optional - Group 2)
       selector:
@@ -400,8 +400,8 @@ blueprint:
       description: |
         Turn on assistance mode if you are weighing an item while holding it (e.g., a pet or infant).
         This will allow you to select a user and subtract their weight from the total weight.
-      #Activer le mode d'assistance si vous pesez un objet tout en le tenant (par ex., un animal ou un bébé).
-      #Cela vous permettra de sélectionner un utilisateur et de soustraire son poids du poids total.
+      # Activer le mode d'assistance si vous pesez un objet tout en le tenant (par ex., un animal ou un bébé).
+      # Cela vous permettra de sélectionner un utilisateur et de soustraire son poids du poids total.
     user6_source_weight_entity:
       name: User 6 Weight Input for the Person (Optional - Group 2)
       selector:
@@ -410,7 +410,7 @@ blueprint:
             domain: input_number
       default: ""
       description: Select the input_number entity containing the weight of the person holding the object.
-      #Sélectionnez l'entité input_number contenant le poids de la personne tenant l'objet.
+      # Sélectionnez l'entité input_number contenant le poids de la personne tenant l'objet.
 
 variables:
   title_notify: !input title_notify

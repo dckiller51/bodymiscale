@@ -13,7 +13,6 @@ from homeassistant.const import (
     STATE_UNKNOWN,
 )
 from homeassistant.core import CALLBACK_TYPE, Event, HomeAssistant, State, callback
-from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.event import async_track_state_change_event
 from homeassistant.helpers.typing import StateType
 from homeassistant.util.dt import get_time_zone
@@ -336,7 +335,7 @@ class BodyScaleMetricsHandler:
         return "invalid"
 
     def _add_sensor_problem(self, entity_id: str, error_type: str) -> None:
-        """Adds a specific sensor problem to the status while maintaining order and without duplicates."""
+        """Add a specific sensor problem to the status while maintaining order and without duplicates."""
         sensor_key = None
         if entity_id == self._config[CONF_SENSOR_WEIGHT]:
             sensor_key = "weight"
@@ -384,7 +383,7 @@ class BodyScaleMetricsHandler:
             )
 
     def _remove_sensor_problem(self, sensor_config_key: str) -> None:
-        """Removes a specific sensor problem from the status."""
+        """Remove a specific sensor problem from the status."""
         sensor_key = None
         if sensor_config_key == CONF_SENSOR_WEIGHT:
             sensor_key = "weight"
