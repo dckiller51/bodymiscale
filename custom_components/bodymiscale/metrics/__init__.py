@@ -243,7 +243,6 @@ class BodyScaleMetricsHandler:
             self._trigger_dependent_recalculation()
 
     def _process_weight(self, state: State) -> tuple[bool, str | None]:
-        entity_id = self._config[CONF_SENSOR_WEIGHT]
         value = state.state
 
         if value == STATE_UNAVAILABLE:
@@ -270,7 +269,6 @@ class BodyScaleMetricsHandler:
         return updated, None
 
     def _process_impedance(self, state: State) -> tuple[bool, str | None]:
-        entity_id = self._config[CONF_SENSOR_IMPEDANCE]
         value = state.state
 
         if value == STATE_UNAVAILABLE:
