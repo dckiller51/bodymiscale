@@ -217,143 +217,109 @@ class BodyScaleMetricsHandler:
     @callback  # type: ignore[misc]
     def _state_changed(self, entity_id: str, new_state: State) -> None:
         """Update the sensor status."""
-        if new_state is None:
+        if new_state is None or new_state.state == STATE_UNKNOWN:
             return
 
         value = new_state.state
         _LOGGER.debug("Received callback from %s with value %s", entity_id, value)
-        if value == STATE_UNKNOWN:
-            return
 
         problem = None
         weight_updated_valid = False
         impedance_updated_valid = False
 
         if entity_id == self._config[CONF_SENSOR_WEIGHT]:
-            if value == STATE_UNAVAILABLE:
-                self._remove_sensor_problem(CONF_SENSOR_WEIGHT)
-                problem = "unavailable"
-            else:
-                try:
-                    value_float = float(value)
-                    if not self._is_valid(
-                        CONF_SENSOR_WEIGHT,
-                        value_float,
-                        CONSTRAINT_WEIGHT_MIN,
-                        CONSTRAINT_WEIGHT_MAX,
-                    ):
-                        problem = (
-                            "low"
-                            if CONSTRAINT_WEIGHT_MIN is not None
-                            and value_float < CONSTRAINT_WEIGHT_MIN
-                            else (
-                                "high"
-                                if CONSTRAINT_WEIGHT_MAX is not None
-                                and value_float > CONSTRAINT_WEIGHT_MAX
-                                else "invalid"
-                            )
-                        )
-                    else:
-                        if (
-                            new_state.attributes.get(ATTR_UNIT_OF_MEASUREMENT)
-                            == UNIT_POUNDS
-                        ):
-                            value_float = value_float * 0.45359237
-                        if self._update_available_metric(Metric.WEIGHT, value_float):
-                            weight_updated_valid = True
-                        self._remove_sensor_problem(CONF_SENSOR_WEIGHT)
+            weight_updated_valid, problem = self._process_weight(new_state)
 
-                except ValueError as e:
-                    _LOGGER.warning(
-                        "Could not convert state of %s to float: %s, Error: %s",
-                        entity_id,
-                        value,
-                        e,
-                    )
-                    self._remove_sensor_problem(CONF_SENSOR_WEIGHT)
-                    problem = "invalid_format"
-
-            if problem:
-                self._add_sensor_problem(entity_id, problem)
-
-        elif entity_id == self._config.get(CONF_SENSOR_IMPEDANCE, None):
-            if value == STATE_UNAVAILABLE:
-                self._remove_sensor_problem(CONF_SENSOR_IMPEDANCE)
-                problem = "unavailable"
-            else:
-                try:
-                    value_float = float(value)
-                    if not self._is_valid(
-                        CONF_SENSOR_IMPEDANCE,
-                        value_float,
-                        CONSTRAINT_IMPEDANCE_MIN,
-                        CONSTRAINT_IMPEDANCE_MAX,
-                    ):
-                        problem = (
-                            "low"
-                            if CONSTRAINT_IMPEDANCE_MIN is not None
-                            and value_float < CONSTRAINT_IMPEDANCE_MIN
-                            else (
-                                "high"
-                                if CONSTRAINT_IMPEDANCE_MAX is not None
-                                and value_float > CONSTRAINT_IMPEDANCE_MAX
-                                else "invalid"
-                            )
-                        )
-                    else:
-                        if self._update_available_metric(Metric.IMPEDANCE, value_float):
-                            impedance_updated_valid = True
-                        self._remove_sensor_problem(CONF_SENSOR_IMPEDANCE)
-
-                except ValueError as e:
-                    _LOGGER.warning(
-                        "Could not convert state of %s to float: %s, Error: %s",
-                        entity_id,
-                        value,
-                        e,
-                    )
-                    self._remove_sensor_problem(CONF_SENSOR_IMPEDANCE)
-                    problem = "invalid_format"
-
-            if problem:
-                self._add_sensor_problem(entity_id, problem)
+        elif entity_id == self._config.get(CONF_SENSOR_IMPEDANCE):
+            impedance_updated_valid, problem = self._process_impedance(new_state)
 
         elif entity_id == self._config.get(CONF_SENSOR_LAST_MEASUREMENT_TIME):
-            if value == STATE_UNAVAILABLE:
-                self._remove_sensor_problem(CONF_SENSOR_LAST_MEASUREMENT_TIME)
-                problem = "unavailable"
-            elif self._is_valid(CONF_SENSOR_LAST_MEASUREMENT_TIME, value, None, None):
-                try:
-                    last_measurement_time_datetime = datetime.fromisoformat(value)
-                    local_tz = get_time_zone(self._hass.config.time_zone)
-                    last_measurement_time_datetime = (
-                        last_measurement_time_datetime.replace(tzinfo=local_tz)
-                    )
-                    self._update_available_metric(
-                        Metric.LAST_MEASUREMENT_TIME, last_measurement_time_datetime
-                    )
-                    self._remove_sensor_problem(CONF_SENSOR_LAST_MEASUREMENT_TIME)
-                    self._trigger_dependent_recalculation()
-                except ValueError:
-                    problem = "invalid_format"
-            else:
-                self._remove_sensor_problem(CONF_SENSOR_LAST_MEASUREMENT_TIME)
-                problem = "invalid"
-            if problem:
-                self._add_sensor_problem(entity_id, problem)
+            problem = self._process_last_measurement_time(new_state)
 
-        elif problem:
-            self._add_sensor_problem(entity_id, problem.split("_")[-1])
-        elif entity_id in [
-            self._config[CONF_SENSOR_WEIGHT],
-            self._config.get(CONF_SENSOR_IMPEDANCE, None),
-            self._config.get(CONF_SENSOR_LAST_MEASUREMENT_TIME),
-        ]:
-            pass
+        if problem:
+            self._add_sensor_problem(entity_id, problem)
 
-        # Trigger recalculation if either weight or impedance was updated to a valid state
         if weight_updated_valid or impedance_updated_valid:
             self._trigger_dependent_recalculation()
+
+    def _process_weight(self, state: State) -> tuple[bool, str | None]:
+        entity_id = self._config[CONF_SENSOR_WEIGHT]
+        value = state.state
+
+        if value == STATE_UNAVAILABLE:
+            self._remove_sensor_problem(CONF_SENSOR_WEIGHT)
+            return False, "unavailable"
+
+        try:
+            value_float = float(value)
+        except ValueError as e:
+            _LOGGER.warning("Could not convert weight %s to float: %s", value, e)
+            self._remove_sensor_problem(CONF_SENSOR_WEIGHT)
+            return False, "invalid_format"
+
+        if not self._is_valid(CONF_SENSOR_WEIGHT, value_float, CONSTRAINT_WEIGHT_MIN, CONSTRAINT_WEIGHT_MAX):
+            return False, self._categorize_problem(value_float, CONSTRAINT_WEIGHT_MIN, CONSTRAINT_WEIGHT_MAX)
+
+        # Convert pounds to kg if necessary
+        if state.attributes.get(ATTR_UNIT_OF_MEASUREMENT) == UNIT_POUNDS:
+            value_float *= 0.45359237
+
+        updated = self._update_available_metric(Metric.WEIGHT, value_float)
+        if updated:
+            self._remove_sensor_problem(CONF_SENSOR_WEIGHT)
+        return updated, None
+
+    def _process_impedance(self, state: State) -> tuple[bool, str | None]:
+        entity_id = self._config[CONF_SENSOR_IMPEDANCE]
+        value = state.state
+
+        if value == STATE_UNAVAILABLE:
+            self._remove_sensor_problem(CONF_SENSOR_IMPEDANCE)
+            return False, "unavailable"
+
+        try:
+            value_float = float(value)
+        except ValueError as e:
+            _LOGGER.warning("Could not convert impedance %s to float: %s", value, e)
+            self._remove_sensor_problem(CONF_SENSOR_IMPEDANCE)
+            return False, "invalid_format"
+
+        if not self._is_valid(CONF_SENSOR_IMPEDANCE, value_float, CONSTRAINT_IMPEDANCE_MIN, CONSTRAINT_IMPEDANCE_MAX):
+            return False, self._categorize_problem(value_float, CONSTRAINT_IMPEDANCE_MIN, CONSTRAINT_IMPEDANCE_MAX)
+
+        updated = self._update_available_metric(Metric.IMPEDANCE, value_float)
+        if updated:
+            self._remove_sensor_problem(CONF_SENSOR_IMPEDANCE)
+        return updated, None
+
+    def _process_last_measurement_time(self, state: State) -> str | None:
+        value = state.state
+
+        if value == STATE_UNAVAILABLE:
+            self._remove_sensor_problem(CONF_SENSOR_LAST_MEASUREMENT_TIME)
+            return "unavailable"
+
+        if not self._is_valid(CONF_SENSOR_LAST_MEASUREMENT_TIME, value, None, None):
+            self._remove_sensor_problem(CONF_SENSOR_LAST_MEASUREMENT_TIME)
+            return "invalid"
+
+        try:
+            dt = datetime.fromisoformat(value)
+            tz = get_time_zone(self._hass.config.time_zone)
+            dt = dt.replace(tzinfo=tz)
+            self._update_available_metric(Metric.LAST_MEASUREMENT_TIME, dt)
+            self._remove_sensor_problem(CONF_SENSOR_LAST_MEASUREMENT_TIME)
+            self._trigger_dependent_recalculation()
+            return None
+        except ValueError:
+            return "invalid_format"
+
+    def _categorize_problem(self, value: float, min_val: float | None, max_val: float | None) -> str:
+        if min_val is not None and value < min_val:
+            return "low"
+        if max_val is not None and value > max_val:
+            return "high"
+        return "invalid"
 
     def _add_sensor_problem(self, entity_id: str, error_type: str) -> None:
         """Adds a specific sensor problem to the status while maintaining order and without duplicates."""
@@ -435,16 +401,17 @@ class BodyScaleMetricsHandler:
         """Check if the sensor state is valid based on constraints."""
         if state == STATE_UNAVAILABLE:
             return False
-        elif name_sensor == CONF_SENSOR_LAST_MEASUREMENT_TIME:
+        if name_sensor == CONF_SENSOR_LAST_MEASUREMENT_TIME:
             try:
                 datetime.fromisoformat(state)
             except ValueError:
                 return False
-        elif constraint_min is not None and state < constraint_min:
+        if constraint_min is not None and state < constraint_min:
             return False
-        elif constraint_max is not None and state > constraint_max:
+        if constraint_max is not None and state > constraint_max:
             return False
         return True
+
 
     def _update_available_metric(self, metric: Metric, state: StateType) -> bool:
         old_state = self._available_metrics.get(metric, None)
