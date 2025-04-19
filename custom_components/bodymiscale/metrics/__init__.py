@@ -336,7 +336,7 @@ class BodyScaleMetricsHandler:
                     self._trigger_dependent_recalculation()
                 except ValueError:
                     problem = "invalid_format"
-            elif value != STATE_UNAVAILABLE:
+            else:
                 self._remove_sensor_problem(CONF_SENSOR_LAST_MEASUREMENT_TIME)
                 problem = "invalid"
             if problem:
