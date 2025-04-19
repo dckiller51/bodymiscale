@@ -1,6 +1,6 @@
-# ESPHome Configurations for Xiaomi Mi Scale with Multi-User Management
+# Example configurations for Xiaomi Mi Scale with multi-user management
 
-This project provides two example ESPHome configurations to integrate a Xiaomi Mi Scale into Home Assistant, with a focus on multi-user management and data persistence.
+This project offers three example configurations for integrating a Xiaomi Mi Scale with Home Assistant, with an emphasis on multi-user management and data persistence.
 
 ## Example 1: Complete Management by ESPHome
 
@@ -30,14 +30,41 @@ This project provides two example ESPHome configurations to integrate a Xiaomi M
 - **Flexibility for Scales Without Impedance:** Users can easily adapt the configurations to their scales.
 - **Weight Range Filtering:** Measurements are associated with users based on configurable weight ranges.
 
+## Example 3: Home Assistant Blueprint for Interactive User Selection
+
+- **File:** `interactive_notification_user_selection_weight_data_update.yaml` (Example Automation using the Blueprint)
+- **Description:** This example utilizes a Home Assistant Blueprint to send an interactive notification when a weight measurement is detected. Users can select who is on the scale, and the blueprint updates the corresponding weight (and optionally impedance/last weigh-in) input numbers/datetimes in Home Assistant. This method requires the Mobile Home Assistant app to receive and respond to the notification.
+[![Open your Home Assistant instance and show the blueprint import dialog with a specific blueprint pre-filled.](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https://github.com/dckiller51/bodymiscale/blob/main/example_config/interactive_notification_user_selection_weight_data_update.yaml)
+- **Advantages:**
+  - Interactive: Provides a user-friendly way to identify who is being weighed.
+  - Flexible User Management: User configuration is done directly in the Home Assistant automation created from the blueprint.
+  - No Weight Range Configuration: Relies on direct user interaction for identification.
+- **Usage:** Ideal for users who prefer a direct, interactive approach to user identification and want to manage user data within Home Assistant using input helpers.
+
+**Interactive Notification Screenshot:**
+
+![Screenshot of Interactive Scale Notification](/example_config/screenshot_phone_notification.jpg)
+
+## Common Features
+
+- **Multi-User Management:** All examples support managing multiple users.
+- **Data Persistence:** Data is retained in ESPHome (Example 1), Home Assistant input helpers (Example 2 & 3).
+- **Flexibility for Scales Without Impedance:** Users can easily adapt the configurations to their scales.
+- **User Identification:** Examples 1 & 2 use weight ranges, while Example 3 uses interactive notifications.
+
 ## Configuration
 
-1. **ESPHome Installation:** Ensure you have ESPHome installed and configured for your ESP32 device.
-2. **Secrets Configuration:** Create a `secrets.yaml` file to store your sensitive information (Wi-Fi SSID, password, etc.).
-3. **Example Selection:** Choose the desired configuration example (`esphome_configuration.yaml` or `esphome_base_configuration.yaml` + `weight_impedance_update.yaml`).
-4. **User Configuration:** Configure user names, weight ranges, and other parameters in the configuration files.
-5. **Configuration Upload:** Upload the configuration to your ESP32 device using ESPHome.
-6. **Home Assistant Integration:** Sensors will be automatically discovered by Home Assistant. You can add them to your dashboards.
+1. **ESPHome Installation (for Examples 1 & 2):** Ensure you have ESPHome installed and configured for your ESP32 device.
+2. **BLE Monitor Installation (for Example 2 & potentially triggering Example 3):** Ensure you have BLE Monitor installed if you are using it to receive data.
+3. **Mobile Home Assistant App (for Example 3):** Ensure you have the Mobile Home Assistant app installed on your devices to receive interactive notifications.
+4. **Secrets Configuration (for ESPHome):** Create a `secrets.yaml` file to store your sensitive information (Wi-Fi SSID, password, etc.).
+5. **Example Selection:** Choose the desired configuration example (ESPHome Direct, ESPHome/BLE Monitor + HA Logic, or HA Blueprint).
+6. **User Configuration:**
+    - **ESPHome Direct:** Configure user names, weight ranges, and other parameters in `esphome_configuration.yaml`.
+    - **ESPHome/BLE Monitor + HA Logic:** Configure user logic in the Home Assistant automation (`weight_impedance_update.yaml`).
+    - **HA Blueprint:** Create a new automation from the `interactive_notification_user_selection_weight_data_update.yaml` (you'll need to add the blueprint file to your `blueprints/automation/` folder) and configure user names and input helper entities in the automation's settings.
+7. **Configuration Upload (for ESPHome):** Upload the ESPHome configuration to your ESP32 device.
+8. **Home Assistant Integration:** Sensors and automations will be automatically discovered or need to be created in Home Assistant. You can add them to your dashboards.
 
 ## Code Examples
 
@@ -46,5 +73,6 @@ This directory contains the following configuration files:
 - **`esphome_configuration.yaml`:** Complete ESPHome configuration to manage all sensors directly.
 - **`esphome_base_configuration.yaml`:** Basic ESPHome configuration to provide raw data to Home Assistant (used in Example 2).
 - **`weight_impedance_update.yaml`:** Home Assistant configuration to manage user logic (used in Example 2).
+- **`interactive_notification_user_selection_weight_data_update.yaml`**: The Home Assistant blueprint for interactive user selection and weight data update (used in Example 3)
 
 Please refer to these files for detailed code examples and specific configurations.
