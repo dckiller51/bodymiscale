@@ -11,10 +11,12 @@
         "data": {
           "height": "Výška",
           "impedance": "Senzor impedancie",
+          "last_measurement_time": "Senzor posledného času váženia",
           "weight": "Senzor hmotnosti"
         },
         "data_description": {
-          "impedance": "Ak vaša váha neposkytuje impedanciu, nechajte toto pole prázdne."
+          "impedance": "Ak vaša váha neposkytuje impedanciu, nechajte toto pole prázdne.",
+          "last_measurement_time": "Ak nemáte senzor posledného času váženia, nechajte toto pole prázdne."
         }
       },
       "user": {
@@ -33,6 +35,7 @@
       "body_fat": { "name": "Telesný tuk" },
       "body_score": { "name": "Skóre tela" },
       "bone_mass": { "name": "Kostná hmota" },
+      "last_measurement_time": { "name": "Posledný čas váženia" },
       "lean_body_mass": { "name": "Čistá telesná hmota" },
       "metabolic_age": { "name": "Metabolický vek" },
       "muscle_mass": { "name": "Svalová hmota" },
@@ -96,6 +99,7 @@
         "height": { "name": "Výška" },
         "ideal": { "name": "Ideál" },
         "impedance": { "name": "Impedancia" },
+        "last_measurement_time": { "name": "Posledný čas váženia" },
         "lean_body_mass": { "name": "Čistá telesná hmota" },
         "metabolic_age": { "name": "Metabolický vek" },
         "muscle_mass": { "name": "Svalová hmota" },
@@ -129,10 +133,12 @@
         "data": {
           "height": "Výška",
           "impedance": "Senzor impedancie",
+          "last_measurement_time": "Senzor posledného času váženia",
           "weight": "Senzor hmotnosti"
         },
         "data_description": {
-          "impedance": "Ak vaša váha neposkytuje impedanciu, nechajte toto pole prázdne."
+          "impedance": "Ak vaša váha neposkytuje impedanciu, nechajte toto pole prázdne.",
+          "last_measurement_time": "Ak nemáte senzor posledného času váženia, nechajte toto pole prázdne."
         }
       }
     }

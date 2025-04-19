@@ -11,10 +11,12 @@
         "data": {
           "height": "身高",
           "impedance": "阻抗传感器",
+          "last_measurement_time": "上次称重时间传感器",
           "weight": "体重传感器"
         },
         "data_description": {
-          "impedance": "如果您的体秤不提供阻抗值，请将此字段留空。"
+          "impedance": "如果您的体秤不提供阻抗值，请将此字段留空。",
+          "last_measurement_time": "如果您没有上次称重时间传感器，请将此字段留空。"
         }
       },
       "user": {
@@ -33,6 +35,7 @@
       "body_fat": { "name": "体脂率" },
       "body_score": { "name": "体质评分" },
       "bone_mass": { "name": "骨量" },
+      "last_measurement_time": { "name": "上次称重时间" },
       "lean_body_mass": { "name": "瘦体重" },
       "metabolic_age": { "name": "代谢年龄" },
       "muscle_mass": { "name": "肌肉量" },
@@ -96,6 +99,7 @@
         "height": { "name": "身高" },
         "ideal": { "name": "理想" },
         "impedance": { "name": "阻抗" },
+        "last_measurement_time": { "name": "上次称重时间" },
         "lean_body_mass": { "name": "瘦体重" },
         "metabolic_age": { "name": "代谢年龄" },
         "muscle_mass": { "name": "肌肉量" },
@@ -129,10 +133,12 @@
         "data": {
           "height": "身高",
           "impedance": "阻抗传感器",
+          "last_measurement_time": "上次称重时间传感器",
           "weight": "体重传感器"
         },
         "data_description": {
-          "impedance": "如果您的体秤不提供阻抗值，请将此字段留空。"
+          "impedance": "如果您的体秤不提供阻抗值，请将此字段留空。",
+          "last_measurement_time": "如果您没有上次称重时间传感器，请将此字段留空。"
         }
       }
     }

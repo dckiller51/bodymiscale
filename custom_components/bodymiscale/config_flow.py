@@ -18,6 +18,7 @@ from .const import (
     CONF_GENDER,
     CONF_HEIGHT,
     CONF_SENSOR_IMPEDANCE,
+    CONF_SENSOR_LAST_MEASUREMENT_TIME,
     CONF_SENSOR_WEIGHT,
     CONSTRAINT_HEIGHT_MAX,
     CONSTRAINT_HEIGHT_MIN,
@@ -68,6 +69,14 @@ def _get_options_schema(
                     else None
                 ),
             ): selector({"entity": {"domain": ["sensor", "input_number", "number"]}}),
+            vol.Optional(
+                CONF_SENSOR_LAST_MEASUREMENT_TIME,
+                description=(
+                    {"suggested_value": defaults[CONF_SENSOR_LAST_MEASUREMENT_TIME]}
+                    if CONF_SENSOR_LAST_MEASUREMENT_TIME in defaults
+                    else None
+                ),
+            ): selector({"entity": {"domain": ["sensor", "input_datetime"]}}),
         }
     )
 

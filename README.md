@@ -57,6 +57,10 @@ Before installing Bodymiscale, ensure you have the following:
 
 If you plan to use an impedance sensor for more advanced metrics (lean body mass, body fat mass, etc.), make sure you also have a dedicated impedance sensor configured in Home Assistant. The same recommendation applies: each user should have their own dedicated impedance sensor for best results.
 
+**(Optional) Last weigh-in sensor dedicated to the user:**
+
+If you plan to integrate your own last weigh-in sensor, make sure a dedicated sensor is properly configured in Home Assistant. The same recommendation applies: each user should have their own last weigh-in sensor for optimal results.
+
 ## Generated data
 
 Bodymiscale calculates the following data:
@@ -108,7 +112,10 @@ Bodymiscale calculates the following data:
    - **Important Recommendation:** It is **strongly recommended** that each Bodymiscale user has their own dedicated weight sensor. Using a shared weight sensor (e.g., one directly linked to a scale) can cause issues when Home Assistant restarts. This is because Bodymiscale retrieves the sensor's value upon initialization, which can skew calculations if multiple users weigh themselves successively on the same scale before the restart.
 5. **Impedance sensor (optional):** If you have an impedance sensor, select it here. This sensor is required to calculate some advanced metrics (lean body mass, body fat mass, etc.).
    - **Recommendation:** As with the weight sensor, it is best for each user to have their own dedicated impedance sensor to avoid issues during restarts.
-6. Click "Save".
+6. **Last measurement time sensor (optional):**
+   If you have a last weigh-in sensor, select it here (e.g., a `sensor`, or an `input_datetime`). This sensor is used to record the date and time of the most recent measurement.
+   Recommendation: Just like the weight and impedance sensors, it is strongly recommended that each user has their own dedicated last weigh-in sensor to prevent conflicts or errors during Home Assistant restarts.
+7. Click "Save".
 
 **Explanation of choices:**
 
@@ -124,7 +131,7 @@ Bodymiscale calculates the following data:
 - **Why are some values missing?** You must have an impedance sensor configured for Bodymiscale to calculate lean body mass, body fat mass, etc.
 - **How accurate is the data?** Bodymiscale uses standard formulas, but the accuracy of measurements depends on your scale and its configuration.
 
-## Helps create weight and/or impedance data persistently
+## Helps create weight, impedance and/or last weighing data persistently
 
 For a detailed configuration to integrate data persistence and multi-user management, please refer to the [example_config](example_config/) folder.
 

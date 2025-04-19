@@ -11,10 +11,12 @@
         "data": {
           "height": "Größe",
           "impedance": "Impedanz sensor",
+          "last_measurement_time": "Sensor der letzten Wägezeit",
           "weight": "Gewicht sensor"
         },
         "data_description": {
-          "impedance": "Falls deine Waage keine Impedanz liefert, lasse dieses Feld leer."
+          "impedance": "Falls deine Waage keine Impedanz liefert, lasse dieses Feld leer.",
+          "last_measurement_time": "Lassen Sie dieses Feld leer, wenn Sie keinen Sensor für die letzte Wägezeit haben."
         }
       },
       "user": {
@@ -33,6 +35,7 @@
       "body_fat": { "name": "Körperfett" },
       "body_score": { "name": "Körperbewertung" },
       "bone_mass": { "name": "Knochenmasse" },
+      "last_measurement_time": { "name": "Letzte Wägezeit" },
       "lean_body_mass": { "name": "Magere Körpermasse" },
       "metabolic_age": { "name": "stoffwechselbedingtes Körperalter" },
       "muscle_mass": { "name": "Muskelmasse" },
@@ -96,6 +99,7 @@
         "height": { "name": "Körpergröße" },
         "ideal": { "name": "Idealgewicht" },
         "impedance": { "name": "Zusammensetzung" },
+        "last_measurement_time": { "name": "Letzte Wägezeit" },
         "lean_body_mass": { "name": "Magere Körpermasse" },
         "metabolic_age": { "name": "stoffwechselbedingtes Körperalter" },
         "muscle_mass": { "name": "Muskelmasse" },
@@ -121,10 +125,12 @@
         "data": {
           "height": "Größe",
           "impedance": "Impedanz sensor",
+          "last_measurement_time": "Sensor der letzten Wägezeit",
           "weight": "Gewicht sensor"
         },
         "data_description": {
-          "impedance": "Falls deine Waage keine Impedanz liefert, lasse dieses Feld leer."
+          "impedance": "Falls deine Waage keine Impedanz liefert, lasse dieses Feld leer.",
+          "last_measurement_time": "Lassen Sie dieses Feld leer, wenn Sie keinen Sensor für die letzte Wägezeit haben."
         }
       }
     }

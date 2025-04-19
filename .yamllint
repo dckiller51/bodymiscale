@@ -1,3 +1,7 @@
+# .yamllint configuration file
+ignore:
+  - example_config/*
+
 rules:
   braces:
     level: error

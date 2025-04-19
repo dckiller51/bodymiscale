@@ -10,11 +10,13 @@
       "options": {
         "data": {
           "height": "Taille",
-          "impedance": "Capteur d' impédance",
+          "impedance": "Capteur d'impédance",
+          "last_measurement_time": "Capteur de la dernière pesée",
           "weight": "Capteur de poids"
         },
         "data_description": {
-          "impedance": "Si votre balance ne fournit pas l' impédance, laissez ce champ vide."
+          "impedance": "Si votre balance ne fournit pas l'impédance, laissez ce champ vide.",
+          "last_measurement_time": "Si vous n'avez pas de capteur pour la dernière heure de pesée, laissez ce champ vide."
         }
       },
       "user": {
@@ -33,6 +35,7 @@
       "body_fat": { "name": "Graisse corporelle" },
       "body_score": { "name": "Score corporel" },
       "bone_mass": { "name": "Masse osseuse" },
+      "last_measurement_time": { "name": "Dernière heure de pesée" },
       "lean_body_mass": { "name": "Masse corporelle mince" },
       "metabolic_age": { "name": "Age corporel" },
       "muscle_mass": { "name": "Masse musculaire" },
@@ -96,6 +99,7 @@
         "height": { "name": "Taille" },
         "ideal": { "name": "Poids idéal" },
         "impedance": { "name": "Impédance" },
+        "last_measurement_time": { "name": "Dernière heure de pesée" },
         "lean_body_mass": { "name": "Masse corporelle mince" },
         "metabolic_age": { "name": "Age corporel" },
         "muscle_mass": { "name": "Masse musculaire" },
@@ -128,11 +132,13 @@
       "init": {
         "data": {
           "height": "Taille",
-          "impedance": "Capteur d' impédance",
+          "impedance": "Capteur d'impédance",
+          "last_measurement_time": "Capteur de la dernière pesée",
           "weight": "Capteur de poids"
         },
         "data_description": {
-          "impedance": "Si votre balance ne fournit pas l' impédance, laissez ce champ vide."
+          "impedance": "Si votre balance ne fournit pas l'impédance, laissez ce champ vide.",
+          "last_measurement_time": "Si vous n'avez pas de capteur pour la dernière heure de pesée, laissez ce champ vide."
         }
       }
     }
