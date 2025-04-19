@@ -96,6 +96,25 @@ blueprint:
       default: ""
       description: Entity ID of the input_datetime for User 1's last weigh-in.
       #ID d'entité de la date et de l'heure d'entrée pour la dernière pesée de l'utilisateur 1.
+    user1_enable_assistance_mode:
+      name: User 1 Enable Weight Assistance Mode (Optional)
+      selector:
+        boolean: {}
+      default: false
+      description: |
+        Turn on assistance mode if you are weighing an item while holding it (e.g., a pet or infant).
+        This will allow you to select a user and subtract their weight from the total weight.
+      #Activer le mode d'assistance si vous pesez un objet tout en le tenant (par ex., un animal ou un bébé).
+      #Cela vous permettra de sélectionner un utilisateur et de soustraire son poids du poids total.
+    user1_source_weight_entity:
+      name: User 1 Weight Input for the Person (Optional)
+      selector:
+        entity:
+          filter:
+            domain: input_number
+      default: ""
+      description: Select the input_number entity containing the weight of the person holding the object.
+      #Sélectionnez l'entité input_number contenant le poids de la personne tenant l'objet.
 
     user2_name:
       name: User 2 Name (Optional)
@@ -131,6 +150,25 @@ blueprint:
       default: ""
       description: Entity ID of the input_datetime for User 2's last weigh-in
       #ID d'entité de la date et de l'heure d'entrée pour la dernière pesée de l'utilisateur 2
+    user2_enable_assistance_mode:
+      name: User 2 Enable Weight Assistance Mode (Optional)
+      selector:
+        boolean: {}
+      default: false
+      description: |
+        Turn on assistance mode if you are weighing an item while holding it (e.g., a pet or infant).
+        This will allow you to select a user and subtract their weight from the total weight.
+      #Activer le mode d'assistance si vous pesez un objet tout en le tenant (par ex., un animal ou un bébé).
+      #Cela vous permettra de sélectionner un utilisateur et de soustraire son poids du poids total.
+    user2_source_weight_entity:
+      name: User 2 Weight Input for the Person (Optional)
+      selector:
+        entity:
+          filter:
+            domain: input_number
+      default: ""
+      description: Select the input_number entity containing the weight of the person holding the object.
+      #Sélectionnez l'entité input_number contenant le poids de la personne tenant l'objet.
 
     user3_name:
       name: User 3 Name (Optional)
@@ -166,6 +204,25 @@ blueprint:
       default: ""
       description: Entity ID of the input_datetime for User 3's last weigh-in
       #ID d'entité de la date et de l'heure d'entrée pour la dernière pesée de l'utilisateur 3
+    user3_enable_assistance_mode:
+      name: User 3 Enable Weight Assistance Mode (Optional)
+      selector:
+        boolean: {}
+      default: false
+      description: |
+        Turn on assistance mode if you are weighing an item while holding it (e.g., a pet or infant).
+        This will allow you to select a user and subtract their weight from the total weight.
+      #Activer le mode d'assistance si vous pesez un objet tout en le tenant (par ex., un animal ou un bébé).
+      #Cela vous permettra de sélectionner un utilisateur et de soustraire son poids du poids total.
+    user3_source_weight_entity:
+      name: User 3 Weight Input for the Person (Optional)
+      selector:
+        entity:
+          filter:
+            domain: input_number
+      default: ""
+      description: Select the input_number entity containing the weight of the person holding the object.
+      #Sélectionnez l'entité input_number contenant le poids de la personne tenant l'objet.
 
     split_weight_threshold:
       name: Split Weight Threshold (Optional for Group 2)
@@ -225,6 +282,25 @@ blueprint:
       default: ""
       description: Entity ID of the input_datetime for User 4's last weigh-in.
       #ID d'entité de la date et de l'heure d'entrée pour la dernière pesée de l'utilisateur 4
+    user4_enable_assistance_mode:
+      name: User 4 Enable Weight Assistance Mode (Optional - Group 2)
+      selector:
+        boolean: {}
+      default: false
+      description: |
+        Turn on assistance mode if you are weighing an item while holding it (e.g., a pet or infant).
+        This will allow you to select a user and subtract their weight from the total weight.
+      #Activer le mode d'assistance si vous pesez un objet tout en le tenant (par ex., un animal ou un bébé).
+      #Cela vous permettra de sélectionner un utilisateur et de soustraire son poids du poids total.
+    user4_source_weight_entity:
+      name: User 4 Weight Input for the Person (Optional - Group 2)
+      selector:
+        entity:
+          filter:
+            domain: input_number
+      default: ""
+      description: Select the input_number entity containing the weight of the person holding the object.
+      #Sélectionnez l'entité input_number contenant le poids de la personne tenant l'objet.
 
     ## user 5 (Conditional)
     user5_name:
@@ -261,6 +337,25 @@ blueprint:
       default: ""
       description: Entity ID of the input_datetime for User 5's last weigh-in.
       #ID d'entité de la date et de l'heure d'entrée pour la dernière pesée de l'utilisateur 5
+    user5_enable_assistance_mode:
+      name: User 5 Enable Weight Assistance Mode (Optional - Group 2)
+      selector:
+        boolean: {}
+      default: false
+      description: |
+        Turn on assistance mode if you are weighing an item while holding it (e.g., a pet or infant).
+        This will allow you to select a user and subtract their weight from the total weight.
+      #Activer le mode d'assistance si vous pesez un objet tout en le tenant (par ex., un animal ou un bébé).
+      #Cela vous permettra de sélectionner un utilisateur et de soustraire son poids du poids total.
+    user5_source_weight_entity:
+      name: User 5 Weight Input for the Person (Optional - Group 2)
+      selector:
+        entity:
+          filter:
+            domain: input_number
+      default: ""
+      description: Select the input_number entity containing the weight of the person holding the object.
+      #Sélectionnez l'entité input_number contenant le poids de la personne tenant l'objet.
 
     ## user 6 (Conditional)
     user6_name:
@@ -297,6 +392,25 @@ blueprint:
       default: ""
       description: Entity ID of the input_datetime for User 6's last weigh-in.
       #ID d'entité de la date et de l'heure d'entrée pour la dernière pesée de l'utilisateur 6
+    user6_enable_assistance_mode:
+      name: User 6 Enable Weight Assistance Mode (Optional - Group 2)
+      selector:
+        boolean: {}
+      default: false
+      description: |
+        Turn on assistance mode if you are weighing an item while holding it (e.g., a pet or infant).
+        This will allow you to select a user and subtract their weight from the total weight.
+      #Activer le mode d'assistance si vous pesez un objet tout en le tenant (par ex., un animal ou un bébé).
+      #Cela vous permettra de sélectionner un utilisateur et de soustraire son poids du poids total.
+    user6_source_weight_entity:
+      name: User 6 Weight Input for the Person (Optional - Group 2)
+      selector:
+        entity:
+          filter:
+            domain: input_number
+      default: ""
+      description: Select the input_number entity containing the weight of the person holding the object.
+      #Sélectionnez l'entité input_number contenant le poids de la personne tenant l'objet.
 
 variables:
   title_notify: !input title_notify
@@ -311,26 +425,38 @@ variables:
   user1_weight: !input user1_weight
   user1_impedance: !input user1_impedance
   user1_last_time: !input user1_last_time
+  user1_enable_assistance_mode: !input user1_enable_assistance_mode
+  user1_source_weight_entity: !input user1_source_weight_entity
   user2_name: !input user2_name
   user2_weight: !input user2_weight
   user2_impedance: !input user2_impedance
   user2_last_time: !input user2_last_time
+  user2_enable_assistance_mode: !input user2_enable_assistance_mode
+  user2_source_weight_entity: !input user2_source_weight_entity
   user3_name: !input user3_name
   user3_weight: !input user3_weight
   user3_impedance: !input user3_impedance
   user3_last_time: !input user3_last_time
+  user3_enable_assistance_mode: !input user3_enable_assistance_mode
+  user3_source_weight_entity: !input user3_source_weight_entity
   user4_name: !input user4_name
   user4_weight: !input user4_weight
   user4_impedance: !input user4_impedance
   user4_last_time: !input user4_last_time
+  user4_enable_assistance_mode: !input user4_enable_assistance_mode
+  user4_source_weight_entity: !input user4_source_weight_entity
   user5_name: !input user5_name
   user5_weight: !input user5_weight
   user5_impedance: !input user5_impedance
   user5_last_time: !input user5_last_time
+  user5_enable_assistance_mode: !input user5_enable_assistance_mode
+  user5_source_weight_entity: !input user5_source_weight_entity
   user6_name: !input user6_name
   user6_weight: !input user6_weight
   user6_impedance: !input user6_impedance
   user6_last_time: !input user6_last_time
+  user6_enable_assistance_mode: !input user6_enable_assistance_mode
+  user6_source_weight_entity: !input user6_source_weight_entity
 
   has_group2_users_configured: >
     {{ user4_name != '' or user5_name != '' or user6_name != '' }}
@@ -419,11 +545,18 @@ action:
               - condition: template
                 value_template: "{{ wait.trigger.event.data.action == (user1_name | lower | replace(' ', '_')) }}"
             sequence:
+              - variables:
+                  final_weight_user1: >
+                    {% if user1_enable_assistance_mode and user1_source_weight_entity is defined and states(user1_source_weight_entity) not in ['unavailable', 'unknown'] %}
+                      {{ current_weight - states(user1_source_weight_entity) | float(0) }}
+                    {% else %}
+                      {{ current_weight }}
+                    {% endif %}
               - action: input_number.set_value
                 target:
                   entity_id: "{{ user1_weight }}"
                 data:
-                  value: "{{ current_weight }}"
+                  value: "{{ final_weight_user1 }}"
               - choose:
                   - conditions:
                       - condition: template
@@ -448,11 +581,18 @@ action:
               - condition: template
                 value_template: "{{ wait.trigger.event.data.action == (user2_name | lower | replace(' ', '_')) }}"
             sequence:
+              - variables:
+                  final_weight_user2: >
+                    {% if user2_enable_assistance_mode and user2_source_weight_entity is defined and states(user2_source_weight_entity) not in ['unavailable', 'unknown'] %}
+                      {{ current_weight - states(user2_source_weight_entity) | float(0) }}
+                    {% else %}
+                      {{ current_weight }}
+                    {% endif %}
               - action: input_number.set_value
                 target:
                   entity_id: "{{ user2_weight }}"
                 data:
-                  value: "{{ current_weight }}"
+                  value: "{{ final_weight_user2 }}"
               - choose:
                   - conditions:
                       - condition: template
@@ -477,11 +617,18 @@ action:
               - condition: template
                 value_template: "{{ wait.trigger.event.data.action == (user3_name | lower | replace(' ', '_')) }}"
             sequence:
+              - variables:
+                  final_weight_user3: >
+                    {% if user3_enable_assistance_mode and user3_source_weight_entity is defined and states(user3_source_weight_entity) not in ['unavailable', 'unknown'] %}
+                      {{ current_weight - states(user3_source_weight_entity) | float(0) }}
+                    {% else %}
+                      {{ current_weight }}
+                    {% endif %}
               - action: input_number.set_value
                 target:
                   entity_id: "{{ user3_weight }}"
                 data:
-                  value: "{{ current_weight }}"
+                  value: "{{ final_weight_user3 }}"
               - choose:
                   - conditions:
                       - condition: template
@@ -506,11 +653,18 @@ action:
               - condition: template
                 value_template: "{{ wait.trigger.event.data.action == (user4_name | lower | replace(' ', '_')) }}"
             sequence:
+              - variables:
+                  final_weight_user4: >
+                    {% if user4_enable_assistance_mode and user4_source_weight_entity is defined and states(user4_source_weight_entity) not in ['unavailable', 'unknown'] %}
+                      {{ current_weight - states(user4_source_weight_entity) | float(0) }}
+                    {% else %}
+                      {{ current_weight }}
+                    {% endif %}
               - action: input_number.set_value
                 target:
                   entity_id: "{{ user4_weight }}"
                 data:
-                  value: "{{ current_weight }}"
+                  value: "{{ final_weight_user4 }}"
               - choose:
                   - conditions:
                       - condition: template
@@ -535,11 +689,18 @@ action:
               - condition: template
                 value_template: "{{ wait.trigger.event.data.action == (user5_name | lower | replace(' ', '_')) }}"
             sequence:
+              - variables:
+                  final_weight_user5: >
+                    {% if user5_enable_assistance_mode and user5_source_weight_entity is defined and states(user5_source_weight_entity) not in ['unavailable', 'unknown'] %}
+                      {{ current_weight - states(user5_source_weight_entity) | float(0) }}
+                    {% else %}
+                      {{ current_weight }}
+                    {% endif %}
               - action: input_number.set_value
                 target:
                   entity_id: "{{ user5_weight }}"
                 data:
-                  value: "{{ current_weight }}"
+                  value: "{{ final_weight_user5 }}"
               - choose:
                   - conditions:
                       - condition: template
@@ -564,11 +725,18 @@ action:
               - condition: template
                 value_template: "{{ wait.trigger.event.data.action == (user6_name | lower | replace(' ', '_')) }}"
             sequence:
+              - variables:
+                  final_weight_user6: >
+                    {% if user6_enable_assistance_mode and user6_source_weight_entity is defined and states(user6_source_weight_entity) not in ['unavailable', 'unknown'] %}
+                      {{ current_weight - states(user6_source_weight_entity) | float(0) }}
+                    {% else %}
+                      {{ current_weight }}
+                    {% endif %}
               - action: input_number.set_value
                 target:
                   entity_id: "{{ user6_weight }}"
                 data:
-                  value: "{{ current_weight }}"
+                  value: "{{ final_weight_user6 }}"
               - choose:
                   - conditions:
                       - condition: template
