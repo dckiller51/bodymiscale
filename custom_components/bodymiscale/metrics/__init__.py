@@ -256,8 +256,15 @@ class BodyScaleMetricsHandler:
             self._remove_sensor_problem(CONF_SENSOR_WEIGHT)
             return False, "invalid_format"
 
-        if not self._is_valid(CONF_SENSOR_WEIGHT, value_float, CONSTRAINT_WEIGHT_MIN, CONSTRAINT_WEIGHT_MAX):
-            return False, self._categorize_problem(value_float, CONSTRAINT_WEIGHT_MIN, CONSTRAINT_WEIGHT_MAX)
+        if not self._is_valid(
+            CONF_SENSOR_WEIGHT,
+            value_float,
+            CONSTRAINT_WEIGHT_MIN,
+            CONSTRAINT_WEIGHT_MAX,
+        ):
+            return False, self._categorize_problem(
+                value_float, CONSTRAINT_WEIGHT_MIN, CONSTRAINT_WEIGHT_MAX
+            )
 
         # Convert pounds to kg if necessary
         if state.attributes.get(ATTR_UNIT_OF_MEASUREMENT) == UNIT_POUNDS:
@@ -282,8 +289,15 @@ class BodyScaleMetricsHandler:
             self._remove_sensor_problem(CONF_SENSOR_IMPEDANCE)
             return False, "invalid_format"
 
-        if not self._is_valid(CONF_SENSOR_IMPEDANCE, value_float, CONSTRAINT_IMPEDANCE_MIN, CONSTRAINT_IMPEDANCE_MAX):
-            return False, self._categorize_problem(value_float, CONSTRAINT_IMPEDANCE_MIN, CONSTRAINT_IMPEDANCE_MAX)
+        if not self._is_valid(
+            CONF_SENSOR_IMPEDANCE,
+            value_float,
+            CONSTRAINT_IMPEDANCE_MIN,
+            CONSTRAINT_IMPEDANCE_MAX,
+        ):
+            return False, self._categorize_problem(
+                value_float, CONSTRAINT_IMPEDANCE_MIN, CONSTRAINT_IMPEDANCE_MAX
+            )
 
         updated = self._update_available_metric(Metric.IMPEDANCE, value_float)
         if updated:
@@ -312,7 +326,9 @@ class BodyScaleMetricsHandler:
         except ValueError:
             return "invalid_format"
 
-    def _categorize_problem(self, value: float, min_val: float | None, max_val: float | None) -> str:
+    def _categorize_problem(
+        self, value: float, min_val: float | None, max_val: float | None
+    ) -> str:
         if min_val is not None and value < min_val:
             return "low"
         if max_val is not None and value > max_val:
@@ -409,7 +425,6 @@ class BodyScaleMetricsHandler:
         if constraint_max is not None and state > constraint_max:
             return False
         return True
-
 
     def _update_available_metric(self, metric: Metric, state: StateType) -> bool:
         old_state = self._available_metrics.get(metric, None)
