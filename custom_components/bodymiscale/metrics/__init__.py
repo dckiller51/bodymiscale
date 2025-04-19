@@ -446,11 +446,11 @@ class BodyScaleMetricsHandler:
             return False
         return True
 
-    def _update_available_metric(self, metric: Metric, state: StateType) -> None:
+    def _update_available_metric(self, metric: Metric, state: StateType) -> bool:
         old_state = self._available_metrics.get(metric, None)
         if old_state is not None and old_state == state:
             _LOGGER.debug("No update required for %s.", metric)
-            return
+            return False
 
         self._available_metrics.setdefault(
             Metric.AGE, get_age(self._config[CONF_BIRTHDAY])
@@ -482,6 +482,7 @@ class BodyScaleMetricsHandler:
                 value = depended_info.calculate(self._config, self._available_metrics)
                 if value is not None:
                     self._update_available_metric(depended, value)
+        return True
 
     def _trigger_dependent_recalculation(self) -> None:
         """Trigger recalculation for metrics that depend on the updated metric."""
