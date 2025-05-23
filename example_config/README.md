@@ -17,7 +17,7 @@ This project offers three example configurations for integrating a Xiaomi Mi Sca
   - `esphome_base_configuration.yaml`: Basic ESPHome configuration to provide raw data to Home Assistant.
   - `weight_impedance_update.yaml`: Home Assistant configuration to manage user logic.
 - **Description:** This example demonstrates how to configure ESPHome to provide raw data (weight, impedance, last weighing time) to Home Assistant. Home Assistant is then used to manage user logic (measurement association, user data persistence).
-[![Open your Home Assistant instance and show the blueprint import dialog with a specific blueprint pre-filled.](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https://github.com/dckiller51/bodymiscale/blob/main/example_config/weight_impedance_update.yaml)
+  [![Open your Home Assistant instance and show the blueprint import dialog with a specific blueprint pre-filled.](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https://github.com/dckiller51/bodymiscale/blob/main/example_config/weight_impedance_update.yaml)
 - **Advantages:**
   - Flexibility: Allows for extensive customization of user management in Home Assistant.
   - Home Assistant Integration: Leverages Home Assistant's features for user data management.
@@ -27,7 +27,7 @@ This project offers three example configurations for integrating a Xiaomi Mi Sca
 
 - **File:** `interactive_notification_user_selection_weight_data_update.yaml` (Example Automation using the Blueprint)
 - **Description:** This example utilizes a Home Assistant Blueprint to send an interactive notification when a weight measurement is detected. Users can select who is on the scale, and the blueprint updates the corresponding weight (and optionally impedance/last weigh-in) input numbers/datetimes in Home Assistant. This method requires the Mobile Home Assistant app to receive and respond to the notification.
-[![Open your Home Assistant instance and show the blueprint import dialog with a specific blueprint pre-filled.](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https://github.com/dckiller51/bodymiscale/blob/main/example_config/interactive_notification_user_selection_weight_data_update.yaml)
+  [![Open your Home Assistant instance and show the blueprint import dialog with a specific blueprint pre-filled.](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https://github.com/dckiller51/bodymiscale/blob/main/example_config/interactive_notification_user_selection_weight_data_update.yaml)
 - **Advantages:**
   - Interactive: Provides a user-friendly way to identify who is being weighed.
   - Flexible User Management: User configuration is done directly in the Home Assistant automation created from the blueprint.
@@ -53,9 +53,9 @@ This project offers three example configurations for integrating a Xiaomi Mi Sca
 4. **Secrets Configuration (for ESPHome):** Create a `secrets.yaml` file to store your sensitive information (Wi-Fi SSID, password, etc.).
 5. **Example Selection:** Choose the desired configuration example (ESPHome Direct, ESPHome/BLE Monitor + HA Logic, or HA Blueprint).
 6. **User Configuration:**
-    - **ESPHome Direct:** Configure user names, weight ranges, and other parameters in `esphome_configuration.yaml`.
-    - **ESPHome/BLE Monitor + HA Logic:** Configure user logic in the Home Assistant automation (`weight_impedance_update.yaml`).
-    - **HA Blueprint:** Create a new automation from the `interactive_notification_user_selection_weight_data_update.yaml` (you'll need to add the blueprint file to your `blueprints/automation/` folder) and configure user names and input helper entities in the automation's settings.
+   - **ESPHome Direct:** Configure user names, weight ranges, and other parameters in `esphome_configuration.yaml`.
+   - **ESPHome/BLE Monitor + HA Logic:** Configure user logic in the Home Assistant automation (`weight_impedance_update.yaml`).
+   - **HA Blueprint:** Create a new automation from the `interactive_notification_user_selection_weight_data_update.yaml` (you'll need to add the blueprint file to your `blueprints/automation/` folder) and configure user names and input helper entities in the automation's settings.
 7. **Configuration Upload (for ESPHome):** Upload the ESPHome configuration to your ESP32 device.
 8. **Home Assistant Integration:** Sensors and automations will be automatically discovered or need to be created in Home Assistant. You can add them to your dashboards.
 
