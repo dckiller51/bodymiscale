@@ -1,6 +1,6 @@
 esphome:
   name: xiaomi-miscale
-  friendly_name: xiaomi_miscale 
+  friendly_name: xiaomi_miscale
 
 esp32:
   board: esp32dev
@@ -12,7 +12,7 @@ wifi:
   password: !secret wpa2
   fast_connect: true
 
-captive_portal:  
+captive_portal:
 
 logger:
 
@@ -29,36 +29,36 @@ time:
     id: esptime
 
 sensor:
-#  - platform: template
-#    name: "Xiaomi Mi Scale v1 Last Weight Time"
-#    id: xiaomi_v1_last_weight_time
-#    lambda: 'return id(xiaomi_v1_last_weight_time).state;'
-#    device_class: timestamp
+  #  - platform: template
+  #    name: "Xiaomi Mi Scale v1 Last Weight Time"
+  #    id: xiaomi_v1_last_weight_time
+  #    lambda: 'return id(xiaomi_v1_last_weight_time).state;'
+  #    device_class: timestamp
 
   - platform: template
     name: "Xiaomi Mi Scale v2 Last Weight Time"
     id: xiaomi_v2_last_weight_time
-    lambda: 'return id(xiaomi_v2_last_weight_time).state;'
+    lambda: "return id(xiaomi_v2_last_weight_time).state;"
     device_class: timestamp
 
-#  - platform: xiaomi_miscale
-#    mac_address: 'C8:47:8C:9F:7B:0A'
-#    weight:
-#      name: "Xiaomi Mi Scale v1 Weight"
-#      name: "Xiaomi Mi Scale v1 Weight"
-#      id: xiaomi_v1_weight
-#      filters:
-#        - timeout:
-#            timeout: 30s
-#            value: !lambda return 0;
-#      on_value:
-#        then:
-#          - sensor.template.publish:
-#              id: xiaomi_v1_last_weight_time
-#              state: !lambda 'return id(esptime).now().timestamp;'
+  #  - platform: xiaomi_miscale
+  #    mac_address: 'C8:47:8C:9F:7B:0A'
+  #    weight:
+  #      name: "Xiaomi Mi Scale v1 Weight"
+  #      name: "Xiaomi Mi Scale v1 Weight"
+  #      id: xiaomi_v1_weight
+  #      filters:
+  #        - timeout:
+  #            timeout: 30s
+  #            value: !lambda return 0;
+  #      on_value:
+  #        then:
+  #          - sensor.template.publish:
+  #              id: xiaomi_v1_last_weight_time
+  #              state: !lambda 'return id(esptime).now().timestamp;'
 
   - platform: xiaomi_miscale
-    mac_address: '5C:CA:D3:70:D4:A2'
+    mac_address: "5C:CA:D3:70:D4:A2"
     weight:
       name: "Xiaomi Mi Scale v2 Weight"
       id: xiaomi_v2_weight
@@ -70,7 +70,7 @@ sensor:
         then:
           - sensor.template.publish:
               id: xiaomi_v2_last_weight_time
-              state: !lambda 'return id(esptime).now().timestamp;'
+              state: !lambda "return id(esptime).now().timestamp;"
     impedance:
       name: "Xiaomi Mi Scale v2 Impedance"
       filters:
