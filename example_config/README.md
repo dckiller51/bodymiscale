@@ -23,6 +23,13 @@ This project offers three example configurations for integrating a Xiaomi Mi Sca
   - Home Assistant Integration: Leverages Home Assistant's features for user data management.
 - **Usage:** Ideal for users who want advanced customization of user management in Home Assistant.
 
+## Common Features
+
+- **Multi-User Management:** Both examples support managing multiple users (up to 5).
+- **Data Persistence:** Data is retained even after an ESPHome restart (in Example 1) or a Home Assistant restart (in Example 2).
+- **Flexibility for Scales Without Impedance:** Users can easily adapt the configurations to their scales.
+- **Weight Range Filtering:** Measurements are associated with users based on configurable weight ranges.
+
 ## Example 3: Home Assistant Blueprint for Interactive User Selection
 
 - **File:** `interactive_notification_user_selection_weight_data_update.yaml` (Example Automation using the Blueprint)
