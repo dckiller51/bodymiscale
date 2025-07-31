@@ -556,7 +556,7 @@ action:
                 target:
                   entity_id: "{{ user1_weight }}"
                 data:
-                  value: "{{ final_weight_user1 }}"
+                  value: "{{ final_weight_user1 | round(2) }}"
               - choose:
                   - conditions:
                       - condition: template
@@ -592,7 +592,7 @@ action:
                 target:
                   entity_id: "{{ user2_weight }}"
                 data:
-                  value: "{{ final_weight_user2 }}"
+                  value: "{{ final_weight_user2 | round(2) }}"
               - choose:
                   - conditions:
                       - condition: template
@@ -628,7 +628,7 @@ action:
                 target:
                   entity_id: "{{ user3_weight }}"
                 data:
-                  value: "{{ final_weight_user3 }}"
+                  value: "{{ final_weight_user3 | round(2) }}"
               - choose:
                   - conditions:
                       - condition: template
@@ -664,7 +664,7 @@ action:
                 target:
                   entity_id: "{{ user4_weight }}"
                 data:
-                  value: "{{ final_weight_user4 }}"
+                  value: "{{ final_weight_user4 | round(2) }}"
               - choose:
                   - conditions:
                       - condition: template
@@ -700,7 +700,7 @@ action:
                 target:
                   entity_id: "{{ user5_weight }}"
                 data:
-                  value: "{{ final_weight_user5 }}"
+                  value: "{{ final_weight_user5 | round(2) }}"
               - choose:
                   - conditions:
                       - condition: template
@@ -736,7 +736,7 @@ action:
                 target:
                   entity_id: "{{ user6_weight }}"
                 data:
-                  value: "{{ final_weight_user6 }}"
+                  value: "{{ final_weight_user6 | round(2) }}"
               - choose:
                   - conditions:
                       - condition: template
