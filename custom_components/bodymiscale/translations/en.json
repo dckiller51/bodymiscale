@@ -11,10 +11,12 @@
         "data": {
           "height": "Height",
           "impedance": "Impedance sensor",
+          "last_measurement_time": "Last measurement time sensor",
           "weight": "Weight sensor"
         },
         "data_description": {
-          "impedance": "If your scale does not provide the impedance, leave this field empty."
+          "impedance": "If your scale does not provide the impedance, leave this field empty.",
+          "last_measurement_time": "If you do not have a last weigh time sensor, leave this field blank."
         }
       },
       "user": {
@@ -33,6 +35,7 @@
       "body_fat": { "name": "Body fat" },
       "body_score": { "name": "Body score" },
       "bone_mass": { "name": "Bone mass" },
+      "last_measurement_time": { "name": "Last measurement time" },
       "lean_body_mass": { "name": "Lean body mass" },
       "metabolic_age": { "name": "Metabolic age" },
       "muscle_mass": { "name": "Muscle mass" },
@@ -96,6 +99,7 @@
         "height": { "name": "Height" },
         "ideal": { "name": "Ideal" },
         "impedance": { "name": "Impedance" },
+        "last_measurement_time": { "name": "Last measurement time" },
         "lean_body_mass": { "name": "Lean body mass" },
         "metabolic_age": { "name": "Metabolic age" },
         "muscle_mass": { "name": "Muscle mass" },
@@ -129,10 +133,12 @@
         "data": {
           "height": "Height",
           "impedance": "Impedance sensor",
+          "last_measurement_time": "Last measurement time sensor",
           "weight": "Weight sensor"
         },
         "data_description": {
-          "impedance": "If your scale does not provide the impedance, leave this field empty."
+          "impedance": "If your scale does not provide the impedance, leave this field empty.",
+          "last_measurement_time": "If you do not have a last weigh time sensor, leave this field blank."
         }
       }
     }
