@@ -11,10 +11,12 @@
         "data": {
           "height": "Wzrost",
           "impedance": "Sensor impedancji",
+          "last_measurement_time": "Czujnik ostatniej godziny ważenia",
           "weight": "Sensor wagi"
         },
         "data_description": {
-          "impedance": "Jeśli waga nie podaje impedancji, pozostaw to pole puste."
+          "impedance": "Jeśli waga nie podaje impedancji, pozostaw to pole puste.",
+          "last_measurement_time": "Jeśli nie masz czujnika ostatniej godziny ważenia, pozostaw to pole puste."
         }
       },
       "user": {
@@ -33,6 +35,7 @@
       "body_fat": { "name": "Tkanina tłuszczowa" },
       "body_score": { "name": "Wynik ciała" },
       "bone_mass": { "name": "Masa kości" },
+      "last_measurement_time": { "name": "Ostatnia godzina ważenia" },
       "lean_body_mass": { "name": "Beztłuszczowa masa ciała" },
       "metabolic_age": { "name": "Wiek metaboliczny" },
       "muscle_mass": { "name": "Masa mięśniowa" },
@@ -96,6 +99,7 @@
         "height": { "name": "Wzrost" },
         "ideal": { "name": "Waga idealna" },
         "impedance": { "name": "Impedancja" },
+        "last_measurement_time": { "name": "Ostatnia godzina ważenia" },
         "lean_body_mass": { "name": "Beztłuszczowa masa ciała" },
         "metabolic_age": { "name": "Wiek metaboliczny" },
         "muscle_mass": { "name": "Masa mięśniowa" },
@@ -129,10 +133,12 @@
         "data": {
           "height": "Wzrost",
           "impedance": "Sensor impedancji",
+          "last_measurement_time": "Czujnik ostatniej godziny ważenia",
           "weight": "Sensor wagi"
         },
         "data_description": {
-          "impedance": "Jeśli waga nie podaje impedancji, pozostaw to pole puste."
+          "impedance": "Jeśli waga nie podaje impedancji, pozostaw to pole puste.",
+          "last_measurement_time": "Jeśli nie masz czujnika ostatniej godziny ważenia, pozostaw to pole puste."
         }
       }
     }
