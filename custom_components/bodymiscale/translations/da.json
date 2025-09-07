@@ -1,0 +1,147 @@
+{
+  "config": {
+    "error": {
+      "already_configured": "Allerede konfigureret",
+      "height_limit": "Højde maximum overskredet (grænse: 220 cm)",
+      "height_low": "Højde minimum overskredet (min : 50 cm)",
+      "invalid_date": "Ugyldig dato"
+    },
+    "step": {
+      "options": {
+        "data": {
+          "height": "Højde",
+          "impedance": "Impedanssensor",
+          "last_measurement_time": "Tidssensor for sidste måling",
+          "weight": "Vægtsensor"
+        },
+        "data_description": {
+          "impedance": "Har din vægt ikke impedanssensor, udfyld ikke dette felt.",
+          "last_measurement_time": "udfyld ikke dette felt hvis der ikke er en tidssensor for sidste måling."
+        }
+      },
+      "user": {
+        "data": {
+          "birthday": "Fødselsdag",
+          "gender": "Køn",
+          "name": "Navn"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "basal_metabolism": { "name": "Basal stofskifte" },
+      "bmi": { "name": "BMI" },
+      "body_fat": { "name": "Kropsfedt" },
+      "body_score": { "name": "Kropsscore" },
+      "bone_mass": { "name": "Knoglemasse" },
+      "last_measurement_time": { "name": "Tidspunkt for sidste måling" },
+      "lean_body_mass": { "name": "Mager kropsmasse" },
+      "metabolic_age": { "name": "Metabolisk alder" },
+      "muscle_mass": { "name": "Muskelmasse" },
+      "protein": { "name": "Protein" },
+      "visceral_fat": { "name": "Visceralt fedt" },
+      "water": { "name": "Vand" },
+      "weight": { "name": "Vægt" }
+    }
+  },
+  "entity_component": {
+    "_": {
+      "name": "bodymiscale",
+      "state": {
+        "ok": "OK",
+        "problem": "Problem"
+      },
+      "state_attributes": {
+        "age": { "name": "Alder" },
+        "basal_metabolism": { "name": "Basal stofskifte" },
+        "bmi": { "name": "BMI" },
+        "bmi_label": {
+          "name": "BMI klasse",
+          "state": {
+            "massive_obesity": "Massiv fedme",
+            "moderate_obesity": "Moderat fedme",
+            "normal_or_healthy_weight": "Normal eller sund vægt",
+            "overweight": "Overvægtig",
+            "severe_obesity": "Alvorlig fedme",
+            "slight_overweight": "Let overvægt",
+            "unavailable": "ikke tilgængelig",
+            "underweight": "Undervægtig"
+          }
+        },
+        "body_fat": { "name": "Kropsfedt" },
+        "body_score": { "name": "Kropsvurdering" },
+        "body_type": {
+          "name": "Kropstype",
+          "state": {
+            "balanced": "Balanceret",
+            "balanced_muscular": "Balanceret muskuløs",
+            "balanced_skinny": "Balanceret slank",
+            "lack_exercise": "Mangel på motion",
+            "obese": "Fed",
+            "overweight": "Overvægtig",
+            "skinny": "Slank",
+            "skinny_muscular": "Muskuløs slank",
+            "thick_set": "Kraftig",
+            "unavailable": "ikke tilgængelig"
+          }
+        },
+        "bone_mass": { "name": "Knoglemasse" },
+        "fat_mass_to_gain": { "name": "Fedtmasse at tage på" },
+        "fat_mass_to_lose": { "name": "Fedtmasse at tabe" },
+        "gender": {
+          "name": "Navn",
+          "state": {
+            "female": "kvinde",
+            "male": "mand"
+          }
+        },
+        "height": { "name": "Højde" },
+        "ideal": { "name": "Ideel" },
+        "impedance": { "name": "Impedans" },
+        "last_measurement_time": { "name": "Tidspunkt for sidste måling" },
+        "lean_body_mass": { "name": "Mager kropsmasse" },
+        "metabolic_age": { "name": "Metabolisk alder" },
+        "muscle_mass": { "name": "Muskelmasse" },
+        "problem": {
+          "name": "Problem",
+          "state": {
+            "impedance_high": "Høj impedans",
+            "impedance_low": "Lav impedans",
+            "impedance_unavailable": "Impedans ikke tilgængelig",
+            "none": "Ingen",
+            "weight_high": "Høj vægt",
+            "weight_high_and_impedance_high": "Høj vægt, høj impedans",
+            "weight_high_and_impedance_low": "Høj vægt, lav impedans",
+            "weight_low": "Weight low",
+            "weight_low_and_impedance_high": "Lav vægt, høj impedans",
+            "weight_low_and_impedance_low": "Lav vægt, lav impedans",
+            "weight_unavailable": "Vægt ikke tilgængelig",
+            "weight_unavailable_and_impedance_unavailable": "Vægt ikke tilgængelig, impedanse ikke tilgængelig"
+          }
+        },
+        "protein": { "name": "Protein" },
+        "visceral_fat": { "name": "Visceralt fedt" },
+        "water": { "name": "Vand" },
+        "weight": { "name": "Vægt" }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "height": "Højde",
+          "impedance": "Impedansesensor",
+          "last_measurement_time": "Tidssensor for sidste måling",
+          "weight": "Vægtsensor"
+        },
+        "data_description": {
+          "impedance": "Hvis din vægt ikke har impedans sensor, udfyld ikke dette felt.",
+          "last_measurement_time": "udfyld ikke dette felt hvid der ikke er en tidssensor for sidste måling."
+        }
+      }
+    }
+  },
+  "title": "BodyMiScale"
+}
