@@ -49,7 +49,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-      # Following steps cannot run by pre-commit.ci as repo = local
+          pip install mypy pylint
       - name: Run mypy
         run: mypy custom_components/
       - name: Pylint review
