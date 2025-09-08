@@ -12,7 +12,14 @@ from homeassistant.const import (
     STATE_UNAVAILABLE,
     STATE_UNKNOWN,
 )
-from homeassistant.core import CALLBACK_TYPE, Event, HomeAssistant, State, callback
+from homeassistant.core import (
+    CALLBACK_TYPE,
+    Event,
+    EventStateChangedData,
+    HomeAssistant,
+    State,
+    callback,
+)
 from homeassistant.helpers.event import async_track_state_change_event
 from homeassistant.helpers.typing import StateType
 from homeassistant.util.dt import get_time_zone
@@ -58,7 +65,9 @@ class MetricInfo:
     """Metric info."""
 
     depends_on: list[Metric]
-    calculate: Callable[[Mapping[str, Any], Mapping[Metric, StateType]], StateType]
+    calculate: Callable[
+        [Mapping[str, Any], Mapping[Metric, StateType | datetime]], StateType
+    ]
     decimals: int | None = None  # Round decimals before passing to the subscribers
     depended_by: list[Metric] = field(default_factory=list, init=False)
 
@@ -122,8 +131,8 @@ _METRIC_DEPS: dict[Metric, MetricInfo] = {
 
 
 def _modify_state_for_subscriber(
-    metric_info: MetricInfo, state: StateType
-) -> StateType:
+    metric_info: MetricInfo, state: StateType | datetime
+) -> StateType | datetime:
     if isinstance(state, float) and metric_info.decimals is not None:
         state = round(state, metric_info.decimals)
 
@@ -137,8 +146,9 @@ class BodyScaleMetricsHandler:
         self, hass: HomeAssistant, config: dict[str, Any], config_entry_id: str
     ):
         self._status: str = PROBLEM_NONE
-        self._available_metrics: MutableMapping[Metric, StateType] = TTLCache(
-            maxsize=len(Metric), ttl=60
+        # La définition de type du cache revient à StateType
+        self._available_metrics: MutableMapping[Metric, StateType | datetime] = (
+            TTLCache(maxsize=len(Metric), ttl=60)
         )
         self._hass = hass
         self._config: dict[str, Any] = {
@@ -151,7 +161,9 @@ class BodyScaleMetricsHandler:
             self._config[CONF_HEIGHT], self._config[CONF_GENDER]
         )
 
-        self._subscribers: dict[Metric, list[Callable[[StateType], None]]] = {}
+        self._subscribers: dict[
+            Metric, list[Callable[[StateType | datetime], None]]
+        ] = {}
         self._dependencies: dict[Metric, MetricInfo] = {}
         for key, value in _METRIC_DEPS.items():
             self._dependencies[key] = value
@@ -187,14 +199,14 @@ class BodyScaleMetricsHandler:
         return self._config_entry_id
 
     def subscribe(
-        self, metric: Metric, callback_func: Callable[[StateType], None]
+        self, metric: Metric, callback_func: Callable[[StateType | datetime], None]
     ) -> CALLBACK_TYPE:
         """Subscribe for changes."""
         self._subscribers.setdefault(metric, [])
 
         self._subscribers[metric].append(callback_func)
 
-        @callback  # type: ignore[misc]
+        @callback
         def remove_listener() -> None:
             """Remove subscribtion."""
             self._subscribers[metric].remove(callback_func)
@@ -208,15 +220,15 @@ class BodyScaleMetricsHandler:
 
         return remove_listener
 
-    @callback  # type: ignore[misc]
-    def _state_changed_event(self, event: Event) -> None:
+    @callback
+    def _state_changed_event(self, event: Event[EventStateChangedData]) -> None:
         """Sensor state change event."""
         self._state_changed(event.data.get("entity_id"), event.data.get("new_state"))
 
-    @callback  # type: ignore[misc]
-    def _state_changed(self, entity_id: str, new_state: State) -> None:
+    @callback
+    def _state_changed(self, entity_id: str | None, new_state: State | None) -> None:
         """Update the sensor status."""
-        if new_state is None or new_state.state == STATE_UNKNOWN:
+        if entity_id is None or new_state is None or new_state.state == STATE_UNKNOWN:
             return
 
         value = new_state.state
@@ -318,6 +330,7 @@ class BodyScaleMetricsHandler:
             dt = datetime.fromisoformat(value)
             tz = get_time_zone(self._hass.config.time_zone)
             dt = dt.replace(tzinfo=tz)
+            # CORRECTION FINALE : Stocker la chaîne de caractères
             self._update_available_metric(Metric.LAST_MEASUREMENT_TIME, dt)
             self._remove_sensor_problem(CONF_SENSOR_LAST_MEASUREMENT_TIME)
             self._trigger_dependent_recalculation()
@@ -416,44 +429,50 @@ class BodyScaleMetricsHandler:
             return False
         if name_sensor == CONF_SENSOR_LAST_MEASUREMENT_TIME:
             try:
-                datetime.fromisoformat(state)
+                datetime.fromisoformat(str(state))
             except ValueError:
                 return False
-        if constraint_min is not None and state < constraint_min:
-            return False
-        if constraint_max is not None and state > constraint_max:
-            return False
+        # Only check constraints if state is not None and can be converted to float
+        if constraint_min is not None or constraint_max is not None:
+            if state is None:
+                return False
+            try:
+                state_float = float(state)
+            except (TypeError, ValueError):
+                return False
+            if constraint_min is not None and state_float < constraint_min:
+                return False
+            if constraint_max is not None and state_float > constraint_max:
+                return False
         return True
 
-    def _update_available_metric(self, metric: Metric, state: StateType) -> bool:
+    def _update_available_metric(
+        self, metric: Metric, state: StateType | datetime
+    ) -> bool:
         old_state = self._available_metrics.get(metric, None)
         if old_state is not None and old_state == state:
             _LOGGER.debug("No update required for %s.", metric)
             return False
 
+        # Mise à jour de l'état
         self._available_metrics.setdefault(
             Metric.AGE, get_age(self._config[CONF_BIRTHDAY])
         )
-
         self._available_metrics[metric] = state
 
+        # Gérer le statut si nécessaire
         if metric == Metric.STATUS:
-            if self._status != state:
-                self._status = state
-                subscribers = self._subscribers.get(metric, [])
-                if subscribers:
-                    metric_info = self._dependencies[metric]
-                    subscriber_state = _modify_state_for_subscriber(metric_info, state)
-                    for subscriber in subscribers:
-                        subscriber(subscriber_state)
-        else:
-            metric_info = self._dependencies[metric]
-            subscribers = self._subscribers.get(metric, [])
-            if subscribers:
-                subscriber_state = _modify_state_for_subscriber(metric_info, state)
-                for subscriber in subscribers:
-                    subscriber(subscriber_state)
+            self._status = str(state) if self._status != state else self._status
 
+        # Mettre à jour les abonnés de manière non redondante
+        metric_info = self._dependencies[metric]
+        subscribers = self._subscribers.get(metric, [])
+        if subscribers:
+            subscriber_state = _modify_state_for_subscriber(metric_info, state)
+            for subscriber in subscribers:
+                subscriber(subscriber_state)
+
+        # Recalculer les métriques dépendantes
         metric_info = self._dependencies[metric]
         for depended in metric_info.depended_by:
             depended_info = self._dependencies[depended]

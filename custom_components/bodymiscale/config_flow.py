@@ -7,11 +7,15 @@ from typing import Any
 
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
-from homeassistant.config_entries import ConfigEntry, ConfigFlow, OptionsFlow
-from homeassistant.const import CONF_MODE, CONF_NAME, CONF_UNIT_OF_MEASUREMENT
+from homeassistant.config_entries import (
+    ConfigEntry,
+    ConfigFlow,
+    ConfigFlowResult,
+    OptionsFlow,
+)
+from homeassistant.const import CONF_NAME
 from homeassistant.core import callback
-from homeassistant.data_entry_flow import FlowResult
-from homeassistant.helpers.selector import selector
+from homeassistant.helpers import selector
 
 from .const import (
     CONF_BIRTHDAY,
@@ -23,13 +27,11 @@ from .const import (
     CONSTRAINT_HEIGHT_MAX,
     CONSTRAINT_HEIGHT_MIN,
     DOMAIN,
-    MAX,
-    MIN,
 )
 from .models import Gender
 
 
-@callback  # type: ignore[misc]
+@callback
 def _get_options_schema(
     defaults: dict[str, Any] | MappingProxyType[str, Any],
 ) -> vol.Schema:
@@ -43,15 +45,13 @@ def _get_options_schema(
                     if CONF_HEIGHT in defaults
                     else None
                 ),
-            ): selector(
-                {
-                    "number": {
-                        MIN: CONSTRAINT_HEIGHT_MIN,
-                        MAX: CONSTRAINT_HEIGHT_MAX,
-                        CONF_UNIT_OF_MEASUREMENT: "cm",
-                        CONF_MODE: "box",
-                    }
-                }
+            ): selector.NumberSelector(
+                selector.NumberSelectorConfig(
+                    mode=selector.NumberSelectorMode.BOX,
+                    min=CONSTRAINT_HEIGHT_MIN,
+                    max=CONSTRAINT_HEIGHT_MAX,
+                    unit_of_measurement="cm",
+                )
             ),
             vol.Required(
                 CONF_SENSOR_WEIGHT,
@@ -60,7 +60,11 @@ def _get_options_schema(
                     if CONF_SENSOR_WEIGHT in defaults
                     else None
                 ),
-            ): selector({"entity": {"domain": ["sensor", "input_number", "number"]}}),
+            ): selector.EntitySelector(
+                selector.EntitySelectorConfig(
+                    domain=["sensor", "input_number", "number"]
+                )
+            ),
             vol.Optional(
                 CONF_SENSOR_IMPEDANCE,
                 description=(
@@ -68,7 +72,11 @@ def _get_options_schema(
                     if CONF_SENSOR_IMPEDANCE in defaults
                     else None
                 ),
-            ): selector({"entity": {"domain": ["sensor", "input_number", "number"]}}),
+            ): selector.EntitySelector(
+                selector.EntitySelectorConfig(
+                    domain=["sensor", "input_number", "number"]
+                )
+            ),
             vol.Optional(
                 CONF_SENSOR_LAST_MEASUREMENT_TIME,
                 description=(
@@ -76,12 +84,14 @@ def _get_options_schema(
                     if CONF_SENSOR_LAST_MEASUREMENT_TIME in defaults
                     else None
                 ),
-            ): selector({"entity": {"domain": ["sensor", "input_datetime"]}}),
+            ): selector.EntitySelector(
+                selector.EntitySelectorConfig(domain=["sensor", "input_datetime"])
+            ),
         }
     )
 
 
-class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):  # type: ignore[misc, call-arg]
+class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):
     """Config flow for bodymiscale."""
 
     VERSION = 2
@@ -91,7 +101,7 @@ class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):  # type: ignore[misc, c
         self._data: dict[str, str] = {}
 
     @staticmethod
-    @callback  # type: ignore[misc]
+    @callback
     def async_get_options_flow(
         config_entry: ConfigEntry,
     ) -> BodyMiScaleOptionsFlowHandler:
@@ -100,9 +110,9 @@ class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):  # type: ignore[misc, c
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
+    ) -> ConfigFlowResult:
         """Handle a flow initialized by the user."""
-        errors = {}
+        errors: dict[str, str] = {}
         if user_input is not None:
             try:
                 cv.date(user_input[CONF_BIRTHDAY])
@@ -113,9 +123,8 @@ class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):  # type: ignore[misc, c
                 self._async_abort_entries_match({CONF_NAME: user_input[CONF_NAME]})
                 self._data = user_input
                 return await self.async_step_options()
-        else:
-            user_input = {}
 
+        user_input = user_input or {}
         return self.async_show_form(
             step_id="user",
             errors=errors,
@@ -127,7 +136,9 @@ class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):  # type: ignore[misc, c
                     vol.Required(
                         CONF_BIRTHDAY,
                         default=user_input.get(CONF_BIRTHDAY, vol.UNDEFINED),
-                    ): selector({"text": {"type": "date"}}),
+                    ): selector.TextSelector(
+                        selector.TextSelectorConfig(type=selector.TextSelectorType.DATE)
+                    ),
                     vol.Required(
                         CONF_GENDER, default=user_input.get(CONF_GENDER, vol.UNDEFINED)
                     ): vol.In({gender: gender.value for gender in Gender}),
@@ -137,9 +148,10 @@ class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):  # type: ignore[misc, c
 
     async def async_step_options(
         self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
+    ) -> ConfigFlowResult:
         """Handle step options."""
-        errors = {}
+        errors: dict[str, str] = {}
+
         if user_input is not None:
             if user_input[CONF_HEIGHT] > CONSTRAINT_HEIGHT_MAX:
                 errors[CONF_HEIGHT] = "height_limit"
@@ -147,10 +159,12 @@ class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):  # type: ignore[misc, c
                 errors[CONF_HEIGHT] = "height_low"
 
             return self.async_create_entry(
-                title=self._data[CONF_NAME], data=self._data, options=user_input
+                title=self._data[CONF_NAME],
+                data=self._data,
+                options=user_input,
             )
 
-        user_input = {}
+        user_input = user_input or {}
         return self.async_show_form(
             step_id="options",
             data_schema=_get_options_schema(user_input),
@@ -158,7 +172,7 @@ class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):  # type: ignore[misc, c
         )
 
 
-class BodyMiScaleOptionsFlowHandler(OptionsFlow):  # type: ignore[misc]
+class BodyMiScaleOptionsFlowHandler(OptionsFlow):
     """Handle Body mi scale options."""
 
     def __init__(self, config_entry: ConfigEntry) -> None:
@@ -167,16 +181,14 @@ class BodyMiScaleOptionsFlowHandler(OptionsFlow):  # type: ignore[misc]
 
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
+    ) -> ConfigFlowResult:
         """Manage Body mi scale options."""
 
         if user_input is not None:
-            return self.async_create_entry(
-                title=self._config_entry.title,
-                data=user_input,
-            )
+            return self.async_create_entry(data=user_input)
 
-        user_input = self._config_entry.options
+        # Convert MappingProxyType en dict
+        user_input = dict(self._config_entry.options)
 
         return self.async_show_form(
             step_id="init",

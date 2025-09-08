@@ -5,7 +5,7 @@ from homeassistant.const import Platform
 MIN_REQUIRED_HA_VERSION = "2023.9.0"
 NAME = "BodyMiScale"
 DOMAIN = "bodymiscale"
-VERSION = "2025.4.0"
+VERSION = "2025.9.0"
 
 ISSUE_URL = "https://github.com/dckiller51/bodymiscale/issues"
 

@@ -3,7 +3,9 @@
 import asyncio
 import logging
 from collections.abc import MutableMapping
+from datetime import datetime
 from functools import partial
+from types import MappingProxyType
 from typing import Any
 
 import homeassistant.helpers.config_validation as cv
@@ -150,8 +152,8 @@ async def async_migrate_entry(_: HomeAssistant, config_entry: ConfigEntry) -> bo
             options.pop(CONF_BIRTHDAY)
             options.pop(CONF_GENDER)
 
-        config_entry.data = data
-        config_entry.options = options
+        config_entry.data = MappingProxyType(data)
+        config_entry.options = MappingProxyType(options)
 
         config_entry.version = 2
 
@@ -173,7 +175,7 @@ class Bodymiscale(BodyScaleBaseEntity):
             EntityDescription(key="bodymiscale", name=None, icon="mdi:human"),
         )
         self._timer_handle: asyncio.TimerHandle | None = None
-        self._available_metrics: MutableMapping[str, StateType] = {}
+        self._available_metrics: MutableMapping[str, StateType | datetime] = {}
 
     async def async_added_to_hass(self) -> None:
         """After being added to hass."""
@@ -181,7 +183,7 @@ class Bodymiscale(BodyScaleBaseEntity):
 
         loop = asyncio.get_event_loop()
 
-        def on_value(value: StateType, *, metric: Metric) -> None:
+        def on_value(value: StateType | datetime, *, metric: Metric) -> None:
             if metric == Metric.STATUS:
                 self._attr_state = STATE_OK if value == PROBLEM_NONE else STATE_PROBLEM
                 self._available_metrics[ATTR_PROBLEM] = value

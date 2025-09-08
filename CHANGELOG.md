@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## 2025.9.0
+
+- **Added:** Danish language support (thank you @Milfeldt).
+- **Fixed:** Fixed pylint warnings regarding BaseException and Exception in the configuration file.
+- **Fixed:** Automatic code formatting with Black and import reorganization with isort.
+- **Fixed:** Fixed mypy errors related to incorrect types for state and datetime.
+- **Changed:** Automatic conversion of sensor values to float with exception handling.
+- **Removed:** Unnecessary suppressions in pylintrc.
+- **Removed:** Obsolete option abstract-class-little-used removed from Pylint configuration.
+
 ## 2025.4.0
 
 - **Fix:** Ensure Bodymiscale entity attributes (including metrics and last measurement time) persist correctly. The internal `TTLCache` used for storing entity attributes has been replaced with a standard dictionary to prevent data loss when only the last measurement time sensor updates.
