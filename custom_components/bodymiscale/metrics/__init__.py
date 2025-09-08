@@ -206,7 +206,7 @@ class BodyScaleMetricsHandler:
 
         self._subscribers[metric].append(callback_func)
 
-        @callback
+        @callback  # type: ignore[misc]
         def remove_listener() -> None:
             """Remove subscribtion."""
             self._subscribers[metric].remove(callback_func)
@@ -220,12 +220,12 @@ class BodyScaleMetricsHandler:
 
         return remove_listener
 
-    @callback
+    @callback  # type: ignore[misc]
     def _state_changed_event(self, event: Event[EventStateChangedData]) -> None:
         """Sensor state change event."""
         self._state_changed(event.data.get("entity_id"), event.data.get("new_state"))
 
-    @callback
+    @callback  # type: ignore[misc]
     def _state_changed(self, entity_id: str | None, new_state: State | None) -> None:
         """Update the sensor status."""
         if entity_id is None or new_state is None or new_state.state == STATE_UNKNOWN:
