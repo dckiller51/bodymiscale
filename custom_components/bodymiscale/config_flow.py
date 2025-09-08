@@ -91,12 +91,13 @@ def _get_options_schema(
     )
 
 
-class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):
+class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):  # type: ignore[call-arg, misc]
     """Config flow for bodymiscale."""
 
     VERSION = 2
 
     def __init__(self) -> None:
+        """Initialize BodyMiScaleFlowHandler."""
         super().__init__()
         self._data: dict[str, str] = {}
 
@@ -172,7 +173,7 @@ class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):
         )
 
 
-class BodyMiScaleOptionsFlowHandler(OptionsFlow):  # type: ignore[misc, call-arg]
+class BodyMiScaleOptionsFlowHandler(OptionsFlow):  # type: ignore[misc]
     """Handle Body mi scale options."""
 
     def __init__(self, config_entry: ConfigEntry) -> None:
