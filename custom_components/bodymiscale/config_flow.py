@@ -172,7 +172,7 @@ class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):
         )
 
 
-class BodyMiScaleOptionsFlowHandler(OptionsFlow):  # type: ignore[misc]
+class BodyMiScaleOptionsFlowHandler(OptionsFlow):  # type: ignore[misc, call-arg]
     """Handle Body mi scale options."""
 
     def __init__(self, config_entry: ConfigEntry) -> None:
