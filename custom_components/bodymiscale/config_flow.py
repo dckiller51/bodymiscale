@@ -31,7 +31,7 @@ from .const import (
 from .models import Gender
 
 
-@callback  # type: ignore[misc]
+@callback
 def _get_options_schema(
     defaults: dict[str, Any] | MappingProxyType[str, Any],
 ) -> vol.Schema:
@@ -91,7 +91,7 @@ def _get_options_schema(
     )
 
 
-class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):  # type: ignore[call-arg, misc]
+class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):
     """Config flow for bodymiscale."""
 
     VERSION = 2
@@ -102,7 +102,7 @@ class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):  # type: ignore[call-ar
         self._data: dict[str, str] = {}
 
     @staticmethod
-    @callback  # type: ignore[misc]
+    @callback
     def async_get_options_flow(
         config_entry: ConfigEntry,
     ) -> BodyMiScaleOptionsFlowHandler:
@@ -173,7 +173,7 @@ class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):  # type: ignore[call-ar
         )
 
 
-class BodyMiScaleOptionsFlowHandler(OptionsFlow):  # type: ignore[misc]
+class BodyMiScaleOptionsFlowHandler(OptionsFlow):
     """Handle Body mi scale options."""
 
     def __init__(self, config_entry: ConfigEntry) -> None:

@@ -53,7 +53,7 @@
     "rust": "latest"
   },
   "forwardPorts": [8123],
-  "image": "mcr.microsoft.com/devcontainers/python:3-bullseye",
+  "image": "mcr.microsoft.com/devcontainers/python:3.13-bullseye",
   "name": "Bodymiscale",
   "portsAttributes": {
     "0-8122": {

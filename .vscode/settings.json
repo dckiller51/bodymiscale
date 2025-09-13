@@ -2,6 +2,8 @@
   "files.associations": {
     "*.yaml": "home-assistant"
   },
+  "python-envs.defaultEnvManager": "ms-python.python:system",
+  "python-envs.pythonProjects": [],
   "python.linting.enabled": true,
   "python.linting.pylintEnabled": true,
   "python.pythonPath": "/usr/local/bin/python"

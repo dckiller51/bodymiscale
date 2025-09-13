@@ -214,7 +214,7 @@ async def async_setup_entry(
     async_add_entities(new_sensors)
 
 
-class BodyScaleSensor(BodyScaleBaseEntity, SensorEntity):  # type: ignore[misc]
+class BodyScaleSensor(BodyScaleBaseEntity, SensorEntity):
     """Body scale sensor."""
 
     def __init__(

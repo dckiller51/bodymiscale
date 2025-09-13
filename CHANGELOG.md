@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - **Fixed:** Fixed pylint warnings regarding BaseException and Exception in the configuration file.
 - **Fixed:** Automatic code formatting with Black and import reorganization with isort.
 - **Fixed:** Fixed mypy errors related to incorrect types for state and datetime.
+- **Changed (Development):** Updated the development environment to use **Python 3.13**.
 - **Changed:** Automatic conversion of sensor values to float with exception handling.
 - **Removed:** Unnecessary suppressions in pylintrc.
 - **Removed:** Obsolete option abstract-class-little-used removed from Pylint configuration.

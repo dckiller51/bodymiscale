@@ -9,7 +9,7 @@ from .const import DOMAIN, VERSION
 from .metrics import BodyScaleMetricsHandler
 
 
-class BodyScaleBaseEntity(Entity):  # type: ignore[misc]
+class BodyScaleBaseEntity(Entity):
     """Body scale base entity."""
 
     _attr_should_poll = False
