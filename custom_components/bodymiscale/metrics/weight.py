@@ -1,6 +1,7 @@
-"""Metrics module, which require only weight."""
+"""Metrics module, which requires only weight."""
 
 from collections.abc import Mapping
+from datetime import datetime
 from typing import Any
 
 from homeassistant.helpers.typing import StateType
@@ -8,45 +9,63 @@ from homeassistant.helpers.typing import StateType
 from custom_components.bodymiscale.const import CONF_GENDER, CONF_HEIGHT
 
 from ..models import Gender, Metric
-from ..util import check_value_constraints
+from ..util import check_value_constraints, to_float
 
 
-def get_bmi(config: Mapping[str, Any], metrics: Mapping[Metric, StateType]) -> float:
-    """Get MBI."""
-    heiht_c = config[CONF_HEIGHT] / 100
-    bmi = metrics[Metric.WEIGHT] / (heiht_c * heiht_c)
+def get_bmi(
+    config: Mapping[str, Any], metrics: Mapping[Metric, StateType | datetime]
+) -> float:
+    """Calculate BMI."""
+    height_val = to_float(config.get(CONF_HEIGHT))
+    weight = to_float(metrics.get(Metric.WEIGHT))
+
+    bmi = 0.0
+
+    if height_val is not None and weight is not None:
+        height_c = height_val / 100
+        bmi = weight / (height_c * height_c)
+
     return check_value_constraints(bmi, 10, 90)
 
 
-def get_bmr(config: Mapping[str, Any], metrics: Mapping[Metric, StateType]) -> float:
-    """Get BMR."""
-    if config[CONF_GENDER] == Gender.FEMALE:
-        bmr = 864.6 + metrics[Metric.WEIGHT] * 10.2036
-        bmr -= config[CONF_HEIGHT] * 0.39336
-        bmr -= metrics[Metric.AGE] * 6.204
+def get_bmr(
+    config: Mapping[str, Any], metrics: Mapping[Metric, StateType | datetime]
+) -> float:
+    """Calculate Basal Metabolic Rate (BMR)."""
+    weight = to_float(metrics.get(Metric.WEIGHT))
+    age = to_float(metrics.get(Metric.AGE))
+    height = to_float(config.get(CONF_HEIGHT))
+    gender = config.get(CONF_GENDER)
 
-        if bmr > 2996:
-            bmr = 5000
+    if weight is None or age is None or height is None or gender is None:
+        return 0.0
+
+    if gender == Gender.FEMALE:
+        bmr = 864.6 + weight * 10.2036
+        bmr -= height * 0.39336
+        bmr -= age * 6.204
     else:
-        bmr = 877.8 + metrics[Metric.WEIGHT] * 14.916
-        bmr -= config[CONF_HEIGHT] * 0.726
-        bmr -= metrics[Metric.AGE] * 8.976
+        bmr = 877.8 + weight * 14.916
+        bmr -= height * 0.726
+        bmr -= age * 8.976
 
-        if bmr > 2322:
-            bmr = 5000
-
+    bmr = min(bmr, 5000)
     return check_value_constraints(bmr, 500, 5000)
 
 
 def get_visceral_fat(
-    config: Mapping[str, Any], metrics: Mapping[Metric, StateType]
+    config: Mapping[str, Any], metrics: Mapping[Metric, StateType | datetime]
 ) -> float:
-    """Get Visceral Fat."""
-    height = config[CONF_HEIGHT]
-    weight = metrics[Metric.WEIGHT]
-    age = metrics[Metric.AGE]
+    """Calculate Visceral Fat."""
+    height = to_float(config.get(CONF_HEIGHT))
+    weight = to_float(metrics.get(Metric.WEIGHT))
+    age = to_float(metrics.get(Metric.AGE))
+    gender = config.get(CONF_GENDER)
 
-    if config[CONF_GENDER] == Gender.MALE:
+    if height is None or weight is None or age is None or gender is None:
+        return 1.0
+
+    if gender == Gender.MALE:
         if height < weight * 1.6 + 63.0:
             vfal = age * 0.15 + (
                 (weight * 305.0) / ((height * 0.0826 * height - height * 0.4) + 48.0)

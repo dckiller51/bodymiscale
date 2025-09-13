@@ -1,6 +1,8 @@
 """Sensor module."""
 
+import logging
 from collections.abc import Callable, Mapping
+from datetime import datetime
 from typing import Any
 
 from homeassistant.components.sensor import (
@@ -40,6 +42,8 @@ from .metrics import BodyScaleMetricsHandler
 from .models import Metric
 from .util import get_bmi_label, get_ideal_weight
 
+_LOGGER = logging.getLogger(__name__)
+
 
 async def async_setup_entry(
     hass: HomeAssistant,
@@ -61,7 +65,13 @@ async def async_setup_entry(
                 state_class=SensorStateClass.MEASUREMENT,
             ),
             Metric.BMI,
-            lambda state, _: {ATTR_BMILABEL: get_bmi_label(state)},
+            lambda state, _: {
+                ATTR_BMILABEL: (
+                    get_bmi_label(float(state))
+                    if isinstance(state, (int, float))
+                    else None
+                )
+            },
         ),
         BodyScaleSensor(
             handler,
@@ -204,7 +214,7 @@ async def async_setup_entry(
     async_add_entities(new_sensors)
 
 
-class BodyScaleSensor(BodyScaleBaseEntity, SensorEntity):  # type: ignore[misc]
+class BodyScaleSensor(BodyScaleBaseEntity, SensorEntity):
     """Body scale sensor."""
 
     def __init__(
@@ -213,23 +223,42 @@ class BodyScaleSensor(BodyScaleBaseEntity, SensorEntity):  # type: ignore[misc]
         entity_description: SensorEntityDescription,
         metric: Metric,
         get_attributes: None | (
-            Callable[[StateType, Mapping[str, Any]], Mapping[str, Any]]
+            Callable[[StateType | datetime, Mapping[str, Any]], Mapping[str, Any]]
         ) = None,
     ):
         super().__init__(handler, entity_description)
         self._metric = metric
         self._get_attributes = get_attributes
 
+    _attr_native_value: StateType | datetime | None = None
+
     async def async_added_to_hass(self) -> None:
         """Set up the event listeners now that hass is ready."""
         await super().async_added_to_hass()
 
-        def on_value(value: StateType) -> None:
-            self._attr_native_value = value
+        # Update the signature of on_value to accept a Union type
+        def on_value(value: StateType | datetime) -> None:
+            # Convert string to datetime object for timestamp sensors
+            if self.device_class == SensorDeviceClass.TIMESTAMP and isinstance(
+                value, str
+            ):
+                try:
+                    self._attr_native_value = datetime.fromisoformat(value)
+                except ValueError as e:
+                    _LOGGER.error(
+                        "Error converting date string to datetime object: %s", e
+                    )
+                    self._attr_native_value = None
+            else:
+                self._attr_native_value = value
+
             if self._get_attributes:
-                self._attr_extra_state_attributes = self._get_attributes(
-                    self._attr_native_value, self._handler.config
+                # Update the attribute getter call to match its new signature
+                attributes = self._get_attributes(
+                    self._attr_native_value, dict(self._handler.config)
                 )
+                self._attr_extra_state_attributes = dict(attributes)
+
             self.async_write_ha_state()
 
         self.async_on_remove(self._handler.subscribe(self._metric, on_value))

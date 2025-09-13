@@ -17,6 +17,18 @@ def check_value_constraints(value: float, minimum: float, maximum: float) -> flo
     return value
 
 
+def to_float(val: Any, default: float = 0.0) -> float:
+    """Convert value to float if possible, otherwise return a default."""
+    if isinstance(val, (int, float)):
+        return float(val)
+    if isinstance(val, str):
+        try:
+            return float(val)
+        except ValueError:
+            return default
+    return default
+
+
 def get_ideal_weight(config: Mapping[str, Any]) -> float:
     """Get ideal weight (just doing a reverse BMI, should be something better)."""
     if config[CONF_GENDER] == Gender.FEMALE:
@@ -27,7 +39,7 @@ def get_ideal_weight(config: Mapping[str, Any]) -> float:
     return round(ideal, 0)
 
 
-def get_bmi_label(bmi: float) -> str:  # pylint: disable=too-many-return-statements
+def get_bmi_label(bmi: float) -> str:
     """Get BMI label."""
     if bmi < 18.5:
         return "underweight"
