@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## 2026.1.0
+
+- **Updated:** Russian translation (thank you @denser).
+
 ## 2025.9.0
 
 - **Added:** Danish language support (thank you @Milfeldt).
