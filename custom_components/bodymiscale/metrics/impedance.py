@@ -45,29 +45,31 @@ def get_fat_percentage(
     age = to_float(metrics.get(Metric.AGE))
     height = to_float(config.get(CONF_HEIGHT))
     gender = config.get(CONF_GENDER)
+    mode = config.get("calculation_mode", "xiaomi")
 
-    # Return 0 if any required metric is missing
     if weight is None or lbm is None or age is None or height is None or gender is None:
         return 0.0
 
-    coefficient = 1.0
-
-    if gender == Gender.FEMALE:
-        const = 9.25 if age <= 49 else 7.25
-        if weight > 60:
-            coefficient = 0.96
-        elif weight < 50:
-            coefficient = 1.02
-        if height > 160 and (weight < 50 or weight > 60):
-            coefficient *= 1.03
+    if mode == "science":
+        fat_percentage = ((weight - lbm) / weight) * 100
     else:
-        const = 0.8
-        if weight < 61:
-            coefficient = 0.98
+        coefficient = 1.0
+        if gender == Gender.FEMALE:
+            const = 9.25 if age <= 49 else 7.25
+            if weight > 60:
+                coefficient = 0.96
+            elif weight < 50:
+                coefficient = 1.02
+            if height > 160 and (weight < 50 or weight > 60):
+                coefficient *= 1.03
+        else:
+            const = 0.8
+            if weight < 61:
+                coefficient = 0.98
 
-    fat_percentage = (1.0 - ((lbm - const) * coefficient / weight)) * 100
+        fat_percentage = (1.0 - ((lbm - const) * coefficient / weight)) * 100
 
-    # Cap fat_percentage at 75
+    # Cap fat_percentage
     if fat_percentage > 63:
         fat_percentage = 75
 
@@ -75,14 +77,18 @@ def get_fat_percentage(
 
 
 def get_water_percentage(
-    _: Mapping[str, Any], metrics: Mapping[Metric, StateType | datetime]
+    config: Mapping[str, Any], metrics: Mapping[Metric, StateType | datetime]
 ) -> float:
     """Get water percentage."""
     fat_percentage = to_float(metrics.get(Metric.FAT_PERCENTAGE)) or 0.0
-    water_percentage = (100 - fat_percentage) * 0.7
-    coefficient = 1.02 if water_percentage <= 50 else 0.98
+    mode = config.get("calculation_mode", "xiaomi")
 
-    water_percentage *= coefficient
+    water_percentage = (100 - fat_percentage) * 0.7
+
+    if mode == "xiaomi":
+        coefficient = 1.02 if water_percentage <= 50 else 0.98
+        water_percentage *= coefficient
+
     if water_percentage >= 65:
         water_percentage = 75
 
@@ -94,8 +100,9 @@ def get_bone_mass(
 ) -> float:
     """Get bone mass."""
     lbm = to_float(metrics.get(Metric.LBM)) or 0.0
-    base = 0.245691014 if config[CONF_GENDER] == Gender.FEMALE else 0.18016894
+    gender = config.get(CONF_GENDER)
 
+    base = 0.245691014 if gender == Gender.FEMALE else 0.18016894
     bone_mass = (base - (lbm * 0.05158)) * -1
 
     if bone_mass > 2.2:
@@ -103,9 +110,9 @@ def get_bone_mass(
     else:
         bone_mass -= 0.1
 
-    if config[CONF_GENDER] == Gender.FEMALE and bone_mass > 5.1:
+    if gender == Gender.FEMALE and bone_mass > 5.1:
         bone_mass = 8
-    elif config[CONF_GENDER] == Gender.MALE and bone_mass > 5.2:
+    elif gender == Gender.MALE and bone_mass > 5.2:
         bone_mass = 8
 
     return check_value_constraints(bone_mass, 0.5, 8)
@@ -137,31 +144,27 @@ def get_metabolic_age(
     weight = to_float(metrics.get(Metric.WEIGHT))
     age = to_float(metrics.get(Metric.AGE))
     impedance = to_float(metrics.get(Metric.IMPEDANCE))
+    gender = config.get(CONF_GENDER)
 
-    metabolic_age = 15.0
+    if None in [height, weight, age, impedance]:
+        return 15.0
 
-    if (
-        height is not None
-        and weight is not None
-        and age is not None
-        and impedance is not None
-    ):
-        if config[CONF_GENDER] == Gender.FEMALE:
-            metabolic_age = (
-                (height * -1.1165)
-                + (weight * 1.5784)
-                + (age * 0.4615)
-                + (impedance * 0.0415)
-                + 83.2548
-            )
-        else:
-            metabolic_age = (
-                (height * -0.7471)
-                + (weight * 0.9161)
-                + (age * 0.4184)
-                + (impedance * 0.0517)
-                + 54.2267
-            )
+    if gender == Gender.FEMALE:
+        metabolic_age = (
+            (height * -1.1165)
+            + (weight * 1.5784)
+            + (age * 0.4615)
+            + (impedance * 0.0415)
+            + 83.2548
+        )
+    else:
+        metabolic_age = (
+            (height * -0.7471)
+            + (weight * 0.9161)
+            + (age * 0.4184)
+            + (impedance * 0.0517)
+            + 54.2267
+        )
 
     return check_value_constraints(metabolic_age, 15, 80)
 

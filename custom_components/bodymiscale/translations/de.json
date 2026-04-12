@@ -9,6 +9,7 @@
     "step": {
       "options": {
         "data": {
+          "calculation_mode": "Berechnungsmethode",
           "height": "Größe",
           "impedance": "Impedanz sensor",
           "last_measurement_time": "Sensor der letzten Wägezeit",
@@ -123,6 +124,7 @@
     "step": {
       "init": {
         "data": {
+          "calculation_mode": "Berechnungsmethode",
           "height": "Größe",
           "impedance": "Impedanz sensor",
           "last_measurement_time": "Sensor der letzten Wägezeit",
@@ -132,6 +134,14 @@
           "impedance": "Falls deine Waage keine Impedanz liefert, lasse dieses Feld leer.",
           "last_measurement_time": "Lassen Sie dieses Feld leer, wenn Sie keinen Sensor für die letzte Wägezeit haben."
         }
+      }
+    }
+  },
+  "selector": {
+    "calculation_mode": {
+      "options": {
+        "science": "Wissenschaftlich",
+        "xiaomi": "Xiaomi (Legacy 2017)"
       }
     }
   },

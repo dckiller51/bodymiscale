@@ -9,6 +9,7 @@
     "step": {
       "options": {
         "data": {
+          "calculation_mode": "Metoda obliczeń",
           "height": "Wzrost",
           "impedance": "Sensor impedancji",
           "last_measurement_time": "Czujnik ostatniej godziny ważenia",
@@ -131,6 +132,7 @@
     "step": {
       "init": {
         "data": {
+          "calculation_mode": "Metoda obliczeń",
           "height": "Wzrost",
           "impedance": "Sensor impedancji",
           "last_measurement_time": "Czujnik ostatniej godziny ważenia",
@@ -140,6 +142,14 @@
           "impedance": "Jeśli waga nie podaje impedancji, pozostaw to pole puste.",
           "last_measurement_time": "Jeśli nie masz czujnika ostatniej godziny ważenia, pozostaw to pole puste."
         }
+      }
+    }
+  },
+  "selector": {
+    "calculation_mode": {
+      "options": {
+        "science": "Naukowa",
+        "xiaomi": "Xiaomi (Legacy 2017)"
       }
     }
   },

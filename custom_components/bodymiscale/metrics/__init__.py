@@ -284,6 +284,17 @@ class BodyScaleMetricsHandler:
         updated = self._update_available_metric(Metric.WEIGHT, value_float)
         if updated:
             self._remove_sensor_problem(CONF_SENSOR_WEIGHT)
+
+            if (
+                CONF_SENSOR_LAST_MEASUREMENT_TIME not in self._config
+                or self._available_metrics.get(Metric.LAST_MEASUREMENT_TIME) is None
+            ):
+
+                last_changed_dt = state.last_changed
+                self._update_available_metric(
+                    Metric.LAST_MEASUREMENT_TIME, last_changed_dt
+                )
+
         return updated, None
 
     def _process_impedance(self, state: State) -> tuple[bool, str | None]:
@@ -313,29 +324,43 @@ class BodyScaleMetricsHandler:
         updated = self._update_available_metric(Metric.IMPEDANCE, value_float)
         if updated:
             self._remove_sensor_problem(CONF_SENSOR_IMPEDANCE)
+
+            if (
+                CONF_SENSOR_LAST_MEASUREMENT_TIME not in self._config
+                or self._available_metrics.get(Metric.LAST_MEASUREMENT_TIME) is None
+            ):
+
+                self._update_available_metric(
+                    Metric.LAST_MEASUREMENT_TIME, state.last_changed
+                )
+
         return updated, None
 
     def _process_last_measurement_time(self, state: State) -> str | None:
+        """Process last measurement time from the source sensor."""
         value = state.state
 
-        if value == STATE_UNAVAILABLE:
+        if value in (STATE_UNAVAILABLE, STATE_UNKNOWN):
             self._remove_sensor_problem(CONF_SENSOR_LAST_MEASUREMENT_TIME)
             return "unavailable"
 
-        if not self._is_valid(CONF_SENSOR_LAST_MEASUREMENT_TIME, value, None, None):
-            self._remove_sensor_problem(CONF_SENSOR_LAST_MEASUREMENT_TIME)
-            return "invalid"
-
         try:
             dt = datetime.fromisoformat(value)
+
             tz = get_time_zone(self._hass.config.time_zone)
-            dt = dt.replace(tzinfo=tz)
-            # CORRECTION FINALE : Stocker la chaîne de caractères
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=tz)
+            else:
+                dt = dt.astimezone(tz)
+
             self._update_available_metric(Metric.LAST_MEASUREMENT_TIME, dt)
             self._remove_sensor_problem(CONF_SENSOR_LAST_MEASUREMENT_TIME)
+
             self._trigger_dependent_recalculation()
             return None
-        except ValueError:
+
+        except (ValueError, TypeError) as e:
+            _LOGGER.error("Invalid date format for last measurement: %s (%s)", value, e)
             return "invalid_format"
 
     def _categorize_problem(

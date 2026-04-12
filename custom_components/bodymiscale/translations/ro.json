@@ -9,6 +9,7 @@
     "step": {
       "options": {
         "data": {
+          "calculation_mode": "Metodă de calcul",
           "height": "Înalțime",
           "impedance": "Senzor impedanță",
           "last_measurement_time": "Senzor pentru ultima oră de cântărire",
@@ -131,6 +132,7 @@
     "step": {
       "init": {
         "data": {
+          "calculation_mode": "Metodă de calcul",
           "height": "Înalțime",
           "impedance": "Senzor impedanță",
           "last_measurement_time": "Senzor pentru ultima oră de cântărire",
@@ -140,6 +142,14 @@
           "impedance": "Dacă cântarul dumneavoastra nu furnizează impedanță, lăsați câmpul necompletat.",
           "last_measurement_time": "Dacă nu aveți un senzor pentru ultima oră de cântărire, lăsați acest câmp gol."
         }
+      }
+    }
+  },
+  "selector": {
+    "calculation_mode": {
+      "options": {
+        "science": "Științific",
+        "xiaomi": "Xiaomi (Legacy 2017)"
       }
     }
   },

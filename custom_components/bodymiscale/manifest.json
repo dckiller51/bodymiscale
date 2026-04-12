@@ -15,5 +15,5 @@
   "requirements": [
     "cachetools==6.2.4"
   ],
-  "version": "2026.1.0"
+  "version": "2026.4.0"
 }

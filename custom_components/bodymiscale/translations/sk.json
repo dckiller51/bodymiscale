@@ -9,6 +9,7 @@
     "step": {
       "options": {
         "data": {
+          "calculation_mode": "Metóda výpočtu",
           "height": "Výška",
           "impedance": "Senzor impedancie",
           "last_measurement_time": "Senzor posledného času váženia",
@@ -131,6 +132,7 @@
     "step": {
       "init": {
         "data": {
+          "calculation_mode": "Metóda výpočtu",
           "height": "Výška",
           "impedance": "Senzor impedancie",
           "last_measurement_time": "Senzor posledného času váženia",
@@ -140,6 +142,14 @@
           "impedance": "Ak vaša váha neposkytuje impedanciu, nechajte toto pole prázdne.",
           "last_measurement_time": "Ak nemáte senzor posledného času váženia, nechajte toto pole prázdne."
         }
+      }
+    }
+  },
+  "selector": {
+    "calculation_mode": {
+      "options": {
+        "science": "Vědecká",
+        "xiaomi": "Xiaomi (Legacy 2017)"
       }
     }
   },

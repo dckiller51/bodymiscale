@@ -37,17 +37,27 @@ def get_bmr(
     height = to_float(config.get(CONF_HEIGHT))
     gender = config.get(CONF_GENDER)
 
+    mode = config.get("calculation_mode", "xiaomi")
+
     if weight is None or age is None or height is None or gender is None:
         return 0.0
 
-    if gender == Gender.FEMALE:
-        bmr = 864.6 + weight * 10.2036
-        bmr -= height * 0.39336
-        bmr -= age * 6.204
+    if mode == "science":
+        # --- SCIENTIFIC FORMULA (Mifflin-St Jeor) ---
+        if gender == Gender.MALE:
+            bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5
+        else:
+            bmr = (10 * weight) + (6.25 * height) - (5 * age) - 161
     else:
-        bmr = 877.8 + weight * 14.916
-        bmr -= height * 0.726
-        bmr -= age * 8.976
+        # --- XIAOMI MODE (Legacy) ---
+        if gender == Gender.FEMALE:
+            bmr = 864.6 + weight * 10.2036
+            bmr -= height * 0.39336
+            bmr -= age * 6.204
+        else:
+            bmr = 877.8 + weight * 14.916
+            bmr -= height * 0.726
+            bmr -= age * 8.976
 
     bmr = min(bmr, 5000)
     return check_value_constraints(bmr, 500, 5000)

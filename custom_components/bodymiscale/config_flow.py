@@ -18,7 +18,9 @@ from homeassistant.core import callback
 from homeassistant.helpers import selector
 
 from .const import (
+    CALCULATION_MODE_OPTIONS,
     CONF_BIRTHDAY,
+    CONF_CALCULATION_MODE,
     CONF_GENDER,
     CONF_HEIGHT,
     CONF_SENSOR_IMPEDANCE,
@@ -51,6 +53,16 @@ def _get_options_schema(
                     min=CONSTRAINT_HEIGHT_MIN,
                     max=CONSTRAINT_HEIGHT_MAX,
                     unit_of_measurement="cm",
+                )
+            ),
+            vol.Required(
+                CONF_CALCULATION_MODE,
+                default=defaults.get(CONF_CALCULATION_MODE, "xiaomi"),
+            ): selector.SelectSelector(
+                selector.SelectSelectorConfig(
+                    options=CALCULATION_MODE_OPTIONS,
+                    mode=selector.SelectSelectorMode.DROPDOWN,
+                    translation_key="calculation_mode",
                 )
             ),
             vol.Required(
