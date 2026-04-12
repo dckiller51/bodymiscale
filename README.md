@@ -12,7 +12,7 @@ With this Home Assistant integration, track your body composition closely using 
 
 ## How it works
 
-Bodymiscale retrieves data from your existing weight sensor (and optionally, your impedance sensor) in Home Assistant. It then calculates various body composition metrics using standard formulas. These calculations are performed locally within Home Assistant.
+Bodymiscale retrieves data from your existing weight sensor (and optionally, your impedance sensor) in Home Assistant. It then calculates various body composition metrics using Xiaomi (Legacy 2017) formulas. These calculations are performed locally within Home Assistant.
 
 Here's a breakdown of the process:
 
@@ -23,7 +23,10 @@ Here's a breakdown of the process:
 
 2. **Optional Impedance Data:** If you have configured an impedance sensor, Bodymiscale will also use this data to calculate more advanced metrics.
 
-3. **Calculations:** Bodymiscale uses standard, scientifically recognized formulas to derive various metrics like BMI, basal metabolism, body fat percentage, and others.
+3. **Calculations:** Bodymiscale uses Xiaomi (Legacy 2017) formulas to derive metrics.
+
+   - **Legacy Mode:** Uses the original 2017 formulas (ideal for historical consistency).
+   - **Scientific Mode:** A new, more precise calculation mode for BMR and Body Composition, specifically tuned for active profiles. This can be toggled in the integration configuration.
 
 4. **Output:** The calculated metrics are then made available as new `sensor` entities within Home Assistant. You can then use these sensors in your Lovelace dashboards, automations, or any other Home Assistant feature.
 
@@ -61,6 +64,9 @@ If you plan to use an impedance sensor for more advanced metrics (lean body mass
 
 If you plan to integrate your own last weigh-in sensor, make sure a dedicated sensor is properly configured in Home Assistant. The same recommendation applies: each user should have their own last weigh-in sensor for optimal results.
 
+**(Optional) Last measurement time sensor:**
+Previously mandatory for accurate history, this is now optional. Bodymiscale now automatically generates a timestamp based on Home Assistant's internal clock whenever a weight change is detected. If you provide a dedicated sensor, Bodymiscale will prioritize that "real" measurement time over the system time.
+
 ## Generated data
 
 Bodymiscale calculates the following data:
@@ -83,6 +89,43 @@ Bodymiscale calculates the following data:
 | Ideal Fat Mass   | Recommended body fat range                                            | Yes                       |
 | Protein          | Percentage of protein in the body                                     | Yes                       |
 | Body Type        | Body type classification                                              | Yes                       |
+
+## Calculation Methods
+
+Bodymiscale allows you to choose between two calculation algorithms. The formulas used depend on whether you have configured an impedance sensor.
+
+### 1. Xiaomi (Legacy 2017)
+
+The original algorithm based on the 2017 Mi Fit ecosystem.
+
+- **Without Impedance:** Provides basic metrics (BMI, BMR, Ideal Weight) using historical Xiaomi constants.
+- **With Impedance:** Calculates full body composition (Fat, Muscle, Water, etc.) based on the original reverse-engineered regression formulas.
+- **Best for:** Maintaining consistency with older Mi Scale data.
+
+### 2. Scientific (New in v2026.4.0)
+
+Modern physiological equations for higher precision.
+
+#### A. Without Impedance (Weight only)
+
+If you don't have an impedance sensor, Bodymiscale uses anthropometric equations:
+
+- **BMR (Basal Metabolic Rate):** Uses the **Mifflin-St Jeor Equation**.
+  - **Male:** $10 \times \text{weight (kg)} + 6.25 \times \text{height (cm)} - 5 \times \text{age} + 5$
+  - **Female:** $10 \times \text{weight (kg)} + 6.25 \times \text{height (cm)} - 5 \times \text{age} - 161$
+- **BMI & Ideal Weight:** Calculated using the **Devine Formula**, adjusted for modern height/weight ratios.
+
+#### B. With Impedance (Full Analysis)
+
+When an impedance sensor is present, the Scientific mode switches to bioelectrical impedance analysis (BIA) models:
+
+- **Lean Body Mass (LBM):** Calculates the weight of non-fat tissue using height and resistance (impedance).
+- **Body Fat & Muscle Mass:** Uses updated constants that better account for age-related muscle density changes, reducing the "over-estimation" of fat in active or athletic profiles.
+- **Water & Protein:** Derived from the LBM using standardized hydration and nitrogen-retention constants.
+
+---
+
+**Note:** The results of these two modes will differ. **Scientific** mode is recommended for users looking for clinical-grade estimations, while **Xiaomi Legacy** is best for those tracking progress against years of historical scale data.
 
 ## Installation
 
@@ -107,6 +150,7 @@ Bodymiscale calculates the following data:
 3. **Personalize your integration:**
    - **First Name (or other identifier):** Enter your first name or another identifier. **Important:** This identifier will determine the name of your Bodymiscale component in Home Assistant, as well as the names of all sensors created by it. Choose a clear and relevant name.
    - **Date of Birth:** Enter your date of birth in YYYY-MM-DD format.
+   - **Calculation Mode:** Choose between **Xiaomi (Legacy 2017)** or **Scientific**. The Scientific mode (added in v2026.4.0) provides a more granular approach to body composition for specific profiles.
    - **Gender:** Select your gender (Male/Female).
 4. **Select your weight sensor:** Choose the existing weight sensor in Home Assistant (e.g., a `sensor`, or an `input_number`).
    - **Important Recommendation:** It is **strongly recommended** that each Bodymiscale user has their own dedicated weight sensor. Using a shared weight sensor (e.g., one directly linked to a scale) can cause issues when Home Assistant restarts. This is because Bodymiscale retrieves the sensor's value upon initialization, which can skew calculations if multiple users weigh themselves successively on the same scale before the restart.
@@ -129,7 +173,7 @@ Bodymiscale calculates the following data:
 ## FAQ
 
 - **Why are some values missing?** You must have an impedance sensor configured for Bodymiscale to calculate lean body mass, body fat mass, etc.
-- **How accurate is the data?** Bodymiscale uses standard formulas, but the accuracy of measurements depends on your scale and its configuration.
+- **How accurate is the data?** Bodymiscale uses Xiaomi (Legacy 2017) formulas, but the accuracy of measurements depends on your scale and its configuration.
 
 ## Helps create weight, impedance and/or last weighing data persistently
 

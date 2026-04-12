@@ -9,6 +9,7 @@
     "step": {
       "options": {
         "data": {
+          "calculation_mode": "Método de cálculo",
           "height": "Altura",
           "impedance": "Sensor de immpedancia",
           "last_measurement_time": "Sensor de la última hora de pesaje",
@@ -131,6 +132,7 @@
     "step": {
       "init": {
         "data": {
+          "calculation_mode": "Método de cálculo",
           "height": "Altura",
           "impedance": "Sensor de immpedancia",
           "last_measurement_time": "Sensor de la última hora de pesaje",
@@ -140,6 +142,14 @@
           "impedance": "Si su báscula no proporciona la impedancia, deje este campo vacío.",
           "last_measurement_time": "Deje este campo en blanco si no tiene un sensor para la última hora de pesaje."
         }
+      }
+    }
+  },
+  "selector": {
+    "calculation_mode": {
+      "options": {
+        "science": "Científico",
+        "xiaomi": "Xiaomi (Legacy 2017)"
       }
     }
   },

@@ -9,6 +9,7 @@
     "step": {
       "options": {
         "data": {
+          "calculation_mode": "Méthode de calcul",
           "height": "Taille",
           "impedance": "Capteur d'impédance",
           "last_measurement_time": "Capteur de la dernière pesée",
@@ -131,6 +132,7 @@
     "step": {
       "init": {
         "data": {
+          "calculation_mode": "Méthode de calcul",
           "height": "Taille",
           "impedance": "Capteur d'impédance",
           "last_measurement_time": "Capteur de la dernière pesée",
@@ -140,6 +142,14 @@
           "impedance": "Si votre balance ne fournit pas l'impédance, laissez ce champ vide.",
           "last_measurement_time": "Si vous n'avez pas de capteur pour la dernière heure de pesée, laissez ce champ vide."
         }
+      }
+    }
+  },
+  "selector": {
+    "calculation_mode": {
+      "options": {
+        "science": "Scientifique",
+        "xiaomi": "Xiaomi (Legacy 2017)"
       }
     }
   },

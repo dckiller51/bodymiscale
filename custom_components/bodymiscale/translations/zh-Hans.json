@@ -9,6 +9,7 @@
     "step": {
       "options": {
         "data": {
+          "calculation_mode": "计算方法",
           "height": "身高",
           "impedance": "阻抗传感器",
           "last_measurement_time": "上次称重时间传感器",
@@ -131,6 +132,7 @@
     "step": {
       "init": {
         "data": {
+          "calculation_mode": "计算方法",
           "height": "身高",
           "impedance": "阻抗传感器",
           "last_measurement_time": "上次称重时间传感器",
@@ -140,6 +142,14 @@
           "impedance": "如果您的体秤不提供阻抗值，请将此字段留空。",
           "last_measurement_time": "如果您没有上次称重时间传感器，请将此字段留空。"
         }
+      }
+    }
+  },
+  "selector": {
+    "calculation_mode": {
+      "options": {
+        "science": "科学",
+        "xiaomi": "小米（Legacy 2017）"
       }
     }
   },

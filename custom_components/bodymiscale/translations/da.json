@@ -9,6 +9,7 @@
     "step": {
       "options": {
         "data": {
+          "calculation_mode": "Beregningsmetode",
           "height": "Højde",
           "impedance": "Impedanssensor",
           "last_measurement_time": "Tidssensor for sidste måling",
@@ -131,6 +132,7 @@
     "step": {
       "init": {
         "data": {
+          "calculation_mode": "Beregningsmetode",
           "height": "Højde",
           "impedance": "Impedansesensor",
           "last_measurement_time": "Tidssensor for sidste måling",
@@ -140,6 +142,14 @@
           "impedance": "Hvis din vægt ikke har impedans sensor, udfyld ikke dette felt.",
           "last_measurement_time": "udfyld ikke dette felt hvid der ikke er en tidssensor for sidste måling."
         }
+      }
+    }
+  },
+  "selector": {
+    "calculation_mode": {
+      "options": {
+        "science": "Videnskabelig",
+        "xiaomi": "Xiaomi (Legacy 2017)"
       }
     }
   },

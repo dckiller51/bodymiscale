@@ -9,6 +9,7 @@
     "step": {
       "options": {
         "data": {
+          "calculation_mode": "Метод расчета",
           "height": "Рост",
           "impedance": "Датчик сопротивления",
           "last_measurement_time": "Датчик последнего времени взвешивания",
@@ -131,6 +132,7 @@
     "step": {
       "init": {
         "data": {
+          "calculation_mode": "Метод расчета",
           "height": "Рост",
           "impedance": "Датчик сопротивления",
           "last_measurement_time": "Датчик последнего времени взвешивания",
@@ -140,6 +142,14 @@
           "impedance": "Если Ваши весы не измеряют сопротивление, оставьте это поле пустым.",
           "last_measurement_time": "Если у вас нет датчика последнего времени взвешивания, оставьте это поле пустым."
         }
+      }
+    }
+  },
+  "selector": {
+    "calculation_mode": {
+      "options": {
+        "science": "Научный",
+        "xiaomi": "Xiaomi (Legacy 2017)"
       }
     }
   },

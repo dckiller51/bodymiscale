@@ -9,6 +9,7 @@
     "step": {
       "options": {
         "data": {
+          "calculation_mode": "Metodo di calcolo",
           "height": "Altezza",
           "impedance": "Sensore impedenza",
           "last_measurement_time": "Sensore dell'ultima ora di pesatura",
@@ -131,6 +132,7 @@
     "step": {
       "init": {
         "data": {
+          "calculation_mode": "Metodo di calcolo",
           "height": "Altezza",
           "impedance": "Sensore impedenza",
           "last_measurement_time": "Sensore dell'ultima ora di pesatura",
@@ -140,6 +142,14 @@
           "impedance": "Se la tua bilancia non fornisce il valore di impedenza lascia questo campo vuoto.",
           "last_measurement_time": "Se non hai un sensore per l'ultima ora di pesatura, lascia questo campo vuoto."
         }
+      }
+    }
+  },
+  "selector": {
+    "calculation_mode": {
+      "options": {
+        "science": "Scientifico",
+        "xiaomi": "Xiaomi (Legacy 2017)"
       }
     }
   },

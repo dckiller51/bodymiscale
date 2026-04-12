@@ -10,6 +10,7 @@ VERSION = "2026.1.0"
 ISSUE_URL = "https://github.com/dckiller51/bodymiscale/issues"
 
 CONF_BIRTHDAY = "birthday"
+CONF_CALCULATION_MODE = "calculation_mode"
 CONF_GENDER = "gender"
 CONF_HEIGHT = "height"
 CONF_SENSOR_IMPEDANCE = "impedance"
@@ -61,6 +62,8 @@ MIN = "min"
 MAX = "max"
 COMPONENT = "component"
 HANDLERS = "handlers"
+
+CALCULATION_MODE_OPTIONS = ["xiaomi", "science"]
 
 PLATFORMS: set[Platform] = {Platform.SENSOR}
 UPDATE_DELAY = 2.0

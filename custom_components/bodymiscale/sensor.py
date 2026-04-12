@@ -106,20 +106,16 @@ async def async_setup_entry(
             Metric.WEIGHT,
             lambda _, config: {ATTR_IDEAL: get_ideal_weight(config)},
         ),
+        BodyScaleSensor(
+            handler,
+            SensorEntityDescription(
+                key=CONF_SENSOR_LAST_MEASUREMENT_TIME,
+                translation_key="last_measurement_time",
+                device_class=SensorDeviceClass.TIMESTAMP,
+            ),
+            Metric.LAST_MEASUREMENT_TIME,
+        ),
     ]
-
-    if CONF_SENSOR_LAST_MEASUREMENT_TIME in handler.config:
-        new_sensors.append(
-            BodyScaleSensor(
-                handler,
-                SensorEntityDescription(
-                    key=CONF_SENSOR_LAST_MEASUREMENT_TIME,
-                    translation_key="last_measurement_time",
-                    device_class=SensorDeviceClass.TIMESTAMP,
-                ),
-                Metric.LAST_MEASUREMENT_TIME,
-            )
-        )
 
     if CONF_SENSOR_IMPEDANCE in handler.config:
         new_sensors.extend(
@@ -236,24 +232,21 @@ class BodyScaleSensor(BodyScaleBaseEntity, SensorEntity):
         """Set up the event listeners now that hass is ready."""
         await super().async_added_to_hass()
 
-        # Update the signature of on_value to accept a Union type
         def on_value(value: StateType | datetime) -> None:
-            # Convert string to datetime object for timestamp sensors
-            if self.device_class == SensorDeviceClass.TIMESTAMP and isinstance(
-                value, str
-            ):
-                try:
-                    self._attr_native_value = datetime.fromisoformat(value)
-                except ValueError as e:
-                    _LOGGER.error(
-                        "Error converting date string to datetime object: %s", e
-                    )
-                    self._attr_native_value = None
+            if self.entity_description.key == CONF_SENSOR_LAST_MEASUREMENT_TIME:
+                if isinstance(value, datetime):
+                    self._attr_native_value = value
+                elif isinstance(value, str):
+                    try:
+                        self._attr_native_value = datetime.fromisoformat(value)
+                    except ValueError:
+                        self._attr_native_value = None
+                else:
+                    self._attr_native_value = value
             else:
                 self._attr_native_value = value
 
             if self._get_attributes:
-                # Update the attribute getter call to match its new signature
                 attributes = self._get_attributes(
                     self._attr_native_value, dict(self._handler.config)
                 )

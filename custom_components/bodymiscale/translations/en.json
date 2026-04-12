@@ -9,6 +9,7 @@
     "step": {
       "options": {
         "data": {
+          "calculation_mode": "Calculation method",
           "height": "Height",
           "impedance": "Impedance sensor",
           "last_measurement_time": "Last measurement time sensor",
@@ -131,6 +132,7 @@
     "step": {
       "init": {
         "data": {
+          "calculation_mode": "Calculation method",
           "height": "Height",
           "impedance": "Impedance sensor",
           "last_measurement_time": "Last measurement time sensor",
@@ -140,6 +142,14 @@
           "impedance": "If your scale does not provide the impedance, leave this field empty.",
           "last_measurement_time": "If you do not have a last weigh time sensor, leave this field blank."
         }
+      }
+    }
+  },
+  "selector": {
+    "calculation_mode": {
+      "options": {
+        "science": "Scientific",
+        "xiaomi": "Xiaomi (Legacy 2017)"
       }
     }
   },
