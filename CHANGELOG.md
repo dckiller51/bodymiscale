@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## 2026.4.1
+
+- **Fixed:** Fixed floating-point discrepancies in sensor history by implementing consistent rounding logic (Fixes [#341](https://github.com/dckiller51/bodymiscale/issues/341)).
+
 ## 2026.4.0
 
 - **Added:** New "Scientific" calculation mode for BMR and Body Composition, selectable in the integration configuration (Fixes [#337](https://github.com/dckiller51/bodymiscale/issues/337)).
