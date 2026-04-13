@@ -133,8 +133,9 @@ _METRIC_DEPS: dict[Metric, MetricInfo] = {
 def _modify_state_for_subscriber(
     metric_info: MetricInfo, state: StateType | datetime
 ) -> StateType | datetime:
-    if isinstance(state, float) and metric_info.decimals is not None:
-        state = round(state, metric_info.decimals)
+    """Round the state according to metric_info before sending to sensors."""
+    if isinstance(state, (int, float)) and metric_info.decimals is not None:
+        return round(float(state), metric_info.decimals)
 
     return state
 
