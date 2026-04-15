@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## 2026.4.2
+
+- **Improved:** Enhanced measurement processing to ensure calculations (BMI, body fat, etc.) are triggered even when weight or impedance values remain identical to the previous reading. (Fixes [#346](https://github.com/dckiller51/bodymiscale/issues/346)).
+
 ## 2026.4.1
 
 - **Fixed:** Fixed floating-point discrepancies in sensor history by implementing consistent rounding logic (Fixes [#341](https://github.com/dckiller51/bodymiscale/issues/341)).

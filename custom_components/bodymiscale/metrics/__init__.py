@@ -282,21 +282,18 @@ class BodyScaleMetricsHandler:
         if state.attributes.get(ATTR_UNIT_OF_MEASUREMENT) == UNIT_POUNDS:
             value_float *= 0.45359237
 
-        updated = self._update_available_metric(Metric.WEIGHT, value_float)
-        if updated:
-            self._remove_sensor_problem(CONF_SENSOR_WEIGHT)
+        self._update_available_metric(Metric.WEIGHT, value_float)
 
-            if (
-                CONF_SENSOR_LAST_MEASUREMENT_TIME not in self._config
-                or self._available_metrics.get(Metric.LAST_MEASUREMENT_TIME) is None
-            ):
+        self._remove_sensor_problem(CONF_SENSOR_WEIGHT)
 
-                last_changed_dt = state.last_changed
-                self._update_available_metric(
-                    Metric.LAST_MEASUREMENT_TIME, last_changed_dt
-                )
+        if (
+            CONF_SENSOR_LAST_MEASUREMENT_TIME not in self._config
+            or self._available_metrics.get(Metric.LAST_MEASUREMENT_TIME) is None
+        ):
+            last_changed_dt = state.last_changed
+            self._update_available_metric(Metric.LAST_MEASUREMENT_TIME, last_changed_dt)
 
-        return updated, None
+        return True, None
 
     def _process_impedance(self, state: State) -> tuple[bool, str | None]:
         value = state.state
@@ -322,20 +319,19 @@ class BodyScaleMetricsHandler:
                 value_float, CONSTRAINT_IMPEDANCE_MIN, CONSTRAINT_IMPEDANCE_MAX
             )
 
-        updated = self._update_available_metric(Metric.IMPEDANCE, value_float)
-        if updated:
-            self._remove_sensor_problem(CONF_SENSOR_IMPEDANCE)
+        self._update_available_metric(Metric.IMPEDANCE, value_float)
 
-            if (
-                CONF_SENSOR_LAST_MEASUREMENT_TIME not in self._config
-                or self._available_metrics.get(Metric.LAST_MEASUREMENT_TIME) is None
-            ):
+        self._remove_sensor_problem(CONF_SENSOR_IMPEDANCE)
 
-                self._update_available_metric(
-                    Metric.LAST_MEASUREMENT_TIME, state.last_changed
-                )
+        if (
+            CONF_SENSOR_LAST_MEASUREMENT_TIME not in self._config
+            or self._available_metrics.get(Metric.LAST_MEASUREMENT_TIME) is None
+        ):
+            self._update_available_metric(
+                Metric.LAST_MEASUREMENT_TIME, state.last_changed
+            )
 
-        return updated, None
+        return True, None
 
     def _process_last_measurement_time(self, state: State) -> str | None:
         """Process last measurement time from the source sensor."""
