@@ -3,12 +3,19 @@
 from collections import namedtuple
 from collections.abc import Mapping
 from datetime import datetime
-from typing import Any, cast
+from typing import Any
 
 from homeassistant.helpers.typing import StateType
 
-from ..const import CONF_GENDER, CONF_HEIGHT, CONF_SCALE
+from ..const import (
+    CONF_GENDER,
+    CONF_HEIGHT,
+    CONF_IMPEDANCE_MODE,
+    CONF_SCALE,
+    IMPEDANCE_MODE_DUAL,
+)
 from ..models import Gender, Metric
+from ..util import check_value_constraints, to_float
 
 
 def _get_malus(
@@ -18,11 +25,11 @@ def _get_malus(
     max_malus: int | float,
     min_malus: int | float,
 ) -> float:
-    """Calculate malus based on data and predefined ranges (original logic)."""
+    """Calculate malus based on data and predefined ranges."""
+    if (min_data - max_data) == 0:
+        return 0.0
     result = ((data - max_data) / (min_data - max_data)) * float(max_malus - min_malus)
-    if result >= 0.0:
-        return result
-    return 0.0
+    return max(0.0, result)
 
 
 def _calculate_bmi_deduct_score(
@@ -35,12 +42,12 @@ def _calculate_bmi_deduct_score(
     bmi_overweight = 28.0
     bmi_obese = 32.0
 
-    if config[CONF_HEIGHT] < 90:
+    if to_float(config.get(CONF_HEIGHT)) < 90:
         return 0.0
 
-    bmi = cast(float, metrics[Metric.BMI])
-    age = cast(int, metrics[Metric.AGE])
-    fat_percentage = cast(float, metrics[Metric.FAT_PERCENTAGE])
+    bmi = to_float(metrics.get(Metric.BMI))
+    age = int(to_float(metrics.get(Metric.AGE)))
+    fat_percentage = to_float(metrics.get(Metric.FAT_PERCENTAGE))
     fat_scale = config[CONF_SCALE].get_fat_percentage(age)
 
     if bmi <= bmi_very_low:
@@ -69,8 +76,8 @@ def _calculate_body_fat_deduct_score(
     config: Mapping[str, Any], metrics: Mapping[Metric, StateType | datetime]
 ) -> float:
     """Calculate body fat deduct score."""
-    fat_percentage = cast(float, metrics[Metric.FAT_PERCENTAGE])
-    age = cast(int, metrics[Metric.AGE])
+    fat_percentage = to_float(metrics.get(Metric.FAT_PERCENTAGE))
+    age = int(to_float(metrics.get(Metric.AGE)))
     gender = config[CONF_GENDER]
     scale = config[CONF_SCALE].get_fat_percentage(age)
 
@@ -94,14 +101,17 @@ def _calculate_body_fat_deduct_score(
 
 
 def _calculate_common_deduct_score(
-    min_value: float, max_value: float, value: float
+    min_value: float, max_value: float, value: float, is_s400: bool = False
 ) -> float:
-    """Calculate common deduct score based on min/max values."""
+    """Calculate common deduct score. Assoupli pour S400."""
     if value >= max_value:
         return 0.0
+
+    penalty_max = 8.0 if is_s400 else 10.0
+
     if value < min_value:
-        return 10.0
-    return _get_malus(value, min_value, max_value, 10, 5) + 5.0
+        return penalty_max
+    return _get_malus(value, min_value, max_value, penalty_max, 5) + 5.0
 
 
 def _calculate_muscle_deduct_score(
@@ -109,16 +119,23 @@ def _calculate_muscle_deduct_score(
 ) -> float:
     """Calculate muscle mass deduct score."""
     scale = config[CONF_SCALE].muscle_mass
-    return _calculate_common_deduct_score(scale[0] - 5.0, scale[0], muscle_mass)
+    is_s400 = config.get(CONF_IMPEDANCE_MODE) == IMPEDANCE_MODE_DUAL
+    return _calculate_common_deduct_score(
+        scale[0] - 5.0, scale[0], muscle_mass, is_s400
+    )
 
 
 def _calculate_water_deduct_score(
     config: Mapping[str, Any], water_percentage: float
 ) -> float:
     """Calculate water percentage deduct score."""
+    is_s400 = config.get(CONF_IMPEDANCE_MODE) == IMPEDANCE_MODE_DUAL
     water_percentage_normal = 55.0 if config[CONF_GENDER] == Gender.MALE else 45.0
     return _calculate_common_deduct_score(
-        water_percentage_normal - 5.0, water_percentage_normal, water_percentage
+        water_percentage_normal - 5.0,
+        water_percentage_normal,
+        water_percentage,
+        is_s400,
     )
 
 
@@ -141,8 +158,8 @@ def _calculate_bone_deduct_score(
             BoneMassEntry(0, 1.3),
         ]
 
-    weight = cast(float, metrics[Metric.WEIGHT])
-    bone_mass = cast(float, metrics[Metric.BONE_MASS])
+    weight = to_float(metrics.get(Metric.WEIGHT))
+    bone_mass = to_float(metrics.get(Metric.BONE_MASS))
     expected_bone_mass = entries[-1].bone_mass
     for entry in entries:
         if weight >= entry.min_weight:
@@ -171,9 +188,9 @@ def _calculate_basal_metabolism_deduct_score(
 ) -> float:
     """Calculate basal metabolism deduct score."""
     gender = config[CONF_GENDER]
-    age = cast(int, metrics[Metric.AGE])
-    weight = cast(float, metrics[Metric.WEIGHT])
-    bmr = cast(float, metrics[Metric.BMR])
+    age = int(to_float(metrics.get(Metric.AGE)))
+    weight = to_float(metrics.get(Metric.WEIGHT))
+    bmr = to_float(metrics.get(Metric.BMR))
 
     coefficients = {
         Gender.MALE: {30: 21.6, 50: 20.07, 100: 19.35},
@@ -211,21 +228,25 @@ def get_body_score(
 ) -> float:
     """Calculate the body score."""
     score = 100.0
+
     score -= _calculate_bmi_deduct_score(config, metrics)
     score -= _calculate_body_fat_deduct_score(config, metrics)
     score -= _calculate_muscle_deduct_score(
-        config, cast(float, metrics[Metric.MUSCLE_MASS])
+        config, to_float(metrics.get(Metric.MUSCLE_MASS))
     )
     score -= _calculate_water_deduct_score(
-        config, cast(float, metrics[Metric.WATER_PERCENTAGE])
+        config, to_float(metrics.get(Metric.WATER_PERCENTAGE))
     )
     score -= _calculate_body_visceral_deduct_score(
-        cast(float, metrics[Metric.VISCERAL_FAT])
+        to_float(metrics.get(Metric.VISCERAL_FAT))
     )
     score -= _calculate_bone_deduct_score(config, metrics)
     score -= _calculate_basal_metabolism_deduct_score(config, metrics)
     score -= _calculate_protein_deduct_score(
-        cast(float, metrics[Metric.PROTEIN_PERCENTAGE])
+        to_float(metrics.get(Metric.PROTEIN_PERCENTAGE))
     )
 
-    return max(0.0, score)
+    if config.get(CONF_IMPEDANCE_MODE) == IMPEDANCE_MODE_DUAL:
+        score += 2.0
+
+    return check_value_constraints(score, 10, 100)

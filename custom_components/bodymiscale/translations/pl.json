@@ -3,26 +3,41 @@
     "error": {
       "already_configured": "Już skonfigurowane",
       "height_limit": "Podano za wysoki wzrost (limit: 220 cm)",
-      "height_low": "Wzrost uznano za zbyt niski (min : 50 cm)",
+      "height_low": "Wzrost uznano za zbyt niski (min: 50 cm)",
       "invalid_date": "Błędna data"
     },
     "step": {
+      "impedance": {
+        "data": {
+          "impedance": "Sensor impedancji (pojedyncza częstotliwość)",
+          "impedance_high": "Sensor impedancji wysokiej częstotliwości (250 kHz)",
+          "impedance_low": "Sensor impedancji niskiej częstotliwości (50 kHz)"
+        },
+        "data_description": {
+          "impedance": "Pojedyncza wartość impedancji dostarczana przez wagę.",
+          "impedance_high": "Impedancja mierzona przy 250 kHz (S400).",
+          "impedance_low": "Impedancja mierzona przy 50 kHz (S400)."
+        },
+        "title": "Sensory impedancji"
+      },
       "options": {
         "data": {
           "calculation_mode": "Metoda obliczeń",
-          "height": "Wzrost",
-          "impedance": "Sensor impedancji",
-          "last_measurement_time": "Czujnik ostatniej godziny ważenia",
+          "height": "Wzrost (cm)",
+          "impedance_mode": "Tryb impedancji",
+          "last_measurement_time": "Czujnik czasu ostatniego ważenia",
           "weight": "Sensor wagi"
         },
         "data_description": {
-          "impedance": "Jeśli waga nie podaje impedancji, pozostaw to pole puste.",
-          "last_measurement_time": "Jeśli nie masz czujnika ostatniej godziny ważenia, pozostaw to pole puste."
-        }
+          "calculation_mode": "Xiaomi: identyczna z aplikacją Zepp Life. Naukowa: formuły WHO / Mifflin. Nie dotyczy trybu dwuczęstotliwościowego S400.",
+          "impedance_mode": "Brak: waga bez impedancji. Standard: jedna częstotliwość (Xiaomi Gen2). Dual-frequency S400: sensory 50 kHz + 250 kHz.",
+          "last_measurement_time": "Opcjonalnie. Pozostaw puste, jeśli nie masz tego czujnika."
+        },
+        "title": "Konfiguracja"
       },
       "user": {
         "data": {
-          "birthday": "Urodziny",
+          "birthday": "Data urodzenia",
           "gender": "Płeć",
           "name": "Imię"
         }
@@ -33,16 +48,16 @@
     "sensor": {
       "basal_metabolism": { "name": "Podstawowa przemiana materii" },
       "bmi": { "name": "BMI" },
-      "body_fat": { "name": "Tkanina tłuszczowa" },
-      "body_score": { "name": "Wynik ciała" },
+      "body_fat": { "name": "Tkanka tłuszczowa" },
+      "body_score": { "name": "Ocena sylwetki" },
       "bone_mass": { "name": "Masa kości" },
-      "last_measurement_time": { "name": "Ostatnia godzina ważenia" },
+      "last_measurement_time": { "name": "Czas ostatniego ważenia" },
       "lean_body_mass": { "name": "Beztłuszczowa masa ciała" },
       "metabolic_age": { "name": "Wiek metaboliczny" },
       "muscle_mass": { "name": "Masa mięśniowa" },
       "protein": { "name": "Białko" },
       "visceral_fat": { "name": "Tłuszcz trzewny" },
-      "water": { "name": "Woda" },
+      "water": { "name": "Woda w organizmie" },
       "weight": { "name": "Waga" }
     }
   },
@@ -51,74 +66,78 @@
       "name": "bodymiscale",
       "state": {
         "ok": "OK",
-        "problem": "Błąd"
+        "problem": "Problem"
       },
       "state_attributes": {
         "age": { "name": "Wiek" },
         "basal_metabolism": { "name": "Podstawowa przemiana materii" },
         "bmi": { "name": "BMI" },
         "bmi_label": {
-          "name": "Etykieta BMI",
+          "name": "Klasyfikacja BMI",
           "state": {
-            "massive_obesity": "Ogromna otyłość",
-            "moderate_obesity": "Umiarkowana otyłość",
-            "normal_or_healthy_weight": "Normalna lub zdrowa waga",
+            "massive_obesity": "Otyłość kliniczna",
+            "moderate_obesity": "Otyłość umiarkowana",
+            "normal_or_healthy_weight": "Waga prawidłowa",
             "overweight": "Nadwaga",
-            "severe_obesity": "Ciężka otyłość",
-            "slight_overweight": "Niewielka nadwaga",
-            "unavailable": "niedostępny",
+            "severe_obesity": "Otyłość znaczna",
+            "slight_overweight": "Lekka nadwaga",
+            "unavailable": "niedostępne",
             "underweight": "Niedowaga"
           }
         },
-        "body_fat": { "name": "Tkanina tłuszczowa" },
-        "body_score": { "name": "Wynik ciała" },
+        "body_fat": { "name": "Tkanka tłuszczowa" },
+        "body_score": { "name": "Ocena sylwetki" },
         "body_type": {
           "name": "Typ sylwetki",
           "state": {
             "balanced": "Zrównoważona",
             "balanced_muscular": "Zrównoważona muskularna",
-            "balanced_skinny": "Zrównoważona chuda",
-            "lack_exercise": "Brak ćwiczeń",
+            "balanced_skinny": "Zrównoważona szczupła",
+            "lack_exercise": "Brak ruchu",
             "obese": "Otyła",
             "overweight": "Nadwaga",
-            "skinny": "Chuda",
-            "skinny_muscular": "Chuda muskularna",
+            "skinny": "Szczupła",
+            "skinny_muscular": "Szczupła muskularna",
             "thick_set": "Krępa",
-            "unavailable": "niedostępny"
+            "unavailable": "niedostępne"
           }
         },
         "bone_mass": { "name": "Masa kości" },
-        "fat_mass_to_gain": { "name": "Masa tłuszczowa do zdobycia" },
-        "fat_mass_to_lose": { "name": "Masa tłuszczowa do stracenia" },
+        "fat_mass_to_gain": { "name": "Masa tłuszczowa do przybrania" },
+        "fat_mass_to_lose": { "name": "Masa tłuszczowa do utraty" },
         "gender": {
           "name": "Płeć",
           "state": {
-            "female": "żeńska",
-            "male": "męska"
+            "female": "kobieta",
+            "male": "mężczyzna"
           }
         },
         "height": { "name": "Wzrost" },
-        "ideal": { "name": "Waga idealna" },
+        "ideal": { "name": "Idealna waga" },
         "impedance": { "name": "Impedancja" },
-        "last_measurement_time": { "name": "Ostatnia godzina ważenia" },
+        "impedance_high": { "name": "Impedancja (250 kHz)" },
+        "impedance_low": { "name": "Impedancja (50 kHz)" },
+        "last_measurement_time": { "name": "Czas ostatniego ważenia" },
         "lean_body_mass": { "name": "Beztłuszczowa masa ciała" },
         "metabolic_age": { "name": "Wiek metaboliczny" },
         "muscle_mass": { "name": "Masa mięśniowa" },
         "problem": {
-          "name": "Błąd",
+          "name": "Problem",
           "state": {
-            "impedance_high": "Impedancja wysoka",
-            "impedance_low": "Niska impedancja",
+            "impedance_high": "Impedancja za wysoka",
+            "impedance_high_high": "Impedancja 250 kHz za wysoka",
+            "impedance_high_low": "Impedancja 250 kHz za niska",
+            "impedance_high_unavailable": "Impedancja 250 kHz niedostępna",
+            "impedance_low": "Impedancja za niska",
+            "impedance_low_high": "Impedancja 50 kHz za wysoka",
+            "impedance_low_low": "Impedancja 50 kHz za niska",
+            "impedance_low_unavailable": "Impedancja 50 kHz niedostępna",
             "impedance_unavailable": "Impedancja niedostępna",
             "none": "Brak",
-            "weight_high": "Waga wysoka",
-            "weight_high_and_impedance_high": "Waga i impedancja wysoka",
-            "weight_high_and_impedance_low": "Waga wysoka a impedancja niska",
-            "weight_low": "Niska waga",
-            "weight_low_and_impedance_high": "Waga nizska a impedancja wysoka",
-            "weight_low_and_impedance_low": "Waga i impedancja niskie",
-            "weight_unavailable": "Waga niedostępna",
-            "weight_unavailable_and_impedance_unavailable": "Waga i impedancja niedostępne"
+            "weight_high": "Waga za wysoka",
+            "weight_invalid_format": "Nieprawidłowy format wagi",
+            "weight_low": "Waga za niska",
+            "weight_unavailable": "Waga niedostępna"
           }
         },
         "protein": { "name": "Białko" },
@@ -130,26 +149,48 @@
   },
   "options": {
     "step": {
+      "impedance": {
+        "data": {
+          "impedance": "Sensor impedancji (pojedyncza częstotliwość)",
+          "impedance_high": "Sensor impedancji wysokiej częstotliwości (250 kHz)",
+          "impedance_low": "Sensor impedancji niskiej częstotliwości (50 kHz)"
+        },
+        "data_description": {
+          "impedance": "Pojedyncza wartość impedancji twojej wagi.",
+          "impedance_high": "Impedancja mierzona przy 250 kHz (S400).",
+          "impedance_low": "Impedancja mierzona przy 50 kHz (S400)."
+        },
+        "title": "Sensory impedancji"
+      },
       "init": {
         "data": {
           "calculation_mode": "Metoda obliczeń",
-          "height": "Wzrost",
-          "impedance": "Sensor impedancji",
-          "last_measurement_time": "Czujnik ostatniej godziny ważenia",
+          "height": "Wzrost (cm)",
+          "impedance_mode": "Tryb impedancji",
+          "last_measurement_time": "Czujnik czasu ostatniego ważenia",
           "weight": "Sensor wagi"
         },
         "data_description": {
-          "impedance": "Jeśli waga nie podaje impedancji, pozostaw to pole puste.",
-          "last_measurement_time": "Jeśli nie masz czujnika ostatniej godziny ważenia, pozostaw to pole puste."
-        }
+          "calculation_mode": "Xiaomi: jak w Zepp Life. Naukowa: WHO / Mifflin. Brak wpływu w trybie S400.",
+          "impedance_mode": "Brak: bez impedancji. Standard: jedna częstotliwość (Xiaomi Gen2). Dual-frequency S400: 50 kHz + 250 kHz.",
+          "last_measurement_time": "Opcjonalnie. Pozostaw puste, jeśli czujnik nie istnieje."
+        },
+        "title": "Konfiguracja"
       }
     }
   },
   "selector": {
     "calculation_mode": {
       "options": {
-        "science": "Naukowa",
-        "xiaomi": "Xiaomi (Legacy 2017)"
+        "science": "Naukowa — WHO / Mifflin",
+        "xiaomi": "Xiaomi — Zepp Life (Legacy 2017)"
+      }
+    },
+    "impedance_mode": {
+      "options": {
+        "dual_frequency": "Dual-frequency S400 (50 kHz + 250 kHz)",
+        "none": "Brak impedancji",
+        "standard": "Pojedyncza częstotliwość (Xiaomi Gen2, Mi Body Scale 2…)"
       }
     }
   },

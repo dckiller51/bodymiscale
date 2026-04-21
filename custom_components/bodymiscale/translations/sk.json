@@ -7,22 +7,37 @@
       "invalid_date": "Neplatný dátum"
     },
     "step": {
+      "impedance": {
+        "data": {
+          "impedance": "Senzor impedancie (jednofrekvenčný)",
+          "impedance_high": "Senzor vysokofrekvenčnej impedancie (250 kHz)",
+          "impedance_low": "Senzor nízkofrekvenčnej impedancie (50 kHz)"
+        },
+        "data_description": {
+          "impedance": "Jedna hodnota impedancie poskytovaná vašou váhou.",
+          "impedance_high": "Impedancia meraná pri 250 kHz (S400).",
+          "impedance_low": "Impedancia meraná pri 50 kHz (S400)."
+        },
+        "title": "Senzory impedancie"
+      },
       "options": {
         "data": {
           "calculation_mode": "Metóda výpočtu",
-          "height": "Výška",
-          "impedance": "Senzor impedancie",
-          "last_measurement_time": "Senzor posledného času váženia",
+          "height": "Výška (cm)",
+          "impedance_mode": "Režim impedancie",
+          "last_measurement_time": "Senzor času posledného váženia",
           "weight": "Senzor hmotnosti"
         },
         "data_description": {
-          "impedance": "Ak vaša váha neposkytuje impedanciu, nechajte toto pole prázdne.",
-          "last_measurement_time": "Ak nemáte senzor posledného času váženia, nechajte toto pole prázdne."
-        }
+          "calculation_mode": "Xiaomi: identické s aplikáciou Zepp Life. Vedecká: vzorce WHO / Mifflin. Neovplyvňuje režim S400.",
+          "impedance_mode": "Žiadny: váha bez impedancie. Štandard: jedna frekvencia (Xiaomi Gen2). Dual-frequency S400: senzory 50 kHz + 250 kHz.",
+          "last_measurement_time": "Voliteľné. Nechajte prázdne, ak tento senzor nemáte."
+        },
+        "title": "Konfigurácia"
       },
       "user": {
         "data": {
-          "birthday": "Narodeniny",
+          "birthday": "Dátum narodenia",
           "gender": "Pohlavie",
           "name": "Meno"
         }
@@ -36,13 +51,13 @@
       "body_fat": { "name": "Telesný tuk" },
       "body_score": { "name": "Skóre tela" },
       "bone_mass": { "name": "Kostná hmota" },
-      "last_measurement_time": { "name": "Posledný čas váženia" },
+      "last_measurement_time": { "name": "Čas posledného váženia" },
       "lean_body_mass": { "name": "Čistá telesná hmota" },
       "metabolic_age": { "name": "Metabolický vek" },
       "muscle_mass": { "name": "Svalová hmota" },
-      "protein": { "name": "Proteín" },
+      "protein": { "name": "Bielkoviny" },
       "visceral_fat": { "name": "Viscerálny tuk" },
-      "water": { "name": "Voda" },
+      "water": { "name": "Voda v tele" },
       "weight": { "name": "Hmotnosť" }
     }
   },
@@ -50,7 +65,7 @@
     "_": {
       "name": "bodymiscale",
       "state": {
-        "ok": "OK",
+        "ok": "V poriadku",
         "problem": "Problém"
       },
       "state_attributes": {
@@ -58,33 +73,33 @@
         "basal_metabolism": { "name": "Bazálny metabolizmus" },
         "bmi": { "name": "BMI" },
         "bmi_label": {
-          "name": "BMI označenie",
+          "name": "Klasifikácia BMI",
           "state": {
             "massive_obesity": "Masívna obezita",
             "moderate_obesity": "Mierna obezita",
-            "normal_or_healthy_weight": "Normálna alebo zdravá hmotnosť",
+            "normal_or_healthy_weight": "Normálna hmotnosť",
             "overweight": "Nadváha",
             "severe_obesity": "Závažná obezita",
             "slight_overweight": "Mierna nadváha",
-            "unavailable": "Nedostupné",
+            "unavailable": "nedostupné",
             "underweight": "Podváha"
           }
         },
         "body_fat": { "name": "Telesný tuk" },
         "body_score": { "name": "Skóre tela" },
         "body_type": {
-          "name": "Typ tela",
+          "name": "Typ postavy",
           "state": {
-            "balanced": "Vyvážený",
-            "balanced_muscular": "Vyvážený-svalnatý",
-            "balanced_skinny": "Vyvážený-chudý",
-            "lack_exercise": "Nedostatok-pohybu",
+            "balanced": "Vyvážená",
+            "balanced_muscular": "Vyvážená svalnatá",
+            "balanced_skinny": "Vyvážená chudá",
+            "lack_exercise": "Nedostatok pohybu",
             "obese": "Obezita",
             "overweight": "Nadváha",
-            "skinny": "Chudý",
-            "skinny_muscular": "Chudý-svalnatý",
-            "thick_set": "Hrubý",
-            "unavailable": "Nedostupné"
+            "skinny": "Chudá",
+            "skinny_muscular": "Chudá svalnatá",
+            "thick_set": "Robustná",
+            "unavailable": "nedostupné"
           }
         },
         "bone_mass": { "name": "Kostná hmota" },
@@ -98,30 +113,34 @@
           }
         },
         "height": { "name": "Výška" },
-        "ideal": { "name": "Ideál" },
+        "ideal": { "name": "Ideálna hmotnosť" },
         "impedance": { "name": "Impedancia" },
-        "last_measurement_time": { "name": "Posledný čas váženia" },
+        "impedance_high": { "name": "Impedancia (250 kHz)" },
+        "impedance_low": { "name": "Impedancia (50 kHz)" },
+        "last_measurement_time": { "name": "Čas posledného váženia" },
         "lean_body_mass": { "name": "Čistá telesná hmota" },
         "metabolic_age": { "name": "Metabolický vek" },
         "muscle_mass": { "name": "Svalová hmota" },
         "problem": {
           "name": "Problém",
           "state": {
-            "impedance_high": "Vysoká impedancia",
-            "impedance_low": "Nízka impedancia",
+            "impedance_high": "Impedancia príliš vysoká",
+            "impedance_high_high": "Vysokofrekvenčná impedancia príliš vysoká",
+            "impedance_high_low": "Vysokofrekvenčná impedancia príliš nízka",
+            "impedance_high_unavailable": "Vysokofrekvenčná impedancia nedostupná",
+            "impedance_low": "Impedancia príliš nízka",
+            "impedance_low_high": "Nízkofrekvenčná impedancia príliš vysoká",
+            "impedance_low_low": "Nízkofrekvenčná impedancia príliš nízka",
+            "impedance_low_unavailable": "Nízkofrekvenčná impedancia nedostupná",
             "impedance_unavailable": "Impedancia nedostupná",
             "none": "Žiadny",
-            "weight_high": "Vysoká hmotnosť",
-            "weight_high_and_impedance_high": "Vysoká hmotnosť, vysoká impedancia",
-            "weight_high_and_impedance_low": "Vysoká hmotnosť, nízka impedancia",
-            "weight_low": "Nízka hmotnosť",
-            "weight_low_and_impedance_high": "Nízka hmotnosť, vysoká impedancia",
-            "weight_low_and_impedance_low": "Nízka hmotnosť, nízka impedancia",
-            "weight_unavailable": "Hmotnosť nedostupná",
-            "weight_unavailable_and_impedance_unavailable": "Hmotnosť nedostupná, impedancia nedostupná"
+            "weight_high": "Hmotnosť príliš vysoká",
+            "weight_invalid_format": "Neplatný formát hmotnosti",
+            "weight_low": "Hmotnosť príliš nízka",
+            "weight_unavailable": "Hmotnosť nedostupná"
           }
         },
-        "protein": { "name": "Proteín" },
+        "protein": { "name": "Bielkoviny" },
         "visceral_fat": { "name": "Viscerálny tuk" },
         "water": { "name": "Voda" },
         "weight": { "name": "Hmotnosť" }
@@ -130,26 +149,48 @@
   },
   "options": {
     "step": {
+      "impedance": {
+        "data": {
+          "impedance": "Senzor impedancie (jednofrekvenčný)",
+          "impedance_high": "Senzor vysokofrekvenčnej impedancie (250 kHz)",
+          "impedance_low": "Senzor nízkofrekvenčnej impedancie (50 kHz)"
+        },
+        "data_description": {
+          "impedance": "Hodnota impedancie vašej váhy.",
+          "impedance_high": "Impedancia meraná pri 250 kHz (S400).",
+          "impedance_low": "Impedancia meraná pri 50 kHz (S400)."
+        },
+        "title": "Senzory impedancie"
+      },
       "init": {
         "data": {
           "calculation_mode": "Metóda výpočtu",
-          "height": "Výška",
-          "impedance": "Senzor impedancie",
-          "last_measurement_time": "Senzor posledného času váženia",
+          "height": "Výška (cm)",
+          "impedance_mode": "Režim impedancie",
+          "last_measurement_time": "Senzor času posledného váženia",
           "weight": "Senzor hmotnosti"
         },
         "data_description": {
-          "impedance": "Ak vaša váha neposkytuje impedanciu, nechajte toto pole prázdne.",
-          "last_measurement_time": "Ak nemáte senzor posledného času váženia, nechajte toto pole prázdne."
-        }
+          "calculation_mode": "Xiaomi: ako v Zepp Life. Vedecká: WHO / Mifflin. Bez efektu v režime S400.",
+          "impedance_mode": "Žiadny: bez impedancie. Štandard: jedna frekvencia (Xiaomi Gen2). Dual-frequency S400: 50 kHz + 250 kHz.",
+          "last_measurement_time": "Voliteľné. Nechajte prázdne, ak senzor neexistuje."
+        },
+        "title": "Konfigurácia"
       }
     }
   },
   "selector": {
     "calculation_mode": {
       "options": {
-        "science": "Vědecká",
-        "xiaomi": "Xiaomi (Legacy 2017)"
+        "science": "Vedecká — WHO / Mifflin",
+        "xiaomi": "Xiaomi — Zepp Life (Legacy 2017)"
+      }
+    },
+    "impedance_mode": {
+      "options": {
+        "dual_frequency": "Dual-frequency S400 (50 kHz + 250 kHz)",
+        "none": "Bez impedancie",
+        "standard": "Jedna frekvencia (Xiaomi Gen2, Mi Body Scale 2…)"
       }
     }
   },

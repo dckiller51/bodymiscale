@@ -2,23 +2,38 @@
   "config": {
     "error": {
       "already_configured": "Уже настроено",
-      "height_limit": "Рост слишком большой (макс: 220 см)",
-      "height_low": "Рост слишком низкий (мин: 50 см)",
+      "height_limit": "Рост слишком большой (макс. 220 см)",
+      "height_low": "Рост слишком низкий (мин. 50 см)",
       "invalid_date": "Неверная дата"
     },
     "step": {
+      "impedance": {
+        "data": {
+          "impedance": "Датчик биоимпеданса (одночастотный)",
+          "impedance_high": "Датчик высокочастотного импеданса (250 кГц)",
+          "impedance_low": "Датчик низкочастотного импеданса (50 кГц)"
+        },
+        "data_description": {
+          "impedance": "Единичное значение сопротивления, передаваемое весами.",
+          "impedance_high": "Сопротивление, измеренное на частоте 250 кГц (S400).",
+          "impedance_low": "Сопротивление, измеренное на частоте 50 кГц (S400)."
+        },
+        "title": "Датчики биоимпеданса"
+      },
       "options": {
         "data": {
           "calculation_mode": "Метод расчета",
-          "height": "Рост",
-          "impedance": "Датчик сопротивления",
-          "last_measurement_time": "Датчик последнего времени взвешивания",
+          "height": "Рост (см)",
+          "impedance_mode": "Режим биоимпеданса",
+          "last_measurement_time": "Датчик времени последнего взвешивания",
           "weight": "Датчик веса"
         },
         "data_description": {
-          "impedance": "Если Ваши весы не измеряют сопротивление, оставьте это поле пустым.",
-          "last_measurement_time": "Если у вас нет датчика последнего времени взвешивания, оставьте это поле пустым."
-        }
+          "calculation_mode": "Xiaomi: как в приложении Zepp Life. Научный: формулы ВОЗ / Миффлина. Не влияет на расчеты S400.",
+          "impedance_mode": "Нет: весы без анализатора. Стандарт: одна частота (Xiaomi Gen2). Двухчастотный S400: датчики 50 кГц + 250 кГц.",
+          "last_measurement_time": "Опционально. Оставьте пустым, если датчик отсутствует."
+        },
+        "title": "Настройка"
       },
       "user": {
         "data": {
@@ -32,17 +47,17 @@
   "entity": {
     "sensor": {
       "basal_metabolism": { "name": "Базальный метаболизм" },
-      "bmi": { "name": "Индекс BMI" },
-      "body_fat": { "name": "Жировая ткань" },
+      "bmi": { "name": "Индекс массы тела (ИМТ)" },
+      "body_fat": { "name": "Жировая масса" },
       "body_score": { "name": "Оценка тела" },
       "bone_mass": { "name": "Костная масса" },
-      "last_measurement_time": { "name": "Последнее время взвешивания" },
-      "lean_body_mass": { "name": "Сухая масса тела" },
+      "last_measurement_time": { "name": "Время последнего взвешивания" },
+      "lean_body_mass": { "name": "Безжировая масса тела" },
       "metabolic_age": { "name": "Метаболический возраст" },
       "muscle_mass": { "name": "Мышечная масса" },
-      "protein": { "name": "Белки" },
+      "protein": { "name": "Белок" },
       "visceral_fat": { "name": "Висцеральный жир" },
-      "water": { "name": "Вода" },
+      "water": { "name": "Вода в организме" },
       "weight": { "name": "Вес" }
     }
   },
@@ -50,46 +65,46 @@
     "_": {
       "name": "bodymiscale",
       "state": {
-        "ok": "OK",
+        "ok": "ОК",
         "problem": "Проблема"
       },
       "state_attributes": {
         "age": { "name": "Возраст" },
         "basal_metabolism": { "name": "Базальный метаболизм" },
-        "bmi": { "name": "Индекс BMI" },
+        "bmi": { "name": "ИМТ" },
         "bmi_label": {
-          "name": "Интерпретация BMI",
+          "name": "Категория ИМТ",
           "state": {
-            "massive_obesity": "Ожирение 3й степени",
-            "moderate_obesity": "Ожирение 1й степени",
+            "massive_obesity": "Ожирение III степени",
+            "moderate_obesity": "Ожирение I степени",
             "normal_or_healthy_weight": "Нормальный вес",
-            "overweight": "Лишний вес",
-            "severe_obesity": "Ожирение 2й степени",
+            "overweight": "Предожирение",
+            "severe_obesity": "Ожирение II степени",
             "slight_overweight": "Избыточный вес",
-            "unavailable": "недоступен",
-            "underweight": "Недостаточный вес"
+            "unavailable": "недоступно",
+            "underweight": "Дефицит массы тела"
           }
         },
-        "body_fat": { "name": "Жировая ткань" },
+        "body_fat": { "name": "Жировая масса" },
         "body_score": { "name": "Оценка тела" },
         "body_type": {
-          "name": "Тип тела",
+          "name": "Тип телосложения",
           "state": {
-            "balanced": "Оптимальный",
-            "balanced_muscular": "Мускулистый",
-            "balanced_skinny": "Худощавый",
-            "lack_exercise": "Недостаток упражнений",
+            "balanced": "Сбалансированный",
+            "balanced_muscular": "Сбалансированный мускулистый",
+            "balanced_skinny": "Сбалансированный худощавый",
+            "lack_exercise": "Недостаток нагрузки",
             "obese": "Ожирение",
             "overweight": "Лишний вес",
-            "skinny": "Тощий",
-            "skinny_muscular": "Подтянуто-мускулистый",
-            "thick_set": "Коренастый",
-            "unavailable": "недоступен"
+            "skinny": "Худой",
+            "skinny_muscular": "Худой мускулистый",
+            "thick_set": "Крепкое телосложение",
+            "unavailable": "недоступно"
           }
         },
         "bone_mass": { "name": "Костная масса" },
-        "fat_mass_to_gain": { "name": "Набираемая жировая масса" },
-        "fat_mass_to_lose": { "name": "Потеря жировой массы" },
+        "fat_mass_to_gain": { "name": "Жировая масса для набора" },
+        "fat_mass_to_lose": { "name": "Жировая масса для снижения" },
         "gender": {
           "name": "Пол",
           "state": {
@@ -99,29 +114,33 @@
         },
         "height": { "name": "Рост" },
         "ideal": { "name": "Идеальный вес" },
-        "impedance": { "name": "Импеданс" },
-        "last_measurement_time": { "name": "Последнее время взвешивания" },
-        "lean_body_mass": { "name": "Сухая масса тела" },
+        "impedance": { "name": "Биоимпеданс" },
+        "impedance_high": { "name": "Биоимпеданс (250 кГц)" },
+        "impedance_low": { "name": "Биоимпеданс (50 кГц)" },
+        "last_measurement_time": { "name": "Время последнего взвешивания" },
+        "lean_body_mass": { "name": "Безжировая масса тела" },
         "metabolic_age": { "name": "Метаболический возраст" },
         "muscle_mass": { "name": "Мышечная масса" },
         "problem": {
           "name": "Проблема",
           "state": {
-            "impedance_high": "Высокий биоимпеданс",
-            "impedance_low": "Низкий биоимпеданс",
-            "impedance_unavailable": "Биоимпеданс недоступен",
+            "impedance_high": "Слишком высокий импеданс",
+            "impedance_high_high": "Высокочастотный импеданс завышен",
+            "impedance_high_low": "Высокочастотный импеданс занижен",
+            "impedance_high_unavailable": "Высокочастотный импеданс недоступен",
+            "impedance_low": "Слишком низкий импеданс",
+            "impedance_low_high": "Низкочастотный импеданс завышен",
+            "impedance_low_low": "Низкочастотный импеданс занижен",
+            "impedance_low_unavailable": "Низкочастотный импеданс недоступен",
+            "impedance_unavailable": "Данные импеданса недоступны",
             "none": "Нет",
-            "weight_high": "Высокий вес",
-            "weight_high_and_impedance_high": "Высокие вес и биоимпеданс",
-            "weight_high_and_impedance_low": "Высокий вес, низкий биоимпеданс",
-            "weight_low": "Низкий вес",
-            "weight_low_and_impedance_high": "Низкий вес, высокий биоимпеданс",
-            "weight_low_and_impedance_low": "Низкие вес и биоимпеданс",
-            "weight_unavailable": "Вес недоступен",
-            "weight_unavailable_and_impedance_unavailable": "Вес и биоимпеданс недоступны"
+            "weight_high": "Слишком большой вес",
+            "weight_invalid_format": "Неверный формат данных веса",
+            "weight_low": "Слишком малый вес",
+            "weight_unavailable": "Вес недоступен"
           }
         },
-        "protein": { "name": "Белки" },
+        "protein": { "name": "Белок" },
         "visceral_fat": { "name": "Висцеральный жир" },
         "water": { "name": "Вода" },
         "weight": { "name": "Вес" }
@@ -130,26 +149,48 @@
   },
   "options": {
     "step": {
+      "impedance": {
+        "data": {
+          "impedance": "Датчик биоимпеданса (одночастотный)",
+          "impedance_high": "Датчик высокочастотного импеданса (250 кГц)",
+          "impedance_low": "Датчик низкочастотного импеданса (50 кГц)"
+        },
+        "data_description": {
+          "impedance": "Значение биоимпеданса ваших весов.",
+          "impedance_high": "Биоимпеданс на частоте 250 кГц (модель S400).",
+          "impedance_low": "Биоимпеданс на частоте 50 кГц (модель S400)."
+        },
+        "title": "Датчики биоимпеданса"
+      },
       "init": {
         "data": {
           "calculation_mode": "Метод расчета",
-          "height": "Рост",
-          "impedance": "Датчик сопротивления",
-          "last_measurement_time": "Датчик последнего времени взвешивания",
+          "height": "Рост (см)",
+          "impedance_mode": "Режим биоимпеданса",
+          "last_measurement_time": "Датчик времени последнего взвешивания",
           "weight": "Датчик веса"
         },
         "data_description": {
-          "impedance": "Если Ваши весы не измеряют сопротивление, оставьте это поле пустым.",
-          "last_measurement_time": "Если у вас нет датчика последнего времени взвешивания, оставьте это поле пустым."
-        }
+          "calculation_mode": "Xiaomi: идентично Zepp Life. Научный: ВОЗ / Миффлина. Не применимо для режима S400.",
+          "impedance_mode": "Нет: без анализатора. Стандарт: одна частота (Xiaomi Gen2). Двухчастотный S400: 50 кГц + 250 кГц.",
+          "last_measurement_time": "Опционально. Оставьте пустым, если датчик не существует."
+        },
+        "title": "Настройка"
       }
     }
   },
   "selector": {
     "calculation_mode": {
       "options": {
-        "science": "Научный",
-        "xiaomi": "Xiaomi (Legacy 2017)"
+        "science": "Научный — ВОЗ / Миффлина",
+        "xiaomi": "Xiaomi — Zepp Life (Legacy 2017)"
+      }
+    },
+    "impedance_mode": {
+      "options": {
+        "dual_frequency": "Двухчастотный S400 (50 кГц + 250 кГц)",
+        "none": "Без анализатора импеданса",
+        "standard": "Одночастотный (Xiaomi Gen2, Mi Body Scale 2…)"
       }
     }
   },
