@@ -3,22 +3,37 @@
     "error": {
       "already_configured": "Allerede konfigureret",
       "height_limit": "Højde maximum overskredet (grænse: 220 cm)",
-      "height_low": "Højde minimum overskredet (min : 50 cm)",
+      "height_low": "Højde minimum overskredet (min: 50 cm)",
       "invalid_date": "Ugyldig dato"
     },
     "step": {
+      "impedance": {
+        "data": {
+          "impedance": "Impedanssensor (enkelt-frekvens)",
+          "impedance_high": "Højfrekvens impedanssensor (250 kHz)",
+          "impedance_low": "Lavfrekvens impedanssensor (50 kHz)"
+        },
+        "data_description": {
+          "impedance": "Enkelt impedansværdi leveret af din vægt.",
+          "impedance_high": "Impedans målt ved 250 kHz (S400).",
+          "impedance_low": "Impedans målt ved 50 kHz (S400)."
+        },
+        "title": "Impedanssensorer"
+      },
       "options": {
         "data": {
           "calculation_mode": "Beregningsmetode",
-          "height": "Højde",
-          "impedance": "Impedanssensor",
+          "height": "Højde (cm)",
+          "impedance_mode": "Impedanstilstand",
           "last_measurement_time": "Tidssensor for sidste måling",
           "weight": "Vægtsensor"
         },
         "data_description": {
-          "impedance": "Har din vægt ikke impedanssensor, udfyld ikke dette felt.",
-          "last_measurement_time": "udfyld ikke dette felt hvis der ikke er en tidssensor for sidste måling."
-        }
+          "calculation_mode": "Xiaomi: identisk med Zepp Life app. Videnskabelig: WHO / Mifflin formler. Har ingen effekt i S400 dual-frequency tilstand.",
+          "impedance_mode": "Ingen: vægt uden impedans. Standard: enkelt-frekvens (Xiaomi Gen2). Dual-frequency S400: 50 kHz + 250 kHz sensorer.",
+          "last_measurement_time": "Valgfrit. Efterlad tom, hvis du ikke har denne sensor."
+        },
+        "title": "Konfiguration"
       },
       "user": {
         "data": {
@@ -71,7 +86,7 @@
           }
         },
         "body_fat": { "name": "Kropsfedt" },
-        "body_score": { "name": "Kropsvurdering" },
+        "body_score": { "name": "Kropsscore" },
         "body_type": {
           "name": "Kropstype",
           "state": {
@@ -91,15 +106,17 @@
         "fat_mass_to_gain": { "name": "Fedtmasse at tage på" },
         "fat_mass_to_lose": { "name": "Fedtmasse at tabe" },
         "gender": {
-          "name": "Navn",
+          "name": "Køn",
           "state": {
             "female": "kvinde",
             "male": "mand"
           }
         },
         "height": { "name": "Højde" },
-        "ideal": { "name": "Ideel" },
+        "ideal": { "name": "Ideel vægt" },
         "impedance": { "name": "Impedans" },
+        "impedance_high": { "name": "Impedans (250 kHz)" },
+        "impedance_low": { "name": "Impedans (50 kHz)" },
         "last_measurement_time": { "name": "Tidspunkt for sidste måling" },
         "lean_body_mass": { "name": "Mager kropsmasse" },
         "metabolic_age": { "name": "Metabolisk alder" },
@@ -108,17 +125,19 @@
           "name": "Problem",
           "state": {
             "impedance_high": "Høj impedans",
+            "impedance_high_high": "Impedans 250 kHz for høj",
+            "impedance_high_low": "Impedans 250 kHz for lav",
+            "impedance_high_unavailable": "Impedans 250 kHz ikke tilgængelig",
             "impedance_low": "Lav impedans",
+            "impedance_low_high": "Impedans 50 kHz for høj",
+            "impedance_low_low": "Impedans 50 kHz for lav",
+            "impedance_low_unavailable": "Impedans 50 kHz ikke tilgængelig",
             "impedance_unavailable": "Impedans ikke tilgængelig",
             "none": "Ingen",
-            "weight_high": "Høj vægt",
-            "weight_high_and_impedance_high": "Høj vægt, høj impedans",
-            "weight_high_and_impedance_low": "Høj vægt, lav impedans",
-            "weight_low": "Weight low",
-            "weight_low_and_impedance_high": "Lav vægt, høj impedans",
-            "weight_low_and_impedance_low": "Lav vægt, lav impedans",
-            "weight_unavailable": "Vægt ikke tilgængelig",
-            "weight_unavailable_and_impedance_unavailable": "Vægt ikke tilgængelig, impedanse ikke tilgængelig"
+            "weight_high": "Vægt for høj",
+            "weight_invalid_format": "Ugyldigt vægtformat",
+            "weight_low": "Vægt for lav",
+            "weight_unavailable": "Vægt ikke tilgængelig"
           }
         },
         "protein": { "name": "Protein" },
@@ -130,26 +149,48 @@
   },
   "options": {
     "step": {
+      "impedance": {
+        "data": {
+          "impedance": "Impedanssensor (enkelt-frekvens)",
+          "impedance_high": "Højfrekvens impedanssensor (250 kHz)",
+          "impedance_low": "Lavfrekvens impedanssensor (50 kHz)"
+        },
+        "data_description": {
+          "impedance": "Enkelt impedansværdi leveret af din vægt.",
+          "impedance_high": "Impedans målt ved 250 kHz (S400).",
+          "impedance_low": "Impedans målt ved 50 kHz (S400)."
+        },
+        "title": "Impedanssensorer"
+      },
       "init": {
         "data": {
           "calculation_mode": "Beregningsmetode",
-          "height": "Højde",
-          "impedance": "Impedansesensor",
+          "height": "Højde (cm)",
+          "impedance_mode": "Impedanstilstand",
           "last_measurement_time": "Tidssensor for sidste måling",
           "weight": "Vægtsensor"
         },
         "data_description": {
-          "impedance": "Hvis din vægt ikke har impedans sensor, udfyld ikke dette felt.",
-          "last_measurement_time": "udfyld ikke dette felt hvid der ikke er en tidssensor for sidste måling."
-        }
+          "calculation_mode": "Xiaomi: identisk med Zepp Life app. Videnskabelig: WHO / Mifflin formler. Har ingen effekt i S400 dual-frequency tilstand.",
+          "impedance_mode": "Ingen: vægt uden impedans. Standard: enkelt-frekvens (Xiaomi Gen2). Dual-frequency S400: 50 kHz + 250 kHz sensorer.",
+          "last_measurement_time": "Valgfrit. Efterlad tom, hvis du ikke har denne sensor."
+        },
+        "title": "Konfiguration"
       }
     }
   },
   "selector": {
     "calculation_mode": {
       "options": {
-        "science": "Videnskabelig",
-        "xiaomi": "Xiaomi (Legacy 2017)"
+        "science": "Videnskabelig — WHO / Mifflin",
+        "xiaomi": "Xiaomi — Zepp Life (Legacy 2017)"
+      }
+    },
+    "impedance_mode": {
+      "options": {
+        "dual_frequency": "Dual-frequency S400 (50 kHz + 250 kHz)",
+        "none": "Ingen impedans",
+        "standard": "Enkelt-frekvens (Xiaomi Gen2, Mi Body Scale 2…)"
       }
     }
   },

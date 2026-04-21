@@ -2,23 +2,38 @@
   "config": {
     "error": {
       "already_configured": "Deja configurat",
-      "height_limit": "Înalțimea este prea mare (limita: 220 cm)",
-      "height_low": "Înalțimea este prea joasă (min : 50 cm)",
+      "height_limit": "Înălțimea este prea mare (limita: 220 cm)",
+      "height_low": "Înălțimea este prea mică (min: 50 cm)",
       "invalid_date": "Dată invalidă"
     },
     "step": {
+      "impedance": {
+        "data": {
+          "impedance": "Senzor impedanță (frecvență unică)",
+          "impedance_high": "Senzor impedanță înaltă frecvență (250 kHz)",
+          "impedance_low": "Senzor impedanță joasă frecvență (50 kHz)"
+        },
+        "data_description": {
+          "impedance": "Valoarea unică de impedanță furnizată de cântar.",
+          "impedance_high": "Impedanța măsurată la 250 kHz (S400).",
+          "impedance_low": "Impedanța măsurată la 50 kHz (S400)."
+        },
+        "title": "Senzori impedanță"
+      },
       "options": {
         "data": {
           "calculation_mode": "Metodă de calcul",
-          "height": "Înalțime",
-          "impedance": "Senzor impedanță",
-          "last_measurement_time": "Senzor pentru ultima oră de cântărire",
+          "height": "Înălțime (cm)",
+          "impedance_mode": "Mod impedanță",
+          "last_measurement_time": "Senzor ultima oră de cântărire",
           "weight": "Senzor greutate"
         },
         "data_description": {
-          "impedance": "Dacă cântarul dumneavoastra nu furnizează impedanță, lăsați câmpul necompletat.",
-          "last_measurement_time": "Dacă nu aveți un senzor pentru ultima oră de cântărire, lăsați acest câmp gol."
-        }
+          "calculation_mode": "Xiaomi: identic cu aplicația Zepp Life. Științific: formule OMS / Mifflin. Nu are efect în modul S400 cu dublă frecvență.",
+          "impedance_mode": "Niciunul: fără impedanță. Standard: frecvență unică (Xiaomi Gen2). Dual-frequency S400: senzori 50 kHz + 250 kHz.",
+          "last_measurement_time": "Opțional. Lăsați gol dacă nu aveți acest senzor."
+        },
+        "title": "Configurare"
       },
       "user": {
         "data": {
@@ -31,18 +46,18 @@
   },
   "entity": {
     "sensor": {
-      "basal_metabolism": { "name": "Metabolismul bazal" },
+      "basal_metabolism": { "name": "Metabolism bazal" },
       "bmi": { "name": "IMC" },
       "body_fat": { "name": "Grăsime corporală" },
       "body_score": { "name": "Scor corporal" },
       "bone_mass": { "name": "Masă osoasă" },
       "last_measurement_time": { "name": "Ultima oră de cântărire" },
       "lean_body_mass": { "name": "Masă corporală slabă" },
-      "metabolic_age": { "name": "Vârsta metabolică" },
+      "metabolic_age": { "name": "Vârstă metabolică" },
       "muscle_mass": { "name": "Masă musculară" },
-      "protein": { "name": "Proteină" },
-      "visceral_fat": { "name": "Grasime viscerala" },
-      "water": { "name": "Apă" },
+      "protein": { "name": "Proteine" },
+      "visceral_fat": { "name": "Grăsime viscerală" },
+      "water": { "name": "Apă corporală" },
       "weight": { "name": "Greutate" }
     }
   },
@@ -50,19 +65,19 @@
     "_": {
       "name": "bodymiscale",
       "state": {
-        "ok": "Bine",
+        "ok": "OK",
         "problem": "Problemă"
       },
       "state_attributes": {
         "age": { "name": "Vârstă" },
-        "basal_metabolism": { "name": "Metabolismul bazal" },
+        "basal_metabolism": { "name": "Metabolism bazal" },
         "bmi": { "name": "IMC" },
         "bmi_label": {
-          "name": "Eticheta IMC",
+          "name": "Clasificare IMC",
           "state": {
-            "massive_obesity": "Obezitate masivă",
+            "massive_obesity": "Obezitate morbidă",
             "moderate_obesity": "Obezitate moderată",
-            "normal_or_healthy_weight": "Greutate normală sau sănătoasă",
+            "normal_or_healthy_weight": "Greutate normală",
             "overweight": "Supraponderal",
             "severe_obesity": "Obezitate severă",
             "slight_overweight": "Ușor supraponderal",
@@ -73,23 +88,23 @@
         "body_fat": { "name": "Grăsime corporală" },
         "body_score": { "name": "Scor corporal" },
         "body_type": {
-          "name": "Tipul corpului",
+          "name": "Tip corporal",
           "state": {
             "balanced": "Echilibrat",
-            "balanced_muscular": "Balanced-muscular",
-            "balanced_skinny": "Slab-echilibrat",
-            "lack_exercise": "Lipsa-exercițiu",
+            "balanced_muscular": "Muscular echilibrat",
+            "balanced_skinny": "Slab echilibrat",
+            "lack_exercise": "Lipsă exercițiu",
             "obese": "Obez",
             "overweight": "Supraponderal",
             "skinny": "Slab",
-            "skinny_muscular": "Slab-muscular",
-            "thick_set": "Îndesat",
+            "skinny_muscular": "Slab muscular",
+            "thick_set": "Robust",
             "unavailable": "indisponibil"
           }
         },
         "bone_mass": { "name": "Masă osoasă" },
-        "fat_mass_to_gain": { "name": "Masa grasă pentru a câștiga" },
-        "fat_mass_to_lose": { "name": "Masă grasă pentru a pierde" },
+        "fat_mass_to_gain": { "name": "Masă grasă de acumulat" },
+        "fat_mass_to_lose": { "name": "Masă grasă de pierdut" },
         "gender": {
           "name": "Gen",
           "state": {
@@ -97,32 +112,36 @@
             "male": "masculin"
           }
         },
-        "height": { "name": "Înălţime" },
-        "ideal": { "name": "Ideal" },
+        "height": { "name": "Înălțime" },
+        "ideal": { "name": "Greutate ideală" },
         "impedance": { "name": "Impedanță" },
+        "impedance_high": { "name": "Impedanță (250 kHz)" },
+        "impedance_low": { "name": "Impedanță (50 kHz)" },
         "last_measurement_time": { "name": "Ultima oră de cântărire" },
         "lean_body_mass": { "name": "Masă corporală slabă" },
-        "metabolic_age": { "name": "Vârsta metabolică" },
+        "metabolic_age": { "name": "Vârstă metabolică" },
         "muscle_mass": { "name": "Masă musculară" },
         "problem": {
           "name": "Problemă",
           "state": {
-            "impedance_high": "Impedanță mare",
-            "impedance_low": "Impedanță scăzută",
+            "impedance_high": "Impedanță prea mare",
+            "impedance_high_high": "Impedanță 250 kHz prea mare",
+            "impedance_high_low": "Impedanță 250 kHz prea mică",
+            "impedance_high_unavailable": "Impedanță 250 kHz indisponibilă",
+            "impedance_low": "Impedanță prea mică",
+            "impedance_low_high": "Impedanță 50 kHz prea mare",
+            "impedance_low_low": "Impedanță 50 kHz prea mică",
+            "impedance_low_unavailable": "Impedanță 50 kHz indisponibilă",
             "impedance_unavailable": "Impedanță indisponibilă",
-            "none": "Nimic",
-            "weight_high": "Greutate mare",
-            "weight_high_and_impedance_high": "Greutate mare, impedanță mare",
-            "weight_high_and_impedance_low": "Greutate mare, impedanță scăzută",
-            "weight_low": "Greutate redusă",
-            "weight_low_and_impedance_high": "Greutate redusă, impedanță ridicată",
-            "weight_low_and_impedance_low": "Greutate redusă, impedanță scăzută",
-            "weight_unavailable": "Greutate indisponibilă",
-            "weight_unavailable_and_impedance_unavailable": "Greutate indisponibilă, impedanță indisponibilă"
+            "none": "Niciuna",
+            "weight_high": "Greutate prea mare",
+            "weight_invalid_format": "Format greutate invalid",
+            "weight_low": "Greutate prea mică",
+            "weight_unavailable": "Greutate indisponibilă"
           }
         },
-        "protein": { "name": "Proteină" },
-        "visceral_fat": { "name": "Grasime viscerala" },
+        "protein": { "name": "Proteine" },
+        "visceral_fat": { "name": "Grăsime viscerală" },
         "water": { "name": "Apă" },
         "weight": { "name": "Greutate" }
       }
@@ -130,26 +149,48 @@
   },
   "options": {
     "step": {
+      "impedance": {
+        "data": {
+          "impedance": "Senzor impedanță (frecvență unică)",
+          "impedance_high": "Senzor impedanță înaltă frecvență (250 kHz)",
+          "impedance_low": "Senzor impedanță joasă frecvență (50 kHz)"
+        },
+        "data_description": {
+          "impedance": "Valoarea impedanței cântarului.",
+          "impedance_high": "Impedanța măsurată la 250 kHz (S400).",
+          "impedance_low": "Impedanța măsurată la 50 kHz (S400)."
+        },
+        "title": "Senzori impedanță"
+      },
       "init": {
         "data": {
           "calculation_mode": "Metodă de calcul",
-          "height": "Înalțime",
-          "impedance": "Senzor impedanță",
-          "last_measurement_time": "Senzor pentru ultima oră de cântărire",
+          "height": "Înălțime (cm)",
+          "impedance_mode": "Mod impedanță",
+          "last_measurement_time": "Senzor ultima oră de cântărire",
           "weight": "Senzor greutate"
         },
         "data_description": {
-          "impedance": "Dacă cântarul dumneavoastra nu furnizează impedanță, lăsați câmpul necompletat.",
-          "last_measurement_time": "Dacă nu aveți un senzor pentru ultima oră de cântărire, lăsați acest câmp gol."
-        }
+          "calculation_mode": "Xiaomi: ca în Zepp Life. Științific: OMS / Mifflin. Fără efect în modul S400.",
+          "impedance_mode": "Niciunul: fără impedanță. Standard: frecvență unică (Xiaomi Gen2). Dual-frequency S400: 50 kHz + 250 kHz.",
+          "last_measurement_time": "Opțional. Lăsați gol dacă senzorul nu există."
+        },
+        "title": "Configurare"
       }
     }
   },
   "selector": {
     "calculation_mode": {
       "options": {
-        "science": "Științific",
-        "xiaomi": "Xiaomi (Legacy 2017)"
+        "science": "Științific — OMS / Mifflin",
+        "xiaomi": "Xiaomi — Zepp Life (Legacy 2017)"
+      }
+    },
+    "impedance_mode": {
+      "options": {
+        "dual_frequency": "Dual-frequency S400 (50 kHz + 250 kHz)",
+        "none": "Fără impedanță",
+        "standard": "Frecvență unică (Xiaomi Gen2, Mi Body Scale 2…)"
       }
     }
   },

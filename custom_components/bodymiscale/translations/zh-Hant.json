@@ -2,27 +2,42 @@
   "config": {
     "error": {
       "already_configured": "已配置",
-      "height_limit": "身高過高（限制：220 釐米）",
-      "height_low": "身高太低（最低：50 釐米）",
-      "invalid_date": "無效日期"
+      "height_limit": "身高過高（限制：220 公分）",
+      "height_low": "身高過低（最低：50 公分）",
+      "invalid_date": "日期無效"
     },
     "step": {
+      "impedance": {
+        "data": {
+          "impedance": "阻抗感測器（單頻）",
+          "impedance_high": "高頻阻抗感測器 (250 kHz)",
+          "impedance_low": "低頻阻抗感測器 (50 kHz)"
+        },
+        "data_description": {
+          "impedance": "您的體脂計提供的單頻率阻抗值。",
+          "impedance_high": "S400 型號測得的 250 kHz 高頻阻抗值。",
+          "impedance_low": "S400 型號測得的 50 kHz 低頻阻抗值。"
+        },
+        "title": "阻抗感測器設定"
+      },
       "options": {
         "data": {
           "calculation_mode": "計算方法",
-          "height": "身高",
-          "impedance": "阻抗傳感器",
+          "height": "身高 (cm)",
+          "impedance_mode": "阻抗模式",
           "last_measurement_time": "上次稱重時間感測器",
-          "weight": "體重傳感器"
+          "weight": "體重感測器"
         },
         "data_description": {
-          "impedance": "如果您的體計不提供阻抗值，請將此欄位留空。",
-          "last_measurement_time": "如果您沒有上次稱重時間感測器，請將此欄位留白。"
-        }
+          "calculation_mode": "小米：與 Zepp Life 演算法一致。科學：基於 WHO / Mifflin 公式。對 S400 雙頻模式無效。",
+          "impedance_mode": "無：體重計不支援阻抗測量。標準：單頻（小米二代秤）。雙頻 S400：支援 50 kHz + 250 kHz 雙頻感測器。",
+          "last_measurement_time": "選填。若無此感測器請留白。"
+        },
+        "title": "配置選項"
       },
       "user": {
         "data": {
-          "birthday": "生日",
+          "birthday": "出生日期",
           "gender": "性別",
           "name": "姓名"
         }
@@ -32,16 +47,16 @@
   "entity": {
     "sensor": {
       "basal_metabolism": { "name": "基礎代謝" },
-      "bmi": { "name": "BMI指數" },
+      "bmi": { "name": "BMI" },
       "body_fat": { "name": "體脂率" },
-      "body_score": { "name": "體質評分" },
+      "body_score": { "name": "身體評分" },
       "bone_mass": { "name": "骨量" },
       "last_measurement_time": { "name": "上次稱重時間" },
       "lean_body_mass": { "name": "瘦體重" },
-      "metabolic_age": { "name": "代謝年齡" },
+      "metabolic_age": { "name": "身體年齡" },
       "muscle_mass": { "name": "肌肉量" },
       "protein": { "name": "蛋白質" },
-      "visceral_fat": { "name": "內臟脂肪" },
+      "visceral_fat": { "name": "內臟脂肪等級" },
       "water": { "name": "水分" },
       "weight": { "name": "體重" }
     }
@@ -51,74 +66,78 @@
       "name": "小米體脂計",
       "state": {
         "ok": "正常",
-        "problem": "問題"
+        "problem": "異常"
       },
       "state_attributes": {
         "age": { "name": "年齡" },
         "basal_metabolism": { "name": "基礎代謝" },
-        "bmi": { "name": "BMI指數" },
+        "bmi": { "name": "BMI" },
         "bmi_label": {
-          "name": "BMI 分類",
+          "name": "BMI 狀態",
           "state": {
             "massive_obesity": "極重度肥胖",
             "moderate_obesity": "中度肥胖",
-            "normal_or_healthy_weight": "正常或健康體重",
+            "normal_or_healthy_weight": "正常",
             "overweight": "超重",
             "severe_obesity": "重度肥胖",
-            "slight_overweight": "輕度超重",
+            "slight_overweight": "偏胖",
             "unavailable": "不可用",
             "underweight": "體重不足"
           }
         },
         "body_fat": { "name": "體脂率" },
-        "body_score": { "name": "體質評分" },
+        "body_score": { "name": "身體評分" },
         "body_type": {
           "name": "體型",
           "state": {
-            "balanced": "均衡",
-            "balanced_muscular": "均衡-肌肉型",
-            "balanced_skinny": "均衡-瘦型",
-            "lack_exercise": "缺乏鍛鍊",
-            "obese": "肥胖",
-            "overweight": "超重",
-            "skinny": "瘦型",
-            "skinny_muscular": "瘦型-肌肉型",
-            "thick_set": "豐滿",
+            "balanced": "勻稱型",
+            "balanced_muscular": "勻稱肌肉型",
+            "balanced_skinny": "勻稱偏瘦型",
+            "lack_exercise": "缺乏運動型",
+            "obese": "肥胖型",
+            "overweight": "超重型",
+            "skinny": "消瘦型",
+            "skinny_muscular": "偏瘦肌肉型",
+            "thick_set": "結實型",
             "unavailable": "不可用"
           }
         },
         "bone_mass": { "name": "骨量" },
-        "fat_mass_to_gain": { "name": "獲得脂肪質量" },
-        "fat_mass_to_lose": { "name": "減少脂肪質量" },
+        "fat_mass_to_gain": { "name": "需增加脂肪量" },
+        "fat_mass_to_lose": { "name": "需減少脂肪量" },
         "gender": {
           "name": "性別",
           "state": {
-            "female": "女性",
-            "male": "男性"
+            "female": "女",
+            "male": "男"
           }
         },
         "height": { "name": "身高" },
-        "ideal": { "name": "理想" },
+        "ideal": { "name": "理想體重" },
         "impedance": { "name": "阻抗" },
+        "impedance_high": { "name": "高頻阻抗 (250 kHz)" },
+        "impedance_low": { "name": "低頻阻抗 (50 kHz)" },
         "last_measurement_time": { "name": "上次稱重時間" },
         "lean_body_mass": { "name": "瘦體重" },
-        "metabolic_age": { "name": "代謝年齡" },
+        "metabolic_age": { "name": "身體年齡" },
         "muscle_mass": { "name": "肌肉量" },
         "problem": {
-          "name": "問題",
+          "name": "異常狀態",
           "state": {
-            "impedance_high": "阻抗高",
-            "impedance_low": "阻抗低",
-            "impedance_unavailable": "阻抗不可用",
+            "impedance_high": "阻抗過高",
+            "impedance_high_high": "250 kHz 阻抗過高",
+            "impedance_high_low": "250 kHz 阻抗過低",
+            "impedance_high_unavailable": "250 kHz 阻抗不可用",
+            "impedance_low": "阻抗過低",
+            "impedance_low_high": "50 kHz 阻抗過高",
+            "impedance_low_low": "50 kHz 阻抗過低",
+            "impedance_low_unavailable": "50 kHz 阻抗不可用",
+            "impedance_unavailable": "阻抗數據缺失",
             "none": "無",
-            "weight_high": "體重高",
-            "weight_high_and_impedance_high": "體重高，阻抗高",
-            "weight_high_and_impedance_low": "體重高，阻抗低",
-            "weight_low": "體重低",
-            "weight_low_and_impedance_high": "體重低，阻抗高",
-            "weight_low_and_impedance_low": "體重低，阻抗低",
-            "weight_unavailable": "體重不可用",
-            "weight_unavailable_and_impedance_unavailable": "體重不可用，阻抗不可用"
+            "weight_high": "體重超出範圍",
+            "weight_invalid_format": "體重格式無效",
+            "weight_low": "體重過低",
+            "weight_unavailable": "體重數據缺失"
           }
         },
         "protein": { "name": "蛋白質" },
@@ -130,26 +149,48 @@
   },
   "options": {
     "step": {
+      "impedance": {
+        "data": {
+          "impedance": "阻抗感測器（單頻）",
+          "impedance_high": "高頻阻抗感測器 (250 kHz)",
+          "impedance_low": "低頻阻抗感測器 (50 kHz)"
+        },
+        "data_description": {
+          "impedance": "來自體脂計的阻抗值。",
+          "impedance_high": "高頻測量值 (S400)。",
+          "impedance_low": "低頻測量值 (S400)。"
+        },
+        "title": "阻抗感測器設定"
+      },
       "init": {
         "data": {
           "calculation_mode": "計算方法",
-          "height": "身高",
-          "impedance": "阻抗傳感器",
+          "height": "身高 (cm)",
+          "impedance_mode": "阻抗模式",
           "last_measurement_time": "上次稱重時間感測器",
-          "weight": "體重傳感器"
+          "weight": "體重感測器"
         },
         "data_description": {
-          "impedance": "如果您的體秤不提供阻抗值，請將此欄位留空。",
-          "last_measurement_time": "如果您沒有上次稱重時間感測器，請將此欄位留白。"
-        }
+          "calculation_mode": "小米：傳統演算法。科學：WHO 標準演算法。S400 模式下此項無效。",
+          "impedance_mode": "無：不測量阻抗。標準：小米二代等單頻秤。雙頻 S400：支援 50 kHz 與 250 kHz。",
+          "last_measurement_time": "選填。若感測器不存在請留白。"
+        },
+        "title": "配置選項"
       }
     }
   },
   "selector": {
     "calculation_mode": {
       "options": {
-        "science": "科學",
-        "xiaomi": "小米（Legacy 2017）"
+        "science": "科學演算法 (WHO / Mifflin)",
+        "xiaomi": "小米演算法 (Legacy 2017 / Zepp Life)"
+      }
+    },
+    "impedance_mode": {
+      "options": {
+        "dual_frequency": "雙頻模式 S400 (50 kHz + 250 kHz)",
+        "none": "無阻抗測量",
+        "standard": "單頻模式 (小米二代秤等)"
       }
     }
   },

@@ -3,22 +3,37 @@
     "error": {
       "already_configured": "Already configured",
       "height_limit": "Height is too high (limit: 220 cm)",
-      "height_low": "Height is too low (min : 50 cm)",
+      "height_low": "Height is too low (min: 50 cm)",
       "invalid_date": "Invalid date"
     },
     "step": {
+      "impedance": {
+        "data": {
+          "impedance": "Impedance sensor (single-frequency)",
+          "impedance_high": "High-frequency impedance sensor (250 kHz)",
+          "impedance_low": "Low-frequency impedance sensor (50 kHz)"
+        },
+        "data_description": {
+          "impedance": "Single impedance value provided by your scale.",
+          "impedance_high": "Impedance measured at 250 kHz (S400).",
+          "impedance_low": "Impedance measured at 50 kHz (S400)."
+        },
+        "title": "Impedance sensors"
+      },
       "options": {
         "data": {
           "calculation_mode": "Calculation method",
-          "height": "Height",
-          "impedance": "Impedance sensor",
+          "height": "Height (cm)",
+          "impedance_mode": "Impedance mode",
           "last_measurement_time": "Last measurement time sensor",
           "weight": "Weight sensor"
         },
         "data_description": {
-          "impedance": "If your scale does not provide the impedance, leave this field empty.",
-          "last_measurement_time": "If you do not have a last weigh time sensor, leave this field blank."
-        }
+          "calculation_mode": "Xiaomi: identical to Zepp Life app. Science: WHO / Mifflin formulas. Has no effect in S400 dual-frequency mode.",
+          "impedance_mode": "None: scale without impedance. Standard: single-frequency (Xiaomi Gen2). Dual-frequency S400: 50 kHz + 250 kHz sensors.",
+          "last_measurement_time": "Optional. Leave blank if you do not have this sensor."
+        },
+        "title": "Configuration"
       },
       "user": {
         "data": {
@@ -98,8 +113,10 @@
           }
         },
         "height": { "name": "Height" },
-        "ideal": { "name": "Ideal" },
+        "ideal": { "name": "Ideal weight" },
         "impedance": { "name": "Impedance" },
+        "impedance_high": { "name": "Impedance (250 kHz)" },
+        "impedance_low": { "name": "Impedance (50 kHz)" },
         "last_measurement_time": { "name": "Last measurement time" },
         "lean_body_mass": { "name": "Lean body mass" },
         "metabolic_age": { "name": "Metabolic age" },
@@ -108,17 +125,19 @@
           "name": "Problem",
           "state": {
             "impedance_high": "Impedance high",
+            "impedance_high_high": "Impedance 250 kHz too high",
+            "impedance_high_low": "Impedance 250 kHz too low",
+            "impedance_high_unavailable": "Impedance 250 kHz unavailable",
             "impedance_low": "Impedance low",
+            "impedance_low_high": "Impedance 50 kHz too high",
+            "impedance_low_low": "Impedance 50 kHz too low",
+            "impedance_low_unavailable": "Impedance 50 kHz unavailable",
             "impedance_unavailable": "Impedance unavailable",
             "none": "None",
-            "weight_high": "Weight high",
-            "weight_high_and_impedance_high": "Weight high, impedance high",
-            "weight_high_and_impedance_low": "Weight high, impedance low",
-            "weight_low": "Weight low",
-            "weight_low_and_impedance_high": "Weight low, impedance high",
-            "weight_low_and_impedance_low": "Weight low, impedance low",
-            "weight_unavailable": "Weight unavailable",
-            "weight_unavailable_and_impedance_unavailable": "Weight unavailable, impedance unavailable"
+            "weight_high": "Weight too high",
+            "weight_invalid_format": "Invalid weight format",
+            "weight_low": "Weight too low",
+            "weight_unavailable": "Weight unavailable"
           }
         },
         "protein": { "name": "Protein" },
@@ -130,26 +149,48 @@
   },
   "options": {
     "step": {
+      "impedance": {
+        "data": {
+          "impedance": "Impedance sensor (single-frequency)",
+          "impedance_high": "High-frequency impedance sensor (250 kHz)",
+          "impedance_low": "Low-frequency impedance sensor (50 kHz)"
+        },
+        "data_description": {
+          "impedance": "Single impedance value provided by your scale.",
+          "impedance_high": "Impedance measured at 250 kHz (S400).",
+          "impedance_low": "Impedance measured at 50 kHz (S400)."
+        },
+        "title": "Impedance sensors"
+      },
       "init": {
         "data": {
           "calculation_mode": "Calculation method",
-          "height": "Height",
-          "impedance": "Impedance sensor",
+          "height": "Height (cm)",
+          "impedance_mode": "Impedance mode",
           "last_measurement_time": "Last measurement time sensor",
           "weight": "Weight sensor"
         },
         "data_description": {
-          "impedance": "If your scale does not provide the impedance, leave this field empty.",
-          "last_measurement_time": "If you do not have a last weigh time sensor, leave this field blank."
-        }
+          "calculation_mode": "Xiaomi: identical to Zepp Life app. Science: WHO / Mifflin formulas. Has no effect in S400 dual-frequency mode.",
+          "impedance_mode": "None: scale without impedance. Standard: single-frequency (Xiaomi Gen2). Dual-frequency S400: 50 kHz + 250 kHz sensors.",
+          "last_measurement_time": "Optional. Leave blank if you do not have this sensor."
+        },
+        "title": "Configuration"
       }
     }
   },
   "selector": {
     "calculation_mode": {
       "options": {
-        "science": "Scientific",
-        "xiaomi": "Xiaomi (Legacy 2017)"
+        "science": "Scientific — WHO / Mifflin",
+        "xiaomi": "Xiaomi — Zepp Life (Legacy 2017)"
+      }
+    },
+    "impedance_mode": {
+      "options": {
+        "dual_frequency": "Dual-frequency S400 (50 kHz + 250 kHz)",
+        "none": "No impedance",
+        "standard": "Single-frequency (Xiaomi Gen2, Mi Body Scale 2…)"
       }
     }
   },

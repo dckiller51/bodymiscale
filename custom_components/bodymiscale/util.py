@@ -30,17 +30,20 @@ def to_float(val: Any, default: float = 0.0) -> float:
 
 
 def get_ideal_weight(config: Mapping[str, Any]) -> float:
-    """Get ideal weight (just doing a reverse BMI, should be something better)."""
-    if config[CONF_GENDER] == Gender.FEMALE:
-        ideal = float(config[CONF_HEIGHT] - 70) * 0.6
-    else:
-        ideal = float(config[CONF_HEIGHT] - 80) * 0.7
+    """Get ideal weight based on height and gender."""
+    height = float(config[CONF_HEIGHT])
+    gender = config[CONF_GENDER]
 
-    return round(ideal, 0)
+    if gender == Gender.FEMALE:
+        ideal = (height - 70) * 0.6
+    else:
+        ideal = (height - 80) * 0.7
+
+    return round(ideal, 1)
 
 
 def get_bmi_label(bmi: float) -> str:
-    """Get BMI label."""
+    """Get BMI label based on WHO standards."""
     if bmi < 18.5:
         return "underweight"
     if bmi < 25:
@@ -56,11 +59,14 @@ def get_bmi_label(bmi: float) -> str:
     return "massive_obesity"
 
 
-def get_age(date: str) -> int:
-    """Get current age from birthdate."""
-    born = datetime.strptime(date, "%Y-%m-%d")
-    today = datetime.today()
-    age = today.year - born.year
-    if (today.month, today.day) < (born.month, born.day):
-        age -= 1
-    return age
+def get_age(date_str: str) -> int:
+    """Get current age from birthdate string (YYYY-MM-DD)."""
+    try:
+        born = datetime.strptime(date_str, "%Y-%m-%d")
+        today = datetime.today()
+        age = today.year - born.year
+        if (today.month, today.day) < (born.month, born.day):
+            age -= 1
+        return age
+    except (ValueError, TypeError):
+        return 0

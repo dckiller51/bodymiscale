@@ -31,7 +31,7 @@ from .const import (
     ATTR_PROTEIN,
     ATTR_VISCERAL,
     ATTR_WATER,
-    CONF_SENSOR_IMPEDANCE,
+    CONF_IMPEDANCE_MODE,
     CONF_SENSOR_LAST_MEASUREMENT_TIME,
     CONF_SENSOR_WEIGHT,
     DOMAIN,
@@ -63,6 +63,7 @@ async def async_setup_entry(
                 translation_key="bmi",
                 icon="mdi:human",
                 state_class=SensorStateClass.MEASUREMENT,
+                suggested_display_precision=1,
             ),
             Metric.BMI,
             lambda state, _: {
@@ -102,6 +103,7 @@ async def async_setup_entry(
                 native_unit_of_measurement=UnitOfMass.KILOGRAMS,
                 device_class=SensorDeviceClass.WEIGHT,
                 state_class=SensorStateClass.MEASUREMENT,
+                suggested_display_precision=2,
             ),
             Metric.WEIGHT,
             lambda _, config: {ATTR_IDEAL: get_ideal_weight(config)},
@@ -117,7 +119,9 @@ async def async_setup_entry(
         ),
     ]
 
-    if CONF_SENSOR_IMPEDANCE in handler.config:
+    impedance_mode = handler.config.get(CONF_IMPEDANCE_MODE, "none")
+
+    if impedance_mode != "none":
         new_sensors.extend(
             [
                 BodyScaleSensor(
@@ -128,6 +132,7 @@ async def async_setup_entry(
                         native_unit_of_measurement=UnitOfMass.KILOGRAMS,
                         device_class=SensorDeviceClass.WEIGHT,
                         state_class=SensorStateClass.MEASUREMENT,
+                        suggested_display_precision=1,
                     ),
                     Metric.LBM,
                 ),
@@ -138,6 +143,7 @@ async def async_setup_entry(
                         translation_key="body_fat",
                         native_unit_of_measurement=PERCENTAGE,
                         state_class=SensorStateClass.MEASUREMENT,
+                        suggested_display_precision=1,
                     ),
                     Metric.FAT_PERCENTAGE,
                 ),
@@ -148,6 +154,7 @@ async def async_setup_entry(
                         translation_key="protein",
                         native_unit_of_measurement=PERCENTAGE,
                         state_class=SensorStateClass.MEASUREMENT,
+                        suggested_display_precision=1,
                     ),
                     Metric.PROTEIN_PERCENTAGE,
                 ),
@@ -159,6 +166,7 @@ async def async_setup_entry(
                         icon="mdi:water-percent",
                         native_unit_of_measurement=PERCENTAGE,
                         state_class=SensorStateClass.MEASUREMENT,
+                        suggested_display_precision=1,
                     ),
                     Metric.WATER_PERCENTAGE,
                 ),
@@ -170,6 +178,7 @@ async def async_setup_entry(
                         native_unit_of_measurement=UnitOfMass.KILOGRAMS,
                         device_class=SensorDeviceClass.WEIGHT,
                         state_class=SensorStateClass.MEASUREMENT,
+                        suggested_display_precision=2,
                     ),
                     Metric.BONE_MASS,
                 ),
@@ -181,6 +190,7 @@ async def async_setup_entry(
                         native_unit_of_measurement=UnitOfMass.KILOGRAMS,
                         device_class=SensorDeviceClass.WEIGHT,
                         state_class=SensorStateClass.MEASUREMENT,
+                        suggested_display_precision=2,
                     ),
                     Metric.MUSCLE_MASS,
                 ),
@@ -233,6 +243,7 @@ class BodyScaleSensor(BodyScaleBaseEntity, SensorEntity):
         await super().async_added_to_hass()
 
         def on_value(value: StateType | datetime) -> None:
+            """Handle a new sensor value and update the entity state."""
             if self.entity_description.key == CONF_SENSOR_LAST_MEASUREMENT_TIME:
                 if isinstance(value, datetime):
                     self._attr_native_value = value

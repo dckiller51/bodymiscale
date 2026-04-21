@@ -7,18 +7,33 @@
       "invalid_date": "Date non valide"
     },
     "step": {
+      "impedance": {
+        "data": {
+          "impedance": "Capteur d'impédance (mono-fréquence)",
+          "impedance_high": "Capteur d'impédance haute fréquence (250 kHz)",
+          "impedance_low": "Capteur d'impédance basse fréquence (50 kHz)"
+        },
+        "data_description": {
+          "impedance": "Capteur unique fourni par votre balance.",
+          "impedance_high": "Impédance mesurée à 250 kHz (S400).",
+          "impedance_low": "Impédance mesurée à 50 kHz (S400)."
+        },
+        "title": "Capteurs d'impédance"
+      },
       "options": {
         "data": {
           "calculation_mode": "Méthode de calcul",
-          "height": "Taille",
-          "impedance": "Capteur d'impédance",
+          "height": "Taille (cm)",
+          "impedance_mode": "Mode d'impédance",
           "last_measurement_time": "Capteur de la dernière pesée",
           "weight": "Capteur de poids"
         },
         "data_description": {
-          "impedance": "Si votre balance ne fournit pas l'impédance, laissez ce champ vide.",
-          "last_measurement_time": "Si vous n'avez pas de capteur pour la dernière heure de pesée, laissez ce champ vide."
-        }
+          "calculation_mode": "Xiaomi : copie conforme de l'app Zepp Life. Science : formules OMS / Mifflin. Sans effet en mode S400 (bi-fréquence).",
+          "impedance_mode": "Aucun : balance sans impédance. Standard : mono-fréquence (Xiaomi Gen2). Bi-fréquence S400 : capteurs 50 kHz + 250 kHz.",
+          "last_measurement_time": "Optionnel. Laissez vide si vous n'avez pas ce capteur."
+        },
+        "title": "Configuration"
       },
       "user": {
         "data": {
@@ -37,12 +52,12 @@
       "body_score": { "name": "Score corporel" },
       "bone_mass": { "name": "Masse osseuse" },
       "last_measurement_time": { "name": "Dernière heure de pesée" },
-      "lean_body_mass": { "name": "Masse corporelle mince" },
-      "metabolic_age": { "name": "Age corporel" },
+      "lean_body_mass": { "name": "Masse corporelle maigre" },
+      "metabolic_age": { "name": "Âge corporel" },
       "muscle_mass": { "name": "Masse musculaire" },
       "protein": { "name": "Protéine" },
       "visceral_fat": { "name": "Graisse viscérale" },
-      "water": { "name": "Water" },
+      "water": { "name": "Eau" },
       "weight": { "name": "Poids" }
     }
   },
@@ -54,7 +69,7 @@
         "problem": "Problème"
       },
       "state_attributes": {
-        "age": { "name": "Age" },
+        "age": { "name": "Âge" },
         "basal_metabolism": { "name": "Métabolisme de base" },
         "bmi": { "name": "IMC" },
         "bmi_label": {
@@ -62,7 +77,7 @@
           "state": {
             "massive_obesity": "Obésité massive",
             "moderate_obesity": "Obésité modérée",
-            "normal_or_healthy_weight": "Normal - poids de santé",
+            "normal_or_healthy_weight": "Normal — poids de santé",
             "overweight": "Surpoids",
             "severe_obesity": "Obésité sévère",
             "slight_overweight": "Léger surpoids",
@@ -100,25 +115,29 @@
         "height": { "name": "Taille" },
         "ideal": { "name": "Poids idéal" },
         "impedance": { "name": "Impédance" },
+        "impedance_high": { "name": "Impédance (250 kHz)" },
+        "impedance_low": { "name": "Impédance (50 kHz)" },
         "last_measurement_time": { "name": "Dernière heure de pesée" },
-        "lean_body_mass": { "name": "Masse corporelle mince" },
-        "metabolic_age": { "name": "Age corporel" },
+        "lean_body_mass": { "name": "Masse corporelle maigre" },
+        "metabolic_age": { "name": "Âge corporel" },
         "muscle_mass": { "name": "Masse musculaire" },
         "problem": {
           "name": "Problème",
           "state": {
-            "impedance_high": "Impédance élevé",
+            "impedance_high": "Impédance élevée",
+            "impedance_high_high": "Impédance 250 kHz trop élevée",
+            "impedance_high_low": "Impédance 250 kHz trop faible",
+            "impedance_high_unavailable": "Impédance 250 kHz indisponible",
             "impedance_low": "Impédance faible",
+            "impedance_low_high": "Impédance 50 kHz trop élevée",
+            "impedance_low_low": "Impédance 50 kHz trop faible",
+            "impedance_low_unavailable": "Impédance 50 kHz indisponible",
             "impedance_unavailable": "Impédance indisponible",
             "none": "Aucun",
-            "weight_high": "Poids élevé",
-            "weight_high_and_impedance_high": "Poids élevé, impédance élevé",
-            "weight_high_and_impedance_low": "Poids élevé, impédance faible",
-            "weight_low": "Poids faible",
-            "weight_low_and_impedance_high": "Poids faible, impédance élevé",
-            "weight_low_and_impedance_low": "Poids faible, impédance faible",
-            "weight_unavailable": "Poids indisponible",
-            "weight_unavailable_and_impedance_unavailable": "Poids indisponible, impédance indisponible"
+            "weight_high": "Poids trop élevé",
+            "weight_invalid_format": "Format de poids invalide",
+            "weight_low": "Poids trop faible",
+            "weight_unavailable": "Poids indisponible"
           }
         },
         "protein": { "name": "Protéine" },
@@ -130,26 +149,48 @@
   },
   "options": {
     "step": {
+      "impedance": {
+        "data": {
+          "impedance": "Capteur d'impédance (mono-fréquence)",
+          "impedance_high": "Capteur d'impédance haute fréquence (250 kHz)",
+          "impedance_low": "Capteur d'impédance basse fréquence (50 kHz)"
+        },
+        "data_description": {
+          "impedance": "Capteur unique fourni par votre balance.",
+          "impedance_high": "Impédance mesurée à 250 kHz (S400).",
+          "impedance_low": "Impédance mesurée à 50 kHz (S400)."
+        },
+        "title": "Capteurs d'impédance"
+      },
       "init": {
         "data": {
           "calculation_mode": "Méthode de calcul",
-          "height": "Taille",
-          "impedance": "Capteur d'impédance",
+          "height": "Taille (cm)",
+          "impedance_mode": "Mode d'impédance",
           "last_measurement_time": "Capteur de la dernière pesée",
           "weight": "Capteur de poids"
         },
         "data_description": {
-          "impedance": "Si votre balance ne fournit pas l'impédance, laissez ce champ vide.",
-          "last_measurement_time": "Si vous n'avez pas de capteur pour la dernière heure de pesée, laissez ce champ vide."
-        }
+          "calculation_mode": "Xiaomi : copie conforme de l'app Zepp Life. Science : formules OMS / Mifflin. Sans effet en mode S400 (bi-fréquence).",
+          "impedance_mode": "Aucun : balance sans impédance. Standard : mono-fréquence (Xiaomi Gen2). Bi-fréquence S400 : capteurs 50 kHz + 250 kHz.",
+          "last_measurement_time": "Optionnel. Laissez vide si vous n'avez pas ce capteur."
+        },
+        "title": "Configuration"
       }
     }
   },
   "selector": {
     "calculation_mode": {
       "options": {
-        "science": "Scientifique",
-        "xiaomi": "Xiaomi (Legacy 2017)"
+        "science": "Scientifique — OMS / Mifflin",
+        "xiaomi": "Xiaomi — Zepp Life (Legacy 2017)"
+      }
+    },
+    "impedance_mode": {
+      "options": {
+        "dual_frequency": "Bi-fréquence S400 (50 kHz + 250 kHz)",
+        "none": "Aucune impédance",
+        "standard": "Mono-fréquence (Xiaomi Gen2, Mi Body Scale 2…)"
       }
     }
   },

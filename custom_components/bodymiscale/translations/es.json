@@ -2,28 +2,43 @@
   "config": {
     "error": {
       "already_configured": "Ya configurado",
-      "height_limit": "La altura es demasiado alta (limite: 220 cm)",
-      "height_low": "La altura es demasiado baja (min : 50 cm)",
-      "invalid_date": "Fecha invalida"
+      "height_limit": "La altura es demasiado alta (límite: 220 cm)",
+      "height_low": "La altura es demasiado baja (mín: 50 cm)",
+      "invalid_date": "Fecha inválida"
     },
     "step": {
+      "impedance": {
+        "data": {
+          "impedance": "Sensor de impedancia (frecuencia única)",
+          "impedance_high": "Sensor de impedancia de alta frecuencia (250 kHz)",
+          "impedance_low": "Sensor de impedancia de baja frecuencia (50 kHz)"
+        },
+        "data_description": {
+          "impedance": "Valor de impedancia único proporcionado por su báscula.",
+          "impedance_high": "Impedancia medida a 250 kHz (S400).",
+          "impedance_low": "Impedancia medida a 50 kHz (S400)."
+        },
+        "title": "Sensores de impedancia"
+      },
       "options": {
         "data": {
           "calculation_mode": "Método de cálculo",
-          "height": "Altura",
-          "impedance": "Sensor de immpedancia",
-          "last_measurement_time": "Sensor de la última hora de pesaje",
+          "height": "Altura (cm)",
+          "impedance_mode": "Modo de impedancia",
+          "last_measurement_time": "Sensor de hora de la última pesada",
           "weight": "Sensor de peso"
         },
         "data_description": {
-          "impedance": "Si su báscula no proporciona la impedancia, deje este campo vacío.",
-          "last_measurement_time": "Deje este campo en blanco si no tiene un sensor para la última hora de pesaje."
-        }
+          "calculation_mode": "Xiaomi: idéntico a la app Zepp Life. Científico: fórmulas OMS / Mifflin. No tiene efecto en el modo S400 de doble frecuencia.",
+          "impedance_mode": "Ninguno: báscula sin impedancia. Estándar: frecuencia única (Xiaomi Gen2). Doble frecuencia S400: sensores de 50 kHz + 250 kHz.",
+          "last_measurement_time": "Opcional. Deje en blanco si no tiene este sensor."
+        },
+        "title": "Configuración"
       },
       "user": {
         "data": {
-          "birthday": "Cumpleaños",
-          "gender": "Genero",
+          "birthday": "Fecha de nacimiento",
+          "gender": "Género",
           "name": "Nombre"
         }
       }
@@ -36,7 +51,7 @@
       "body_fat": { "name": "Grasa corporal" },
       "body_score": { "name": "Puntuación corporal" },
       "bone_mass": { "name": "Masa ósea" },
-      "last_measurement_time": { "name": "Última hora de pesaje" },
+      "last_measurement_time": { "name": "Hora de la última pesada" },
       "lean_body_mass": { "name": "Masa corporal magra" },
       "metabolic_age": { "name": "Edad metabólica" },
       "muscle_mass": { "name": "Masa muscular" },
@@ -58,16 +73,16 @@
         "basal_metabolism": { "name": "Metabolismo basal" },
         "bmi": { "name": "IMC" },
         "bmi_label": {
-          "name": "Etiqueta IMC",
+          "name": "Clasificación IMC",
           "state": {
             "massive_obesity": "Obesidad masiva",
-            "moderate_ obesity": "Obesidad moderada",
-            "normal_or_healthy_weight": "Normal",
+            "moderate_obesity": "Obesidad moderada",
+            "normal_or_healthy_weight": "Peso normal",
             "overweight": "Sobrepeso",
             "severe_obesity": "Obesidad severa",
             "slight_overweight": "Ligero sobrepeso",
             "unavailable": "no disponible",
-            "underweight": "Por debajo del peso normal"
+            "underweight": "Bajo peso"
           }
         },
         "body_fat": { "name": "Grasa corporal" },
@@ -76,31 +91,33 @@
           "name": "Tipo de cuerpo",
           "state": {
             "balanced": "Equilibrado",
-            "balanced_muscular": "Musculuso equilibrado",
-            "balanced_skinny": "Flaco equilibrado",
-            "lack_exercise": "Falto de ejercicio",
+            "balanced_muscular": "Musculoso equilibrado",
+            "balanced_skinny": "Delgado equilibrado",
+            "lack_exercise": "Falta de ejercicio",
             "obese": "Obeso",
             "overweight": "Sobrepeso",
-            "skinny": "Flaco",
-            "skinny_muscular": "Flaco musculoso",
-            "thick_set": "Rechoncho",
+            "skinny": "Delgado",
+            "skinny_muscular": "Delgado musculoso",
+            "thick_set": "Fuerte",
             "unavailable": "no disponible"
           }
         },
         "bone_mass": { "name": "Masa ósea" },
-        "fat_mass_to_gain": { "name": "Masa grasa a ganar" },
-        "fat_mass_to_lose": { "name": "Masa grasa a perder" },
+        "fat_mass_to_gain": { "name": "Grasa a ganar" },
+        "fat_mass_to_lose": { "name": "Grasa a perder" },
         "gender": {
-          "name": "Sexo",
+          "name": "Género",
           "state": {
             "female": "femenino",
             "male": "masculino"
           }
         },
         "height": { "name": "Altura" },
-        "ideal": { "name": "Ideal" },
+        "ideal": { "name": "Peso ideal" },
         "impedance": { "name": "Impedancia" },
-        "last_measurement_time": { "name": "Última hora de pesaje" },
+        "impedance_high": { "name": "Impedancia (250 kHz)" },
+        "impedance_low": { "name": "Impedancia (50 kHz)" },
+        "last_measurement_time": { "name": "Hora de la última pesada" },
         "lean_body_mass": { "name": "Masa corporal magra" },
         "metabolic_age": { "name": "Edad metabólica" },
         "muscle_mass": { "name": "Masa muscular" },
@@ -108,17 +125,19 @@
           "name": "Problema",
           "state": {
             "impedance_high": "Impedancia alta",
+            "impedance_high_high": "Impedancia 250 kHz demasiado alta",
+            "impedance_high_low": "Impedancia 250 kHz demasiado baja",
+            "impedance_high_unavailable": "Impedancia 250 kHz no disponible",
             "impedance_low": "Impedancia baja",
+            "impedance_low_high": "Impedancia 50 kHz demasiado alta",
+            "impedance_low_low": "Impedancia 50 kHz demasiado baja",
+            "impedance_low_unavailable": "Impedancia 50 kHz no disponible",
             "impedance_unavailable": "Impedancia no disponible",
             "none": "Ninguno",
-            "weight_high": "Peso alto",
-            "weight_high_and_impedance_high": "Peso alto, impedancia alta",
-            "weight_high_and_impedance_low": "Peso alto, impedancia baja",
-            "weight_low": "Peso bajo",
-            "weight_low_and_impedance_high": "Peso bajo, impedancia alta",
-            "weight_low_and_impedance_low": "Peso bajo, impedancia baja",
-            "weight_unavailable": "Peso no disponible",
-            "weight_unavailable_and_impedance_unavailable": "Peso no disponible, impedancia no disponible"
+            "weight_high": "Peso demasiado alto",
+            "weight_invalid_format": "Formato de peso inválido",
+            "weight_low": "Peso demasiado bajo",
+            "weight_unavailable": "Peso no disponible"
           }
         },
         "protein": { "name": "Proteína" },
@@ -130,26 +149,48 @@
   },
   "options": {
     "step": {
+      "impedance": {
+        "data": {
+          "impedance": "Sensor de impedancia (frecuencia única)",
+          "impedance_high": "Sensor de impedancia de alta frecuencia (250 kHz)",
+          "impedance_low": "Sensor de impedancia de baja frecuencia (50 kHz)"
+        },
+        "data_description": {
+          "impedance": "Valor de impedancia único de su báscula.",
+          "impedance_high": "Impedancia medida a 250 kHz (S400).",
+          "impedance_low": "Impedancia medida a 50 kHz (S400)."
+        },
+        "title": "Sensores de impedancia"
+      },
       "init": {
         "data": {
           "calculation_mode": "Método de cálculo",
-          "height": "Altura",
-          "impedance": "Sensor de immpedancia",
-          "last_measurement_time": "Sensor de la última hora de pesaje",
+          "height": "Altura (cm)",
+          "impedance_mode": "Modo de impedancia",
+          "last_measurement_time": "Sensor de hora de la última pesada",
           "weight": "Sensor de peso"
         },
         "data_description": {
-          "impedance": "Si su báscula no proporciona la impedancia, deje este campo vacío.",
-          "last_measurement_time": "Deje este campo en blanco si no tiene un sensor para la última hora de pesaje."
-        }
+          "calculation_mode": "Xiaomi: idéntico a Zepp Life. Científico: OMS / Mifflin. Sin efecto en modo S400.",
+          "impedance_mode": "Ninguno: Sin impedancia. Estándar: frecuencia única (Xiaomi Gen2). Doble frecuencia S400: 50 kHz + 250 kHz.",
+          "last_measurement_time": "Opcional. Dejar en blanco si no existe sensor."
+        },
+        "title": "Configuración"
       }
     }
   },
   "selector": {
     "calculation_mode": {
       "options": {
-        "science": "Científico",
-        "xiaomi": "Xiaomi (Legacy 2017)"
+        "science": "Científico — OMS / Mifflin",
+        "xiaomi": "Xiaomi — Zepp Life (Legacy 2017)"
+      }
+    },
+    "impedance_mode": {
+      "options": {
+        "dual_frequency": "Doble frecuencia S400 (50 kHz + 250 kHz)",
+        "none": "Sin impedancia",
+        "standard": "Frecuencia única (Xiaomi Gen2, Mi Body Scale 2…)"
       }
     }
   },

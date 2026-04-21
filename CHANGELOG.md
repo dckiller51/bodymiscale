@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## 2026.4.3
+
+- **Added (Experimental):** Dual-frequency impedance support for Xiaomi S400 and compatible scales. A new `impedance_mode` selector in the integration configuration allows choosing between `None`, `Standard` (single-frequency), and `Dual-frequency S400` (50 kHz + 250 kHz). ⚠️ The S400 dual-frequency mode is **experimental** — formulas are calibrated on a single reference point and results may vary depending on your body composition and scale firmware. Help us improve them: [#349](https://github.com/dckiller51/bodymiscale/issues/349).
+- **Added:** New `impedance_low` and `impedance_high` sensor entities exposed when dual-frequency mode is active.
+- **Added:** Separate `calculation_mode` and `impedance_mode` settings. `calculation_mode` (Xiaomi / Scientific) applies only to standard single-frequency mode. The S400 dual-frequency mode uses its own dedicated formulas regardless of this setting.
+- **Changed:** Calculation modes are now clearly separated by purpose — `Xiaomi` replicates the Zepp Life / Mi Fit app results exactly, `Scientific` uses WHO-recommended equations (Mifflin–St Jeor for BMR, Janmahasatian for LBM), and `S400` uses Lukaski-based dual-frequency BIA equations.
+- **Fixed:** Migration path from config entry version 2 → 3 now correctly sets `impedance_mode` based on existing sensor configuration.
+
 ## 2026.4.2
 
 - **Improved:** Enhanced measurement processing to ensure calculations (BMI, body fat, etc.) are triggered even when weight or impedance values remain identical to the previous reading. (Fixes [#346](https://github.com/dckiller51/bodymiscale/issues/346)).

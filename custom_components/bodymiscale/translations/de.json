@@ -2,23 +2,38 @@
   "config": {
     "error": {
       "already_configured": "Bereits konfiguriert",
-      "height_limit": "Die Höhe ist zu hoch (Grenze: 220 cm)",
-      "height_low": "Die Höhe ist zu niedrig (min : 50 cm)",
+      "height_limit": "Die Körpergröße ist zu hoch (Grenze: 220 cm)",
+      "height_low": "Die Körpergröße ist zu niedrig (min: 50 cm)",
       "invalid_date": "Ungültiges Datum"
     },
     "step": {
+      "impedance": {
+        "data": {
+          "impedance": "Impedanzsensor (Einzelfrequenz)",
+          "impedance_high": "Hochfrequenz-Impedanzsensor (250 kHz)",
+          "impedance_low": "Niederfrequenz-Impedanzsensor (50 kHz)"
+        },
+        "data_description": {
+          "impedance": "Einzelner Impedanzwert, der von Ihrer Waage geliefert wird.",
+          "impedance_high": "Impedanz gemessen bei 250 kHz (S400).",
+          "impedance_low": "Impedanz gemessen bei 50 kHz (S400)."
+        },
+        "title": "Impedanzsensoren"
+      },
       "options": {
         "data": {
           "calculation_mode": "Berechnungsmethode",
-          "height": "Größe",
-          "impedance": "Impedanz sensor",
-          "last_measurement_time": "Sensor der letzten Wägezeit",
-          "weight": "Gewicht sensor"
+          "height": "Körpergröße (cm)",
+          "impedance_mode": "Impedanz-Modus",
+          "last_measurement_time": "Sensor für die letzte Messzeit",
+          "weight": "Gewichtssensor"
         },
         "data_description": {
-          "impedance": "Falls deine Waage keine Impedanz liefert, lasse dieses Feld leer.",
-          "last_measurement_time": "Lassen Sie dieses Feld leer, wenn Sie keinen Sensor für die letzte Wägezeit haben."
-        }
+          "calculation_mode": "Xiaomi: Identisch mit der Zepp Life App. Wissenschaftlich: WHO / Mifflin Formeln. Hat im S400 Dual-Frequenz-Modus keine Auswirkung.",
+          "impedance_mode": "Keine: Waage ohne Impedanzmessung. Standard: Einzelfrequenz (Xiaomi Gen2). Dual-Frequenz S400: 50 kHz + 250 kHz Sensoren.",
+          "last_measurement_time": "Optional. Leer lassen, wenn Sie diesen Sensor nicht haben."
+        },
+        "title": "Konfiguration"
       },
       "user": {
         "data": {
@@ -36,9 +51,9 @@
       "body_fat": { "name": "Körperfett" },
       "body_score": { "name": "Körperbewertung" },
       "bone_mass": { "name": "Knochenmasse" },
-      "last_measurement_time": { "name": "Letzte Wägezeit" },
+      "last_measurement_time": { "name": "Letzte Messzeit" },
       "lean_body_mass": { "name": "Magere Körpermasse" },
-      "metabolic_age": { "name": "stoffwechselbedingtes Körperalter" },
+      "metabolic_age": { "name": "Stoffwechselalter" },
       "muscle_mass": { "name": "Muskelmasse" },
       "protein": { "name": "Protein" },
       "visceral_fat": { "name": "Bauchfett" },
@@ -60,12 +75,12 @@
         "bmi_label": {
           "name": "BMI Klassifikation",
           "state": {
-            "massive_obesity": "massive Fettleibigkeit",
-            "moderate_obesity": "moderate Fettleibigkeit",
-            "normal_or_healthy_weight": "Normal - gesundes Gewicht",
+            "massive_obesity": "Massive Fettleibigkeit",
+            "moderate_obesity": "Moderate Fettleibigkeit",
+            "normal_or_healthy_weight": "Normalgewicht",
             "overweight": "Übergewicht",
-            "severe_obesity": "schwere Fettleibigkeit",
-            "slight_overweight": "leichtes Übergewicht",
+            "severe_obesity": "Schwere Fettleibigkeit",
+            "slight_overweight": "Leichtes Übergewicht",
             "unavailable": "Nicht verfügbar",
             "underweight": "Untergewicht"
           }
@@ -75,41 +90,53 @@
         "body_type": {
           "name": "Körperbau",
           "state": {
-            "balanced": "ausgewogen",
-            "balanced_muscular": "ausgewogen muskulös",
-            "balanced_skinny": "ausgeglichen schlank",
+            "balanced": "Ausgewogen",
+            "balanced_muscular": "Ausgewogen muskulös",
+            "balanced_skinny": "Ausgewogen schlank",
             "lack_exercise": "Bewegungsmangel",
-            "obese": "fettleibig",
+            "obese": "Fettleibig",
             "overweight": "Übergewicht",
-            "skinny": "schlank",
-            "skinny_muscular": "muskulös schlank",
-            "thick_set": "stämmig",
+            "skinny": "Schlank",
+            "skinny_muscular": "Muskulös schlank",
+            "thick_set": "Stämmig",
             "unavailable": "Nicht verfügbar"
           }
         },
         "bone_mass": { "name": "Knochenmasse" },
-        "fat_mass_to_gain": { "name": "Fettmasse zu gewinnen" },
+        "fat_mass_to_gain": { "name": "Fettmasse aufzubauen" },
         "fat_mass_to_lose": { "name": "Fettmasse zu verlieren" },
         "gender": {
           "name": "Geschlecht",
           "state": {
-            "female": "weibl.",
-            "male": "männl."
+            "female": "weiblich",
+            "male": "männlich"
           }
         },
         "height": { "name": "Körpergröße" },
         "ideal": { "name": "Idealgewicht" },
-        "impedance": { "name": "Zusammensetzung" },
-        "last_measurement_time": { "name": "Letzte Wägezeit" },
+        "impedance": { "name": "Impedanz" },
+        "impedance_high": { "name": "Impedanz (250 kHz)" },
+        "impedance_low": { "name": "Impedanz (50 kHz)" },
+        "last_measurement_time": { "name": "Letzte Messzeit" },
         "lean_body_mass": { "name": "Magere Körpermasse" },
-        "metabolic_age": { "name": "stoffwechselbedingtes Körperalter" },
+        "metabolic_age": { "name": "Stoffwechselalter" },
         "muscle_mass": { "name": "Muskelmasse" },
         "problem": {
           "name": "Problem",
           "state": {
-            "impedance_unavailable": "Bioelektrische Impedanzmessung (Körperzusammensetzung) nicht verfügbar",
-            "none": "keine",
-            "weight unavailable_and_impedance unavailable": "Gewichts- und bioelektrische Impedanzmessung (Körperzusammensetzung) nicht verfügbar.",
+            "impedance_high": "Impedanz zu hoch",
+            "impedance_high_high": "Impedans 250 kHz zu hoch",
+            "impedance_high_low": "Impedans 250 kHz zu niedrig",
+            "impedance_high_unavailable": "Impedans 250 kHz nicht verfügbar",
+            "impedance_low": "Impedanz zu niedrig",
+            "impedance_low_high": "Impedans 50 kHz zu hoch",
+            "impedance_low_low": "Impedans 50 kHz zu niedrig",
+            "impedance_low_unavailable": "Impedans 50 kHz nicht verfügbar",
+            "impedance_unavailable": "Impedanzmessung nicht verfügbar",
+            "none": "Keine",
+            "weight_high": "Gewicht zu hoch",
+            "weight_invalid_format": "Ungültiges Gewichtsformat",
+            "weight_low": "Gewicht zu niedrig",
             "weight_unavailable": "Gewichtsmessung nicht verfügbar"
           }
         },
@@ -122,26 +149,48 @@
   },
   "options": {
     "step": {
+      "impedance": {
+        "data": {
+          "impedance": "Impedanzsensor (Einzelfrequenz)",
+          "impedance_high": "Hochfrequenz-Impedanzsensor (250 kHz)",
+          "impedance_low": "Niederfrequenz-Impedanzsensor (50 kHz)"
+        },
+        "data_description": {
+          "impedance": "Einzelner Impedanzwert Ihrer Waage.",
+          "impedance_high": "Impedanz gemessen bei 250 kHz (S400).",
+          "impedance_low": "Impedanz gemessen bei 50 kHz (S400)."
+        },
+        "title": "Impedanzsensoren"
+      },
       "init": {
         "data": {
           "calculation_mode": "Berechnungsmethode",
-          "height": "Größe",
-          "impedance": "Impedanz sensor",
-          "last_measurement_time": "Sensor der letzten Wägezeit",
-          "weight": "Gewicht sensor"
+          "height": "Körpergröße (cm)",
+          "impedance_mode": "Impedanz-Modus",
+          "last_measurement_time": "Sensor für die letzte Messzeit",
+          "weight": "Gewichtssensor"
         },
         "data_description": {
-          "impedance": "Falls deine Waage keine Impedanz liefert, lasse dieses Feld leer.",
-          "last_measurement_time": "Lassen Sie dieses Feld leer, wenn Sie keinen Sensor für die letzte Wägezeit haben."
-        }
+          "calculation_mode": "Xiaomi: Identisch mit Zepp Life. Wissenschaftlich: WHO / Mifflin. Keine Auswirkung im S400-Modus.",
+          "impedance_mode": "Keine: Ohne Impedanz. Standard: Einzelfrequenz (Xiaomi Gen2). Dual-Frequenz S400: 50 kHz + 250 kHz.",
+          "last_measurement_time": "Optional lassen, wenn kein Sensor vorhanden."
+        },
+        "title": "Konfiguration"
       }
     }
   },
   "selector": {
     "calculation_mode": {
       "options": {
-        "science": "Wissenschaftlich",
-        "xiaomi": "Xiaomi (Legacy 2017)"
+        "science": "Wissenschaftlich — WHO / Mifflin",
+        "xiaomi": "Xiaomi — Zepp Life (Legacy 2017)"
+      }
+    },
+    "impedance_mode": {
+      "options": {
+        "dual_frequency": "Dual-Frequenz S400 (50 kHz + 250 kHz)",
+        "none": "Keine Impedanz",
+        "standard": "Einzelfrequenz (Xiaomi Gen2, Mi Body Scale 2…)"
       }
     }
   },
