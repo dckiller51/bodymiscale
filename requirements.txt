@@ -1,5 +1,5 @@
 cachetools==7.0.6
-homeassistant>=2024.3.3
+homeassistant>=2026.4.3
 mypy==1.20.2
 pre-commit==4.6.0
 pylint==4.0.5
