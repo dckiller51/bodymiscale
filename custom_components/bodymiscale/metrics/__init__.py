@@ -271,7 +271,6 @@ class BodyScaleMetricsHandler:
                     int(profile_id.state) if profile_id else None,
                     int(user_profile_id),
                 )
-                self._clear_sensor_problem(entity_id)
                 return
 
         raw = new_state.state
