@@ -264,12 +264,12 @@ class BodyScaleMetricsHandler:
         user_profile_id = self._config.get(CONF_PROFILE_ID)
         if profile_entity_id and user_profile_id:
             profile_id = self._hass.states.get(profile_entity_id)
-            if profile_id is None or profile_id.state != user_profile_id:
+            if profile_id is None or int(profile_id.state) != int(user_profile_id):
                 _LOGGER.debug(
                     "Ignoring update from %s due to profile ID mismatch (%s != %s)",
                     entity_id,
-                    profile_id.state if profile_id else None,
-                    user_profile_id,
+                    int(profile_id.state) if profile_id else None,
+                    int(user_profile_id),
                 )
                 return
 
