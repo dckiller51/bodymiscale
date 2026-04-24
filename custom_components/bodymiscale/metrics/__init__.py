@@ -261,11 +261,16 @@ class BodyScaleMetricsHandler:
 
         # Verify profile ID matches with user on the scale if configured
         profile_entity_id = self._config.get(CONF_SENSOR_PROFILE_ID)
-        if profile_entity_id:
+        user_profile_id = self._config.get(CONF_PROFILE_ID)
+        if profile_entity_id and user_profile_id:
             profile_id = self._hass.states.get(profile_entity_id)
-            if profile_id is None or profile_id.state != self._config.get(
-                CONF_PROFILE_ID
-            ):
+            if profile_id is None or profile_id.state != user_profile_id:
+                _LOGGER.debug(
+                    "Ignoring update from %s due to profile ID mismatch (%s != %s)",
+                    entity_id,
+                    profile_id.state if profile_id else None,
+                    user_profile_id,
+                )
                 return
 
         raw = new_state.state
