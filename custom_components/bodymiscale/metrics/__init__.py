@@ -32,11 +32,13 @@ from ..const import (
     CONF_GENDER,
     CONF_HEIGHT,
     CONF_IMPEDANCE_MODE,
+    CONF_PROFILE_ID,
     CONF_SCALE,
     CONF_SENSOR_IMPEDANCE,
     CONF_SENSOR_IMPEDANCE_HIGH,
     CONF_SENSOR_IMPEDANCE_LOW,
     CONF_SENSOR_LAST_MEASUREMENT_TIME,
+    CONF_SENSOR_PROFILE_ID,
     CONF_SENSOR_WEIGHT,
     CONSTRAINT_IMPEDANCE_MAX,
     CONSTRAINT_IMPEDANCE_MIN,
@@ -256,6 +258,15 @@ class BodyScaleMetricsHandler:
     def _state_changed(self, entity_id: str | None, new_state: State | None) -> None:
         if entity_id is None or new_state is None:
             return
+
+        # Verify profile ID matches with user on the scale if configured
+        profile_entity_id = self._config.get(CONF_SENSOR_PROFILE_ID)
+        if profile_entity_id:
+            profile_id = self._hass.states.get(profile_entity_id)
+            if profile_id is None or profile_id.state != self._config.get(
+                CONF_PROFILE_ID
+            ):
+                return
 
         raw = new_state.state
 

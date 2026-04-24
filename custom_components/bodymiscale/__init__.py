@@ -34,10 +34,12 @@ from .const import (
     CONF_GENDER,
     CONF_HEIGHT,
     CONF_IMPEDANCE_MODE,
+    CONF_PROFILE_ID,
     CONF_SENSOR_IMPEDANCE,
     CONF_SENSOR_IMPEDANCE_HIGH,
     CONF_SENSOR_IMPEDANCE_LOW,
     CONF_SENSOR_LAST_MEASUREMENT_TIME,
+    CONF_SENSOR_PROFILE_ID,
     CONF_SENSOR_WEIGHT,
     DOMAIN,
     HANDLERS,
@@ -58,6 +60,7 @@ SCHEMA_SENSORS = vol.Schema(
         vol.Optional(CONF_SENSOR_IMPEDANCE_LOW): cv.entity_id,
         vol.Optional(CONF_SENSOR_IMPEDANCE_HIGH): cv.entity_id,
         vol.Optional(CONF_SENSOR_LAST_MEASUREMENT_TIME): cv.entity_id,
+        vol.Optional(CONF_SENSOR_PROFILE_ID): cv.entity_id,
     }
 )
 
@@ -67,6 +70,7 @@ BODYMISCALE_SCHEMA = vol.Schema(
         vol.Required(CONF_HEIGHT): cv.positive_int,
         vol.Required(CONF_BIRTHDAY): cv.string,
         vol.Required(CONF_GENDER): cv.string,
+        vol.Required(CONF_PROFILE_ID): cv.positive_int,
     },
     extra=vol.ALLOW_EXTRA,
 )

@@ -18,6 +18,7 @@ CONF_BIRTHDAY = "birthday"
 CONF_GENDER = "gender"
 CONF_HEIGHT = "height"
 CONF_SCALE = "scale"
+CONF_PROFILE_ID = "profile_id"
 
 # calculation mode
 # - xiaomi  : formula Zepp Life / Mi Fit, etc. (proprietary Xiaomi algorithm)
@@ -50,6 +51,7 @@ CONF_SENSOR_IMPEDANCE = "impedance"  # Mode standard
 CONF_SENSOR_IMPEDANCE_LOW = "impedance_low"  # dual mode 50 kHz
 CONF_SENSOR_IMPEDANCE_HIGH = "impedance_high"  # dual mode 250 kHz
 CONF_SENSOR_LAST_MEASUREMENT_TIME = "last_measurement_time"
+CONF_SENSOR_PROFILE_ID = "profile_id_sensor"
 
 # Attributs
 ATTR_AGE = "age"
@@ -91,6 +93,8 @@ CONSTRAINT_IMPEDANCE_MIN = 50
 CONSTRAINT_IMPEDANCE_MAX = 3000
 CONSTRAINT_WEIGHT_MIN = 10
 CONSTRAINT_WEIGHT_MAX = 200
+CONSTRAINT_PROFILE_ID_MIN = 1
+CONSTRAINT_PROFILE_ID_MAX = 5
 
 # Home Assistant
 PLATFORMS: set[Platform] = {Platform.SENSOR}
