@@ -272,10 +272,15 @@ class BodyScaleSensor(BodyScaleBaseEntity, RestoreSensor):
 
             self.async_write_ha_state()
 
+        # Mark this sensor's restoration as complete
+        self._handler.mark_restoration_complete()
+
         def on_value(value: StateType | datetime) -> None:
             """Handle a new sensor value and update the entity state."""
             if self.entity_description.key == CONF_SENSOR_LAST_MEASUREMENT_TIME:
-                if isinstance(value, datetime):
+                if isinstance(
+                    value, datetime
+                ):  # Same result as Else so not needed here...?
                     self._attr_native_value = value
                 elif isinstance(value, str):
                     try:
