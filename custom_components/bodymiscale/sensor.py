@@ -245,7 +245,27 @@ class BodyScaleSensor(BodyScaleBaseEntity, RestoreSensor):
         # Restore the last state
         last_sensor_data = await self.async_get_last_sensor_data()
         if last_sensor_data and last_sensor_data.native_value is not None:
-            self._attr_native_value = last_sensor_data.native_value
+            # Handle timestamp sensor restoration (may be stored as string)
+            if self.entity_description.key == CONF_SENSOR_LAST_MEASUREMENT_TIME:
+                if isinstance(last_sensor_data.native_value, str):
+                    try:
+                        self._attr_native_value = datetime.fromisoformat(
+                            last_sensor_data.native_value
+                        )
+                    except ValueError:
+                        self._attr_native_value = None
+                else:
+                    self._attr_native_value = last_sensor_data.native_value
+            else:
+                self._attr_native_value = last_sensor_data.native_value
+
+            # Recalculate extra attributes from restored value
+            if self._get_attributes and self._attr_native_value is not None:
+                # Cast to expected type for type checker
+                value: StateType | datetime = self._attr_native_value  # type: ignore[assignment]
+                attributes = self._get_attributes(value, dict(self._handler.config))
+                self._attr_extra_state_attributes = dict(attributes)
+
             self.async_write_ha_state()
 
         def on_value(value: StateType | datetime) -> None:
