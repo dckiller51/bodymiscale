@@ -15,6 +15,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import PERCENTAGE, UnitOfMass
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.helpers.typing import StateType
 
 from .const import (
@@ -220,7 +221,7 @@ async def async_setup_entry(
     async_add_entities(new_sensors)
 
 
-class BodyScaleSensor(BodyScaleBaseEntity, SensorEntity):
+class BodyScaleSensor(BodyScaleBaseEntity, SensorEntity, RestoreEntity):
     """Body scale sensor."""
 
     def __init__(
@@ -241,6 +242,12 @@ class BodyScaleSensor(BodyScaleBaseEntity, SensorEntity):
     async def async_added_to_hass(self) -> None:
         """Set up the event listeners now that hass is ready."""
         await super().async_added_to_hass()
+
+        # Restore the last state
+        last_state = await self.async_get_last_state()
+        if last_state:
+            self._attr_native_value = last_state.state
+            self.async_write_ha_state()
 
         def on_value(value: StateType | datetime) -> None:
             """Handle a new sensor value and update the entity state."""

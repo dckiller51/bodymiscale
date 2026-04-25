@@ -208,11 +208,6 @@ class BodyScaleMetricsHandler:
             self._state_changed_event,
         )
 
-        # Initial state
-        for entity_id in sensors:
-            if (state := self._hass.states.get(entity_id)) is not None:
-                self._state_changed(entity_id, state)
-
     # ── Properties ───────────────────────────────────────────────────────────
 
     @property
