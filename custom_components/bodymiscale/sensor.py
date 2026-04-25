@@ -3,11 +3,11 @@
 import logging
 from collections.abc import Callable, Mapping
 from datetime import datetime
-from typing import Any
+from typing import Any, cast
 
 from homeassistant.components.sensor import (
+    RestoreSensor,
     SensorDeviceClass,
-    SensorEntity,
     SensorEntityDescription,
     SensorStateClass,
 )
@@ -220,7 +220,7 @@ async def async_setup_entry(
     async_add_entities(new_sensors)
 
 
-class BodyScaleSensor(BodyScaleBaseEntity, SensorEntity):
+class BodyScaleSensor(BodyScaleBaseEntity, RestoreSensor):
     """Body scale sensor."""
 
     def __init__(
@@ -242,10 +242,45 @@ class BodyScaleSensor(BodyScaleBaseEntity, SensorEntity):
         """Set up the event listeners now that hass is ready."""
         await super().async_added_to_hass()
 
+        # Restore the last state
+        last_sensor_data = await self.async_get_last_sensor_data()
+        if last_sensor_data and last_sensor_data.native_value is not None:
+            # Handle timestamp sensor restoration (may be stored as string)
+            if (
+                self.entity_description.key == CONF_SENSOR_LAST_MEASUREMENT_TIME
+                and isinstance(last_sensor_data.native_value, str)
+            ):
+                try:
+                    self._attr_native_value = datetime.fromisoformat(
+                        last_sensor_data.native_value
+                    )
+                except ValueError:
+                    self._attr_native_value = None
+            else:
+                # RestoreSensor can also return Decimal or date objects not in StateType | datetime,
+                # so we need to handle that gracefully by casting
+                self._attr_native_value = cast(
+                    StateType | datetime, last_sensor_data.native_value
+                )
+
+            # Recalculate extra attributes from restored value
+            if self._get_attributes and self._attr_native_value is not None:
+                attributes = self._get_attributes(
+                    self._attr_native_value, dict(self._handler.config)
+                )
+                self._attr_extra_state_attributes = dict(attributes)
+
+            self.async_write_ha_state()
+
+        # Mark this sensor's restoration as complete
+        self._handler.mark_restoration_complete()
+
         def on_value(value: StateType | datetime) -> None:
             """Handle a new sensor value and update the entity state."""
             if self.entity_description.key == CONF_SENSOR_LAST_MEASUREMENT_TIME:
-                if isinstance(value, datetime):
+                if isinstance(
+                    value, datetime
+                ):  # Same result as Else so not needed here...?
                     self._attr_native_value = value
                 elif isinstance(value, str):
                     try:
