@@ -3,7 +3,7 @@
 import logging
 from collections.abc import Callable, Mapping
 from datetime import datetime
-from typing import Any
+from typing import Any, cast
 
 from homeassistant.components.sensor import (
     RestoreSensor,
@@ -236,7 +236,7 @@ class BodyScaleSensor(BodyScaleBaseEntity, RestoreSensor):
         self._metric = metric
         self._get_attributes = get_attributes
 
-    _attr_native_value: StateType | datetime | None | Any = None
+    _attr_native_value: StateType | datetime | None = None
 
     async def async_added_to_hass(self) -> None:
         """Set up the event listeners now that hass is ready."""
@@ -246,24 +246,28 @@ class BodyScaleSensor(BodyScaleBaseEntity, RestoreSensor):
         last_sensor_data = await self.async_get_last_sensor_data()
         if last_sensor_data and last_sensor_data.native_value is not None:
             # Handle timestamp sensor restoration (may be stored as string)
-            if self.entity_description.key == CONF_SENSOR_LAST_MEASUREMENT_TIME:
-                if isinstance(last_sensor_data.native_value, str):
-                    try:
-                        self._attr_native_value = datetime.fromisoformat(
-                            last_sensor_data.native_value
-                        )
-                    except ValueError:
-                        self._attr_native_value = None
-                else:
-                    self._attr_native_value = last_sensor_data.native_value
+            if (
+                self.entity_description.key == CONF_SENSOR_LAST_MEASUREMENT_TIME
+                and isinstance(last_sensor_data.native_value, str)
+            ):
+                try:
+                    self._attr_native_value = datetime.fromisoformat(
+                        last_sensor_data.native_value
+                    )
+                except ValueError:
+                    self._attr_native_value = None
             else:
-                self._attr_native_value = last_sensor_data.native_value
+                # RestoreSensor can also return Decimal or date objects not in StateType | datetime,
+                # so we need to handle that gracefully by casting
+                self._attr_native_value = cast(
+                    StateType | datetime, last_sensor_data.native_value
+                )
 
             # Recalculate extra attributes from restored value
             if self._get_attributes and self._attr_native_value is not None:
-                # Cast to expected type for type checker
-                value: StateType | datetime = self._attr_native_value  # type: ignore[assignment]
-                attributes = self._get_attributes(value, dict(self._handler.config))
+                attributes = self._get_attributes(
+                    self._attr_native_value, dict(self._handler.config)
+                )
                 self._attr_extra_state_attributes = dict(attributes)
 
             self.async_write_ha_state()
