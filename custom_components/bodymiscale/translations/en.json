@@ -26,12 +26,16 @@
           "height": "Height (cm)",
           "impedance_mode": "Impedance mode",
           "last_measurement_time": "Last measurement time sensor",
+          "profile_id": "Profile ID",
+          "profile_id_sensor": "Profile ID sensor",
           "weight": "Weight sensor"
         },
         "data_description": {
           "calculation_mode": "Xiaomi: identical to Zepp Life app. Science: WHO / Schofield formulas. Has no effect in S400 dual-frequency mode.",
           "impedance_mode": "None: scale without impedance. Standard: single-frequency (Xiaomi Gen2). Dual-frequency S400: 50 kHz + 250 kHz sensors.",
-          "last_measurement_time": "Optional. Leave blank if you do not have this sensor."
+          "last_measurement_time": "Optional. Leave blank if you do not have this sensor.",
+          "profile_id": "Optional. Your profile number on the scale (1-5). Measurements from other profiles are ignored when the Profile ID sensor is set.",
+          "profile_id_sensor": "Optional. Sensor containing the profile ID reported by the scale. Use with Profile ID to ignore measurements from other profiles."
         },
         "title": "Configuration"
       },
@@ -178,12 +182,16 @@
           "height": "Height (cm)",
           "impedance_mode": "Impedance mode",
           "last_measurement_time": "Last measurement time sensor",
+          "profile_id": "Profile ID",
+          "profile_id_sensor": "Profile ID sensor",
           "weight": "Weight sensor"
         },
         "data_description": {
           "calculation_mode": "Xiaomi: identical to Zepp Life app. Science: WHO / Schofield formulas. Has no effect in S400 dual-frequency mode.",
           "impedance_mode": "None: scale without impedance. Standard: single-frequency (Xiaomi Gen2). Dual-frequency S400: 50 kHz + 250 kHz sensors.",
-          "last_measurement_time": "Optional. Leave blank if you do not have this sensor."
+          "last_measurement_time": "Optional. Leave blank if you do not have this sensor.",
+          "profile_id": "Optional. Your profile number on the scale (1-5). Measurements from other profiles are ignored when the Profile ID sensor is set.",
+          "profile_id_sensor": "Optional. Sensor containing the profile ID reported by the scale. Use with Profile ID to ignore measurements from other profiles."
         },
         "title": "Configuration"
       }

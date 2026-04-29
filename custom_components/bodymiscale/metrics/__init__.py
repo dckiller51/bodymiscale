@@ -32,11 +32,13 @@ from ..const import (
     CONF_GENDER,
     CONF_HEIGHT,
     CONF_IMPEDANCE_MODE,
+    CONF_PROFILE_ID,
     CONF_SCALE,
     CONF_SENSOR_IMPEDANCE,
     CONF_SENSOR_IMPEDANCE_HIGH,
     CONF_SENSOR_IMPEDANCE_LOW,
     CONF_SENSOR_LAST_MEASUREMENT_TIME,
+    CONF_SENSOR_PROFILE_ID,
     CONF_SENSOR_WEIGHT,
     CONSTRAINT_IMPEDANCE_MAX,
     CONSTRAINT_IMPEDANCE_MIN,
@@ -359,6 +361,20 @@ class BodyScaleMetricsHandler:
                 "Ignoring update from %s until restoration is complete", entity_id
             )
             return
+
+        # Verify profile ID matches with user on the scale if configured
+        profile_entity_id = self._config.get(CONF_SENSOR_PROFILE_ID)
+        user_profile_id = self._config.get(CONF_PROFILE_ID)
+        if profile_entity_id and user_profile_id:
+            profile_id = self._hass.states.get(profile_entity_id)
+            if profile_id is None or int(profile_id.state) != int(user_profile_id):
+                _LOGGER.debug(
+                    "Ignoring update from %s due to profile ID mismatch (%s != %s)",
+                    entity_id,
+                    int(profile_id.state) if profile_id else None,
+                    int(user_profile_id),
+                )
+                return
 
         raw = new_state.state
 

@@ -26,12 +26,16 @@
           "height": "身高 (cm)",
           "impedance_mode": "阻抗模式",
           "last_measurement_time": "上次稱重時間感測器",
+          "profile_id": "個人檔案 ID",
+          "profile_id_sensor": "個人檔案 ID 感測器",
           "weight": "體重感測器"
         },
         "data_description": {
           "calculation_mode": "小米：與 Zepp Life 演算法一致。科學：基於 WHO / Schofield 公式。對 S400 雙頻模式無效。",
           "impedance_mode": "無：體重計不支援阻抗測量。標準：單頻（小米二代秤）。雙頻 S400：支援 50 kHz + 250 kHz 雙頻感測器。",
-          "last_measurement_time": "選填。若無此感測器請留白。"
+          "last_measurement_time": "選填。若無此感測器請留白。",
+          "profile_id": "選填。你在體重秤上的個人檔案編號 (1-5)。設定個人檔案 ID 感測器後，將忽略其他個人檔案的測量值。",
+          "profile_id_sensor": "選填。包含體重秤回報之個人檔案 ID 的感測器。與個人檔案 ID 搭配使用，可忽略其他個人檔案的測量值。"
         },
         "title": "配置選項"
       },
@@ -178,12 +182,16 @@
           "height": "身高 (cm)",
           "impedance_mode": "阻抗模式",
           "last_measurement_time": "上次稱重時間感測器",
+          "profile_id": "個人檔案 ID",
+          "profile_id_sensor": "個人檔案 ID 感測器",
           "weight": "體重感測器"
         },
         "data_description": {
           "calculation_mode": "小米：與 Zepp Life 演算法一致。科學：基於 WHO / Schofield 公式。對 S400 雙頻模式無效。",
           "impedance_mode": "無：體重計不支援阻抗測量。標準：單頻（小米二代秤）。雙頻 S400：支援 50 kHz + 250 kHz 雙頻感測器。",
-          "last_measurement_time": "選填。若無此感測器請留白。"
+          "last_measurement_time": "選填。若無此感測器請留白。",
+          "profile_id": "選填。你在體重秤上的個人檔案編號 (1-5)。設定個人檔案 ID 感測器後，將忽略其他個人檔案的測量值。",
+          "profile_id_sensor": "選填。包含體重秤回報之個人檔案 ID 的感測器。與個人檔案 ID 搭配使用，可忽略其他個人檔案的測量值。"
         },
         "title": "配置選項"
       }

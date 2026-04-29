@@ -26,12 +26,16 @@
           "height": "Lengte (cm)",
           "impedance_mode": "Impedantiemodus",
           "last_measurement_time": "Sensor voor meest recente meettijd",
+          "profile_id": "Profiel-ID",
+          "profile_id_sensor": "Profiel-ID-sensor",
           "weight": "Gewichtssensor"
         },
         "data_description": {
           "calculation_mode": "Xiaomi: identiek aan de Zepp Life-app. Wetenschappelijk: WHO / Schofield-formules. Heeft geen effect in S400-dualfrequentiemodus.",
           "impedance_mode": "Geen: weegschaal zonder impedantie. Standaard: enkele frequentie (Xiaomi Gen2). Dual-frequency S400: 50 kHz + 250 kHz sensoren.",
-          "last_measurement_time": "Optioneel. Laat leeg als je deze sensor niet hebt."
+          "last_measurement_time": "Optioneel. Laat leeg als je deze sensor niet hebt.",
+          "profile_id": "Optioneel. Je profielnummer op de weegschaal (1-5). Metingen van andere profielen worden genegeerd wanneer de profiel-ID-sensor is ingesteld.",
+          "profile_id_sensor": "Optioneel. Sensor met de profiel-ID die door de weegschaal wordt gemeld. Gebruik samen met Profiel-ID om metingen van andere profielen te negeren."
         },
         "title": "Configuratie"
       },
@@ -178,12 +182,16 @@
           "height": "Lengte (cm)",
           "impedance_mode": "Impedantiemodus",
           "last_measurement_time": "Sensor voor laatste meettijd",
+          "profile_id": "Profiel-ID",
+          "profile_id_sensor": "Profiel-ID-sensor",
           "weight": "Gewichtssensor"
         },
         "data_description": {
           "calculation_mode": "Xiaomi: identiek aan de Zepp Life-app. Wetenschappelijk: WHO / Schofield-formules. Heeft geen effect in S400-dualfrequentiemodus.",
           "impedance_mode": "Geen: weegschaal zonder impedantie. Standaard: enkele frequentie (Xiaomi Gen2). Dual-frequency S400: 50 kHz + 250 kHz sensoren.",
-          "last_measurement_time": "Optioneel. Laat leeg als je deze sensor niet hebt."
+          "last_measurement_time": "Optioneel. Laat leeg als je deze sensor niet hebt.",
+          "profile_id": "Optioneel. Je profielnummer op de weegschaal (1-5). Metingen van andere profielen worden genegeerd wanneer de profiel-ID-sensor is ingesteld.",
+          "profile_id_sensor": "Optioneel. Sensor met de profiel-ID die door de weegschaal wordt gemeld. Gebruik samen met Profiel-ID om metingen van andere profielen te negeren."
         },
         "title": "Configuratie"
       }

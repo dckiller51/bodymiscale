@@ -26,12 +26,16 @@
           "height": "Altura (cm)",
           "impedance_mode": "Modo de impedância",
           "last_measurement_time": "Sensor da última pesagem",
+          "profile_id": "ID do perfil",
+          "profile_id_sensor": "Sensor de ID do perfil",
           "weight": "Sensor de peso"
         },
         "data_description": {
           "calculation_mode": "Xiaomi: idêntico ao app Zepp Life. Científico: fórmulas OMS / Schofield. Não tem efeito no modo S400 de dupla frequência.",
           "impedance_mode": "Nenhum: balança sem impedância. Padrão: frequência única (Xiaomi Gen2). Dupla frequência S400: sensores de 50 kHz + 250 kHz.",
-          "last_measurement_time": "Opcional. Deixe em branco se não possuir este sensor."
+          "last_measurement_time": "Opcional. Deixe em branco se não possuir este sensor.",
+          "profile_id": "Opcional. O número do seu perfil na balança (1-5). Medições de outros perfis são ignoradas quando o sensor de ID do perfil está definido.",
+          "profile_id_sensor": "Opcional. Sensor que contém o ID do perfil informado pela balança. Use com ID do perfil para ignorar medições de outros perfis."
         },
         "title": "Configuração"
       },
@@ -178,12 +182,16 @@
           "height": "Altura (cm)",
           "impedance_mode": "Modo de impedância",
           "last_measurement_time": "Sensor da última pesagem",
+          "profile_id": "ID do perfil",
+          "profile_id_sensor": "Sensor de ID do perfil",
           "weight": "Sensor de peso"
         },
         "data_description": {
           "calculation_mode": "Xiaomi: idêntico ao app Zepp Life. Científico: fórmulas OMS / Schofield. Não tem efeito no modo S400 de dupla frequência.",
           "impedance_mode": "Nenhum: balança sem impedância. Padrão: frequência única (Xiaomi Gen2). Dupla frequência S400: sensores de 50 kHz + 250 kHz.",
-          "last_measurement_time": "Opcional. Deixe em branco se não possuir este sensor."
+          "last_measurement_time": "Opcional. Deixe em branco se não possuir este sensor.",
+          "profile_id": "Opcional. O número do seu perfil na balança (1-5). Medições de outros perfis são ignoradas quando o sensor de ID do perfil está definido.",
+          "profile_id_sensor": "Opcional. Sensor que contém o ID do perfil informado pela balança. Use com ID do perfil para ignorar medições de outros perfis."
         },
         "title": "Configuração"
       }

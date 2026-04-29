@@ -26,12 +26,16 @@
           "height": "Körpergröße (cm)",
           "impedance_mode": "Impedanz-Modus",
           "last_measurement_time": "Sensor für die letzte Messzeit",
+          "profile_id": "Profil-ID",
+          "profile_id_sensor": "Profil-ID-Sensor",
           "weight": "Gewichtssensor"
         },
         "data_description": {
           "calculation_mode": "Xiaomi: Identisch mit der Zepp Life App. Wissenschaftlich: WHO / Schofield Formeln. Hat im S400 Dual-Frequenz-Modus keine Auswirkung.",
           "impedance_mode": "Keine: Waage ohne Impedanzmessung. Standard: Einzelfrequenz (Xiaomi Gen2). Dual-Frequenz S400: 50 kHz + 250 kHz Sensoren.",
-          "last_measurement_time": "Optional. Leer lassen, wenn Sie diesen Sensor nicht haben."
+          "last_measurement_time": "Optional. Leer lassen, wenn Sie diesen Sensor nicht haben.",
+          "profile_id": "Optional. Ihre Profilnummer auf der Waage (1-5). Messungen anderer Profile werden ignoriert, wenn der Profil-ID-Sensor gesetzt ist.",
+          "profile_id_sensor": "Optional. Sensor, der die von der Waage gemeldete Profil-ID enthält. Zusammen mit der Profil-ID verwenden, um Messungen anderer Profile zu ignorieren."
         },
         "title": "Konfiguration"
       },
@@ -178,12 +182,16 @@
           "height": "Körpergröße (cm)",
           "impedance_mode": "Impedanz-Modus",
           "last_measurement_time": "Sensor für die letzte Messzeit",
+          "profile_id": "Profil-ID",
+          "profile_id_sensor": "Profil-ID-Sensor",
           "weight": "Gewichtssensor"
         },
         "data_description": {
           "calculation_mode": "Xiaomi: Identisch mit der Zepp Life App. Wissenschaftlich: WHO / Schofield Formeln. Hat im S400 Dual-Frequenz-Modus keine Auswirkung.",
           "impedance_mode": "Keine: Waage ohne Impedanzmessung. Standard: Einzelfrequenz (Xiaomi Gen2). Dual-Frequenz S400: 50 kHz + 250 kHz Sensoren.",
-          "last_measurement_time": "Optional. Leer lassen, wenn Sie diesen Sensor nicht haben."
+          "last_measurement_time": "Optional. Leer lassen, wenn Sie diesen Sensor nicht haben.",
+          "profile_id": "Optional. Ihre Profilnummer auf der Waage (1-5). Messungen anderer Profile werden ignoriert, wenn der Profil-ID-Sensor gesetzt ist.",
+          "profile_id_sensor": "Optional. Sensor, der die von der Waage gemeldete Profil-ID enthält. Zusammen mit der Profil-ID verwenden, um Messungen anderer Profile zu ignorieren."
         },
         "title": "Konfiguration"
       }

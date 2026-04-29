@@ -26,12 +26,16 @@
           "height": "Højde (cm)",
           "impedance_mode": "Impedanstilstand",
           "last_measurement_time": "Tidssensor for sidste måling",
+          "profile_id": "Profil-id",
+          "profile_id_sensor": "Profil-id-sensor",
           "weight": "Vægtsensor"
         },
         "data_description": {
           "calculation_mode": "Xiaomi: identisk med Zepp Life app. Videnskabelig: WHO / Schofield formler. Har ingen effekt i S400 dual-frequency tilstand.",
           "impedance_mode": "Ingen: vægt uden impedans. Standard: enkelt-frekvens (Xiaomi Gen2). Dual-frequency S400: 50 kHz + 250 kHz sensorer.",
-          "last_measurement_time": "Valgfrit. Efterlad tom, hvis du ikke har denne sensor."
+          "last_measurement_time": "Valgfrit. Efterlad tom, hvis du ikke har denne sensor.",
+          "profile_id": "Valgfrit. Dit profilnummer på vægten (1-5). Målinger fra andre profiler ignoreres, når profil-id-sensoren er angivet.",
+          "profile_id_sensor": "Valgfrit. Sensoren, der indeholder profil-id'et rapporteret af vægten. Brug sammen med profil-id for at ignorere målinger fra andre profiler."
         },
         "title": "Konfiguration"
       },
@@ -178,12 +182,16 @@
           "height": "Højde (cm)",
           "impedance_mode": "Impedanstilstand",
           "last_measurement_time": "Tidssensor for sidste måling",
+          "profile_id": "Profil-id",
+          "profile_id_sensor": "Profil-id-sensor",
           "weight": "Vægtsensor"
         },
         "data_description": {
           "calculation_mode": "Xiaomi: identisk med Zepp Life app. Videnskabelig: WHO / Schofield formler. Har ingen effekt i S400 dual-frequency tilstand.",
           "impedance_mode": "Ingen: vægt uden impedans. Standard: enkelt-frekvens (Xiaomi Gen2). Dual-frequency S400: 50 kHz + 250 kHz sensorer.",
-          "last_measurement_time": "Valgfrit. Efterlad tom, hvis du ikke har denne sensor."
+          "last_measurement_time": "Valgfrit. Efterlad tom, hvis du ikke har denne sensor.",
+          "profile_id": "Valgfrit. Dit profilnummer på vægten (1-5). Målinger fra andre profiler ignoreres, når profil-id-sensoren er angivet.",
+          "profile_id_sensor": "Valgfrit. Sensoren, der indeholder profil-id'et rapporteret af vægten. Brug sammen med profil-id for at ignorere målinger fra andre profiler."
         },
         "title": "Konfiguration"
       }

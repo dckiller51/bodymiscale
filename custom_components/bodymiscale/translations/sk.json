@@ -26,12 +26,16 @@
           "height": "Výška (cm)",
           "impedance_mode": "Režim impedancie",
           "last_measurement_time": "Senzor času posledného váženia",
+          "profile_id": "ID profilu",
+          "profile_id_sensor": "Senzor ID profilu",
           "weight": "Senzor hmotnosti"
         },
         "data_description": {
           "calculation_mode": "Xiaomi: identické s aplikáciou Zepp Life. Vedecká: vzorce WHO / Schofield. Neovplyvňuje režim S400.",
           "impedance_mode": "Žiadny: váha bez impedancie. Štandard: jedna frekvencia (Xiaomi Gen2). Dual-frequency S400: senzory 50 kHz + 250 kHz.",
-          "last_measurement_time": "Voliteľné. Nechajte prázdne, ak tento senzor nemáte."
+          "last_measurement_time": "Voliteľné. Nechajte prázdne, ak tento senzor nemáte.",
+          "profile_id": "Voliteľné. Číslo vášho profilu na váhe (1-5). Merania z iných profilov sa ignorujú, keď je nastavený senzor ID profilu.",
+          "profile_id_sensor": "Voliteľné. Senzor obsahujúci ID profilu nahlásené váhou. Použite s ID profilu na ignorovanie meraní z iných profilov."
         },
         "title": "Konfigurácia"
       },
@@ -178,12 +182,16 @@
           "height": "Výška (cm)",
           "impedance_mode": "Režim impedancie",
           "last_measurement_time": "Senzor času posledného váženia",
+          "profile_id": "ID profilu",
+          "profile_id_sensor": "Senzor ID profilu",
           "weight": "Senzor hmotnosti"
         },
         "data_description": {
           "calculation_mode": "Xiaomi: identické s aplikáciou Zepp Life. Vedecká: vzorce WHO / Schofield. Neovplyvňuje režim S400.",
           "impedance_mode": "Žiadny: váha bez impedancie. Štandard: jedna frekvencia (Xiaomi Gen2). Dual-frequency S400: senzory 50 kHz + 250 kHz.",
-          "last_measurement_time": "Voliteľné. Nechajte prázdne, ak tento senzor nemáte."
+          "last_measurement_time": "Voliteľné. Nechajte prázdne, ak tento senzor nemáte.",
+          "profile_id": "Voliteľné. Číslo vášho profilu na váhe (1-5). Merania z iných profilov sa ignorujú, keď je nastavený senzor ID profilu.",
+          "profile_id_sensor": "Voliteľné. Senzor obsahujúci ID profilu nahlásené váhou. Použite s ID profilu na ignorovanie meraní z iných profilov."
         },
         "title": "Konfigurácia"
       }

@@ -24,13 +24,17 @@ from .const import (
     CONF_GENDER,
     CONF_HEIGHT,
     CONF_IMPEDANCE_MODE,
+    CONF_PROFILE_ID,
     CONF_SENSOR_IMPEDANCE,
     CONF_SENSOR_IMPEDANCE_HIGH,
     CONF_SENSOR_IMPEDANCE_LOW,
     CONF_SENSOR_LAST_MEASUREMENT_TIME,
+    CONF_SENSOR_PROFILE_ID,
     CONF_SENSOR_WEIGHT,
     CONSTRAINT_HEIGHT_MAX,
     CONSTRAINT_HEIGHT_MIN,
+    CONSTRAINT_PROFILE_ID_MAX,
+    CONSTRAINT_PROFILE_ID_MIN,
     DOMAIN,
     IMPEDANCE_MODE_DUAL,
     IMPEDANCE_MODE_NONE,
@@ -83,6 +87,24 @@ def _get_main_options_schema(
                 },
             ): selector.EntitySelector(
                 selector.EntitySelectorConfig(domain=["sensor", "input_datetime"])
+            ),
+            vol.Optional(
+                CONF_SENSOR_PROFILE_ID,
+                description={"suggested_value": defaults.get(CONF_SENSOR_PROFILE_ID)},
+            ): selector.EntitySelector(
+                selector.EntitySelectorConfig(
+                    domain=["sensor", "input_number", "number"]
+                )
+            ),
+            vol.Optional(
+                CONF_PROFILE_ID,
+                description={"suggested_value": defaults.get(CONF_PROFILE_ID)},
+            ): selector.NumberSelector(
+                selector.NumberSelectorConfig(
+                    mode=selector.NumberSelectorMode.BOX,
+                    min=CONSTRAINT_PROFILE_ID_MIN,
+                    max=CONSTRAINT_PROFILE_ID_MAX,
+                )
             ),
             vol.Required(
                 CONF_IMPEDANCE_MODE,

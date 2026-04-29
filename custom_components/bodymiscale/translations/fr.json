@@ -26,12 +26,16 @@
           "height": "Taille (cm)",
           "impedance_mode": "Mode d'impédance",
           "last_measurement_time": "Capteur de la dernière pesée",
+          "profile_id": "ID de profil",
+          "profile_id_sensor": "Capteur d'ID de profil",
           "weight": "Capteur de poids"
         },
         "data_description": {
           "calculation_mode": "Xiaomi : copie conforme de l'app Zepp Life. Science : formules OMS / Schofield. Sans effet en mode S400 (bi-fréquence).",
           "impedance_mode": "Aucun : balance sans impédance. Standard : mono-fréquence (Xiaomi Gen2). Bi-fréquence S400 : capteurs 50 kHz + 250 kHz.",
-          "last_measurement_time": "Optionnel. Laissez vide si vous n'avez pas ce capteur."
+          "last_measurement_time": "Optionnel. Laissez vide si vous n'avez pas ce capteur.",
+          "profile_id": "Optionnel. Le numéro de votre profil sur la balance (1-5). Les mesures des autres profils sont ignorées lorsque le capteur d'ID de profil est défini.",
+          "profile_id_sensor": "Optionnel. Capteur contenant l'ID de profil indiqué par la balance. Utilisez-le avec l'ID de profil pour ignorer les mesures des autres profils."
         },
         "title": "Configuration"
       },
@@ -178,12 +182,16 @@
           "height": "Taille (cm)",
           "impedance_mode": "Mode d'impédance",
           "last_measurement_time": "Capteur de la dernière pesée",
+          "profile_id": "ID de profil",
+          "profile_id_sensor": "Capteur d'ID de profil",
           "weight": "Capteur de poids"
         },
         "data_description": {
           "calculation_mode": "Xiaomi : copie conforme de l'app Zepp Life. Science : formules OMS / Schofield. Sans effet en mode S400 (bi-fréquence).",
           "impedance_mode": "Aucun : balance sans impédance. Standard : mono-fréquence (Xiaomi Gen2). Bi-fréquence S400 : capteurs 50 kHz + 250 kHz.",
-          "last_measurement_time": "Optionnel. Laissez vide si vous n'avez pas ce capteur."
+          "last_measurement_time": "Optionnel. Laissez vide si vous n'avez pas ce capteur.",
+          "profile_id": "Optionnel. Le numéro de votre profil sur la balance (1-5). Les mesures des autres profils sont ignorées lorsque le capteur d'ID de profil est défini.",
+          "profile_id_sensor": "Optionnel. Capteur contenant l'ID de profil indiqué par la balance. Utilisez-le avec l'ID de profil pour ignorer les mesures des autres profils."
         },
         "title": "Configuration"
       }

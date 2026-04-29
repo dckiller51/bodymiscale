@@ -26,12 +26,16 @@
           "height": "身高 (cm)",
           "impedance_mode": "阻抗模式",
           "last_measurement_time": "上次称重时间传感器",
+          "profile_id": "档案 ID",
+          "profile_id_sensor": "档案 ID 传感器",
           "weight": "体重传感器"
         },
         "data_description": {
           "calculation_mode": "小米：与 Zepp Life 算法一致。科学：基于 WHO / Schofield 公式。对 S400 双频模式无效。",
           "impedance_mode": "无：秤不带阻抗测量。标准：单频（小米二代秤）。双频 S400：支持 50 kHz + 250 kHz 双频传感器。",
-          "last_measurement_time": "可选。如果没有该传感器请留空。"
+          "last_measurement_time": "可选。如果没有该传感器请留空。",
+          "profile_id": "可选。你在体重秤上的档案编号 (1-5)。设置档案 ID 传感器后，将忽略其他档案的测量值。",
+          "profile_id_sensor": "可选。包含体重秤报告的档案 ID 的传感器。与档案 ID 一起使用，可忽略其他档案的测量值。"
         },
         "title": "配置选项"
       },
@@ -178,12 +182,16 @@
           "height": "身高 (cm)",
           "impedance_mode": "阻抗模式",
           "last_measurement_time": "上次称重时间传感器",
+          "profile_id": "档案 ID",
+          "profile_id_sensor": "档案 ID 传感器",
           "weight": "体重传感器"
         },
         "data_description": {
           "calculation_mode": "小米：与 Zepp Life 算法一致。科学：基于 WHO / Schofield 公式。对 S400 双频模式无效。",
           "impedance_mode": "无：秤不带阻抗测量。标准：单频（小米二代秤）。双频 S400：支持 50 kHz + 250 kHz 双频传感器。",
-          "last_measurement_time": "可选。如果没有该传感器请留空。"
+          "last_measurement_time": "可选。如果没有该传感器请留空。",
+          "profile_id": "可选。你在体重秤上的档案编号 (1-5)。设置档案 ID 传感器后，将忽略其他档案的测量值。",
+          "profile_id_sensor": "可选。包含体重秤报告的档案 ID 的传感器。与档案 ID 一起使用，可忽略其他档案的测量值。"
         },
         "title": "配置选项"
       }
