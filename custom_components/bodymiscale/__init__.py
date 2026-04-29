@@ -11,11 +11,19 @@ import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
 from awesomeversion import AwesomeVersion
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_NAME, CONF_SENSORS, STATE_OK, STATE_PROBLEM
+from homeassistant.const import (
+    CONF_NAME,
+    CONF_SENSORS,
+    STATE_OK,
+    STATE_PROBLEM,
+    EntityCategory,
+)
 from homeassistant.const import __version__ as HA_VERSION
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import EntityDescription
 from homeassistant.helpers.entity_component import EntityComponent
+from homeassistant.helpers.entity_platform import EntityPlatform
+from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.helpers.typing import StateType
 
 from custom_components.bodymiscale.metrics import BodyScaleMetricsHandler
@@ -40,6 +48,7 @@ from .const import (
     CONF_SENSOR_LAST_MEASUREMENT_TIME,
     CONF_SENSOR_WEIGHT,
     DOMAIN,
+    ENTITIES,
     HANDLERS,
     MIN_REQUIRED_HA_VERSION,
     PLATFORMS,
@@ -50,6 +59,8 @@ from .const import (
 from .entity import BodyScaleBaseEntity
 
 _LOGGER = logging.getLogger(__name__)
+
+MAIN_ENTITY_PLATFORMS = "main_entity_platforms"
 
 SCHEMA_SENSORS = vol.Schema(
     {
@@ -76,6 +87,27 @@ CONFIG_SCHEMA = vol.Schema(
 )
 
 
+async def _async_add_bodymiscale_entity(
+    component: EntityComponent,
+    entry: ConfigEntry,
+    entity: "Bodymiscale",
+) -> None:
+    """Add the main Bodymiscale entity with config entry context."""
+    platform = EntityPlatform(
+        hass=component.hass,
+        logger=_LOGGER,
+        domain=DOMAIN,
+        platform_name=DOMAIN,
+        platform=None,
+        scan_interval=component.scan_interval,
+        entity_namespace=None,
+    )
+    platform.async_prepare()
+    platform.config_entry = entry
+    component.hass.data[DOMAIN][MAIN_ENTITY_PLATFORMS][entry.entry_id] = platform
+    await platform.async_add_entities([entity])
+
+
 def is_ha_supported() -> bool:
     """Return True, if current HA version is supported."""
     if AwesomeVersion(HA_VERSION) >= MIN_REQUIRED_HA_VERSION:
@@ -98,20 +130,31 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             DOMAIN,
             {
                 COMPONENT: EntityComponent(_LOGGER, DOMAIN, hass),
+                ENTITIES: {},
                 HANDLERS: {},
+                MAIN_ENTITY_PLATFORMS: {},
             },
         )
         _LOGGER.info(STARTUP_MESSAGE)
+    else:
+        hass.data[DOMAIN].setdefault(MAIN_ENTITY_PLATFORMS, {})
 
     handler = BodyScaleMetricsHandler(
         hass, {**entry.data, **entry.options}, entry.entry_id
     )
     hass.data[DOMAIN][HANDLERS][entry.entry_id] = handler
 
-    component: EntityComponent = hass.data[DOMAIN][COMPONENT]
-    await component.async_add_entities([Bodymiscale(handler)])
+    # Reserve the main entity restoration before sensors can restore.
+    handler.add_restoration_sensor()
 
+    # Let sensor.py register its own restoration slots first.
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+
+    # Add the main entity last so restoration cannot complete too early.
+    component: EntityComponent = hass.data[DOMAIN][COMPONENT]
+    entity = Bodymiscale(handler)
+    await _async_add_bodymiscale_entity(component, entry, entity)
+    hass.data[DOMAIN][ENTITIES][entry.entry_id] = entity.entity_id
 
     entry.async_on_unload(entry.add_update_listener(async_reload_entry))
 
@@ -123,7 +166,17 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     unload_ok: bool = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
 
     if unload_ok:
-        del hass.data[DOMAIN][HANDLERS][entry.entry_id]
+        entity_id = hass.data[DOMAIN][ENTITIES].pop(entry.entry_id, None)
+        platform = hass.data[DOMAIN][MAIN_ENTITY_PLATFORMS].pop(entry.entry_id, None)
+        if entity_id is not None and platform is not None:
+            await platform.async_remove_entity(entity_id)
+        if platform is not None:
+            await platform.async_destroy()
+
+        handler: BodyScaleMetricsHandler = hass.data[DOMAIN][HANDLERS].pop(
+            entry.entry_id
+        )
+        handler.unload()
         if len(hass.data[DOMAIN][HANDLERS]) == 0:
             hass.data.pop(DOMAIN)
 
@@ -171,14 +224,19 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry) ->
     return True
 
 
-class Bodymiscale(BodyScaleBaseEntity):
+class Bodymiscale(BodyScaleBaseEntity, RestoreEntity):
     """Bodymiscale entity."""
 
     def __init__(self, handler: BodyScaleMetricsHandler):
         """Initialize the Bodymiscale component."""
         super().__init__(
             handler,
-            EntityDescription(key="bodymiscale", name=None, icon="mdi:human"),
+            EntityDescription(
+                key="bodymiscale",
+                name=None,
+                icon="mdi:human",
+                entity_category=EntityCategory.DIAGNOSTIC,
+            ),
         )
         self._timer_handle: asyncio.TimerHandle | None = None
         self._available_metrics: MutableMapping[str, StateType | datetime] = {}
@@ -186,6 +244,40 @@ class Bodymiscale(BodyScaleBaseEntity):
     async def async_added_to_hass(self) -> None:
         """After being added to hass."""
         await super().async_added_to_hass()
+
+        # Restore previous state
+        last_state = await self.async_get_last_state()
+        if last_state is not None:
+            # Attributes to exclude (computed or from config)
+            exclude_attrs = {
+                ATTR_BMILABEL,
+                ATTR_FATMASSTOLOSE,
+                ATTR_FATMASSTOGAIN,
+                CONF_HEIGHT,
+                CONF_GENDER,
+                ATTR_IDEAL,
+                ATTR_AGE,
+            }
+            self._available_metrics = {
+                k: v for k, v in last_state.attributes.items() if k not in exclude_attrs
+            }
+            for metric in (
+                Metric.WEIGHT,
+                Metric.IMPEDANCE,
+                Metric.IMPEDANCE_LOW,
+                Metric.IMPEDANCE_HIGH,
+                Metric.LAST_MEASUREMENT_TIME,
+            ):
+                if metric.value in self._available_metrics:
+                    self._handler.restore_metric(
+                        metric, self._available_metrics[metric.value]
+                    )
+            self._attr_state = last_state.state
+
+            self.async_write_ha_state()
+
+        # Mark restoration complete for the main entity
+        self._handler.mark_restoration_complete()
 
         loop = asyncio.get_running_loop()
 
@@ -209,6 +301,10 @@ class Bodymiscale(BodyScaleBaseEntity):
             )
 
         def on_remove() -> None:
+            if self._timer_handle is not None:
+                self._timer_handle.cancel()
+                self._timer_handle = None
+
             for subscription in remove_subscriptions:
                 subscription()
 

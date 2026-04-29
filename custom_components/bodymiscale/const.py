@@ -11,6 +11,7 @@ ISSUE_URL = "https://github.com/dckiller51/bodymiscale/issues"
 
 # System
 COMPONENT = "component"
+ENTITIES = "entities"
 HANDLERS = "handlers"
 
 # Config

@@ -190,6 +190,12 @@ class BodyScaleMetricsHandler:
             TTLCache(maxsize=len(Metric), ttl=60)
         )
 
+        # Counter to track pending sensor restorations
+        self._pending_restorations = 0
+
+        # Flag to track if restoration is complete - ignore source sensor updates until set
+        self._restoration_complete = False
+
         # Sensor problems: { "weight": "high", "impedance": "unavailable", ... }
         self._sensor_problems: dict[str, str] = {}
 
@@ -222,16 +228,11 @@ class BodyScaleMetricsHandler:
         if CONF_SENSOR_LAST_MEASUREMENT_TIME in self._config:
             sensors.append(self._config[CONF_SENSOR_LAST_MEASUREMENT_TIME])
 
-        self._remove_listener = async_track_state_change_event(
+        self._remove_listener: CALLBACK_TYPE | None = async_track_state_change_event(
             self._hass,
             sensors,
             self._state_changed_event,
         )
-
-        # Initial state
-        for entity_id in sensors:
-            if (state := self._hass.states.get(entity_id)) is not None:
-                self._state_changed(entity_id, state)
 
     # ── Properties ───────────────────────────────────────────────────────────
 
@@ -244,6 +245,14 @@ class BodyScaleMetricsHandler:
     def config_entry_id(self) -> str:
         """Return config entry id."""
         return self._config_entry_id
+
+    @callback
+    def unload(self) -> None:
+        """Unload the handler and remove Home Assistant listeners."""
+        if self._remove_listener is not None:
+            self._remove_listener()
+            self._remove_listener = None
+        self._subscribers.clear()
 
     # ── Subscribe ────────────────────────────────────────────────────────────
 
@@ -268,15 +277,87 @@ class BodyScaleMetricsHandler:
 
         return _remove_listener
 
+    # ── Restoration ────────────────────────────────────────────────────────────
+
+    def add_restoration_sensor(self, count: int = 1) -> None:
+        """Add pending restorations for sensors that are being restored."""
+        self._pending_restorations += count
+        _LOGGER.debug(
+            "Added %d restoration sensor(s), pending restorations: %d",
+            count,
+            self._pending_restorations,
+        )
+
+    def mark_restoration_complete(self) -> None:
+        """Mark that a sensor has restored and check if all are done."""
+        self._pending_restorations -= 1
+        _LOGGER.debug(
+            "Restoration step completed, pending restorations: %d",
+            self._pending_restorations,
+        )
+        if self._pending_restorations <= 0:
+            self._restoration_complete = True
+            _LOGGER.debug("Restoration complete, enabling source sensor updates")
+
+    def restore_metric(self, metric: Metric, state: StateType | datetime) -> None:
+        """Seed a metric from a restored Home Assistant entity state."""
+        restored_source_metrics = {
+            Metric.WEIGHT,
+            Metric.IMPEDANCE,
+            Metric.IMPEDANCE_LOW,
+            Metric.IMPEDANCE_HIGH,
+            Metric.LAST_MEASUREMENT_TIME,
+        }
+        if metric not in restored_source_metrics:
+            return
+
+        if metric == Metric.LAST_MEASUREMENT_TIME:
+            if isinstance(state, datetime):
+                self._update_available_metric(metric, state)
+            elif isinstance(state, str):
+                try:
+                    self._update_available_metric(metric, datetime.fromisoformat(state))
+                except ValueError:
+                    _LOGGER.debug("Ignoring restored %s value %s", metric, state)
+            return
+
+        if state is None or isinstance(state, datetime):
+            _LOGGER.debug("Ignoring restored %s value %s", metric, state)
+            return
+
+        try:
+            state = float(state)
+        except (TypeError, ValueError):
+            _LOGGER.debug("Ignoring restored %s value %s", metric, state)
+            return
+
+        self._update_available_metric(metric, state)
+
     # ── State change ─────────────────────────────────────────────────────────
 
     @callback
     def _state_changed_event(self, event: Event[EventStateChangedData]) -> None:
-        self._state_changed(event.data.get("entity_id"), event.data.get("new_state"))
+        self._state_changed(
+            event.data.get("entity_id"),
+            event.data.get("new_state"),
+            event.data.get("old_state"),
+        )
 
     @callback
-    def _state_changed(self, entity_id: str | None, new_state: State | None) -> None:
+    def _state_changed(
+        self, entity_id: str | None, new_state: State | None, old_state: State | None
+    ) -> None:
         if entity_id is None or new_state is None:
+            _LOGGER.debug(
+                "During source sensor state change, entity_id or new_state was None. Skipping processing."
+            )
+            return
+
+        # Ignore source sensor updates until restoration is complete
+        if not self._restoration_complete:
+            _LOGGER.debug(
+                "Ignoring update from %s until restoration is complete", entity_id
+            )
             return
 
         raw = new_state.state
@@ -284,22 +365,32 @@ class BodyScaleMetricsHandler:
         # Sensor back to unknown → clear the problem without recalculating
         if raw == STATE_UNKNOWN:
             self._clear_sensor_problem(entity_id)
+            _LOGGER.debug(
+                "Sensor %s state is unknown, clearing problem and skipping processing",
+                entity_id,
+            )
             return
 
         valid = False
         problem: str | None = None
 
         if entity_id == self._config[CONF_SENSOR_WEIGHT]:
-            valid, problem = self._process_weight(new_state)
+            valid, problem = self._process_weight(new_state, old_state)
 
         elif entity_id == self._config.get(CONF_SENSOR_IMPEDANCE):
-            valid, problem = self._process_impedance(new_state, Metric.IMPEDANCE)
+            valid, problem = self._process_impedance(
+                new_state, Metric.IMPEDANCE, old_state
+            )
 
         elif entity_id == self._config.get(CONF_SENSOR_IMPEDANCE_LOW):
-            valid, problem = self._process_impedance(new_state, Metric.IMPEDANCE_LOW)
+            valid, problem = self._process_impedance(
+                new_state, Metric.IMPEDANCE_LOW, old_state
+            )
 
         elif entity_id == self._config.get(CONF_SENSOR_IMPEDANCE_HIGH):
-            valid, problem = self._process_impedance(new_state, Metric.IMPEDANCE_HIGH)
+            valid, problem = self._process_impedance(
+                new_state, Metric.IMPEDANCE_HIGH, old_state
+            )
 
         elif entity_id == self._config.get(CONF_SENSOR_LAST_MEASUREMENT_TIME):
             problem = self._process_last_measurement_time(new_state)
@@ -315,7 +406,9 @@ class BodyScaleMetricsHandler:
 
     # ── Process helpers ───────────────────────────────────────────────────────
 
-    def _process_weight(self, state: State) -> tuple[bool, str | None]:
+    def _process_weight(
+        self, state: State, previous_state: State | None
+    ) -> tuple[bool, str | None]:
         raw = state.state
 
         if raw == STATE_UNAVAILABLE:
@@ -334,6 +427,12 @@ class BodyScaleMetricsHandler:
         if state.attributes.get(ATTR_UNIT_OF_MEASUREMENT) == UNIT_POUNDS:
             val *= 0.45359237
 
+        previous_val = self._available_metrics.get(Metric.WEIGHT)
+        decimals = self._dependencies[Metric.WEIGHT].decimals
+        assert decimals is not None
+        previous_val_changed = not isinstance(previous_val, (int, float)) or round(
+            float(previous_val), decimals
+        ) != round(val, decimals)
         self._update_available_metric(Metric.WEIGHT, val)
 
         # Fallback timestamp if no dedicated sensor
@@ -341,14 +440,40 @@ class BodyScaleMetricsHandler:
             CONF_SENSOR_LAST_MEASUREMENT_TIME not in self._config
             or self._available_metrics.get(Metric.LAST_MEASUREMENT_TIME) is None
         ):
-            self._update_available_metric(
-                Metric.LAST_MEASUREMENT_TIME, state.last_changed
-            )
+            # Only update if this is a fresh measurement (not a restoration)
+            # A fresh measurement is when the previous state was not unknown/unavailable
+            # or the value changed compared to the previously (re)stored value
+            # (during restart or first measurement)
+            if (
+                previous_state
+                and previous_state.state
+                not in (
+                    STATE_UNKNOWN,
+                    STATE_UNAVAILABLE,
+                    None,
+                )
+                or previous_val_changed
+            ):
+                self._update_available_metric(
+                    Metric.LAST_MEASUREMENT_TIME, state.last_changed
+                )
+                _LOGGER.debug(
+                    "LAST_MEASUREMENT_TIME updated because previous_state was %s, previous_val was %s and val is %s",
+                    previous_state.state if previous_state else None,
+                    previous_val,
+                    val,
+                )
+            else:
+                _LOGGER.debug(
+                    "LAST_MEASUREMENT_TIME previous state is unknown and %s is equal to %s, ignoring as assuming from restart",
+                    previous_val,
+                    val,
+                )
 
         return True, None
 
     def _process_impedance(
-        self, state: State, metric: Metric
+        self, state: State, metric: Metric, previous_state: State | None
     ) -> tuple[bool, str | None]:
         raw = state.state
 
@@ -365,15 +490,48 @@ class BodyScaleMetricsHandler:
         if val > CONSTRAINT_IMPEDANCE_MAX:
             return False, "high"
 
+        previous_val = self._available_metrics.get(metric)
+        decimals = self._dependencies[metric].decimals
+        assert decimals is not None
+        previous_val_changed = not isinstance(previous_val, (int, float)) or round(
+            float(previous_val), decimals
+        ) != round(val, decimals)
         self._update_available_metric(metric, val)
 
+        # Fallback timestamp if no dedicated sensor
         if (
             CONF_SENSOR_LAST_MEASUREMENT_TIME not in self._config
             or self._available_metrics.get(Metric.LAST_MEASUREMENT_TIME) is None
         ):
-            self._update_available_metric(
-                Metric.LAST_MEASUREMENT_TIME, state.last_changed
-            )
+            # Only update if this is a fresh measurement (not a restoration)
+            # A fresh measurement is when the previous state was not unknown/unavailable
+            # or the value changed compared to the previously (re)stored value
+            # (during restart or first measurement)
+            if (
+                previous_state
+                and previous_state.state
+                not in (
+                    STATE_UNKNOWN,
+                    STATE_UNAVAILABLE,
+                    None,
+                )
+                or previous_val_changed
+            ):
+                self._update_available_metric(
+                    Metric.LAST_MEASUREMENT_TIME, state.last_changed
+                )
+                _LOGGER.debug(
+                    "LAST_MEASUREMENT_TIME updated because previous_state was %s, previous_val was %s and val is %s",
+                    previous_state.state if previous_state else None,
+                    previous_val,
+                    val,
+                )
+            else:
+                _LOGGER.debug(
+                    "LAST_MEASUREMENT_TIME previous state is unknown and %s is equal to %s, ignoring as assuming from restart",
+                    previous_val,
+                    val,
+                )
 
         return True, None
 
@@ -388,7 +546,7 @@ class BodyScaleMetricsHandler:
             tz = get_time_zone(self._hass.config.time_zone)
             dt = dt.replace(tzinfo=tz) if dt.tzinfo is None else dt.astimezone(tz)
             self._update_available_metric(Metric.LAST_MEASUREMENT_TIME, dt)
-            self._trigger_dependent_recalculation()
+            self._trigger_dependent_recalculation()  # Seems not needed here because no metric depends on LAST_MEASUREMENT_TIME, but just in case?
             return None
         except (ValueError, TypeError) as e:
             _LOGGER.error("Invalid date format for last measurement: %s (%s)", raw, e)
