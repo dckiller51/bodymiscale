@@ -1,0 +1,208 @@
+{
+  "config": {
+    "error": {
+      "already_configured": "Al geconfigureerd",
+      "height_limit": "Lengte is te hoog (limiet: 220 cm)",
+      "height_low": "Lengte is te laag (min: 50 cm)",
+      "invalid_date": "Ongeldige datum"
+    },
+    "step": {
+      "impedance": {
+        "data": {
+          "impedance": "Impedantiesensor (enkele frequentie)",
+          "impedance_high": "Hoogfrequente impedantiesensor (250 kHz)",
+          "impedance_low": "Laagfrequente impedantiesensor (50 kHz)"
+        },
+        "data_description": {
+          "impedance": "Enkele impedantiewaarde geleverd door je weegschaal.",
+          "impedance_high": "Impedantie gemeten op 250 kHz (S400).",
+          "impedance_low": "Impedantie gemeten op 50 kHz (S400)."
+        },
+        "title": "Impedantiesensoren"
+      },
+      "options": {
+        "data": {
+          "calculation_mode": "Berekeningsmethode",
+          "height": "Lengte (cm)",
+          "impedance_mode": "Impedantiemodus",
+          "last_measurement_time": "Sensor voor meest recente meettijd",
+          "weight": "Gewichtssensor"
+        },
+        "data_description": {
+          "calculation_mode": "Xiaomi: identiek aan de Zepp Life-app. Wetenschappelijk: WHO / Schofield-formules. Heeft geen effect in S400-dualfrequentiemodus.",
+          "impedance_mode": "Geen: weegschaal zonder impedantie. Standaard: enkele frequentie (Xiaomi Gen2). Dual-frequency S400: 50 kHz + 250 kHz sensoren.",
+          "last_measurement_time": "Optioneel. Laat leeg als je deze sensor niet hebt."
+        },
+        "title": "Configuratie"
+      },
+      "user": {
+        "data": {
+          "birthday": "Geboortedatum",
+          "gender": "Geslacht",
+          "name": "Naam"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "basal_metabolism": { "name": "Basaal metabolisme" },
+      "bmi": { "name": "BMI" },
+      "body_cell_mass": { "name": "Lichaamscelmassa" },
+      "body_fat": { "name": "Lichaamsvet" },
+      "body_score": { "name": "Lichaamsscore" },
+      "bone_mass": { "name": "Botmassa" },
+      "ecw_tbw_ratio": { "name": "ECW/TBW-ratio" },
+      "extracellular_water": { "name": "Extracellulair water" },
+      "intracellular_water": { "name": "Intracellulair water" },
+      "last_measurement_time": { "name": "Laatste meettijd" },
+      "lean_body_mass": { "name": "Vetvrije massa" },
+      "metabolic_age": { "name": "Metabole leeftijd" },
+      "muscle_mass": { "name": "Spiermassa" },
+      "protein": { "name": "Eiwit" },
+      "skeletal_muscle_mass": { "name": "Skeletspiermassa" },
+      "visceral_fat": { "name": "Visceraal vet" },
+      "water": { "name": "Water" },
+      "weight": { "name": "Gewicht" }
+    }
+  },
+  "entity_component": {
+    "_": {
+      "name": "bodymiscale",
+      "state": {
+        "ok": "OK",
+        "problem": "Probleem"
+      },
+      "state_attributes": {
+        "age": { "name": "Leeftijd" },
+        "basal_metabolism": { "name": "Basaal metabolisme" },
+        "bmi": { "name": "BMI" },
+        "bmi_label": {
+          "name": "BMI-label",
+          "state": {
+            "massive_obesity": "Morbide obesitas",
+            "moderate_obesity": "Matige obesitas",
+            "normal_or_healthy_weight": "Normaal of gezond gewicht",
+            "overweight": "Overgewicht",
+            "severe_obesity": "Ernstige obesitas",
+            "slight_overweight": "Licht overgewicht",
+            "unavailable": "niet beschikbaar",
+            "underweight": "Ondergewicht"
+          }
+        },
+        "body_cell_mass": { "name": "Lichaamscelmassa" },
+        "body_fat": { "name": "Lichaamsvet" },
+        "body_score": { "name": "Lichaamsscore" },
+        "body_type": {
+          "name": "Lichaamstype",
+          "state": {
+            "balanced": "In balans",
+            "balanced_muscular": "In balans en gespierd",
+            "balanced_skinny": "In balans en slank",
+            "lack_exercise": "Gebrek aan beweging",
+            "obese": "Obees",
+            "overweight": "Overgewicht",
+            "skinny": "Slank",
+            "skinny_muscular": "Slank en gespierd",
+            "thick_set": "Stevig gebouwd",
+            "unavailable": "niet beschikbaar"
+          }
+        },
+        "bone_mass": { "name": "Botmassa" },
+        "ecw_tbw_ratio": { "name": "ECW/TBW-ratio" },
+        "extracellular_water": { "name": "Extracellulair water" },
+        "fat_mass_to_gain": { "name": "Aan te komen vetmassa" },
+        "fat_mass_to_lose": { "name": "Te verliezen vetmassa" },
+        "gender": {
+          "name": "Geslacht",
+          "state": {
+            "female": "vrouw",
+            "male": "man"
+          }
+        },
+        "height": { "name": "Lengte" },
+        "ideal": { "name": "Ideaal gewicht" },
+        "impedance": { "name": "Impedantie" },
+        "impedance_high": { "name": "Impedantie (250 kHz)" },
+        "impedance_low": { "name": "Impedantie (50 kHz)" },
+        "intracellular_water": { "name": "Intracellulair water" },
+        "last_measurement_time": { "name": "Laatste meettijd" },
+        "lean_body_mass": { "name": "Vetvrije massa" },
+        "metabolic_age": { "name": "Metabole leeftijd" },
+        "muscle_mass": { "name": "Spiermassa" },
+        "problem": {
+          "name": "Probleem",
+          "state": {
+            "impedance_high": "Hoge impedantie",
+            "impedance_high_high": "Impedantie 250 kHz te hoog",
+            "impedance_high_low": "Impedantie 250 kHz te laag",
+            "impedance_high_unavailable": "Impedantie 250 kHz niet beschikbaar",
+            "impedance_low": "Lage impedantie",
+            "impedance_low_high": "Impedantie 50 kHz te hoog",
+            "impedance_low_low": "Impedantie 50 kHz te laag",
+            "impedance_low_unavailable": "Impedantie 50 kHz niet beschikbaar",
+            "impedance_unavailable": "Impedantie niet beschikbaar",
+            "none": "Geen",
+            "weight_high": "Gewicht te hoog",
+            "weight_invalid_format": "Ongeldig gewichtformaat",
+            "weight_low": "Gewicht te laag",
+            "weight_unavailable": "Gewicht niet beschikbaar"
+          }
+        },
+        "protein": { "name": "Eiwit" },
+        "skeletal_muscle_mass": { "name": "Skeletspiermassa" },
+        "visceral_fat": { "name": "Visceraal vet" },
+        "water": { "name": "Water" },
+        "weight": { "name": "Gewicht" }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "impedance": {
+        "data": {
+          "impedance": "Impedantiesensor (enkele frequentie)",
+          "impedance_high": "Hoogfrequente impedantiesensor (250 kHz)",
+          "impedance_low": "Laagfrequente impedantiesensor (50 kHz)"
+        },
+        "data_description": {
+          "impedance": "Enkele impedantiewaarde geleverd door je weegschaal.",
+          "impedance_high": "Impedantie gemeten op 250 kHz (S400).",
+          "impedance_low": "Impedantie gemeten op 50 kHz (S400)."
+        },
+        "title": "Impedantiesensoren"
+      },
+      "init": {
+        "data": {
+          "calculation_mode": "Berekeningsmethode",
+          "height": "Lengte (cm)",
+          "impedance_mode": "Impedantiemodus",
+          "last_measurement_time": "Sensor voor laatste meettijd",
+          "weight": "Gewichtssensor"
+        },
+        "data_description": {
+          "calculation_mode": "Xiaomi: identiek aan de Zepp Life-app. Wetenschappelijk: WHO / Schofield-formules. Heeft geen effect in S400-dualfrequentiemodus.",
+          "impedance_mode": "Geen: weegschaal zonder impedantie. Standaard: enkele frequentie (Xiaomi Gen2). Dual-frequency S400: 50 kHz + 250 kHz sensoren.",
+          "last_measurement_time": "Optioneel. Laat leeg als je deze sensor niet hebt."
+        },
+        "title": "Configuratie"
+      }
+    }
+  },
+  "selector": {
+    "calculation_mode": {
+      "options": {
+        "science": "Wetenschappelijk - WHO / Schofield",
+        "xiaomi": "Xiaomi - Zepp Life (Legacy 2017)"
+      }
+    },
+    "impedance_mode": {
+      "options": {
+        "dual_frequency": "Dual-frequency S400 (50 kHz + 250 kHz)",
+        "none": "Geen impedantie",
+        "standard": "Enkele frequentie (Xiaomi Gen2, Mi Body Scale 2...)"
+      }
+    }
+  },
+  "title": "BodyMiScale"
+}
