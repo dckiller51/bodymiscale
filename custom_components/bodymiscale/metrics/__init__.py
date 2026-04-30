@@ -1,5 +1,6 @@
 """Metrics module."""
 
+import asyncio
 import logging
 from collections.abc import Callable, Mapping, MutableMapping
 from dataclasses import dataclass, field
@@ -40,6 +41,8 @@ from ..const import (
     CONF_SENSOR_LAST_MEASUREMENT_TIME,
     CONF_SENSOR_PROFILE_ID,
     CONF_SENSOR_WEIGHT,
+    CONF_WEIGHT_RANGE_MAX,
+    CONF_WEIGHT_RANGE_MIN,
     CONSTRAINT_IMPEDANCE_MAX,
     CONSTRAINT_IMPEDANCE_MIN,
     CONSTRAINT_WEIGHT_MAX,
@@ -48,6 +51,9 @@ from ..const import (
     IMPEDANCE_MODE_STANDARD,
     PROBLEM_NONE,
     UNIT_POUNDS,
+    USER_DETERMINATION_WEIGHT_RECENT_SECONDS,
+    USER_DETERMINATION_WEIGHT_RETRY_DELAY,
+    USER_DETERMINATION_WEIGHT_TIMEOUT,
 )
 from ..models import Gender, Metric
 from .body_score import get_body_score
@@ -200,6 +206,7 @@ class BodyScaleMetricsHandler:
 
         # Sensor problems: { "weight": "high", "impedance": "unavailable", ... }
         self._sensor_problems: dict[str, str] = {}
+        self._pending_user_determination_retries: dict[str, asyncio.TimerHandle] = {}
 
         self._subscribers: dict[
             Metric, list[Callable[[StateType | datetime], None]]
@@ -254,6 +261,9 @@ class BodyScaleMetricsHandler:
         if self._remove_listener is not None:
             self._remove_listener()
             self._remove_listener = None
+        for retry in self._pending_user_determination_retries.values():
+            retry.cancel()
+        self._pending_user_determination_retries.clear()
         self._subscribers.clear()
 
     # ── Subscribe ────────────────────────────────────────────────────────────
@@ -347,7 +357,11 @@ class BodyScaleMetricsHandler:
 
     @callback
     def _state_changed(
-        self, entity_id: str | None, new_state: State | None, old_state: State | None
+        self,
+        entity_id: str | None,
+        new_state: State | None,
+        old_state: State | None,
+        retry_until: float | None = None,
     ) -> None:
         if entity_id is None or new_state is None:
             _LOGGER.debug(
@@ -362,20 +376,6 @@ class BodyScaleMetricsHandler:
             )
             return
 
-        # Verify profile ID matches with user on the scale if configured
-        profile_entity_id = self._config.get(CONF_SENSOR_PROFILE_ID)
-        user_profile_id = self._config.get(CONF_PROFILE_ID)
-        if profile_entity_id and user_profile_id:
-            profile_id = self._hass.states.get(profile_entity_id)
-            if profile_id is None or int(profile_id.state) != int(user_profile_id):
-                _LOGGER.debug(
-                    "Ignoring update from %s due to profile ID mismatch (%s != %s)",
-                    entity_id,
-                    int(profile_id.state) if profile_id else None,
-                    int(user_profile_id),
-                )
-                return
-
         raw = new_state.state
 
         # Sensor back to unknown → clear the problem without recalculating
@@ -386,6 +386,21 @@ class BodyScaleMetricsHandler:
                 entity_id,
             )
             return
+
+        if raw != STATE_UNAVAILABLE:
+            user_match = self._matches_configured_user(entity_id, new_state)
+            if user_match is None:
+                self._schedule_user_determination_retry(
+                    entity_id, new_state, old_state, retry_until
+                )
+                return
+            self._cancel_user_determination_retry(entity_id)
+            if not user_match:
+                _LOGGER.debug(
+                    "Ignoring update from %s because it does not match the configured user",
+                    entity_id,
+                )
+                return
 
         valid = False
         problem: str | None = None
@@ -419,6 +434,156 @@ class BodyScaleMetricsHandler:
 
         if valid:
             self._trigger_dependent_recalculation()
+
+    # ── User determination ───────────────────────────────────────────────────
+
+    def _profile_id_configured(self) -> bool:
+        """Return True if profile ID matching is fully configured."""
+        return bool(
+            self._config.get(CONF_SENSOR_PROFILE_ID)
+            and self._config.get(CONF_PROFILE_ID) is not None
+        )
+
+    def _weight_range_configured(self) -> bool:
+        """Return True if weight range matching is fully configured."""
+        return bool(
+            self._config.get(CONF_WEIGHT_RANGE_MIN) is not None
+            and self._config.get(CONF_WEIGHT_RANGE_MAX) is not None
+        )
+
+    def _matches_configured_user(self, entity_id: str, new_state: State) -> bool | None:
+        """Return whether this update belongs to the configured user.
+
+        None means the update should be retried briefly because the matching
+        weight may not have been published yet.
+        """
+        if self._profile_id_configured():
+            return self._matches_profile_id(entity_id)
+
+        if self._weight_range_configured():
+            return self._matches_weight_range(entity_id, new_state)
+
+        return True
+
+    def _matches_profile_id(self, entity_id: str) -> bool:
+        """Return True if the scale profile ID matches the configured profile."""
+        profile_entity_id = self._config.get(CONF_SENSOR_PROFILE_ID)
+        user_profile_id = self._config.get(CONF_PROFILE_ID)
+        if not isinstance(profile_entity_id, str) or user_profile_id is None:
+            return False
+
+        profile_id = self._hass.states.get(profile_entity_id)
+
+        try:
+            if profile_id is None:
+                raise ValueError("profile ID state is unavailable")
+            profile_value = int(profile_id.state)
+            user_profile_value = int(user_profile_id)
+        except (TypeError, ValueError):
+            _LOGGER.debug(
+                "Ignoring update from %s due to unavailable profile ID (%s != %s)",
+                entity_id,
+                profile_id.state if profile_id else None,
+                user_profile_id,
+            )
+            return False
+
+        if profile_value != user_profile_value:
+            _LOGGER.debug(
+                "Ignoring update from %s due to profile ID mismatch (%s != %s)",
+                entity_id,
+                profile_value,
+                user_profile_value,
+            )
+            return False
+
+        return True
+
+    def _matches_weight_range(self, entity_id: str, new_state: State) -> bool | None:
+        """Return True if the current weight is inside the configured range."""
+        weight_state: State | None
+        if entity_id == self._config[CONF_SENSOR_WEIGHT]:
+            weight_state = new_state
+            require_recent_weight = False
+        else:
+            weight_state = self._hass.states.get(self._config[CONF_SENSOR_WEIGHT])
+            require_recent_weight = True
+
+        if weight_state is None:
+            return None if require_recent_weight else True
+
+        if require_recent_weight and not self._weight_state_is_recent(weight_state):
+            return None
+
+        weight = self._weight_state_to_kg(weight_state)
+        if weight is None:
+            # For the weight sensor itself, let _process_weight handle invalid
+            # values and publish the proper problem state.
+            return None if require_recent_weight else True
+
+        return (
+            float(self._config[CONF_WEIGHT_RANGE_MIN])
+            <= weight
+            <= float(self._config[CONF_WEIGHT_RANGE_MAX])
+        )
+
+    def _weight_state_is_recent(self, state: State) -> bool:
+        """Return True if the source weight was updated recently."""
+        now = datetime.now(state.last_updated.tzinfo)
+        age = (now - state.last_updated).total_seconds()
+        return age <= USER_DETERMINATION_WEIGHT_RECENT_SECONDS
+
+    def _weight_state_to_kg(self, state: State) -> float | None:
+        """Return a weight sensor state converted to kilograms."""
+        if state.state in (STATE_UNAVAILABLE, STATE_UNKNOWN):
+            return None
+
+        try:
+            weight = float(state.state)
+        except ValueError:
+            return None
+
+        if state.attributes.get(ATTR_UNIT_OF_MEASUREMENT) == UNIT_POUNDS:
+            weight *= 0.45359237
+
+        return weight
+
+    def _schedule_user_determination_retry(
+        self,
+        entity_id: str,
+        new_state: State,
+        old_state: State | None,
+        retry_until: float | None,
+    ) -> None:
+        """Retry a non-weight source update while waiting for a fresh weight."""
+        loop = asyncio.get_running_loop()
+        retry_until = retry_until or loop.time() + USER_DETERMINATION_WEIGHT_TIMEOUT
+        delay = min(USER_DETERMINATION_WEIGHT_RETRY_DELAY, retry_until - loop.time())
+
+        if delay <= 0:
+            _LOGGER.debug(
+                "Ignoring update from %s because no fresh matching weight arrived",
+                entity_id,
+            )
+            self._cancel_user_determination_retry(entity_id)
+            return
+
+        self._cancel_user_determination_retry(entity_id)
+
+        def retry() -> None:
+            """Retry processing the delayed source update."""
+            self._pending_user_determination_retries.pop(entity_id, None)
+            self._state_changed(entity_id, new_state, old_state, retry_until)
+
+        self._pending_user_determination_retries[entity_id] = loop.call_later(
+            delay, retry
+        )
+
+    def _cancel_user_determination_retry(self, entity_id: str) -> None:
+        """Cancel a pending user determination retry for an entity."""
+        retry = self._pending_user_determination_retries.pop(entity_id, None)
+        if retry is not None:
+            retry.cancel()
 
     # ── Process helpers ───────────────────────────────────────────────────────
 

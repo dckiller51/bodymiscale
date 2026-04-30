@@ -49,6 +49,8 @@ from .const import (
     CONF_SENSOR_LAST_MEASUREMENT_TIME,
     CONF_SENSOR_PROFILE_ID,
     CONF_SENSOR_WEIGHT,
+    CONF_WEIGHT_RANGE_MAX,
+    CONF_WEIGHT_RANGE_MIN,
     DOMAIN,
     ENTITIES,
     HANDLERS,
@@ -82,6 +84,8 @@ BODYMISCALE_SCHEMA = vol.Schema(
         vol.Required(CONF_BIRTHDAY): cv.string,
         vol.Required(CONF_GENDER): cv.string,
         vol.Optional(CONF_PROFILE_ID): cv.positive_int,
+        vol.Optional(CONF_WEIGHT_RANGE_MIN): vol.Coerce(float),
+        vol.Optional(CONF_WEIGHT_RANGE_MAX): vol.Coerce(float),
     },
     extra=vol.ALLOW_EXTRA,
 )

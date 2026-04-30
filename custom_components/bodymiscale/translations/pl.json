@@ -4,7 +4,11 @@
       "already_configured": "Już skonfigurowane",
       "height_limit": "Podano za wysoki wzrost (limit: 220 cm)",
       "height_low": "Wzrost uznano za zbyt niski (min: 50 cm)",
-      "invalid_date": "Błędna data"
+      "invalid_date": "Błędna data",
+      "profile_id_incomplete": "Wybierz zarówno czujnik ID profilu, jak i ID profilu albo pozostaw oba pola puste.",
+      "user_determination_required": "Skonfiguruj pełne dopasowanie ID profilu albo pełny zakres wagi.",
+      "weight_range_incomplete": "Podaj zarówno minimalną, jak i maksymalną wagę albo pozostaw oba pola puste.",
+      "weight_range_invalid": "Maksymalna waga musi być większa niż minimalna waga."
     },
     "step": {
       "impedance": {
@@ -23,19 +27,16 @@
       "options": {
         "data": {
           "calculation_mode": "Metoda obliczeń",
-          "height": "Wzrost (cm)",
+          "handle_user_determination": "Obsługuj określanie użytkownika",
           "impedance_mode": "Tryb impedancji",
           "last_measurement_time": "Czujnik czasu ostatniego ważenia",
-          "profile_id": "ID profilu",
-          "profile_id_sensor": "Czujnik ID profilu",
           "weight": "Sensor wagi"
         },
         "data_description": {
           "calculation_mode": "Xiaomi: identyczna z aplikacją Zepp Life. Naukowa: formuły WHO / Schofield. Nie dotyczy trybu dwuczęstotliwościowego S400.",
+          "handle_user_determination": "Pokaż dodatkową stronę do filtrowania pomiarów według ID profilu wagi albo dozwolonego zakresu wagi.",
           "impedance_mode": "Brak: waga bez impedancji. Standard: jedna częstotliwość (Xiaomi Gen2). Dual-frequency S400: sensory 50 kHz + 250 kHz.",
-          "last_measurement_time": "Opcjonalnie. Pozostaw puste, jeśli nie masz tego czujnika.",
-          "profile_id": "Opcjonalnie. Numer Twojego profilu na wadze (1-5). Pomiary z innych profili są ignorowane, gdy ustawiony jest czujnik ID profilu.",
-          "profile_id_sensor": "Opcjonalnie. Czujnik zawierający ID profilu zgłoszony przez wagę. Użyj z ID profilu, aby ignorować pomiary z innych profili."
+          "last_measurement_time": "Opcjonalnie. Pozostaw puste, jeśli nie masz tego czujnika."
         },
         "title": "Konfiguracja"
       },
@@ -43,8 +44,25 @@
         "data": {
           "birthday": "Data urodzenia",
           "gender": "Płeć",
+          "height": "Wzrost (cm)",
           "name": "Imię"
-        }
+        },
+        "title": "Profil"
+      },
+      "user_determination": {
+        "data": {
+          "profile_id": "ID profilu",
+          "profile_id_sensor": "Czujnik ID profilu",
+          "weight_range_max": "Maksymalna waga użytkownika",
+          "weight_range_min": "Minimalna waga użytkownika"
+        },
+        "data_description": {
+          "profile_id": "Opcjonalnie. Numer Twojego profilu na wadze (1-5). Pomiary z innych profili są ignorowane, gdy ustawiony jest czujnik ID profilu.",
+          "profile_id_sensor": "Opcjonalnie. Czujnik zawierający ID profilu zgłaszane przez wagę. ID profilu ma pierwszeństwo, gdy skonfigurowano obie metody.",
+          "weight_range_max": "Opcjonalnie. Najwyższa akceptowana waga dla tego użytkownika, w kilogramach.",
+          "weight_range_min": "Opcjonalnie. Najniższa akceptowana waga dla tego użytkownika, w kilogramach. Używane tylko wtedy, gdy ID profilu nie jest skonfigurowane."
+        },
+        "title": "Określanie użytkownika"
       }
     }
   },
@@ -179,21 +197,34 @@
       "init": {
         "data": {
           "calculation_mode": "Metoda obliczeń",
+          "handle_user_determination": "Obsługuj określanie użytkownika",
           "height": "Wzrost (cm)",
           "impedance_mode": "Tryb impedancji",
           "last_measurement_time": "Czujnik czasu ostatniego ważenia",
-          "profile_id": "ID profilu",
-          "profile_id_sensor": "Czujnik ID profilu",
           "weight": "Sensor wagi"
         },
         "data_description": {
           "calculation_mode": "Xiaomi: identyczna z aplikacją Zepp Life. Naukowa: formuły WHO / Schofield. Nie dotyczy trybu dwuczęstotliwościowego S400.",
+          "handle_user_determination": "Pokaż dodatkową stronę do filtrowania pomiarów według ID profilu wagi albo dozwolonego zakresu wagi.",
           "impedance_mode": "Brak: waga bez impedancji. Standard: jedna częstotliwość (Xiaomi Gen2). Dual-frequency S400: sensory 50 kHz + 250 kHz.",
-          "last_measurement_time": "Opcjonalnie. Pozostaw puste, jeśli nie masz tego czujnika.",
-          "profile_id": "Opcjonalnie. Numer Twojego profilu na wadze (1-5). Pomiary z innych profili są ignorowane, gdy ustawiony jest czujnik ID profilu.",
-          "profile_id_sensor": "Opcjonalnie. Czujnik zawierający ID profilu zgłoszony przez wagę. Użyj z ID profilu, aby ignorować pomiary z innych profili."
+          "last_measurement_time": "Opcjonalnie. Pozostaw puste, jeśli nie masz tego czujnika."
         },
         "title": "Konfiguracja"
+      },
+      "user_determination": {
+        "data": {
+          "profile_id": "ID profilu",
+          "profile_id_sensor": "Czujnik ID profilu",
+          "weight_range_max": "Maksymalna waga użytkownika",
+          "weight_range_min": "Minimalna waga użytkownika"
+        },
+        "data_description": {
+          "profile_id": "Opcjonalnie. Numer Twojego profilu na wadze (1-5). Pomiary z innych profili są ignorowane, gdy ustawiony jest czujnik ID profilu.",
+          "profile_id_sensor": "Opcjonalnie. Czujnik zawierający ID profilu zgłaszane przez wagę. ID profilu ma pierwszeństwo, gdy skonfigurowano obie metody.",
+          "weight_range_max": "Opcjonalnie. Najwyższa akceptowana waga dla tego użytkownika, w kilogramach.",
+          "weight_range_min": "Opcjonalnie. Najniższa akceptowana waga dla tego użytkownika, w kilogramach. Używane tylko wtedy, gdy ID profilu nie jest skonfigurowane."
+        },
+        "title": "Określanie użytkownika"
       }
     }
   },

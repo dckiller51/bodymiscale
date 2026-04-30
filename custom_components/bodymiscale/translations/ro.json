@@ -4,7 +4,11 @@
       "already_configured": "Deja configurat",
       "height_limit": "Înălțimea este prea mare (limita: 220 cm)",
       "height_low": "Înălțimea este prea mică (min: 50 cm)",
-      "invalid_date": "Dată invalidă"
+      "invalid_date": "Dată invalidă",
+      "profile_id_incomplete": "Selectați atât un senzor ID profil, cât și un ID profil, sau lăsați ambele câmpuri goale.",
+      "user_determination_required": "Configurați fie o potrivire completă după ID profil, fie un interval complet de greutate.",
+      "weight_range_incomplete": "Introduceți atât greutatea minimă, cât și greutatea maximă, sau lăsați ambele câmpuri goale.",
+      "weight_range_invalid": "Greutatea maximă trebuie să fie mai mare decât greutatea minimă."
     },
     "step": {
       "impedance": {
@@ -23,19 +27,16 @@
       "options": {
         "data": {
           "calculation_mode": "Metodă de calcul",
-          "height": "Înălțime (cm)",
+          "handle_user_determination": "Gestionează determinarea utilizatorului",
           "impedance_mode": "Mod impedanță",
           "last_measurement_time": "Senzor ultima oră de cântărire",
-          "profile_id": "ID profil",
-          "profile_id_sensor": "Senzor ID profil",
           "weight": "Senzor greutate"
         },
         "data_description": {
           "calculation_mode": "Xiaomi: identic cu aplicația Zepp Life. Științific: formule OMS / Schofield. Nu are efect în modul S400 cu dublă frecvență.",
+          "handle_user_determination": "Afișează o pagină suplimentară pentru filtrarea măsurătorilor după ID-ul profilului cântarului sau după un interval de greutate permis.",
           "impedance_mode": "Niciunul: fără impedanță. Standard: frecvență unică (Xiaomi Gen2). Dual-frequency S400: senzori 50 kHz + 250 kHz.",
-          "last_measurement_time": "Opțional. Lăsați gol dacă nu aveți acest senzor.",
-          "profile_id": "Opțional. Numărul profilului dvs. pe cântar (1-5). Măsurătorile din alte profiluri sunt ignorate când senzorul ID profil este setat.",
-          "profile_id_sensor": "Opțional. Senzorul care conține ID-ul profilului raportat de cântar. Utilizați-l cu ID profil pentru a ignora măsurătorile din alte profiluri."
+          "last_measurement_time": "Opțional. Lăsați gol dacă nu aveți acest senzor."
         },
         "title": "Configurare"
       },
@@ -43,8 +44,25 @@
         "data": {
           "birthday": "Dată naștere",
           "gender": "Gen",
+          "height": "Înălțime (cm)",
           "name": "Nume"
-        }
+        },
+        "title": "Profil"
+      },
+      "user_determination": {
+        "data": {
+          "profile_id": "ID profil",
+          "profile_id_sensor": "Senzor ID profil",
+          "weight_range_max": "Greutate maximă utilizator",
+          "weight_range_min": "Greutate minimă utilizator"
+        },
+        "data_description": {
+          "profile_id": "Opțional. Numărul profilului dvs. pe cântar (1-5). Măsurătorile din alte profiluri sunt ignorate când senzorul ID profil este setat.",
+          "profile_id_sensor": "Opțional. Senzorul care conține ID-ul profilului raportat de cântar. ID-ul profilului are prioritate când ambele metode sunt configurate.",
+          "weight_range_max": "Opțional. Cea mai mare greutate acceptată pentru acest utilizator, în kilograme.",
+          "weight_range_min": "Opțional. Cea mai mică greutate acceptată pentru acest utilizator, în kilograme. Se folosește doar când ID-ul profilului nu este configurat."
+        },
+        "title": "Determinarea utilizatorului"
       }
     }
   },
@@ -179,21 +197,34 @@
       "init": {
         "data": {
           "calculation_mode": "Metodă de calcul",
+          "handle_user_determination": "Gestionează determinarea utilizatorului",
           "height": "Înălțime (cm)",
           "impedance_mode": "Mod impedanță",
           "last_measurement_time": "Senzor ultima oră de cântărire",
-          "profile_id": "ID profil",
-          "profile_id_sensor": "Senzor ID profil",
           "weight": "Senzor greutate"
         },
         "data_description": {
           "calculation_mode": "Xiaomi: identic cu aplicația Zepp Life. Științific: formule OMS / Schofield. Nu are efect în modul S400 cu dublă frecvență.",
+          "handle_user_determination": "Afișează o pagină suplimentară pentru filtrarea măsurătorilor după ID-ul profilului cântarului sau după un interval de greutate permis.",
           "impedance_mode": "Niciunul: fără impedanță. Standard: frecvență unică (Xiaomi Gen2). Dual-frequency S400: senzori 50 kHz + 250 kHz.",
-          "last_measurement_time": "Opțional. Lăsați gol dacă nu aveți acest senzor.",
-          "profile_id": "Opțional. Numărul profilului dvs. pe cântar (1-5). Măsurătorile din alte profiluri sunt ignorate când senzorul ID profil este setat.",
-          "profile_id_sensor": "Opțional. Senzorul care conține ID-ul profilului raportat de cântar. Utilizați-l cu ID profil pentru a ignora măsurătorile din alte profiluri."
+          "last_measurement_time": "Opțional. Lăsați gol dacă nu aveți acest senzor."
         },
         "title": "Configurare"
+      },
+      "user_determination": {
+        "data": {
+          "profile_id": "ID profil",
+          "profile_id_sensor": "Senzor ID profil",
+          "weight_range_max": "Greutate maximă utilizator",
+          "weight_range_min": "Greutate minimă utilizator"
+        },
+        "data_description": {
+          "profile_id": "Opțional. Numărul profilului dvs. pe cântar (1-5). Măsurătorile din alte profiluri sunt ignorate când senzorul ID profil este setat.",
+          "profile_id_sensor": "Opțional. Senzorul care conține ID-ul profilului raportat de cântar. ID-ul profilului are prioritate când ambele metode sunt configurate.",
+          "weight_range_max": "Opțional. Cea mai mare greutate acceptată pentru acest utilizator, în kilograme.",
+          "weight_range_min": "Opțional. Cea mai mică greutate acceptată pentru acest utilizator, în kilograme. Se folosește doar când ID-ul profilului nu este configurat."
+        },
+        "title": "Determinarea utilizatorului"
       }
     }
   },

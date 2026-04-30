@@ -4,7 +4,11 @@
       "already_configured": "Already configured",
       "height_limit": "Height is too high (limit: 220 cm)",
       "height_low": "Height is too low (min: 50 cm)",
-      "invalid_date": "Invalid date"
+      "invalid_date": "Invalid date",
+      "profile_id_incomplete": "Select both a Profile ID sensor and a Profile ID, or leave both blank.",
+      "user_determination_required": "Configure a complete Profile ID match or a complete weight range.",
+      "weight_range_incomplete": "Enter both the minimum and maximum weight, or leave both blank.",
+      "weight_range_invalid": "The maximum weight must be greater than the minimum weight."
     },
     "step": {
       "impedance": {
@@ -23,19 +27,16 @@
       "options": {
         "data": {
           "calculation_mode": "Calculation method",
-          "height": "Height (cm)",
+          "handle_user_determination": "Handle user determination",
           "impedance_mode": "Impedance mode",
           "last_measurement_time": "Last measurement time sensor",
-          "profile_id": "Profile ID",
-          "profile_id_sensor": "Profile ID sensor",
           "weight": "Weight sensor"
         },
         "data_description": {
           "calculation_mode": "Xiaomi: identical to Zepp Life app. Science: WHO / Schofield formulas. Has no effect in S400 dual-frequency mode.",
+          "handle_user_determination": "Show an extra page for filtering measurements by scale profile ID or by an allowed weight range.",
           "impedance_mode": "None: scale without impedance. Standard: single-frequency (Xiaomi Gen2). Dual-frequency S400: 50 kHz + 250 kHz sensors.",
-          "last_measurement_time": "Optional. Leave blank if you do not have this sensor.",
-          "profile_id": "Optional. Your profile number on the scale (1-5). Measurements from other profiles are ignored when the Profile ID sensor is set.",
-          "profile_id_sensor": "Optional. Sensor containing the profile ID reported by the scale. Use with Profile ID to ignore measurements from other profiles."
+          "last_measurement_time": "Optional. Leave blank if you do not have this sensor."
         },
         "title": "Configuration"
       },
@@ -43,8 +44,25 @@
         "data": {
           "birthday": "Birthday",
           "gender": "Gender",
+          "height": "Height (cm)",
           "name": "Name"
-        }
+        },
+        "title": "Profile"
+      },
+      "user_determination": {
+        "data": {
+          "profile_id": "Profile ID",
+          "profile_id_sensor": "Profile ID sensor",
+          "weight_range_max": "Maximum user weight",
+          "weight_range_min": "Minimum user weight"
+        },
+        "data_description": {
+          "profile_id": "Optional. Your profile number on the scale (1-5). Measurements from other profiles are ignored when the Profile ID sensor is set.",
+          "profile_id_sensor": "Optional. Sensor containing the profile ID reported by the scale. Profile ID is preferred when both methods are configured.",
+          "weight_range_max": "Optional. The highest accepted weight for this user, in kilograms.",
+          "weight_range_min": "Optional. The lowest accepted weight for this user, in kilograms. Used only when Profile ID is not configured."
+        },
+        "title": "User determination"
       }
     }
   },
@@ -179,21 +197,34 @@
       "init": {
         "data": {
           "calculation_mode": "Calculation method",
+          "handle_user_determination": "Handle user determination",
           "height": "Height (cm)",
           "impedance_mode": "Impedance mode",
           "last_measurement_time": "Last measurement time sensor",
-          "profile_id": "Profile ID",
-          "profile_id_sensor": "Profile ID sensor",
           "weight": "Weight sensor"
         },
         "data_description": {
           "calculation_mode": "Xiaomi: identical to Zepp Life app. Science: WHO / Schofield formulas. Has no effect in S400 dual-frequency mode.",
+          "handle_user_determination": "Show an extra page for filtering measurements by scale profile ID or by an allowed weight range.",
           "impedance_mode": "None: scale without impedance. Standard: single-frequency (Xiaomi Gen2). Dual-frequency S400: 50 kHz + 250 kHz sensors.",
-          "last_measurement_time": "Optional. Leave blank if you do not have this sensor.",
-          "profile_id": "Optional. Your profile number on the scale (1-5). Measurements from other profiles are ignored when the Profile ID sensor is set.",
-          "profile_id_sensor": "Optional. Sensor containing the profile ID reported by the scale. Use with Profile ID to ignore measurements from other profiles."
+          "last_measurement_time": "Optional. Leave blank if you do not have this sensor."
         },
         "title": "Configuration"
+      },
+      "user_determination": {
+        "data": {
+          "profile_id": "Profile ID",
+          "profile_id_sensor": "Profile ID sensor",
+          "weight_range_max": "Maximum user weight",
+          "weight_range_min": "Minimum user weight"
+        },
+        "data_description": {
+          "profile_id": "Optional. Your profile number on the scale (1-5). Measurements from other profiles are ignored when the Profile ID sensor is set.",
+          "profile_id_sensor": "Optional. Sensor containing the profile ID reported by the scale. Profile ID is preferred when both methods are configured.",
+          "weight_range_max": "Optional. The highest accepted weight for this user, in kilograms.",
+          "weight_range_min": "Optional. The lowest accepted weight for this user, in kilograms. Used only when Profile ID is not configured."
+        },
+        "title": "User determination"
       }
     }
   },

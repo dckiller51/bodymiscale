@@ -4,7 +4,11 @@
       "already_configured": "Déjà configuré",
       "height_limit": "La taille est trop élevée (limite : 220 cm)",
       "height_low": "La taille est trop basse (min : 50 cm)",
-      "invalid_date": "Date non valide"
+      "invalid_date": "Date non valide",
+      "profile_id_incomplete": "Sélectionnez à la fois un capteur d'ID de profil et un ID de profil, ou laissez les deux vides.",
+      "user_determination_required": "Configurez soit une correspondance complète par ID de profil, soit une plage de poids complète.",
+      "weight_range_incomplete": "Renseignez à la fois le poids minimum et le poids maximum, ou laissez les deux vides.",
+      "weight_range_invalid": "Le poids maximum doit être supérieur au poids minimum."
     },
     "step": {
       "impedance": {
@@ -23,19 +27,16 @@
       "options": {
         "data": {
           "calculation_mode": "Méthode de calcul",
-          "height": "Taille (cm)",
+          "handle_user_determination": "Gérer l'identification de l'utilisateur",
           "impedance_mode": "Mode d'impédance",
           "last_measurement_time": "Capteur de la dernière pesée",
-          "profile_id": "ID de profil",
-          "profile_id_sensor": "Capteur d'ID de profil",
           "weight": "Capteur de poids"
         },
         "data_description": {
           "calculation_mode": "Xiaomi : copie conforme de l'app Zepp Life. Science : formules OMS / Schofield. Sans effet en mode S400 (bi-fréquence).",
+          "handle_user_determination": "Affiche une page supplémentaire pour filtrer les mesures par ID de profil de la balance ou par une plage de poids autorisée.",
           "impedance_mode": "Aucun : balance sans impédance. Standard : mono-fréquence (Xiaomi Gen2). Bi-fréquence S400 : capteurs 50 kHz + 250 kHz.",
-          "last_measurement_time": "Optionnel. Laissez vide si vous n'avez pas ce capteur.",
-          "profile_id": "Optionnel. Le numéro de votre profil sur la balance (1-5). Les mesures des autres profils sont ignorées lorsque le capteur d'ID de profil est défini.",
-          "profile_id_sensor": "Optionnel. Capteur contenant l'ID de profil indiqué par la balance. Utilisez-le avec l'ID de profil pour ignorer les mesures des autres profils."
+          "last_measurement_time": "Optionnel. Laissez vide si vous n'avez pas ce capteur."
         },
         "title": "Configuration"
       },
@@ -43,8 +44,25 @@
         "data": {
           "birthday": "Date d'anniversaire",
           "gender": "Genre",
+          "height": "Taille (cm)",
           "name": "Nom"
-        }
+        },
+        "title": "Profil"
+      },
+      "user_determination": {
+        "data": {
+          "profile_id": "ID de profil",
+          "profile_id_sensor": "Capteur d'ID de profil",
+          "weight_range_max": "Poids maximal de l'utilisateur",
+          "weight_range_min": "Poids minimal de l'utilisateur"
+        },
+        "data_description": {
+          "profile_id": "Optionnel. Votre numéro de profil sur la balance (1-5). Les mesures des autres profils sont ignorées lorsque le capteur d'ID de profil est défini.",
+          "profile_id_sensor": "Optionnel. Capteur contenant l'ID de profil indiqué par la balance. L'ID de profil est prioritaire lorsque les deux méthodes sont configurées.",
+          "weight_range_max": "Optionnel. Le poids le plus élevé accepté pour cet utilisateur, en kilogrammes.",
+          "weight_range_min": "Optionnel. Le poids le plus bas accepté pour cet utilisateur, en kilogrammes. Utilisé uniquement lorsque l'ID de profil n'est pas configuré."
+        },
+        "title": "Identification de l'utilisateur"
       }
     }
   },
@@ -179,21 +197,34 @@
       "init": {
         "data": {
           "calculation_mode": "Méthode de calcul",
+          "handle_user_determination": "Gérer l'identification de l'utilisateur",
           "height": "Taille (cm)",
           "impedance_mode": "Mode d'impédance",
           "last_measurement_time": "Capteur de la dernière pesée",
-          "profile_id": "ID de profil",
-          "profile_id_sensor": "Capteur d'ID de profil",
           "weight": "Capteur de poids"
         },
         "data_description": {
           "calculation_mode": "Xiaomi : copie conforme de l'app Zepp Life. Science : formules OMS / Schofield. Sans effet en mode S400 (bi-fréquence).",
+          "handle_user_determination": "Affiche une page supplémentaire pour filtrer les mesures par ID de profil de la balance ou par une plage de poids autorisée.",
           "impedance_mode": "Aucun : balance sans impédance. Standard : mono-fréquence (Xiaomi Gen2). Bi-fréquence S400 : capteurs 50 kHz + 250 kHz.",
-          "last_measurement_time": "Optionnel. Laissez vide si vous n'avez pas ce capteur.",
-          "profile_id": "Optionnel. Le numéro de votre profil sur la balance (1-5). Les mesures des autres profils sont ignorées lorsque le capteur d'ID de profil est défini.",
-          "profile_id_sensor": "Optionnel. Capteur contenant l'ID de profil indiqué par la balance. Utilisez-le avec l'ID de profil pour ignorer les mesures des autres profils."
+          "last_measurement_time": "Optionnel. Laissez vide si vous n'avez pas ce capteur."
         },
         "title": "Configuration"
+      },
+      "user_determination": {
+        "data": {
+          "profile_id": "ID de profil",
+          "profile_id_sensor": "Capteur d'ID de profil",
+          "weight_range_max": "Poids maximal de l'utilisateur",
+          "weight_range_min": "Poids minimal de l'utilisateur"
+        },
+        "data_description": {
+          "profile_id": "Optionnel. Votre numéro de profil sur la balance (1-5). Les mesures des autres profils sont ignorées lorsque le capteur d'ID de profil est défini.",
+          "profile_id_sensor": "Optionnel. Capteur contenant l'ID de profil indiqué par la balance. L'ID de profil est prioritaire lorsque les deux méthodes sont configurées.",
+          "weight_range_max": "Optionnel. Le poids le plus élevé accepté pour cet utilisateur, en kilogrammes.",
+          "weight_range_min": "Optionnel. Le poids le plus bas accepté pour cet utilisateur, en kilogrammes. Utilisé uniquement lorsque l'ID de profil n'est pas configuré."
+        },
+        "title": "Identification de l'utilisateur"
       }
     }
   },

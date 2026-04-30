@@ -4,7 +4,11 @@
       "already_configured": "Bereits konfiguriert",
       "height_limit": "Die Körpergröße ist zu hoch (Grenze: 220 cm)",
       "height_low": "Die Körpergröße ist zu niedrig (min: 50 cm)",
-      "invalid_date": "Ungültiges Datum"
+      "invalid_date": "Ungültiges Datum",
+      "profile_id_incomplete": "Wählen Sie sowohl einen Profil-ID-Sensor als auch eine Profil-ID aus, oder lassen Sie beides leer.",
+      "user_determination_required": "Konfigurieren Sie entweder einen vollständigen Profil-ID-Abgleich oder einen vollständigen Gewichtsbereich.",
+      "weight_range_incomplete": "Geben Sie sowohl das Mindest- als auch das Höchstgewicht ein, oder lassen Sie beides leer.",
+      "weight_range_invalid": "Das Höchstgewicht muss größer als das Mindestgewicht sein."
     },
     "step": {
       "impedance": {
@@ -23,19 +27,16 @@
       "options": {
         "data": {
           "calculation_mode": "Berechnungsmethode",
-          "height": "Körpergröße (cm)",
+          "handle_user_determination": "Benutzerbestimmung verwenden",
           "impedance_mode": "Impedanz-Modus",
           "last_measurement_time": "Sensor für die letzte Messzeit",
-          "profile_id": "Profil-ID",
-          "profile_id_sensor": "Profil-ID-Sensor",
           "weight": "Gewichtssensor"
         },
         "data_description": {
           "calculation_mode": "Xiaomi: Identisch mit der Zepp Life App. Wissenschaftlich: WHO / Schofield Formeln. Hat im S400 Dual-Frequenz-Modus keine Auswirkung.",
+          "handle_user_determination": "Zeigt eine zusätzliche Seite zum Filtern von Messungen nach Waagen-Profil-ID oder nach einem erlaubten Gewichtsbereich.",
           "impedance_mode": "Keine: Waage ohne Impedanzmessung. Standard: Einzelfrequenz (Xiaomi Gen2). Dual-Frequenz S400: 50 kHz + 250 kHz Sensoren.",
-          "last_measurement_time": "Optional. Leer lassen, wenn Sie diesen Sensor nicht haben.",
-          "profile_id": "Optional. Ihre Profilnummer auf der Waage (1-5). Messungen anderer Profile werden ignoriert, wenn der Profil-ID-Sensor gesetzt ist.",
-          "profile_id_sensor": "Optional. Sensor, der die von der Waage gemeldete Profil-ID enthält. Zusammen mit der Profil-ID verwenden, um Messungen anderer Profile zu ignorieren."
+          "last_measurement_time": "Optional. Leer lassen, wenn Sie diesen Sensor nicht haben."
         },
         "title": "Konfiguration"
       },
@@ -43,8 +44,25 @@
         "data": {
           "birthday": "Geburtstag",
           "gender": "Geschlecht",
+          "height": "Körpergröße (cm)",
           "name": "Name"
-        }
+        },
+        "title": "Profil"
+      },
+      "user_determination": {
+        "data": {
+          "profile_id": "Profil-ID",
+          "profile_id_sensor": "Profil-ID-Sensor",
+          "weight_range_max": "Maximales Benutzergewicht",
+          "weight_range_min": "Minimales Benutzergewicht"
+        },
+        "data_description": {
+          "profile_id": "Optional. Ihre Profilnummer auf der Waage (1-5). Messungen anderer Profile werden ignoriert, wenn der Profil-ID-Sensor gesetzt ist.",
+          "profile_id_sensor": "Optional. Sensor, der die von der Waage gemeldete Profil-ID enthält. Die Profil-ID wird bevorzugt, wenn beide Methoden konfiguriert sind.",
+          "weight_range_max": "Optional. Das höchste akzeptierte Gewicht für diesen Benutzer, in Kilogramm.",
+          "weight_range_min": "Optional. Das niedrigste akzeptierte Gewicht für diesen Benutzer, in Kilogramm. Wird nur verwendet, wenn keine Profil-ID konfiguriert ist."
+        },
+        "title": "Benutzerbestimmung"
       }
     }
   },
@@ -179,21 +197,34 @@
       "init": {
         "data": {
           "calculation_mode": "Berechnungsmethode",
+          "handle_user_determination": "Benutzerbestimmung verwenden",
           "height": "Körpergröße (cm)",
           "impedance_mode": "Impedanz-Modus",
           "last_measurement_time": "Sensor für die letzte Messzeit",
-          "profile_id": "Profil-ID",
-          "profile_id_sensor": "Profil-ID-Sensor",
           "weight": "Gewichtssensor"
         },
         "data_description": {
           "calculation_mode": "Xiaomi: Identisch mit der Zepp Life App. Wissenschaftlich: WHO / Schofield Formeln. Hat im S400 Dual-Frequenz-Modus keine Auswirkung.",
+          "handle_user_determination": "Zeigt eine zusätzliche Seite zum Filtern von Messungen nach Waagen-Profil-ID oder nach einem erlaubten Gewichtsbereich.",
           "impedance_mode": "Keine: Waage ohne Impedanzmessung. Standard: Einzelfrequenz (Xiaomi Gen2). Dual-Frequenz S400: 50 kHz + 250 kHz Sensoren.",
-          "last_measurement_time": "Optional. Leer lassen, wenn Sie diesen Sensor nicht haben.",
-          "profile_id": "Optional. Ihre Profilnummer auf der Waage (1-5). Messungen anderer Profile werden ignoriert, wenn der Profil-ID-Sensor gesetzt ist.",
-          "profile_id_sensor": "Optional. Sensor, der die von der Waage gemeldete Profil-ID enthält. Zusammen mit der Profil-ID verwenden, um Messungen anderer Profile zu ignorieren."
+          "last_measurement_time": "Optional. Leer lassen, wenn Sie diesen Sensor nicht haben."
         },
         "title": "Konfiguration"
+      },
+      "user_determination": {
+        "data": {
+          "profile_id": "Profil-ID",
+          "profile_id_sensor": "Profil-ID-Sensor",
+          "weight_range_max": "Maximales Benutzergewicht",
+          "weight_range_min": "Minimales Benutzergewicht"
+        },
+        "data_description": {
+          "profile_id": "Optional. Ihre Profilnummer auf der Waage (1-5). Messungen anderer Profile werden ignoriert, wenn der Profil-ID-Sensor gesetzt ist.",
+          "profile_id_sensor": "Optional. Sensor, der die von der Waage gemeldete Profil-ID enthält. Die Profil-ID wird bevorzugt, wenn beide Methoden konfiguriert sind.",
+          "weight_range_max": "Optional. Das höchste akzeptierte Gewicht für diesen Benutzer, in Kilogramm.",
+          "weight_range_min": "Optional. Das niedrigste akzeptierte Gewicht für diesen Benutzer, in Kilogramm. Wird nur verwendet, wenn keine Profil-ID konfiguriert ist."
+        },
+        "title": "Benutzerbestimmung"
       }
     }
   },

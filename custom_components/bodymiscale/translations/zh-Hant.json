@@ -4,7 +4,11 @@
       "already_configured": "已配置",
       "height_limit": "身高過高（限制：220 公分）",
       "height_low": "身高過低（最低：50 公分）",
-      "invalid_date": "日期無效"
+      "invalid_date": "日期無效",
+      "profile_id_incomplete": "請選擇個人資料 ID 感測器和個人資料 ID，或將兩者都留空。",
+      "user_determination_required": "請設定完整的個人資料 ID 比對，或完整的體重範圍。",
+      "weight_range_incomplete": "請輸入最小和最大體重，或將兩者都留空。",
+      "weight_range_invalid": "最大體重必須大於最小體重。"
     },
     "step": {
       "impedance": {
@@ -23,19 +27,16 @@
       "options": {
         "data": {
           "calculation_mode": "計算方法",
-          "height": "身高 (cm)",
+          "handle_user_determination": "處理使用者判定",
           "impedance_mode": "阻抗模式",
           "last_measurement_time": "上次稱重時間感測器",
-          "profile_id": "個人檔案 ID",
-          "profile_id_sensor": "個人檔案 ID 感測器",
           "weight": "體重感測器"
         },
         "data_description": {
           "calculation_mode": "小米：與 Zepp Life 演算法一致。科學：基於 WHO / Schofield 公式。對 S400 雙頻模式無效。",
+          "handle_user_determination": "顯示額外頁面，用於依體重計個人資料 ID 或允許的體重範圍篩選測量值。",
           "impedance_mode": "無：體重計不支援阻抗測量。標準：單頻（小米二代秤）。雙頻 S400：支援 50 kHz + 250 kHz 雙頻感測器。",
-          "last_measurement_time": "選填。若無此感測器請留白。",
-          "profile_id": "選填。你在體重秤上的個人檔案編號 (1-5)。設定個人檔案 ID 感測器後，將忽略其他個人檔案的測量值。",
-          "profile_id_sensor": "選填。包含體重秤回報之個人檔案 ID 的感測器。與個人檔案 ID 搭配使用，可忽略其他個人檔案的測量值。"
+          "last_measurement_time": "選填。若無此感測器請留白。"
         },
         "title": "配置選項"
       },
@@ -43,8 +44,25 @@
         "data": {
           "birthday": "出生日期",
           "gender": "性別",
+          "height": "身高 (cm)",
           "name": "姓名"
-        }
+        },
+        "title": "個人資料"
+      },
+      "user_determination": {
+        "data": {
+          "profile_id": "個人資料 ID",
+          "profile_id_sensor": "個人資料 ID 感測器",
+          "weight_range_max": "使用者最大體重",
+          "weight_range_min": "使用者最小體重"
+        },
+        "data_description": {
+          "profile_id": "選用。你在體重計上的個人資料編號 (1-5)。設定個人資料 ID 感測器後，將忽略其他個人資料的測量值。",
+          "profile_id_sensor": "選用。包含體重計回報的個人資料 ID 的感測器。當兩種方法都已設定時，優先使用個人資料 ID。",
+          "weight_range_max": "選用。此使用者可接受的最高體重，單位為公斤。",
+          "weight_range_min": "選用。此使用者可接受的最低體重，單位為公斤。僅在未設定個人資料 ID 時使用。"
+        },
+        "title": "使用者判定"
       }
     }
   },
@@ -179,21 +197,34 @@
       "init": {
         "data": {
           "calculation_mode": "計算方法",
+          "handle_user_determination": "處理使用者判定",
           "height": "身高 (cm)",
           "impedance_mode": "阻抗模式",
           "last_measurement_time": "上次稱重時間感測器",
-          "profile_id": "個人檔案 ID",
-          "profile_id_sensor": "個人檔案 ID 感測器",
           "weight": "體重感測器"
         },
         "data_description": {
           "calculation_mode": "小米：與 Zepp Life 演算法一致。科學：基於 WHO / Schofield 公式。對 S400 雙頻模式無效。",
+          "handle_user_determination": "顯示額外頁面，用於依體重計個人資料 ID 或允許的體重範圍篩選測量值。",
           "impedance_mode": "無：體重計不支援阻抗測量。標準：單頻（小米二代秤）。雙頻 S400：支援 50 kHz + 250 kHz 雙頻感測器。",
-          "last_measurement_time": "選填。若無此感測器請留白。",
-          "profile_id": "選填。你在體重秤上的個人檔案編號 (1-5)。設定個人檔案 ID 感測器後，將忽略其他個人檔案的測量值。",
-          "profile_id_sensor": "選填。包含體重秤回報之個人檔案 ID 的感測器。與個人檔案 ID 搭配使用，可忽略其他個人檔案的測量值。"
+          "last_measurement_time": "選填。若無此感測器請留白。"
         },
         "title": "配置選項"
+      },
+      "user_determination": {
+        "data": {
+          "profile_id": "個人資料 ID",
+          "profile_id_sensor": "個人資料 ID 感測器",
+          "weight_range_max": "使用者最大體重",
+          "weight_range_min": "使用者最小體重"
+        },
+        "data_description": {
+          "profile_id": "選用。你在體重計上的個人資料編號 (1-5)。設定個人資料 ID 感測器後，將忽略其他個人資料的測量值。",
+          "profile_id_sensor": "選用。包含體重計回報的個人資料 ID 的感測器。當兩種方法都已設定時，優先使用個人資料 ID。",
+          "weight_range_max": "選用。此使用者可接受的最高體重，單位為公斤。",
+          "weight_range_min": "選用。此使用者可接受的最低體重，單位為公斤。僅在未設定個人資料 ID 時使用。"
+        },
+        "title": "使用者判定"
       }
     }
   },

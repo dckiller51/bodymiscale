@@ -4,7 +4,11 @@
       "already_configured": "Ya configurado",
       "height_limit": "La altura es demasiado alta (límite: 220 cm)",
       "height_low": "La altura es demasiado baja (mín: 50 cm)",
-      "invalid_date": "Fecha inválida"
+      "invalid_date": "Fecha inválida",
+      "profile_id_incomplete": "Seleccione tanto un sensor de ID de perfil como un ID de perfil, o deje ambos vacíos.",
+      "user_determination_required": "Configure una coincidencia completa por ID de perfil o un rango de peso completo.",
+      "weight_range_incomplete": "Introduzca tanto el peso mínimo como el máximo, o deje ambos vacíos.",
+      "weight_range_invalid": "El peso máximo debe ser mayor que el peso mínimo."
     },
     "step": {
       "impedance": {
@@ -23,19 +27,16 @@
       "options": {
         "data": {
           "calculation_mode": "Método de cálculo",
-          "height": "Altura (cm)",
+          "handle_user_determination": "Gestionar determinación de usuario",
           "impedance_mode": "Modo de impedancia",
           "last_measurement_time": "Sensor de hora de la última pesada",
-          "profile_id": "ID de perfil",
-          "profile_id_sensor": "Sensor de ID de perfil",
           "weight": "Sensor de peso"
         },
         "data_description": {
           "calculation_mode": "Xiaomi: idéntico a la app Zepp Life. Científico: fórmulas OMS / Schofield. No tiene efecto en el modo S400 de doble frecuencia.",
+          "handle_user_determination": "Muestra una página adicional para filtrar mediciones por ID de perfil de la báscula o por un rango de peso permitido.",
           "impedance_mode": "Ninguno: báscula sin impedancia. Estándar: frecuencia única (Xiaomi Gen2). Doble frecuencia S400: sensores de 50 kHz + 250 kHz.",
-          "last_measurement_time": "Opcional. Deje en blanco si no tiene este sensor.",
-          "profile_id": "Opcional. El número de tu perfil en la báscula (1-5). Las mediciones de otros perfiles se ignoran cuando el sensor de ID de perfil está definido.",
-          "profile_id_sensor": "Opcional. Sensor que contiene el ID de perfil informado por la báscula. Úsalo con ID de perfil para ignorar mediciones de otros perfiles."
+          "last_measurement_time": "Opcional. Deje en blanco si no tiene este sensor."
         },
         "title": "Configuración"
       },
@@ -43,8 +44,25 @@
         "data": {
           "birthday": "Fecha de nacimiento",
           "gender": "Género",
+          "height": "Altura (cm)",
           "name": "Nombre"
-        }
+        },
+        "title": "Perfil"
+      },
+      "user_determination": {
+        "data": {
+          "profile_id": "ID de perfil",
+          "profile_id_sensor": "Sensor de ID de perfil",
+          "weight_range_max": "Peso máximo del usuario",
+          "weight_range_min": "Peso mínimo del usuario"
+        },
+        "data_description": {
+          "profile_id": "Opcional. Tu número de perfil en la báscula (1-5). Las mediciones de otros perfiles se ignoran cuando el sensor de ID de perfil está definido.",
+          "profile_id_sensor": "Opcional. Sensor que contiene el ID de perfil informado por la báscula. El ID de perfil tiene prioridad cuando ambos métodos están configurados.",
+          "weight_range_max": "Opcional. El peso más alto aceptado para este usuario, en kilogramos.",
+          "weight_range_min": "Opcional. El peso más bajo aceptado para este usuario, en kilogramos. Solo se usa cuando no se ha configurado el ID de perfil."
+        },
+        "title": "Determinación de usuario"
       }
     }
   },
@@ -179,21 +197,34 @@
       "init": {
         "data": {
           "calculation_mode": "Método de cálculo",
+          "handle_user_determination": "Gestionar determinación de usuario",
           "height": "Altura (cm)",
           "impedance_mode": "Modo de impedancia",
           "last_measurement_time": "Sensor de hora de la última pesada",
-          "profile_id": "ID de perfil",
-          "profile_id_sensor": "Sensor de ID de perfil",
           "weight": "Sensor de peso"
         },
         "data_description": {
           "calculation_mode": "Xiaomi: idéntico a la app Zepp Life. Científico: fórmulas OMS / Schofield. No tiene efecto en el modo S400 de doble frecuencia.",
+          "handle_user_determination": "Muestra una página adicional para filtrar mediciones por ID de perfil de la báscula o por un rango de peso permitido.",
           "impedance_mode": "Ninguno: báscula sin impedancia. Estándar: frecuencia única (Xiaomi Gen2). Doble frecuencia S400: sensores de 50 kHz + 250 kHz.",
-          "last_measurement_time": "Opcional. Deje en blanco si no tiene este sensor.",
-          "profile_id": "Opcional. El número de tu perfil en la báscula (1-5). Las mediciones de otros perfiles se ignoran cuando el sensor de ID de perfil está definido.",
-          "profile_id_sensor": "Opcional. Sensor que contiene el ID de perfil informado por la báscula. Úsalo con ID de perfil para ignorar mediciones de otros perfiles."
+          "last_measurement_time": "Opcional. Deje en blanco si no tiene este sensor."
         },
         "title": "Configuración"
+      },
+      "user_determination": {
+        "data": {
+          "profile_id": "ID de perfil",
+          "profile_id_sensor": "Sensor de ID de perfil",
+          "weight_range_max": "Peso máximo del usuario",
+          "weight_range_min": "Peso mínimo del usuario"
+        },
+        "data_description": {
+          "profile_id": "Opcional. Tu número de perfil en la báscula (1-5). Las mediciones de otros perfiles se ignoran cuando el sensor de ID de perfil está definido.",
+          "profile_id_sensor": "Opcional. Sensor que contiene el ID de perfil informado por la báscula. El ID de perfil tiene prioridad cuando ambos métodos están configurados.",
+          "weight_range_max": "Opcional. El peso más alto aceptado para este usuario, en kilogramos.",
+          "weight_range_min": "Opcional. El peso más bajo aceptado para este usuario, en kilogramos. Solo se usa cuando no se ha configurado el ID de perfil."
+        },
+        "title": "Determinación de usuario"
       }
     }
   },

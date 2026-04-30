@@ -4,7 +4,11 @@
       "already_configured": "Al geconfigureerd",
       "height_limit": "Lengte is te hoog (limiet: 220 cm)",
       "height_low": "Lengte is te laag (min: 50 cm)",
-      "invalid_date": "Ongeldige datum"
+      "invalid_date": "Ongeldige datum",
+      "profile_id_incomplete": "Selecteer zowel een profiel-ID-sensor als een profiel-ID, of laat beide leeg.",
+      "user_determination_required": "Configureer een volledige profiel-ID-match of een volledig gewichtsbereik.",
+      "weight_range_incomplete": "Voer zowel het minimum- als maximumgewicht in, of laat beide leeg.",
+      "weight_range_invalid": "Het maximumgewicht moet groter zijn dan het minimumgewicht."
     },
     "step": {
       "impedance": {
@@ -23,19 +27,16 @@
       "options": {
         "data": {
           "calculation_mode": "Berekeningsmethode",
-          "height": "Lengte (cm)",
+          "handle_user_determination": "Gebruikersbepaling afhandelen",
           "impedance_mode": "Impedantiemodus",
           "last_measurement_time": "Sensor voor meest recente meettijd",
-          "profile_id": "Profiel-ID",
-          "profile_id_sensor": "Profiel-ID-sensor",
           "weight": "Gewichtssensor"
         },
         "data_description": {
           "calculation_mode": "Xiaomi: identiek aan de Zepp Life-app. Wetenschappelijk: WHO / Schofield-formules. Heeft geen effect in S400-dualfrequentiemodus.",
+          "handle_user_determination": "Toon een extra pagina om metingen te filteren op profiel-ID van de weegschaal of op een toegestaan gewichtsbereik.",
           "impedance_mode": "Geen: weegschaal zonder impedantie. Standaard: enkele frequentie (Xiaomi Gen2). Dual-frequency S400: 50 kHz + 250 kHz sensoren.",
-          "last_measurement_time": "Optioneel. Laat leeg als je deze sensor niet hebt.",
-          "profile_id": "Optioneel. Je profielnummer op de weegschaal (1-5). Metingen van andere profielen worden genegeerd wanneer de profiel-ID-sensor is ingesteld.",
-          "profile_id_sensor": "Optioneel. Sensor met de profiel-ID die door de weegschaal wordt gemeld. Gebruik samen met Profiel-ID om metingen van andere profielen te negeren."
+          "last_measurement_time": "Optioneel. Laat leeg als je deze sensor niet hebt."
         },
         "title": "Configuratie"
       },
@@ -43,8 +44,25 @@
         "data": {
           "birthday": "Geboortedatum",
           "gender": "Geslacht",
+          "height": "Lengte (cm)",
           "name": "Naam"
-        }
+        },
+        "title": "Profiel"
+      },
+      "user_determination": {
+        "data": {
+          "profile_id": "Profiel-ID",
+          "profile_id_sensor": "Profiel-ID-sensor",
+          "weight_range_max": "Maximaal gebruikersgewicht",
+          "weight_range_min": "Minimaal gebruikersgewicht"
+        },
+        "data_description": {
+          "profile_id": "Optioneel. Je profielnummer op de weegschaal (1-5). Metingen van andere profielen worden genegeerd wanneer de profiel-ID-sensor is ingesteld.",
+          "profile_id_sensor": "Optioneel. Sensor die de door de weegschaal gerapporteerde profiel-ID bevat. Profiel-ID heeft voorrang wanneer beide methoden zijn geconfigureerd.",
+          "weight_range_max": "Optioneel. Het hoogste geaccepteerde gewicht voor deze gebruiker, in kilogram.",
+          "weight_range_min": "Optioneel. Het laagste geaccepteerde gewicht voor deze gebruiker, in kilogram. Alleen gebruikt wanneer profiel-ID niet is geconfigureerd."
+        },
+        "title": "Gebruikersbepaling"
       }
     }
   },
@@ -179,21 +197,34 @@
       "init": {
         "data": {
           "calculation_mode": "Berekeningsmethode",
+          "handle_user_determination": "Gebruikersbepaling afhandelen",
           "height": "Lengte (cm)",
           "impedance_mode": "Impedantiemodus",
           "last_measurement_time": "Sensor voor laatste meettijd",
-          "profile_id": "Profiel-ID",
-          "profile_id_sensor": "Profiel-ID-sensor",
           "weight": "Gewichtssensor"
         },
         "data_description": {
           "calculation_mode": "Xiaomi: identiek aan de Zepp Life-app. Wetenschappelijk: WHO / Schofield-formules. Heeft geen effect in S400-dualfrequentiemodus.",
+          "handle_user_determination": "Toon een extra pagina om metingen te filteren op profiel-ID van de weegschaal of op een toegestaan gewichtsbereik.",
           "impedance_mode": "Geen: weegschaal zonder impedantie. Standaard: enkele frequentie (Xiaomi Gen2). Dual-frequency S400: 50 kHz + 250 kHz sensoren.",
-          "last_measurement_time": "Optioneel. Laat leeg als je deze sensor niet hebt.",
-          "profile_id": "Optioneel. Je profielnummer op de weegschaal (1-5). Metingen van andere profielen worden genegeerd wanneer de profiel-ID-sensor is ingesteld.",
-          "profile_id_sensor": "Optioneel. Sensor met de profiel-ID die door de weegschaal wordt gemeld. Gebruik samen met Profiel-ID om metingen van andere profielen te negeren."
+          "last_measurement_time": "Optioneel. Laat leeg als je deze sensor niet hebt."
         },
         "title": "Configuratie"
+      },
+      "user_determination": {
+        "data": {
+          "profile_id": "Profiel-ID",
+          "profile_id_sensor": "Profiel-ID-sensor",
+          "weight_range_max": "Maximaal gebruikersgewicht",
+          "weight_range_min": "Minimaal gebruikersgewicht"
+        },
+        "data_description": {
+          "profile_id": "Optioneel. Je profielnummer op de weegschaal (1-5). Metingen van andere profielen worden genegeerd wanneer de profiel-ID-sensor is ingesteld.",
+          "profile_id_sensor": "Optioneel. Sensor die de door de weegschaal gerapporteerde profiel-ID bevat. Profiel-ID heeft voorrang wanneer beide methoden zijn geconfigureerd.",
+          "weight_range_max": "Optioneel. Het hoogste geaccepteerde gewicht voor deze gebruiker, in kilogram.",
+          "weight_range_min": "Optioneel. Het laagste geaccepteerde gewicht voor deze gebruiker, in kilogram. Alleen gebruikt wanneer profiel-ID niet is geconfigureerd."
+        },
+        "title": "Gebruikersbepaling"
       }
     }
   },

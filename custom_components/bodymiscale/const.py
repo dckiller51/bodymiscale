@@ -20,6 +20,9 @@ CONF_GENDER = "gender"
 CONF_HEIGHT = "height"
 CONF_SCALE = "scale"
 CONF_PROFILE_ID = "profile_id"
+CONF_HANDLE_USER_DETERMINATION = "handle_user_determination"
+CONF_WEIGHT_RANGE_MIN = "weight_range_min"
+CONF_WEIGHT_RANGE_MAX = "weight_range_max"
 
 # calculation mode
 # - xiaomi  : formula Zepp Life / Mi Fit, etc. (proprietary Xiaomi algorithm)
@@ -92,7 +95,7 @@ If you have any issues with this you need to open an issue here:
 -------------------------------------------------------------------
 """
 
-# Contraint
+# Constraint
 CONSTRAINT_HEIGHT_MIN = 50
 CONSTRAINT_HEIGHT_MAX = 220
 CONSTRAINT_IMPEDANCE_MIN = 50
@@ -105,3 +108,6 @@ CONSTRAINT_PROFILE_ID_MAX = 5
 # Home Assistant
 PLATFORMS: set[Platform] = {Platform.SENSOR}
 UPDATE_DELAY = 2.0
+USER_DETERMINATION_WEIGHT_TIMEOUT = 3.0
+USER_DETERMINATION_WEIGHT_RETRY_DELAY = 0.5
+USER_DETERMINATION_WEIGHT_RECENT_SECONDS = 3.0

@@ -4,7 +4,11 @@
       "already_configured": "Allerede konfigureret",
       "height_limit": "Højde maximum overskredet (grænse: 220 cm)",
       "height_low": "Højde minimum overskredet (min: 50 cm)",
-      "invalid_date": "Ugyldig dato"
+      "invalid_date": "Ugyldig dato",
+      "profile_id_incomplete": "Vælg både en profil-ID-sensor og et profil-ID, eller lad begge være tomme.",
+      "user_determination_required": "Konfigurer enten et komplet profil-ID-match eller et komplet vægtinterval.",
+      "weight_range_incomplete": "Indtast både minimums- og maksimumsvægt, eller lad begge være tomme.",
+      "weight_range_invalid": "Maksimumvægten skal være større end minimumsvægten."
     },
     "step": {
       "impedance": {
@@ -23,19 +27,16 @@
       "options": {
         "data": {
           "calculation_mode": "Beregningsmetode",
-          "height": "Højde (cm)",
+          "handle_user_determination": "Håndter brugerbestemmelse",
           "impedance_mode": "Impedanstilstand",
           "last_measurement_time": "Tidssensor for sidste måling",
-          "profile_id": "Profil-id",
-          "profile_id_sensor": "Profil-id-sensor",
           "weight": "Vægtsensor"
         },
         "data_description": {
           "calculation_mode": "Xiaomi: identisk med Zepp Life app. Videnskabelig: WHO / Schofield formler. Har ingen effekt i S400 dual-frequency tilstand.",
+          "handle_user_determination": "Vis en ekstra side til filtrering af målinger efter vægtens profil-ID eller efter et tilladt vægtinterval.",
           "impedance_mode": "Ingen: vægt uden impedans. Standard: enkelt-frekvens (Xiaomi Gen2). Dual-frequency S400: 50 kHz + 250 kHz sensorer.",
-          "last_measurement_time": "Valgfrit. Efterlad tom, hvis du ikke har denne sensor.",
-          "profile_id": "Valgfrit. Dit profilnummer på vægten (1-5). Målinger fra andre profiler ignoreres, når profil-id-sensoren er angivet.",
-          "profile_id_sensor": "Valgfrit. Sensoren, der indeholder profil-id'et rapporteret af vægten. Brug sammen med profil-id for at ignorere målinger fra andre profiler."
+          "last_measurement_time": "Valgfrit. Efterlad tom, hvis du ikke har denne sensor."
         },
         "title": "Konfiguration"
       },
@@ -43,8 +44,25 @@
         "data": {
           "birthday": "Fødselsdag",
           "gender": "Køn",
+          "height": "Højde (cm)",
           "name": "Navn"
-        }
+        },
+        "title": "Profil"
+      },
+      "user_determination": {
+        "data": {
+          "profile_id": "Profil-ID",
+          "profile_id_sensor": "Profil-ID-sensor",
+          "weight_range_max": "Maksimal brugervægt",
+          "weight_range_min": "Minimal brugervægt"
+        },
+        "data_description": {
+          "profile_id": "Valgfrit. Dit profilnummer på vægten (1-5). Målinger fra andre profiler ignoreres, når profil-ID-sensoren er angivet.",
+          "profile_id_sensor": "Valgfrit. Sensoren, der indeholder det profil-ID, som vægten rapporterer. Profil-ID foretrækkes, når begge metoder er konfigureret.",
+          "weight_range_max": "Valgfrit. Den højeste accepterede vægt for denne bruger, i kilogram.",
+          "weight_range_min": "Valgfrit. Den laveste accepterede vægt for denne bruger, i kilogram. Bruges kun, når profil-ID ikke er konfigureret."
+        },
+        "title": "Brugerbestemmelse"
       }
     }
   },
@@ -179,21 +197,34 @@
       "init": {
         "data": {
           "calculation_mode": "Beregningsmetode",
+          "handle_user_determination": "Håndter brugerbestemmelse",
           "height": "Højde (cm)",
           "impedance_mode": "Impedanstilstand",
           "last_measurement_time": "Tidssensor for sidste måling",
-          "profile_id": "Profil-id",
-          "profile_id_sensor": "Profil-id-sensor",
           "weight": "Vægtsensor"
         },
         "data_description": {
           "calculation_mode": "Xiaomi: identisk med Zepp Life app. Videnskabelig: WHO / Schofield formler. Har ingen effekt i S400 dual-frequency tilstand.",
+          "handle_user_determination": "Vis en ekstra side til filtrering af målinger efter vægtens profil-ID eller efter et tilladt vægtinterval.",
           "impedance_mode": "Ingen: vægt uden impedans. Standard: enkelt-frekvens (Xiaomi Gen2). Dual-frequency S400: 50 kHz + 250 kHz sensorer.",
-          "last_measurement_time": "Valgfrit. Efterlad tom, hvis du ikke har denne sensor.",
-          "profile_id": "Valgfrit. Dit profilnummer på vægten (1-5). Målinger fra andre profiler ignoreres, når profil-id-sensoren er angivet.",
-          "profile_id_sensor": "Valgfrit. Sensoren, der indeholder profil-id'et rapporteret af vægten. Brug sammen med profil-id for at ignorere målinger fra andre profiler."
+          "last_measurement_time": "Valgfrit. Efterlad tom, hvis du ikke har denne sensor."
         },
         "title": "Konfiguration"
+      },
+      "user_determination": {
+        "data": {
+          "profile_id": "Profil-ID",
+          "profile_id_sensor": "Profil-ID-sensor",
+          "weight_range_max": "Maksimal brugervægt",
+          "weight_range_min": "Minimal brugervægt"
+        },
+        "data_description": {
+          "profile_id": "Valgfrit. Dit profilnummer på vægten (1-5). Målinger fra andre profiler ignoreres, når profil-ID-sensoren er angivet.",
+          "profile_id_sensor": "Valgfrit. Sensoren, der indeholder det profil-ID, som vægten rapporterer. Profil-ID foretrækkes, når begge metoder er konfigureret.",
+          "weight_range_max": "Valgfrit. Den højeste accepterede vægt for denne bruger, i kilogram.",
+          "weight_range_min": "Valgfrit. Den laveste accepterede vægt for denne bruger, i kilogram. Bruges kun, når profil-ID ikke er konfigureret."
+        },
+        "title": "Brugerbestemmelse"
       }
     }
   },

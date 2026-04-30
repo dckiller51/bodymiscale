@@ -4,7 +4,11 @@
       "already_configured": "Già configurato",
       "height_limit": "L'altezza è troppo elevata (limite: 220 cm)",
       "height_low": "L'altezza è troppo bassa (min: 50 cm)",
-      "invalid_date": "Data non valida"
+      "invalid_date": "Data non valida",
+      "profile_id_incomplete": "Seleziona sia un sensore ID profilo sia un ID profilo, oppure lascia entrambi vuoti.",
+      "user_determination_required": "Configura una corrispondenza completa tramite ID profilo oppure un intervallo di peso completo.",
+      "weight_range_incomplete": "Inserisci sia il peso minimo sia il peso massimo, oppure lascia entrambi vuoti.",
+      "weight_range_invalid": "Il peso massimo deve essere maggiore del peso minimo."
     },
     "step": {
       "impedance": {
@@ -23,19 +27,16 @@
       "options": {
         "data": {
           "calculation_mode": "Metodo di calcolo",
-          "height": "Altezza (cm)",
+          "handle_user_determination": "Gestisci determinazione utente",
           "impedance_mode": "Modalità impedenza",
           "last_measurement_time": "Sensore dell'ultima ora di pesatura",
-          "profile_id": "ID profilo",
-          "profile_id_sensor": "Sensore ID profilo",
           "weight": "Sensore peso"
         },
         "data_description": {
           "calculation_mode": "Xiaomi: identico all'app Zepp Life. Scientifico: formule OMS / Schofield. Non ha effetto in modalità S400 a doppia frequenza.",
+          "handle_user_determination": "Mostra una pagina aggiuntiva per filtrare le misurazioni per ID profilo della bilancia o per un intervallo di peso consentito.",
           "impedance_mode": "Nessuna: bilancia senza impedenza. Standard: singola frequenza (Xiaomi Gen2). Dual-frequency S400: sensori 50 kHz + 250 kHz.",
-          "last_measurement_time": "Opzionale. Lascia vuoto se non hai questo sensore.",
-          "profile_id": "Opzionale. Il numero del tuo profilo sulla bilancia (1-5). Le misurazioni di altri profili vengono ignorate quando il sensore ID profilo è impostato.",
-          "profile_id_sensor": "Opzionale. Sensore che contiene l'ID profilo riportato dalla bilancia. Usalo con ID profilo per ignorare le misurazioni di altri profili."
+          "last_measurement_time": "Opzionale. Lascia vuoto se non hai questo sensore."
         },
         "title": "Configurazione"
       },
@@ -43,8 +44,25 @@
         "data": {
           "birthday": "Data di nascita",
           "gender": "Genere",
+          "height": "Altezza (cm)",
           "name": "Nome"
-        }
+        },
+        "title": "Profilo"
+      },
+      "user_determination": {
+        "data": {
+          "profile_id": "ID profilo",
+          "profile_id_sensor": "Sensore ID profilo",
+          "weight_range_max": "Peso massimo utente",
+          "weight_range_min": "Peso minimo utente"
+        },
+        "data_description": {
+          "profile_id": "Opzionale. Il tuo numero di profilo sulla bilancia (1-5). Le misurazioni di altri profili vengono ignorate quando il sensore ID profilo è impostato.",
+          "profile_id_sensor": "Opzionale. Sensore che contiene l'ID profilo riportato dalla bilancia. L'ID profilo ha priorità quando entrambi i metodi sono configurati.",
+          "weight_range_max": "Opzionale. Il peso massimo accettato per questo utente, in chilogrammi.",
+          "weight_range_min": "Opzionale. Il peso minimo accettato per questo utente, in chilogrammi. Usato solo quando l'ID profilo non è configurato."
+        },
+        "title": "Determinazione utente"
       }
     }
   },
@@ -179,21 +197,34 @@
       "init": {
         "data": {
           "calculation_mode": "Metodo di calcolo",
+          "handle_user_determination": "Gestisci determinazione utente",
           "height": "Altezza (cm)",
           "impedance_mode": "Modalità impedenza",
           "last_measurement_time": "Sensore dell'ultima ora di pesatura",
-          "profile_id": "ID profilo",
-          "profile_id_sensor": "Sensore ID profilo",
           "weight": "Sensore peso"
         },
         "data_description": {
           "calculation_mode": "Xiaomi: identico all'app Zepp Life. Scientifico: formule OMS / Schofield. Non ha effetto in modalità S400 a doppia frequenza.",
+          "handle_user_determination": "Mostra una pagina aggiuntiva per filtrare le misurazioni per ID profilo della bilancia o per un intervallo di peso consentito.",
           "impedance_mode": "Nessuna: bilancia senza impedenza. Standard: singola frequenza (Xiaomi Gen2). Dual-frequency S400: sensori 50 kHz + 250 kHz.",
-          "last_measurement_time": "Opzionale. Lascia vuoto se non hai questo sensore.",
-          "profile_id": "Opzionale. Il numero del tuo profilo sulla bilancia (1-5). Le misurazioni di altri profili vengono ignorate quando il sensore ID profilo è impostato.",
-          "profile_id_sensor": "Opzionale. Sensore che contiene l'ID profilo riportato dalla bilancia. Usalo con ID profilo per ignorare le misurazioni di altri profili."
+          "last_measurement_time": "Opzionale. Lascia vuoto se non hai questo sensore."
         },
         "title": "Configurazione"
+      },
+      "user_determination": {
+        "data": {
+          "profile_id": "ID profilo",
+          "profile_id_sensor": "Sensore ID profilo",
+          "weight_range_max": "Peso massimo utente",
+          "weight_range_min": "Peso minimo utente"
+        },
+        "data_description": {
+          "profile_id": "Opzionale. Il tuo numero di profilo sulla bilancia (1-5). Le misurazioni di altri profili vengono ignorate quando il sensore ID profilo è impostato.",
+          "profile_id_sensor": "Opzionale. Sensore che contiene l'ID profilo riportato dalla bilancia. L'ID profilo ha priorità quando entrambi i metodi sono configurati.",
+          "weight_range_max": "Opzionale. Il peso massimo accettato per questo utente, in chilogrammi.",
+          "weight_range_min": "Opzionale. Il peso minimo accettato per questo utente, in chilogrammi. Usato solo quando l'ID profilo non è configurato."
+        },
+        "title": "Determinazione utente"
       }
     }
   },

@@ -4,7 +4,11 @@
       "already_configured": "Já configurado",
       "height_limit": "A altura é muito alta (limite: 220 cm)",
       "height_low": "A altura é muito baixa (mín: 50 cm)",
-      "invalid_date": "Data inválida"
+      "invalid_date": "Data inválida",
+      "profile_id_incomplete": "Selecione um sensor de ID de perfil e um ID de perfil, ou deixe ambos em branco.",
+      "user_determination_required": "Configure uma correspondência completa por ID de perfil ou uma faixa de peso completa.",
+      "weight_range_incomplete": "Informe o peso mínimo e o peso máximo, ou deixe ambos em branco.",
+      "weight_range_invalid": "O peso máximo deve ser maior que o peso mínimo."
     },
     "step": {
       "impedance": {
@@ -23,19 +27,16 @@
       "options": {
         "data": {
           "calculation_mode": "Método de cálculo",
-          "height": "Altura (cm)",
+          "handle_user_determination": "Gerenciar determinação do usuário",
           "impedance_mode": "Modo de impedância",
           "last_measurement_time": "Sensor da última pesagem",
-          "profile_id": "ID do perfil",
-          "profile_id_sensor": "Sensor de ID do perfil",
           "weight": "Sensor de peso"
         },
         "data_description": {
           "calculation_mode": "Xiaomi: idêntico ao app Zepp Life. Científico: fórmulas OMS / Schofield. Não tem efeito no modo S400 de dupla frequência.",
+          "handle_user_determination": "Mostra uma página extra para filtrar medições pelo ID de perfil da balança ou por uma faixa de peso permitida.",
           "impedance_mode": "Nenhum: balança sem impedância. Padrão: frequência única (Xiaomi Gen2). Dupla frequência S400: sensores de 50 kHz + 250 kHz.",
-          "last_measurement_time": "Opcional. Deixe em branco se não possuir este sensor.",
-          "profile_id": "Opcional. O número do seu perfil na balança (1-5). Medições de outros perfis são ignoradas quando o sensor de ID do perfil está definido.",
-          "profile_id_sensor": "Opcional. Sensor que contém o ID do perfil informado pela balança. Use com ID do perfil para ignorar medições de outros perfis."
+          "last_measurement_time": "Opcional. Deixe em branco se não possuir este sensor."
         },
         "title": "Configuração"
       },
@@ -43,8 +44,25 @@
         "data": {
           "birthday": "Data de nascimento",
           "gender": "Gênero",
+          "height": "Altura (cm)",
           "name": "Nome"
-        }
+        },
+        "title": "Perfil"
+      },
+      "user_determination": {
+        "data": {
+          "profile_id": "ID do perfil",
+          "profile_id_sensor": "Sensor de ID do perfil",
+          "weight_range_max": "Peso máximo do usuário",
+          "weight_range_min": "Peso mínimo do usuário"
+        },
+        "data_description": {
+          "profile_id": "Opcional. O número do seu perfil na balança (1-5). Medições de outros perfis são ignoradas quando o sensor de ID de perfil está definido.",
+          "profile_id_sensor": "Opcional. Sensor que contém o ID de perfil informado pela balança. O ID de perfil tem prioridade quando os dois métodos estão configurados.",
+          "weight_range_max": "Opcional. O maior peso aceito para este usuário, em quilogramas.",
+          "weight_range_min": "Opcional. O menor peso aceito para este usuário, em quilogramas. Usado somente quando o ID de perfil não está configurado."
+        },
+        "title": "Determinação do usuário"
       }
     }
   },
@@ -179,21 +197,34 @@
       "init": {
         "data": {
           "calculation_mode": "Método de cálculo",
+          "handle_user_determination": "Gerenciar determinação do usuário",
           "height": "Altura (cm)",
           "impedance_mode": "Modo de impedância",
           "last_measurement_time": "Sensor da última pesagem",
-          "profile_id": "ID do perfil",
-          "profile_id_sensor": "Sensor de ID do perfil",
           "weight": "Sensor de peso"
         },
         "data_description": {
           "calculation_mode": "Xiaomi: idêntico ao app Zepp Life. Científico: fórmulas OMS / Schofield. Não tem efeito no modo S400 de dupla frequência.",
+          "handle_user_determination": "Mostra uma página extra para filtrar medições pelo ID de perfil da balança ou por uma faixa de peso permitida.",
           "impedance_mode": "Nenhum: balança sem impedância. Padrão: frequência única (Xiaomi Gen2). Dupla frequência S400: sensores de 50 kHz + 250 kHz.",
-          "last_measurement_time": "Opcional. Deixe em branco se não possuir este sensor.",
-          "profile_id": "Opcional. O número do seu perfil na balança (1-5). Medições de outros perfis são ignoradas quando o sensor de ID do perfil está definido.",
-          "profile_id_sensor": "Opcional. Sensor que contém o ID do perfil informado pela balança. Use com ID do perfil para ignorar medições de outros perfis."
+          "last_measurement_time": "Opcional. Deixe em branco se não possuir este sensor."
         },
         "title": "Configuração"
+      },
+      "user_determination": {
+        "data": {
+          "profile_id": "ID do perfil",
+          "profile_id_sensor": "Sensor de ID do perfil",
+          "weight_range_max": "Peso máximo do usuário",
+          "weight_range_min": "Peso mínimo do usuário"
+        },
+        "data_description": {
+          "profile_id": "Opcional. O número do seu perfil na balança (1-5). Medições de outros perfis são ignoradas quando o sensor de ID de perfil está definido.",
+          "profile_id_sensor": "Opcional. Sensor que contém o ID de perfil informado pela balança. O ID de perfil tem prioridade quando os dois métodos estão configurados.",
+          "weight_range_max": "Opcional. O maior peso aceito para este usuário, em quilogramas.",
+          "weight_range_min": "Opcional. O menor peso aceito para este usuário, em quilogramas. Usado somente quando o ID de perfil não está configurado."
+        },
+        "title": "Determinação do usuário"
       }
     }
   },
