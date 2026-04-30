@@ -35,15 +35,13 @@ $$LBM = \frac{H \times 9.058}{100} \times \frac{H}{100} + W \times 0.32 + 12.226
 
 ### 2. TBW — Total Body Water (displayed water%)
 
-**Adapted from Deurenberg et al. (1995)**
+**Pace & Rathbun (1945) / Siri (1956)**
 
-$$TBW_{display} = 0.718 \times (H^2 / Z_{lf}) + 0.105 \times (H^2 / Z_{hf}) + 0.233 \times W - 3.61$$
+$$water\% = (100 - fat\%) \times 0.73$$
 
-$$water\% = (TBW_{display} / W) \times 100$$
+This expresses TBW as a percentage of **total body weight**, producing physiologically plausible values in the typical adult range (~55–65% for males, ~50–60% for females).
 
-**Origin:** Structure based on Deurenberg et al. 1995 _(Am J Clin Nutr 61(1):4-12)_, validated on hand-to-foot devices against deuterium dilution. The original coefficients (`0.449 / 0.066`) have been empirically scaled up (`0.718 / 0.105`, ×~1.6) to compensate for the higher impedance path on foot-to-foot hardware.
-
-> ⚠️ **Limitation:** For subjects with BMI < 28, this formula may overestimate TBW (sometimes yielding water% > 90%), which is clamped to 75% for display. The displayed water% remains physiologically plausible after clamping. However, ECW/ICW/BCM use a separate, more stable TBW source — see below.
+> ℹ️ The underlying Deurenberg formula is still used internally to compute TBW liters for ECW/ICW/BCM compartment calculations, but the **displayed percentage** uses Pace for consistency with clinical references and consumer scale conventions.
 
 ---
 
@@ -153,20 +151,21 @@ Uses weight, height, and age ratios from the original Xiaomi physiological model
 
 ## Available Metrics Summary
 
-| Metric            | Unit | Method                     | Reliability         |
-| :---------------- | :--- | :------------------------- | :------------------ |
-| **LBM**           | kg   | Xiaomi calibrated          | ✅ Good             |
-| **Water% (TBW)**  | %    | Deurenberg adapted + clamp | ✅ Good (displayed) |
-| **ECW**           | L    | Z-ratio / Pace TBW         | ⚠️ Trend only       |
-| **ICW**           | L    | TBW − ECW / Pace TBW       | ⚠️ Trend only       |
-| **ECW/TBW Ratio** | %    | Derived / Pace TBW         | ⚠️ Trend only       |
-| **BCM**           | kg   | Wang / ICW                 | ⚠️ Trend only       |
-| **SMM**           | kg   | Janssen (adapted)          | ✅ Good             |
-| **Fat%**          | %    | Siri 2-compartment         | ✅ Good             |
-| **BMR**           | kcal | Katch-McArdle              | ✅ Good             |
-| **Metabolic Age** | yrs  | BMR-relative               | ✅ Good             |
-| **Visceral Fat**  | -    | Zepp Life                  | ✅ Good             |
-| **Protein**       | %    | Wang 1999                  | ✅ Good             |
+| Metric            | Unit | Method                     | Reliability   |
+| :---------------- | :--- | :------------------------- | :------------ |
+| **LBM**           | kg   | Xiaomi calibrated          | ✅ Good       |
+| **Water% (TBW)**  | %    | Pace & Rathbun (displayed) | ✅ Good       |
+| **TBW (liters)**  | L    | Deurenberg (internal)      | ⚠️ Trend only |
+| **ECW**           | L    | Z-ratio / Pace TBW         | ⚠️ Trend only |
+| **ICW**           | L    | TBW − ECW / Pace TBW       | ⚠️ Trend only |
+| **ECW/TBW Ratio** | %    | Derived / Pace TBW         | ⚠️ Trend only |
+| **BCM**           | kg   | Wang / ICW                 | ⚠️ Trend only |
+| **SMM**           | kg   | Janssen (adapted)          | ✅ Good       |
+| **Fat%**          | %    | Siri 2-compartment         | ✅ Good       |
+| **BMR**           | kcal | Katch-McArdle              | ✅ Good       |
+| **Metabolic Age** | yrs  | BMR-relative               | ✅ Good       |
+| **Visceral Fat**  | -    | Zepp Life                  | ✅ Good       |
+| **Protein**       | %    | Wang 1999                  | ✅ Good       |
 
 ---
 

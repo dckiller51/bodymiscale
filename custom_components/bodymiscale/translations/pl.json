@@ -29,7 +29,7 @@
           "weight": "Sensor wagi"
         },
         "data_description": {
-          "calculation_mode": "Xiaomi: identyczna z aplikacją Zepp Life. Naukowa: formuły WHO / Mifflin. Nie dotyczy trybu dwuczęstotliwościowego S400.",
+          "calculation_mode": "Xiaomi: identyczna z aplikacją Zepp Life. Naukowa: formuły WHO / Schofield. Nie dotyczy trybu dwuczęstotliwościowego S400.",
           "impedance_mode": "Brak: waga bez impedancji. Standard: jedna częstotliwość (Xiaomi Gen2). Dual-frequency S400: sensory 50 kHz + 250 kHz.",
           "last_measurement_time": "Opcjonalnie. Pozostaw puste, jeśli nie masz tego czujnika."
         },
@@ -181,9 +181,9 @@
           "weight": "Sensor wagi"
         },
         "data_description": {
-          "calculation_mode": "Xiaomi: jak w Zepp Life. Naukowa: WHO / Mifflin. Brak wpływu w trybie S400.",
-          "impedance_mode": "Brak: bez impedancji. Standard: jedna częstotliwość (Xiaomi Gen2). Dual-frequency S400: 50 kHz + 250 kHz.",
-          "last_measurement_time": "Opcjonalnie. Pozostaw puste, jeśli czujnik nie istnieje."
+          "calculation_mode": "Xiaomi: identyczna z aplikacją Zepp Life. Naukowa: formuły WHO / Schofield. Nie dotyczy trybu dwuczęstotliwościowego S400.",
+          "impedance_mode": "Brak: waga bez impedancji. Standard: jedna częstotliwość (Xiaomi Gen2). Dual-frequency S400: sensory 50 kHz + 250 kHz.",
+          "last_measurement_time": "Opcjonalnie. Pozostaw puste, jeśli nie masz tego czujnika."
         },
         "title": "Konfiguracja"
       }
@@ -192,7 +192,7 @@
   "selector": {
     "calculation_mode": {
       "options": {
-        "science": "Naukowa — WHO / Mifflin",
+        "science": "Naukowa — WHO / Schofield",
         "xiaomi": "Xiaomi — Zepp Life (Legacy 2017)"
       }
     },

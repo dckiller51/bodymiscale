@@ -1,6 +1,7 @@
 """Body scale module."""
 
 from functools import cached_property
+from typing import ClassVar
 
 from ..models import Gender
 
@@ -9,7 +10,7 @@ class Scale:
     """Scale implementation."""
 
     # Fat% table: [very low, low, normal, high] by age range / gender
-    _FAT_SCALES: list[tuple[int, int, list[float], list[float]]] = [
+    _FAT_SCALES: ClassVar[list[tuple[int, int, list[float], list[float]]]] = [
         # (age_min, age_max, female_values, male_values)
         (0, 12, [12.0, 21.0, 30.0, 34.0], [7.0, 16.0, 25.0, 30.0]),
         (12, 14, [15.0, 24.0, 33.0, 37.0], [7.0, 16.0, 25.0, 30.0]),
@@ -21,7 +22,9 @@ class Scale:
     ]
 
     # Muscle mass table: [low, normal] by height / gender
-    _MUSCLE_SCALES: list[tuple[dict[Gender, int], list[float], list[float]]] = [
+    _MUSCLE_SCALES: ClassVar[
+        list[tuple[dict[Gender, int], list[float], list[float]]]
+    ] = [
         ({Gender.MALE: 170, Gender.FEMALE: 160}, [36.5, 42.6], [49.4, 59.5]),
         ({Gender.MALE: 160, Gender.FEMALE: 150}, [32.9, 37.6], [44.0, 52.5]),
         ({Gender.MALE: 0, Gender.FEMALE: 0}, [29.1, 34.8], [38.5, 46.6]),

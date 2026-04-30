@@ -33,7 +33,7 @@ good-names=i,j,k,ex,_,T,x,y,id
 
 [MESSAGES CONTROL]
 # Reasons disabled:
-# format - handled by black
+# format - handled by ruff
 # duplicate-code - unavoidable
 # cyclic-import - doesn't test if both import on load
 # too-many-* - are not enforced for the sake of readability
@@ -81,3 +81,7 @@ overgeneral-exceptions=builtins.BaseException,
 
 [DESIGN]
 max-returns=10
+max-args=6
+max-locals=25
+max-branches=20
+max-positional-arguments=6

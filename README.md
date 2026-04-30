@@ -124,7 +124,7 @@ Uses standardized anthropometric equations:
 Switches to advanced bioelectrical impedance analysis (BIA) models:
 
 - **Lean Body Mass (LBM):** Uses clinically validated equations to calculate non-fat tissue.
-- **Water & Protein:** Derived from LBM using standardized physiological constants (**Pace 73.2%** for hydration and **Wang 19.5%** for proteins).
+- **Water & Protein:** Derived from LBM using standardized physiological constants (**Pace 73%** for hydration and **Wang 19.5%** for proteins).
 
 ### 3. S400 (Dual-frequency)
 

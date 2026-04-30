@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
-
 set -e
 
 cd "$(dirname "$0")/.."
 
+# pyproject.toml
 scripts/install/pip_packages "pip"
 scripts/install/pip_packages setuptools wheel
-scripts/install/pip_packages --requirement requirements.txt
+pip install -e ".[dev]"
+
 pre-commit install

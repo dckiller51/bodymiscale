@@ -29,7 +29,7 @@
           "weight": "Senzor greutate"
         },
         "data_description": {
-          "calculation_mode": "Xiaomi: identic cu aplicația Zepp Life. Științific: formule OMS / Mifflin. Nu are efect în modul S400 cu dublă frecvență.",
+          "calculation_mode": "Xiaomi: identic cu aplicația Zepp Life. Științific: formule OMS / Schofield. Nu are efect în modul S400 cu dublă frecvență.",
           "impedance_mode": "Niciunul: fără impedanță. Standard: frecvență unică (Xiaomi Gen2). Dual-frequency S400: senzori 50 kHz + 250 kHz.",
           "last_measurement_time": "Opțional. Lăsați gol dacă nu aveți acest senzor."
         },
@@ -181,9 +181,9 @@
           "weight": "Senzor greutate"
         },
         "data_description": {
-          "calculation_mode": "Xiaomi: ca în Zepp Life. Științific: OMS / Mifflin. Fără efect în modul S400.",
-          "impedance_mode": "Niciunul: fără impedanță. Standard: frecvență unică (Xiaomi Gen2). Dual-frequency S400: 50 kHz + 250 kHz.",
-          "last_measurement_time": "Opțional. Lăsați gol dacă senzorul nu există."
+          "calculation_mode": "Xiaomi: identic cu aplicația Zepp Life. Științific: formule OMS / Schofield. Nu are efect în modul S400 cu dublă frecvență.",
+          "impedance_mode": "Niciunul: fără impedanță. Standard: frecvență unică (Xiaomi Gen2). Dual-frequency S400: senzori 50 kHz + 250 kHz.",
+          "last_measurement_time": "Opțional. Lăsați gol dacă nu aveți acest senzor."
         },
         "title": "Configurare"
       }
@@ -192,7 +192,7 @@
   "selector": {
     "calculation_mode": {
       "options": {
-        "science": "Științific — OMS / Mifflin",
+        "science": "Științific — OMS / Schofield",
         "xiaomi": "Xiaomi — Zepp Life (Legacy 2017)"
       }
     },

@@ -1,46 +1,69 @@
 {
   "config": {
+    "abort": {
+      "already_configured": "A profile with this name is already configured."
+    },
     "error": {
-      "already_configured": "Already configured",
       "height_limit": "Height is too high (limit: 220 cm)",
       "height_low": "Height is too low (min: 50 cm)",
-      "invalid_date": "Invalid date"
+      "invalid_date": "Invalid date",
+      "name_already_used": "This name is already used by another profile. Choose a different one.",
+      "weight_range_invalid": "Minimum weight must be strictly less than maximum weight.",
+      "weight_range_overlap": "This range overlaps another user's range. Adjust the bounds so they don't share a value (e.g., if the next user starts at 65 kg, your maximum must be at most 64.99 kg)."
     },
     "step": {
-      "impedance": {
-        "data": {
-          "impedance": "Impedance sensor (single-frequency)",
-          "impedance_high": "High-frequency impedance sensor (250 kHz)",
-          "impedance_low": "Low-frequency impedance sensor (50 kHz)"
-        },
-        "data_description": {
-          "impedance": "Single impedance value provided by your scale.",
-          "impedance_high": "Impedance measured at 250 kHz (S400).",
-          "impedance_low": "Impedance measured at 50 kHz (S400)."
-        },
-        "title": "Impedance sensors"
-      },
-      "options": {
+      "modes": {
         "data": {
           "calculation_mode": "Calculation method",
           "height": "Height (cm)",
           "impedance_mode": "Impedance mode",
+          "profile_method": "Profile identification method"
+        },
+        "data_description": {
+          "calculation_mode": "Xiaomi: identical to Zepp Life app. Science: WHO / Schofield formulas. Has no effect in S400 dual-frequency mode.",
+          "impedance_mode": "None: scale without impedance. Standard: single-frequency (Xiaomi Gen2). Dual-frequency S400: 50 kHz + 250 kHz sensors.",
+          "profile_method": "How to identify which user steps on the scale. Choose \"None\" if you use dedicated sensors per person."
+        },
+        "title": "Operating modes"
+      },
+      "profile": {
+        "data": {
+          "notify_device_id": "Mobile device receiving the notification",
+          "profile_id": "Profile ID (1-5)",
+          "weight_max": "Maximum weight (kg, excluded)",
+          "weight_min": "Minimum weight (kg, included)"
+        },
+        "data_description": {
+          "notify_device_id": "The phone that will receive an interactive notification after each weighing. Tap your name to confirm the measurement.",
+          "weight_max": "This value is excluded. Adjacent ranges must not share a bound — if the next user starts at 65 kg, enter at most 64.99 kg here.",
+          "weight_min": "The interval is [min, max): this value is included in your range."
+        },
+        "title": "Profile settings"
+      },
+      "sensors": {
+        "data": {
+          "impedance": "Impedance sensor (single-frequency)",
+          "impedance_high": "High-frequency impedance sensor (250 kHz)",
+          "impedance_low": "Low-frequency impedance sensor (50 kHz)",
           "last_measurement_time": "Last measurement time sensor",
+          "profile_id_sensor": "ID sensor (Scale ID)",
           "weight": "Weight sensor"
         },
         "data_description": {
-          "calculation_mode": "Xiaomi: identical to Zepp Life app. Science: WHO / Mifflin formulas. Has no effect in S400 dual-frequency mode.",
-          "impedance_mode": "None: scale without impedance. Standard: single-frequency (Xiaomi Gen2). Dual-frequency S400: 50 kHz + 250 kHz sensors.",
+          "impedance": "Single impedance value provided by your scale.",
+          "impedance_high": "Impedance measured at 250 kHz (S400).",
+          "impedance_low": "Impedance measured at 50 kHz (S400).",
           "last_measurement_time": "Optional. Leave blank if you do not have this sensor."
         },
-        "title": "Configuration"
+        "title": "Sensor selection"
       },
       "user": {
         "data": {
           "birthday": "Birthday",
           "gender": "Gender",
           "name": "Name"
-        }
+        },
+        "title": "User identity"
       }
     }
   },
@@ -54,6 +77,9 @@
       "bone_mass": { "name": "Bone mass" },
       "ecw_tbw_ratio": { "name": "ECW/TBW ratio" },
       "extracellular_water": { "name": "Extracellular water" },
+      "impedance": { "name": "Impedance" },
+      "impedance_high": { "name": "Impedance (250 kHz)" },
+      "impedance_low": { "name": "Impedance (50 kHz)" },
       "intracellular_water": { "name": "Intracellular water" },
       "last_measurement_time": { "name": "Last measurement time" },
       "lean_body_mass": { "name": "Lean body mass" },
@@ -157,42 +183,69 @@
       }
     }
   },
+  "notify": {
+    "weighing_message": "New measurement: {weight:.1f} kg",
+    "weighing_title": "Bodymiscale — Who is on the scale?"
+  },
   "options": {
+    "error": {
+      "height_limit": "Height is too high (limit: 220 cm)",
+      "height_low": "Height is too low (min: 50 cm)",
+      "weight_range_invalid": "Minimum weight must be strictly less than maximum weight.",
+      "weight_range_overlap": "This range overlaps another user's range. Adjust the bounds so they don't share a value (e.g., if the next user starts at 65 kg, your maximum must be at most 64.99 kg)."
+    },
     "step": {
-      "impedance": {
-        "data": {
-          "impedance": "Impedance sensor (single-frequency)",
-          "impedance_high": "High-frequency impedance sensor (250 kHz)",
-          "impedance_low": "Low-frequency impedance sensor (50 kHz)"
-        },
-        "data_description": {
-          "impedance": "Single impedance value provided by your scale.",
-          "impedance_high": "Impedance measured at 250 kHz (S400).",
-          "impedance_low": "Impedance measured at 50 kHz (S400)."
-        },
-        "title": "Impedance sensors"
-      },
       "init": {
         "data": {
           "calculation_mode": "Calculation method",
           "height": "Height (cm)",
           "impedance_mode": "Impedance mode",
+          "profile_method": "Profile identification method"
+        },
+        "data_description": {
+          "calculation_mode": "Xiaomi: identical to Zepp Life app. Science: WHO / Schofield formulas. Has no effect in S400 dual-frequency mode.",
+          "impedance_mode": "None: scale without impedance. Standard: single-frequency (Xiaomi Gen2). Dual-frequency S400: 50 kHz + 250 kHz sensors.",
+          "profile_method": "How to identify which user steps on the scale. Choose \"None\" if you use dedicated sensors per person."
+        },
+        "title": "Edit operating modes"
+      },
+      "profile": {
+        "data": {
+          "notify_device_id": "Mobile device receiving the notification",
+          "profile_id": "Profile ID (1-5)",
+          "weight_max": "Maximum weight (kg, excluded)",
+          "weight_min": "Minimum weight (kg, included)"
+        },
+        "data_description": {
+          "notify_device_id": "The phone that will receive an interactive notification after each weighing. Tap your name to confirm the measurement.",
+          "weight_max": "This value is excluded. Adjacent ranges must not share a bound — if the next user starts at 65 kg, enter at most 64.99 kg here.",
+          "weight_min": "The interval is [min, max): this value is included in your range."
+        },
+        "title": "Edit profile"
+      },
+      "sensors": {
+        "data": {
+          "impedance": "Impedance sensor (single-frequency)",
+          "impedance_high": "High-frequency impedance sensor (250 kHz)",
+          "impedance_low": "Low-frequency impedance sensor (50 kHz)",
           "last_measurement_time": "Last measurement time sensor",
+          "profile_id_sensor": "ID sensor (Scale ID)",
           "weight": "Weight sensor"
         },
         "data_description": {
-          "calculation_mode": "Xiaomi: identical to Zepp Life app. Science: WHO / Mifflin formulas. Has no effect in S400 dual-frequency mode.",
-          "impedance_mode": "None: scale without impedance. Standard: single-frequency (Xiaomi Gen2). Dual-frequency S400: 50 kHz + 250 kHz sensors.",
+          "impedance": "Single impedance value provided by your scale.",
+          "impedance_high": "Impedance measured at 250 kHz (S400).",
+          "impedance_low": "Impedance measured at 50 kHz (S400).",
           "last_measurement_time": "Optional. Leave blank if you do not have this sensor."
         },
-        "title": "Configuration"
+        "title": "Edit sensors"
       }
     }
   },
   "selector": {
     "calculation_mode": {
       "options": {
-        "science": "Scientific — WHO / Mifflin",
+        "science": "Scientific — WHO / Schofield",
         "xiaomi": "Xiaomi — Zepp Life (Legacy 2017)"
       }
     },
@@ -201,6 +254,14 @@
         "dual_frequency": "Dual-frequency S400 (50 kHz + 250 kHz)",
         "none": "No impedance",
         "standard": "Single-frequency (Xiaomi Gen2, Mi Body Scale 2…)"
+      }
+    },
+    "profile_method": {
+      "options": {
+        "none": "None — manual (no filter)",
+        "notification": "Interactive mobile notification",
+        "profile_id": "Profile ID (from scale / Xiaomi Home)",
+        "weight_range": "Weight range"
       }
     }
   },

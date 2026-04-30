@@ -16,6 +16,7 @@ from homeassistant.config_entries import (
 from homeassistant.const import CONF_NAME
 from homeassistant.core import callback
 from homeassistant.helpers import selector
+from homeassistant.util import slugify
 
 from .const import (
     CALCULATION_MODE_OPTIONS,
@@ -24,27 +25,68 @@ from .const import (
     CONF_GENDER,
     CONF_HEIGHT,
     CONF_IMPEDANCE_MODE,
+    CONF_NOTIFY_DEVICE_ID,
+    CONF_PROFILE_ID,
+    CONF_PROFILE_METHOD,
     CONF_SENSOR_IMPEDANCE,
     CONF_SENSOR_IMPEDANCE_HIGH,
     CONF_SENSOR_IMPEDANCE_LOW,
     CONF_SENSOR_LAST_MEASUREMENT_TIME,
+    CONF_SENSOR_PROFILE_ID,
     CONF_SENSOR_WEIGHT,
+    CONF_WEIGHT_MAX,
+    CONF_WEIGHT_MIN,
     CONSTRAINT_HEIGHT_MAX,
     CONSTRAINT_HEIGHT_MIN,
+    CONSTRAINT_PROFILE_ID_MAX,
+    CONSTRAINT_PROFILE_ID_MIN,
+    CONSTRAINT_WEIGHT_MAX,
+    CONSTRAINT_WEIGHT_MIN,
     DOMAIN,
     IMPEDANCE_MODE_DUAL,
     IMPEDANCE_MODE_NONE,
     IMPEDANCE_MODE_OPTIONS,
     IMPEDANCE_MODE_STANDARD,
+    PROFILE_METHOD_ID,
+    PROFILE_METHOD_NONE,
+    PROFILE_METHOD_NOTIFY,
+    PROFILE_METHOD_OPTIONS,
+    PROFILE_METHOD_WEIGHT,
 )
 from .models import Gender
 
+# ---------------------------------------------------------------------------
+# Schema helpers
+# ---------------------------------------------------------------------------
+
 
 @callback
-def _get_main_options_schema(
+def _get_user_schema(
     defaults: dict[str, Any] | MappingProxyType[str, Any],
 ) -> vol.Schema:
-    """Return the main options schema (page 1: height, calculation mode, impedance mode, weight, last measurement)."""
+    """Step 1 (config only): identity — name, birthday, gender."""
+    return vol.Schema(
+        {
+            vol.Required(CONF_NAME, default=defaults.get(CONF_NAME)): str,
+            vol.Required(
+                CONF_BIRTHDAY,
+                description={"suggested_value": defaults.get(CONF_BIRTHDAY)},
+            ): selector.TextSelector(
+                selector.TextSelectorConfig(type=selector.TextSelectorType.DATE)
+            ),
+            vol.Required(
+                CONF_GENDER,
+                default=defaults.get(CONF_GENDER),
+            ): vol.In({gender: gender.value for gender in Gender}),
+        }
+    )
+
+
+@callback
+def _get_modes_schema(
+    defaults: dict[str, Any] | MappingProxyType[str, Any],
+) -> vol.Schema:
+    """Step 2: height, calculation mode, impedance mode, profile method."""
     return vol.Schema(
         {
             vol.Required(
@@ -53,8 +95,8 @@ def _get_main_options_schema(
             ): selector.NumberSelector(
                 selector.NumberSelectorConfig(
                     mode=selector.NumberSelectorMode.BOX,
-                    min=CONSTRAINT_HEIGHT_MIN,
-                    max=CONSTRAINT_HEIGHT_MAX,
+                    min=0,
+                    max=500,
                     unit_of_measurement="cm",
                 )
             ),
@@ -69,22 +111,6 @@ def _get_main_options_schema(
                 )
             ),
             vol.Required(
-                CONF_SENSOR_WEIGHT,
-                description={"suggested_value": defaults.get(CONF_SENSOR_WEIGHT)},
-            ): selector.EntitySelector(
-                selector.EntitySelectorConfig(
-                    domain=["sensor", "input_number", "number"]
-                )
-            ),
-            vol.Optional(
-                CONF_SENSOR_LAST_MEASUREMENT_TIME,
-                description={
-                    "suggested_value": defaults.get(CONF_SENSOR_LAST_MEASUREMENT_TIME)
-                },
-            ): selector.EntitySelector(
-                selector.EntitySelectorConfig(domain=["sensor", "input_datetime"])
-            ),
-            vol.Required(
                 CONF_IMPEDANCE_MODE,
                 default=defaults.get(CONF_IMPEDANCE_MODE, IMPEDANCE_MODE_NONE),
             ): selector.SelectSelector(
@@ -94,15 +120,44 @@ def _get_main_options_schema(
                     translation_key="impedance_mode",
                 )
             ),
+            vol.Required(
+                CONF_PROFILE_METHOD,
+                default=defaults.get(CONF_PROFILE_METHOD, PROFILE_METHOD_NONE),
+            ): selector.SelectSelector(
+                selector.SelectSelectorConfig(
+                    options=PROFILE_METHOD_OPTIONS,
+                    mode=selector.SelectSelectorMode.DROPDOWN,
+                    translation_key="profile_method",
+                )
+            ),
         }
     )
 
 
-def _get_impedance_schema(mode: str, defaults: dict[str, Any]) -> vol.Schema:
-    """Return the impedance sensor schema for the selected mode (page 2)."""
-    fields: dict = {}
+def _get_sensors_schema(
+    impedance_mode: str,
+    profile_method: str,
+    defaults: dict[str, Any],
+) -> vol.Schema:
+    """Step 3: sensor selectors — dynamic based on impedance & profile modes."""
+    fields: dict = {
+        vol.Required(
+            CONF_SENSOR_WEIGHT,
+            description={"suggested_value": defaults.get(CONF_SENSOR_WEIGHT)},
+        ): selector.EntitySelector(
+            selector.EntitySelectorConfig(domain=["sensor", "input_number", "number"])
+        ),
+        vol.Optional(
+            CONF_SENSOR_LAST_MEASUREMENT_TIME,
+            description={
+                "suggested_value": defaults.get(CONF_SENSOR_LAST_MEASUREMENT_TIME)
+            },
+        ): selector.EntitySelector(
+            selector.EntitySelectorConfig(domain=["sensor", "input_datetime"])
+        ),
+    }
 
-    if mode == IMPEDANCE_MODE_STANDARD:
+    if impedance_mode == IMPEDANCE_MODE_STANDARD:
         fields[
             vol.Required(
                 CONF_SENSOR_IMPEDANCE,
@@ -112,7 +167,7 @@ def _get_impedance_schema(mode: str, defaults: dict[str, Any]) -> vol.Schema:
             selector.EntitySelectorConfig(domain=["sensor", "input_number", "number"])
         )
 
-    elif mode == IMPEDANCE_MODE_DUAL:
+    elif impedance_mode == IMPEDANCE_MODE_DUAL:
         fields[
             vol.Required(
                 CONF_SENSOR_IMPEDANCE_LOW,
@@ -134,13 +189,144 @@ def _get_impedance_schema(mode: str, defaults: dict[str, Any]) -> vol.Schema:
             selector.EntitySelectorConfig(domain=["sensor", "input_number", "number"])
         )
 
+    if profile_method == PROFILE_METHOD_ID:
+        fields[
+            vol.Required(
+                CONF_SENSOR_PROFILE_ID,
+                description={"suggested_value": defaults.get(CONF_SENSOR_PROFILE_ID)},
+            )
+        ] = selector.EntitySelector(
+            selector.EntitySelectorConfig(domain=["sensor", "input_number", "number"])
+        )
+
     return vol.Schema(fields)
+
+
+def _get_profile_schema(method: str, defaults: dict[str, Any]) -> vol.Schema | None:
+    """Step 4 (conditional): profile-specific configuration."""
+    if method == PROFILE_METHOD_NONE:
+        return None
+
+    if method == PROFILE_METHOD_ID:
+        return vol.Schema(
+            {
+                vol.Required(
+                    CONF_PROFILE_ID,
+                    description={"suggested_value": defaults.get(CONF_PROFILE_ID)},
+                ): selector.NumberSelector(
+                    selector.NumberSelectorConfig(
+                        mode=selector.NumberSelectorMode.BOX,
+                        min=CONSTRAINT_PROFILE_ID_MIN,
+                        max=CONSTRAINT_PROFILE_ID_MAX,
+                        step=1,
+                    )
+                ),
+            }
+        )
+
+    if method == PROFILE_METHOD_WEIGHT:
+        return vol.Schema(
+            {
+                vol.Required(
+                    CONF_WEIGHT_MIN,
+                    description={"suggested_value": defaults.get(CONF_WEIGHT_MIN)},
+                ): selector.NumberSelector(
+                    selector.NumberSelectorConfig(
+                        mode=selector.NumberSelectorMode.BOX,
+                        min=CONSTRAINT_WEIGHT_MIN,
+                        max=CONSTRAINT_WEIGHT_MAX,
+                        step=0.01,
+                        unit_of_measurement="kg",
+                    )
+                ),
+                vol.Required(
+                    CONF_WEIGHT_MAX,
+                    description={"suggested_value": defaults.get(CONF_WEIGHT_MAX)},
+                ): selector.NumberSelector(
+                    selector.NumberSelectorConfig(
+                        mode=selector.NumberSelectorMode.BOX,
+                        min=CONSTRAINT_WEIGHT_MIN,
+                        max=CONSTRAINT_WEIGHT_MAX,
+                        step=0.01,
+                        unit_of_measurement="kg",
+                    )
+                ),
+            }
+        )
+
+    if method == PROFILE_METHOD_NOTIFY:
+        return vol.Schema(
+            {
+                vol.Required(
+                    CONF_NOTIFY_DEVICE_ID,
+                    description={
+                        "suggested_value": defaults.get(CONF_NOTIFY_DEVICE_ID)
+                    },
+                ): selector.DeviceSelector(
+                    selector.DeviceSelectorConfig(integration="mobile_app")
+                ),
+            }
+        )
+
+    return None
+
+
+def _validate_weight_range(
+    weight_min: float,
+    weight_max: float,
+    existing_ranges: list[tuple[float, float]],
+) -> str | None:
+    """Validate the weight range and detect overlaps with existing entries."""
+    if weight_min >= weight_max:
+        return "weight_range_invalid"
+
+    for r_min, r_max in existing_ranges:
+        if weight_min < r_max and r_min < weight_max:
+            return "weight_range_overlap"
+
+    return None
+
+
+# Keys that belong exclusively to each profile method.
+_METHOD_KEYS: dict[str, list[str]] = {
+    PROFILE_METHOD_ID: [CONF_SENSOR_PROFILE_ID, CONF_PROFILE_ID],
+    PROFILE_METHOD_WEIGHT: [CONF_WEIGHT_MIN, CONF_WEIGHT_MAX],
+    PROFILE_METHOD_NOTIFY: [CONF_NOTIFY_DEVICE_ID],
+    PROFILE_METHOD_NONE: [],
+}
+
+_IMPEDANCE_KEYS: dict[str, list[str]] = {
+    IMPEDANCE_MODE_STANDARD: [CONF_SENSOR_IMPEDANCE],
+    IMPEDANCE_MODE_DUAL: [CONF_SENSOR_IMPEDANCE_LOW, CONF_SENSOR_IMPEDANCE_HIGH],
+    IMPEDANCE_MODE_NONE: [],
+}
+
+
+def _purge_other_method_keys(data: dict, keep_method: str) -> None:
+    """Remove config keys that belong to profile methods other than *keep_method*."""
+    for method, keys in _METHOD_KEYS.items():
+        if method != keep_method:
+            for key in keys:
+                data.pop(key, None)
+
+
+def _purge_impedance_keys(data: dict, keep_mode: str) -> None:
+    """Remove config keys that belong to impedance modes other than *keep_mode*."""
+    for mode, keys in _IMPEDANCE_KEYS.items():
+        if mode != keep_mode:
+            for key in keys:
+                data.pop(key, None)
+
+
+# ---------------------------------------------------------------------------
+# Config flow
+# ---------------------------------------------------------------------------
 
 
 class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):
     """Config flow for bodymiscale."""
 
-    VERSION = 3
+    VERSION = 4
 
     def __init__(self) -> None:
         """Initialize BodyMiScaleFlowHandler."""
@@ -155,6 +341,8 @@ class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):
         """Get the options flow for this handler."""
         return BodyMiScaleOptionsFlowHandler(config_entry)
 
+    # ── Step 1: identity (name, birthday, gender) ─────────────────────────
+
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
     ) -> ConfigFlowResult:
@@ -168,129 +356,246 @@ class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):
                 errors[CONF_BIRTHDAY] = "invalid_date"
 
             if not errors:
-                self._async_abort_entries_match({CONF_NAME: user_input[CONF_NAME]})
-                self._data = user_input
-                return await self.async_step_options()
+                name_input = user_input[CONF_NAME].strip()
+                name_slug = slugify(name_input)
+
+                existing_slugs = [
+                    slugify(entry.data.get(CONF_NAME, ""))
+                    for entry in self._async_current_entries(include_ignore=False)
+                ]
+
+                if name_slug in existing_slugs:
+                    errors[CONF_NAME] = "name_already_used"
+
+            if not errors:
+                await self.async_set_unique_id(name_slug)
+                self._abort_if_unique_id_configured()
+
+                self._data = {**user_input, CONF_NAME: name_input}
+                return await self.async_step_modes()
 
         return self.async_show_form(
             step_id="user",
             errors=errors,
-            data_schema=vol.Schema(
-                {
-                    vol.Required(CONF_NAME): str,
-                    vol.Required(CONF_BIRTHDAY): selector.TextSelector(
-                        selector.TextSelectorConfig(type=selector.TextSelectorType.DATE)
-                    ),
-                    vol.Required(CONF_GENDER): vol.In(
-                        {gender: gender.value for gender in Gender}
-                    ),
-                }
-            ),
+            data_schema=_get_user_schema(self._data),
         )
 
-    async def async_step_options(
+    # ── Step 2: modes (height, calc, impedance, profile) ──────────────────
+
+    async def async_step_modes(
         self, user_input: dict[str, Any] | None = None
     ) -> ConfigFlowResult:
-        """Handle the main options step."""
+        """Handle the async_step_modes step."""
         errors: dict[str, str] = {}
 
         if user_input is not None:
-            if user_input[CONF_HEIGHT] > CONSTRAINT_HEIGHT_MAX:
+            h = user_input[CONF_HEIGHT]
+            if h > CONSTRAINT_HEIGHT_MAX:
                 errors[CONF_HEIGHT] = "height_limit"
-            elif user_input[CONF_HEIGHT] < CONSTRAINT_HEIGHT_MIN:
+            elif h < CONSTRAINT_HEIGHT_MIN:
                 errors[CONF_HEIGHT] = "height_low"
 
             if not errors:
                 self._data.update(user_input)
-                if user_input[CONF_IMPEDANCE_MODE] == IMPEDANCE_MODE_NONE:
-                    return self.async_create_entry(
-                        title=self._data[CONF_NAME],
-                        data=self._data,
-                        options=self._data,
-                    )
-                return await self.async_step_impedance()
+                profile_method = user_input.get(
+                    CONF_PROFILE_METHOD, PROFILE_METHOD_NONE
+                )
+                _purge_other_method_keys(self._data, profile_method)
+                impedance_mode = user_input.get(
+                    CONF_IMPEDANCE_MODE, IMPEDANCE_MODE_NONE
+                )
+                _purge_impedance_keys(self._data, impedance_mode)
+                return await self.async_step_sensors()
 
         return self.async_show_form(
-            step_id="options",
+            step_id="modes",
             errors=errors,
-            data_schema=_get_main_options_schema(self._data),
+            data_schema=_get_modes_schema(self._data),
         )
 
-    async def async_step_impedance(
+    # ── Step 3: sensors (weight, impedance, last time, profile sensor) ────
+
+    async def async_step_sensors(
         self, user_input: dict[str, Any] | None = None
     ) -> ConfigFlowResult:
-        """Handle the impedance sensors step."""
+        """Handle sensors selection step."""
         if user_input is not None:
             self._data.update(user_input)
-            return self.async_create_entry(
-                title=self._data[CONF_NAME],
-                data=self._data,
-                options=self._data,
-            )
+            profile_method = self._data.get(CONF_PROFILE_METHOD, PROFILE_METHOD_NONE)
+            if profile_method != PROFILE_METHOD_NONE:
+                return await self.async_step_profile()
+            return self._create_entry()
 
-        mode = self._data.get(CONF_IMPEDANCE_MODE, IMPEDANCE_MODE_NONE)
+        impedance_mode = self._data.get(CONF_IMPEDANCE_MODE, IMPEDANCE_MODE_NONE)
+        profile_method = self._data.get(CONF_PROFILE_METHOD, PROFILE_METHOD_NONE)
         return self.async_show_form(
-            step_id="impedance",
-            data_schema=_get_impedance_schema(mode, self._data),
+            step_id="sensors",
+            data_schema=_get_sensors_schema(impedance_mode, profile_method, self._data),
         )
+
+    # ── Step 4: profile-specific configuration ────────────────────────────
+
+    async def async_step_profile(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Handle profile configuration step."""
+        errors: dict[str, str] = {}
+        method = self._data.get(CONF_PROFILE_METHOD, PROFILE_METHOD_NONE)
+        schema = _get_profile_schema(method, self._data)
+
+        if schema is None:
+            return self._create_entry()
+
+        if user_input is not None:
+            if method == PROFILE_METHOD_WEIGHT:
+                w_min = user_input.get(CONF_WEIGHT_MIN)
+                w_max = user_input.get(CONF_WEIGHT_MAX)
+                if w_min is None or w_max is None:
+                    errors["base"] = "weight_range_invalid"
+                else:
+                    existing = self._get_existing_weight_ranges()
+                    err = _validate_weight_range(float(w_min), float(w_max), existing)
+                    if err:
+                        errors["base"] = err
+
+            if not errors:
+                self._data.update(user_input)
+                return self._create_entry()
+
+        return self.async_show_form(
+            step_id="profile",
+            errors=errors,
+            data_schema=schema,
+        )
+
+    # ── Helpers ───────────────────────────────────────────────────────────
+
+    def _create_entry(self) -> ConfigFlowResult:
+        """Create the config entry."""
+        return self.async_create_entry(
+            title=self._data[CONF_NAME],
+            data=self._data,
+            options=self._data,
+        )
+
+    def _get_existing_weight_ranges(self) -> list[tuple[float, float]]:
+        """Return weight ranges already configured in other entries."""
+        ranges = []
+        for entry in self._async_current_entries():
+            opts = dict(entry.data) | dict(entry.options)
+            if opts.get(CONF_PROFILE_METHOD) == PROFILE_METHOD_WEIGHT:
+                w_min = opts.get(CONF_WEIGHT_MIN)
+                w_max = opts.get(CONF_WEIGHT_MAX)
+                if w_min is not None and w_max is not None:
+                    ranges.append((float(w_min), float(w_max)))
+        return ranges
+
+
+# ---------------------------------------------------------------------------
+# Options flow (reconfiguration — no name/birthday/gender)
+# ---------------------------------------------------------------------------
 
 
 class BodyMiScaleOptionsFlowHandler(OptionsFlow):
     """Options flow for bodymiscale."""
 
     def __init__(self, config_entry: ConfigEntry) -> None:
-        """Initialize BodyMiScaleOptionsFlowHandler."""
         self._config_entry = config_entry
-        self._data = dict(config_entry.options)
+        self._data = dict(config_entry.data) | dict(config_entry.options)
 
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
     ) -> ConfigFlowResult:
-        """Manage the main options."""
+        """Handle options flow init step."""
         errors: dict[str, str] = {}
 
         if user_input is not None:
-            if user_input[CONF_HEIGHT] > CONSTRAINT_HEIGHT_MAX:
+            h = user_input[CONF_HEIGHT]
+            if h > CONSTRAINT_HEIGHT_MAX:
                 errors[CONF_HEIGHT] = "height_limit"
-            elif user_input[CONF_HEIGHT] < CONSTRAINT_HEIGHT_MIN:
+            elif h < CONSTRAINT_HEIGHT_MIN:
                 errors[CONF_HEIGHT] = "height_low"
 
             if not errors:
                 self._data.update(user_input)
-                if user_input[CONF_IMPEDANCE_MODE] == IMPEDANCE_MODE_NONE:
-                    # Clean up orphaned impedance keys
-                    for k in [
-                        CONF_SENSOR_IMPEDANCE,
-                        CONF_SENSOR_IMPEDANCE_LOW,
-                        CONF_SENSOR_IMPEDANCE_HIGH,
-                    ]:
-                        self._data.pop(k, None)
-                    return self.async_create_entry(data=self._data)
-                return await self.async_step_impedance()
+                profile_method = user_input.get(
+                    CONF_PROFILE_METHOD, PROFILE_METHOD_NONE
+                )
+                _purge_other_method_keys(self._data, profile_method)
+                impedance_mode = user_input.get(
+                    CONF_IMPEDANCE_MODE, IMPEDANCE_MODE_NONE
+                )
+                _purge_impedance_keys(self._data, impedance_mode)
+                return await self.async_step_sensors()
 
         return self.async_show_form(
             step_id="init",
             errors=errors,
-            data_schema=_get_main_options_schema(self._data),
+            data_schema=_get_modes_schema(self._data),
         )
 
-    async def async_step_impedance(
+    async def async_step_sensors(
         self, user_input: dict[str, Any] | None = None
     ) -> ConfigFlowResult:
-        """Manage the impedance sensor options."""
+        """Handle sensors selection step."""
         if user_input is not None:
-            mode = self._data.get(CONF_IMPEDANCE_MODE)
-            # Clean up keys from the previous mode
-            if mode == IMPEDANCE_MODE_STANDARD:
-                self._data.pop(CONF_SENSOR_IMPEDANCE_LOW, None)
-                self._data.pop(CONF_SENSOR_IMPEDANCE_HIGH, None)
-            elif mode == IMPEDANCE_MODE_DUAL:
-                self._data.pop(CONF_SENSOR_IMPEDANCE, None)
             self._data.update(user_input)
+            profile_method = self._data.get(CONF_PROFILE_METHOD, PROFILE_METHOD_NONE)
+            if profile_method != PROFILE_METHOD_NONE:
+                return await self.async_step_profile()
             return self.async_create_entry(data=self._data)
 
-        mode = self._data.get(CONF_IMPEDANCE_MODE, IMPEDANCE_MODE_NONE)
+        impedance_mode = self._data.get(CONF_IMPEDANCE_MODE, IMPEDANCE_MODE_NONE)
+        profile_method = self._data.get(CONF_PROFILE_METHOD, PROFILE_METHOD_NONE)
         return self.async_show_form(
-            step_id="impedance",
-            data_schema=_get_impedance_schema(mode, self._data),
+            step_id="sensors",
+            data_schema=_get_sensors_schema(impedance_mode, profile_method, self._data),
         )
+
+    async def async_step_profile(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Handle profile configuration step."""
+        errors: dict[str, str] = {}
+        method = self._data.get(CONF_PROFILE_METHOD, PROFILE_METHOD_NONE)
+        schema = _get_profile_schema(method, self._data)
+
+        if schema is None:
+            return self.async_create_entry(data=self._data)
+
+        if user_input is not None:
+            if method == PROFILE_METHOD_WEIGHT:
+                w_min = user_input.get(CONF_WEIGHT_MIN)
+                w_max = user_input.get(CONF_WEIGHT_MAX)
+                if w_min is None or w_max is None:
+                    errors["base"] = "weight_range_invalid"
+                else:
+                    existing = self._get_other_weight_ranges()
+                    err = _validate_weight_range(float(w_min), float(w_max), existing)
+                    if err:
+                        errors["base"] = err
+
+            if not errors:
+                self._data.update(user_input)
+                return self.async_create_entry(data=self._data)
+
+        return self.async_show_form(
+            step_id="profile",
+            errors=errors,
+            data_schema=schema,
+        )
+
+    def _get_other_weight_ranges(self) -> list[tuple[float, float]]:
+        """Return weight ranges from other entries."""
+        current_id = self._config_entry.entry_id
+        ranges = []
+        for entry in self.hass.config_entries.async_entries(DOMAIN):
+            if entry.entry_id == current_id:
+                continue
+            opts = dict(entry.data) | dict(entry.options)
+            if opts.get(CONF_PROFILE_METHOD) == PROFILE_METHOD_WEIGHT:
+                w_min = opts.get(CONF_WEIGHT_MIN)
+                w_max = opts.get(CONF_WEIGHT_MAX)
+                if w_min is not None and w_max is not None:
+                    ranges.append((float(w_min), float(w_max)))
+        return ranges

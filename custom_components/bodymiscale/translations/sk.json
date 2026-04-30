@@ -29,7 +29,7 @@
           "weight": "Senzor hmotnosti"
         },
         "data_description": {
-          "calculation_mode": "Xiaomi: identické s aplikáciou Zepp Life. Vedecká: vzorce WHO / Mifflin. Neovplyvňuje režim S400.",
+          "calculation_mode": "Xiaomi: identické s aplikáciou Zepp Life. Vedecká: vzorce WHO / Schofield. Neovplyvňuje režim S400.",
           "impedance_mode": "Žiadny: váha bez impedancie. Štandard: jedna frekvencia (Xiaomi Gen2). Dual-frequency S400: senzory 50 kHz + 250 kHz.",
           "last_measurement_time": "Voliteľné. Nechajte prázdne, ak tento senzor nemáte."
         },
@@ -181,9 +181,9 @@
           "weight": "Senzor hmotnosti"
         },
         "data_description": {
-          "calculation_mode": "Xiaomi: ako v Zepp Life. Vedecká: WHO / Mifflin. Bez efektu v režime S400.",
-          "impedance_mode": "Žiadny: bez impedancie. Štandard: jedna frekvencia (Xiaomi Gen2). Dual-frequency S400: 50 kHz + 250 kHz.",
-          "last_measurement_time": "Voliteľné. Nechajte prázdne, ak senzor neexistuje."
+          "calculation_mode": "Xiaomi: identické s aplikáciou Zepp Life. Vedecká: vzorce WHO / Schofield. Neovplyvňuje režim S400.",
+          "impedance_mode": "Žiadny: váha bez impedancie. Štandard: jedna frekvencia (Xiaomi Gen2). Dual-frequency S400: senzory 50 kHz + 250 kHz.",
+          "last_measurement_time": "Voliteľné. Nechajte prázdne, ak tento senzor nemáte."
         },
         "title": "Konfigurácia"
       }
@@ -192,7 +192,7 @@
   "selector": {
     "calculation_mode": {
       "options": {
-        "science": "Vedecká — WHO / Mifflin",
+        "science": "Vedecká — WHO / Schofield",
         "xiaomi": "Xiaomi — Zepp Life (Legacy 2017)"
       }
     },

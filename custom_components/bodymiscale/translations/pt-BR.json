@@ -29,7 +29,7 @@
           "weight": "Sensor de peso"
         },
         "data_description": {
-          "calculation_mode": "Xiaomi: idêntico ao app Zepp Life. Científico: fórmulas OMS / Mifflin. Não tem efeito no modo S400 de dupla frequência.",
+          "calculation_mode": "Xiaomi: idêntico ao app Zepp Life. Científico: fórmulas OMS / Schofield. Não tem efeito no modo S400 de dupla frequência.",
           "impedance_mode": "Nenhum: balança sem impedância. Padrão: frequência única (Xiaomi Gen2). Dupla frequência S400: sensores de 50 kHz + 250 kHz.",
           "last_measurement_time": "Opcional. Deixe em branco se não possuir este sensor."
         },
@@ -181,9 +181,9 @@
           "weight": "Sensor de peso"
         },
         "data_description": {
-          "calculation_mode": "Xiaomi: idêntico ao Zepp Life. Científico: OMS / Mifflin. Sem efeito no modo S400.",
-          "impedance_mode": "Nenhum: sem impedância. Padrão: frequência única (Xiaomi Gen2). Dupla frequência S400: 50 kHz + 250 kHz.",
-          "last_measurement_time": "Opcional. Deixe em branco se o sensor não existir."
+          "calculation_mode": "Xiaomi: idêntico ao app Zepp Life. Científico: fórmulas OMS / Schofield. Não tem efeito no modo S400 de dupla frequência.",
+          "impedance_mode": "Nenhum: balança sem impedância. Padrão: frequência única (Xiaomi Gen2). Dupla frequência S400: sensores de 50 kHz + 250 kHz.",
+          "last_measurement_time": "Opcional. Deixe em branco se não possuir este sensor."
         },
         "title": "Configuração"
       }
@@ -192,7 +192,7 @@
   "selector": {
     "calculation_mode": {
       "options": {
-        "science": "Científico — OMS / Mifflin",
+        "science": "Científico — OMS / Schofield",
         "xiaomi": "Xiaomi — Zepp Life (Legado 2017)"
       }
     },

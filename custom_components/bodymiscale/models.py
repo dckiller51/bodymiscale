@@ -1,6 +1,6 @@
 """Models module."""
 
-from enum import Enum
+from enum import StrEnum
 
 from .const import (
     ATTR_AGE,
@@ -29,14 +29,14 @@ from .const import (
 )
 
 
-class Gender(str, Enum):
+class Gender(StrEnum):
     """Gender enum."""
 
     MALE = "male"
     FEMALE = "female"
 
 
-class Metric(str, Enum):
+class Metric(StrEnum):
     """Metric enum."""
 
     STATUS = "status"

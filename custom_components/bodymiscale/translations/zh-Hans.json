@@ -29,7 +29,7 @@
           "weight": "体重传感器"
         },
         "data_description": {
-          "calculation_mode": "小米：与 Zepp Life 算法一致。科学：基于 WHO / Mifflin 公式。对 S400 双频模式无效。",
+          "calculation_mode": "小米：与 Zepp Life 算法一致。科学：基于 WHO / Schofield 公式。对 S400 双频模式无效。",
           "impedance_mode": "无：秤不带阻抗测量。标准：单频（小米二代秤）。双频 S400：支持 50 kHz + 250 kHz 双频传感器。",
           "last_measurement_time": "可选。如果没有该传感器请留空。"
         },
@@ -181,9 +181,9 @@
           "weight": "体重传感器"
         },
         "data_description": {
-          "calculation_mode": "小米：传统算法。科学：WHO 标准算法。S400 模式下此项无效。",
-          "impedance_mode": "无：不测量阻抗。标准：小米二代等单频秤。双频 S400：支持 50 kHz 与 250 kHz。",
-          "last_measurement_time": "可选。如果没有传感器请留空。"
+          "calculation_mode": "小米：与 Zepp Life 算法一致。科学：基于 WHO / Schofield 公式。对 S400 双频模式无效。",
+          "impedance_mode": "无：秤不带阻抗测量。标准：单频（小米二代秤）。双频 S400：支持 50 kHz + 250 kHz 双频传感器。",
+          "last_measurement_time": "可选。如果没有该传感器请留空。"
         },
         "title": "配置选项"
       }
@@ -192,7 +192,7 @@
   "selector": {
     "calculation_mode": {
       "options": {
-        "science": "科学算法 (WHO / Mifflin)",
+        "science": "科学算法 (WHO / Schofield)",
         "xiaomi": "小米算法 (Legacy 2017 / Zepp Life)"
       }
     },

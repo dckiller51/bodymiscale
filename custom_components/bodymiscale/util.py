@@ -24,7 +24,7 @@ def to_float(val: Any, default: float = 0.0) -> float:
     if isinstance(val, str):
         try:
             return float(val)
-        except ValueError:
+        except ValueError, TypeError:
             return default
     return default
 
@@ -34,10 +34,7 @@ def get_ideal_weight(config: Mapping[str, Any]) -> float:
     height = float(config[CONF_HEIGHT])
     gender = config[CONF_GENDER]
 
-    if gender == Gender.FEMALE:
-        ideal = (height - 70) * 0.6
-    else:
-        ideal = (height - 80) * 0.7
+    ideal = (height - 70) * 0.6 if gender == Gender.FEMALE else (height - 80) * 0.7
 
     return round(ideal, 1)
 
@@ -119,5 +116,5 @@ def get_age(date_str: str) -> int:
         if (today.month, today.day) < (born.month, born.day):
             age -= 1
         return age
-    except (ValueError, TypeError):
+    except ValueError, TypeError:
         return 0
