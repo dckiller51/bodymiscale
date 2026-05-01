@@ -55,8 +55,18 @@ blueprint:
           filter:
             domain: sensor
     impedance_sensor:
-      name: Impedance Sensor Entity (Optional)
-      description: The entity ID of your impedance sensor (if available).
+      name: Impedance Sensor Low Frequency Entity (Optional)
+      description: The entity ID of your impedance sensor with 50 kHz (low-frequency) impedance value (if available). Its the sensor with the numerically larger value.
+      # L'ID d'entité de votre capteur d'impédance (si disponible).
+      selector:
+        entity:
+          filter:
+            domain: sensor
+      default: ""
+
+    impedance_high_sensor:
+      name: Impedance High Frequency Sensor Entity (Optional)
+      description: The entity ID of your impedance sensor with 250 kHz (high-frequency) impedance value (if available). Its the sensor with the numerically smaller value (may be named _low).
       # L'ID d'entité de votre capteur d'impédance (si disponible).
       selector:
         entity:
@@ -86,6 +96,15 @@ blueprint:
             domain: input_number
       default: ""
       description: Entity ID of the input_number for User 1's impedance.
+      # ID d'entité du input_number pour l'impédance de l'utilisateur 1.
+    user1_impedance_high:
+      name: User 1 Impedance High-Frequency Input Number (Optional)
+      selector:
+        entity:
+          filter:
+            domain: input_number
+      default: ""
+      description: Entity ID of the input_number for User 1's high-frequency impedance.
       # ID d'entité du input_number pour l'impédance de l'utilisateur 1.
     user1_last_time:
       name: User 1 Last Weigh-in (Optional)
@@ -141,6 +160,15 @@ blueprint:
       default: ""
       description: Entity ID of the input_number for User 2's impedance.
       # ID d'entité du input_number pour l'impédance de l'utilisateur 2.
+    user2_impedance_high:
+      name: User 2 Impedance High-Frequency Input Number (Optional)
+      selector:
+        entity:
+          filter:
+            domain: input_number
+      default: ""
+      description: Entity ID of the input_number for User 2's high-frequency impedance.
+      # ID d'entité du input_number pour l'impédance de l'utilisateur 2.
     user2_last_time:
       name: User 2 Last Weigh-in (Optional)
       selector:
@@ -194,6 +222,15 @@ blueprint:
             domain: input_number
       default: ""
       description: Entity ID of the input_number for User 3's impedance.
+      # ID d'entité du input_number pour l'impédance de l'utilisateur 3.
+    user3_impedance_high:
+      name: User 3 Impedance High-Frequency Input Number (Optional)
+      selector:
+        entity:
+          filter:
+            domain: input_number
+      default: ""
+      description: Entity ID of the input_number for User 3's high-frequency impedance.
       # ID d'entité du input_number pour l'impédance de l'utilisateur 3.
     user3_last_time:
       name: User 3 Last Weigh-in (Optional)
@@ -273,6 +310,15 @@ blueprint:
       default: ""
       description: Entity ID of the input_number for User 4's impedance.
       # ID d'entité du input_number pour l'impédance de l'utilisateur 4.
+    user4_impedance_high:
+      name: User 4 Impedance High-Frequency Input Number (Optional)
+      selector:
+        entity:
+          filter:
+            domain: input_number
+      default: ""
+      description: Entity ID of the input_number for User 4's high-frequency impedance.
+      # ID d'entité du input_number pour l'impédance de l'utilisateur 4.
     user4_last_time:
       name: User 4 Last Weigh-in (Optional - Group 2)
       selector:
@@ -327,6 +373,15 @@ blueprint:
             domain: input_number
       default: ""
       description: Entity ID of the input_number for User 5's impedance.
+      # ID d'entité du input_number pour l'impédance de l'utilisateur 5.
+    user5_impedance_high:
+      name: User 5 Impedance High-Frequency Input Number (Optional)
+      selector:
+        entity:
+          filter:
+            domain: input_number
+      default: ""
+      description: Entity ID of the input_number for User 5's high-frequency impedance.
       # ID d'entité du input_number pour l'impédance de l'utilisateur 5.
     user5_last_time:
       name: User 5 Last Weigh-in (Optional - Group 2)
@@ -383,6 +438,15 @@ blueprint:
       default: ""
       description: Entity ID of the input_number for User 6's impedance.
       # ID d'entité du input_number pour l'impédance de l'utilisateur 6.
+    user6_impedance_high:
+      name: User 6 Impedance High-Frequency Input Number (Optional)
+      selector:
+        entity:
+          filter:
+            domain: input_number
+      default: ""
+      description: Entity ID of the input_number for User 6's high-frequency impedance.
+      # ID d'entité du input_number pour l'impédance de l'utilisateur 6.
     user6_last_time:
       name: User 6 Last Weigh-in (Optional - Group 2)
       selector:
@@ -418,42 +482,49 @@ variables:
   response_timeout_seconds: !input response_timeout_seconds
   weight_sensor: !input weight_sensor
   impedance_sensor: !input impedance_sensor
+  impedance_high_sensor: !input impedance_high_sensor
   split_weight_threshold: !input split_weight_threshold
   split_weight_direction: !input split_weight_direction
   weight: "{{ states(weight_sensor) | float(0) }}"
   user1_name: !input user1_name
   user1_weight: !input user1_weight
   user1_impedance: !input user1_impedance
+  user1_impedance_high: !input user1_impedance_high
   user1_last_time: !input user1_last_time
   user1_enable_assistance_mode: !input user1_enable_assistance_mode
   user1_source_weight_entity: !input user1_source_weight_entity
   user2_name: !input user2_name
   user2_weight: !input user2_weight
   user2_impedance: !input user2_impedance
+  user2_impedance_high: !input user2_impedance_high
   user2_last_time: !input user2_last_time
   user2_enable_assistance_mode: !input user2_enable_assistance_mode
   user2_source_weight_entity: !input user2_source_weight_entity
   user3_name: !input user3_name
   user3_weight: !input user3_weight
   user3_impedance: !input user3_impedance
+  user3_impedance_high: !input user3_impedance_high
   user3_last_time: !input user3_last_time
   user3_enable_assistance_mode: !input user3_enable_assistance_mode
   user3_source_weight_entity: !input user3_source_weight_entity
   user4_name: !input user4_name
   user4_weight: !input user4_weight
   user4_impedance: !input user4_impedance
+  user4_impedance_high: !input user4_impedance_high
   user4_last_time: !input user4_last_time
   user4_enable_assistance_mode: !input user4_enable_assistance_mode
   user4_source_weight_entity: !input user4_source_weight_entity
   user5_name: !input user5_name
   user5_weight: !input user5_weight
   user5_impedance: !input user5_impedance
+  user5_impedance_high: !input user5_impedance_high
   user5_last_time: !input user5_last_time
   user5_enable_assistance_mode: !input user5_enable_assistance_mode
   user5_source_weight_entity: !input user5_source_weight_entity
   user6_name: !input user6_name
   user6_weight: !input user6_weight
   user6_impedance: !input user6_impedance
+  user6_impedance_high: !input user6_impedance_high
   user6_last_time: !input user6_last_time
   user6_enable_assistance_mode: !input user6_enable_assistance_mode
   user6_source_weight_entity: !input user6_source_weight_entity
@@ -472,6 +543,7 @@ action:
       notification_id: "{{ context.id }}"
       current_weight: "{{ states(weight_sensor) | float(0) }}"
       impedance: "{{ states(impedance_sensor) | float(0) }}"
+      impedance_high: "{{ states(impedance_high_sensor) | float(0) }}"
       group2_condition: >
         {{ (user4_name | string != '' or user5_name | string != '' or user6_name | string != '') and (
             (split_weight_direction == 'below' and current_weight <= split_weight_threshold | float(0)) or
@@ -570,6 +642,16 @@ action:
               - choose:
                   - conditions:
                       - condition: template
+                        value_template: "{{ user1_impedance_high != '' and impedance_high_sensor is defined and impedance_high_sensor != '' and states(impedance_high_sensor) not in ['unavailable', 'unknown'] }}"
+                    sequence:
+                      - action: input_number.set_value
+                        target:
+                          entity_id: "{{ user1_impedance_high }}"
+                        data:
+                          value: "{{ impedance_high }}"
+              - choose:
+                  - conditions:
+                      - condition: template
                         value_template: "{{ user1_last_time != '' }}"
                     sequence:
                       - action: input_datetime.set_datetime
@@ -603,6 +685,16 @@ action:
                           entity_id: "{{ user2_impedance }}"
                         data:
                           value: "{{ impedance }}"
+              - choose:
+                  - conditions:
+                      - condition: template
+                        value_template: "{{ user2_impedance_high != '' and impedance_high_sensor is defined and impedance_high_sensor != '' and states(impedance_high_sensor) not in ['unavailable', 'unknown'] }}"
+                    sequence:
+                      - action: input_number.set_value
+                        target:
+                          entity_id: "{{ user2_impedance_high }}"
+                        data:
+                          value: "{{ impedance_high }}"
               - choose:
                   - conditions:
                       - condition: template
@@ -642,6 +734,16 @@ action:
               - choose:
                   - conditions:
                       - condition: template
+                        value_template: "{{ user3_impedance_high != '' and impedance_high_sensor is defined and impedance_high_sensor != '' and states(impedance_high_sensor) not in ['unavailable', 'unknown'] }}"
+                    sequence:
+                      - action: input_number.set_value
+                        target:
+                          entity_id: "{{ user3_impedance_high }}"
+                        data:
+                          value: "{{ impedance_high }}"
+              - choose:
+                  - conditions:
+                      - condition: template
                         value_template: "{{ user3_last_time != '' }}"
                     sequence:
                       - action: input_datetime.set_datetime
@@ -675,6 +777,16 @@ action:
                           entity_id: "{{ user4_impedance }}"
                         data:
                           value: "{{ impedance }}"
+              - choose:
+                  - conditions:
+                      - condition: template
+                        value_template: "{{ user4_impedance_high != '' and impedance_high_sensor is defined and impedance_high_sensor != '' and states(impedance_high_sensor) not in ['unavailable', 'unknown'] }}"
+                    sequence:
+                      - action: input_number.set_value
+                        target:
+                          entity_id: "{{ user4_impedance_high }}"
+                        data:
+                          value: "{{ impedance_high }}"
               - choose:
                   - conditions:
                       - condition: template
@@ -714,6 +826,16 @@ action:
               - choose:
                   - conditions:
                       - condition: template
+                        value_template: "{{ user5_impedance_high != '' and impedance_high_sensor is defined and impedance_high_sensor != '' and states(impedance_high_sensor) not in ['unavailable', 'unknown'] }}"
+                    sequence:
+                      - action: input_number.set_value
+                        target:
+                          entity_id: "{{ user5_impedance_high }}"
+                        data:
+                          value: "{{ impedance_high }}"
+              - choose:
+                  - conditions:
+                      - condition: template
                         value_template: "{{ user5_last_time != '' }}"
                     sequence:
                       - action: input_datetime.set_datetime
@@ -747,6 +869,16 @@ action:
                           entity_id: "{{ user6_impedance }}"
                         data:
                           value: "{{ impedance }}"
+              - choose:
+                  - conditions:
+                      - condition: template
+                        value_template: "{{ user6_impedance_high != '' and impedance_high_sensor is defined and impedance_high_sensor != '' and states(impedance_high_sensor) not in ['unavailable', 'unknown'] }}"
+                    sequence:
+                      - action: input_number.set_value
+                        target:
+                          entity_id: "{{ user6_impedance_high }}"
+                        data:
+                          value: "{{ impedance_high }}"
               - choose:
                   - conditions:
                       - condition: template
