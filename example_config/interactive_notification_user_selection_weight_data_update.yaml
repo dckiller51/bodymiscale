@@ -55,7 +55,7 @@ blueprint:
           filter:
             domain: sensor
     impedance_sensor:
-      name: Impedance Sensor Low Frequency Entity (Optional)
+      name: Impedance Low Frequency Sensor Entity (Optional)
       description: The entity ID of your impedance sensor with 50 kHz (low-frequency) impedance value (if available). Its the sensor with the numerically larger value.
       # L'ID d'entité de votre capteur d'impédance (si disponible).
       selector:
