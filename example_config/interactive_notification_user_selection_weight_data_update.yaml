@@ -557,7 +557,7 @@ variables:
     {% elif has_z1 %}
       {{ states(z1_entity)|float }}
     {% else %} 0 {% endif %}
-    
+
   impedance_hf: >
     {% if mode == 'dual_frequency' and has_z1 and has_z2 %}
       {{ [states(z1_entity)|float, states(z2_entity)|float] | min }}
