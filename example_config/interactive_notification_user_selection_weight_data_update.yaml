@@ -46,6 +46,19 @@ blueprint:
           unit_of_measurement: seconds
       description: The number of seconds to wait for a response to the interactive notification.
       # Le nombre de secondes à attendre pour une réponse à la notification interactive
+    impedance_mode:
+      name: Impedance Mode
+      description: "Select 'No Impedance' to make all impedance fields optional."
+      default: "none"
+      selector:
+        select:
+          options:
+            - label: "No Impedance (Weight only)"
+              value: "none"
+            - label: "Single-frequency (Standard)"
+              value: "standard"
+            - label: "Dual-frequency (S400)"
+              value: "dual_frequency"
     weight_sensor:
       name: Weight Sensor Entity
       description: The entity ID of your weight sensor.
@@ -480,9 +493,10 @@ variables:
   title_notify: !input title_notify
   message_notify: !input message_notify
   response_timeout_seconds: !input response_timeout_seconds
+  mode: !input impedance_mode
   weight_sensor: !input weight_sensor
-  impedance_sensor: !input impedance_sensor
-  impedance_high_sensor: !input impedance_high_sensor
+  z1_entity: !input impedance_sensor
+  z2_entity: !input impedance_high_sensor
   split_weight_threshold: !input split_weight_threshold
   split_weight_direction: !input split_weight_direction
   weight: "{{ states(weight_sensor) | float(0) }}"
@@ -532,6 +546,23 @@ variables:
   has_group2_users_configured: >
     {{ user4_name != '' or user5_name != '' or user6_name != '' }}
 
+  # Logic to determine if impedance data is available
+  has_z1: "{{ z1_entity != '' and states(z1_entity) not in ['unavailable', 'unknown'] }}"
+  has_z2: "{{ z2_entity != '' and states(z2_entity) not in ['unavailable', 'unknown'] }}"
+
+  # Min/Max safety only if both sensors are present for S400
+  impedance_lf: >
+    {% if mode == 'dual_frequency' and has_z1 and has_z2 %}
+      {{ [states(z1_entity)|float, states(z2_entity)|float] | max }}
+    {% elif has_z1 %}
+      {{ states(z1_entity)|float }}
+    {% else %} 0 {% endif %}
+    
+  impedance_hf: >
+    {% if mode == 'dual_frequency' and has_z1 and has_z2 %}
+      {{ [states(z1_entity)|float, states(z2_entity)|float] | min }}
+    {% else %} 0 {% endif %}
+
 trigger:
   - trigger: state
     entity_id: !input weight_sensor
@@ -542,8 +573,8 @@ action:
   - variables:
       notification_id: "{{ context.id }}"
       current_weight: "{{ states(weight_sensor) | float(0) }}"
-      impedance: "{{ states(impedance_sensor) | float(0) }}"
-      impedance_high: "{{ states(impedance_high_sensor) | float(0) }}"
+      computed_z_lf: "{{ impedance_lf }}"
+      computed_z_hf: "{{ impedance_hf }}"
       group2_condition: >
         {{ (user4_name | string != '' or user5_name | string != '' or user6_name | string != '') and (
             (split_weight_direction == 'below' and current_weight <= split_weight_threshold | float(0)) or
@@ -632,23 +663,23 @@ action:
               - choose:
                   - conditions:
                       - condition: template
-                        value_template: "{{ user1_impedance != '' and impedance_sensor is defined and impedance_sensor != '' and states(impedance_sensor) not in ['unavailable', 'unknown'] }}"
+                        value_template: "{{ mode != 'none' and impedance_lf > 0 and user1_impedance != '' }}"
                     sequence:
                       - action: input_number.set_value
                         target:
                           entity_id: "{{ user1_impedance }}"
                         data:
-                          value: "{{ impedance }}"
+                          value: "{{ computed_z_lf }}"
               - choose:
                   - conditions:
                       - condition: template
-                        value_template: "{{ user1_impedance_high != '' and impedance_high_sensor is defined and impedance_high_sensor != '' and states(impedance_high_sensor) not in ['unavailable', 'unknown'] }}"
+                        value_template: "{{ mode == 'dual_frequency' and computed_z_hf > 0 and user1_impedance_high != '' }}"
                     sequence:
                       - action: input_number.set_value
                         target:
                           entity_id: "{{ user1_impedance_high }}"
                         data:
-                          value: "{{ impedance_high }}"
+                          value: "{{ computed_z_hf }}"
               - choose:
                   - conditions:
                       - condition: template
@@ -678,23 +709,23 @@ action:
               - choose:
                   - conditions:
                       - condition: template
-                        value_template: "{{ user2_impedance != '' and impedance_sensor is defined and impedance_sensor != '' and states(impedance_sensor) not in ['unavailable', 'unknown'] }}"
+                        value_template: "{{ mode != 'none' and impedance_lf > 0 and user2_impedance != '' }}"
                     sequence:
                       - action: input_number.set_value
                         target:
                           entity_id: "{{ user2_impedance }}"
                         data:
-                          value: "{{ impedance }}"
+                          value: "{{ computed_z_lf }}"
               - choose:
                   - conditions:
                       - condition: template
-                        value_template: "{{ user2_impedance_high != '' and impedance_high_sensor is defined and impedance_high_sensor != '' and states(impedance_high_sensor) not in ['unavailable', 'unknown'] }}"
+                        value_template: "{{ mode == 'dual_frequency' and computed_z_hf > 0 and user2_impedance_high != '' }}"
                     sequence:
                       - action: input_number.set_value
                         target:
                           entity_id: "{{ user2_impedance_high }}"
                         data:
-                          value: "{{ impedance_high }}"
+                          value: "{{ computed_z_hf }}"
               - choose:
                   - conditions:
                       - condition: template
@@ -724,23 +755,23 @@ action:
               - choose:
                   - conditions:
                       - condition: template
-                        value_template: "{{ user3_impedance != '' and impedance_sensor is defined and impedance_sensor != '' and states(impedance_sensor) not in ['unavailable', 'unknown'] }}"
+                        value_template: "{{ mode != 'none' and impedance_lf > 0 and user3_impedance != '' }}"
                     sequence:
                       - action: input_number.set_value
                         target:
                           entity_id: "{{ user3_impedance }}"
                         data:
-                          value: "{{ impedance }}"
+                          value: "{{ computed_z_lf }}"
               - choose:
                   - conditions:
                       - condition: template
-                        value_template: "{{ user3_impedance_high != '' and impedance_high_sensor is defined and impedance_high_sensor != '' and states(impedance_high_sensor) not in ['unavailable', 'unknown'] }}"
+                        value_template: "{{ mode == 'dual_frequency' and computed_z_hf > 0 and user3_impedance_high != '' }}"
                     sequence:
                       - action: input_number.set_value
                         target:
                           entity_id: "{{ user3_impedance_high }}"
                         data:
-                          value: "{{ impedance_high }}"
+                          value: "{{ computed_z_hf }}"
               - choose:
                   - conditions:
                       - condition: template
@@ -770,23 +801,23 @@ action:
               - choose:
                   - conditions:
                       - condition: template
-                        value_template: "{{ user4_impedance != '' and impedance_sensor is defined and impedance_sensor != '' and states(impedance_sensor) not in ['unavailable', 'unknown'] }}"
+                        value_template: "{{ mode != 'none' and impedance_lf > 0 and user4_impedance != '' }}"
                     sequence:
                       - action: input_number.set_value
                         target:
                           entity_id: "{{ user4_impedance }}"
                         data:
-                          value: "{{ impedance }}"
+                          value: "{{ computed_z_lf }}"
               - choose:
                   - conditions:
                       - condition: template
-                        value_template: "{{ user4_impedance_high != '' and impedance_high_sensor is defined and impedance_high_sensor != '' and states(impedance_high_sensor) not in ['unavailable', 'unknown'] }}"
+                        value_template: "{{ mode == 'dual_frequency' and computed_z_hf > 0 and user4_impedance_high != '' }}"
                     sequence:
                       - action: input_number.set_value
                         target:
                           entity_id: "{{ user4_impedance_high }}"
                         data:
-                          value: "{{ impedance_high }}"
+                          value: "{{ computed_z_hf }}"
               - choose:
                   - conditions:
                       - condition: template
@@ -816,23 +847,23 @@ action:
               - choose:
                   - conditions:
                       - condition: template
-                        value_template: "{{ user5_impedance != '' and impedance_sensor is defined and impedance_sensor != '' and states(impedance_sensor) not in ['unavailable', 'unknown'] }}"
+                        value_template: "{{ mode != 'none' and impedance_lf > 0 and user5_impedance != '' }}"
                     sequence:
                       - action: input_number.set_value
                         target:
                           entity_id: "{{ user5_impedance }}"
                         data:
-                          value: "{{ impedance }}"
+                          value: "{{ computed_z_lf }}"
               - choose:
                   - conditions:
                       - condition: template
-                        value_template: "{{ user5_impedance_high != '' and impedance_high_sensor is defined and impedance_high_sensor != '' and states(impedance_high_sensor) not in ['unavailable', 'unknown'] }}"
+                        value_template: "{{ mode == 'dual_frequency' and computed_z_hf > 0 and user5_impedance_high != '' }}"
                     sequence:
                       - action: input_number.set_value
                         target:
                           entity_id: "{{ user5_impedance_high }}"
                         data:
-                          value: "{{ impedance_high }}"
+                          value: "{{ computed_z_hf }}"
               - choose:
                   - conditions:
                       - condition: template
@@ -862,23 +893,23 @@ action:
               - choose:
                   - conditions:
                       - condition: template
-                        value_template: "{{ user6_impedance != '' and impedance_sensor is defined and impedance_sensor != '' and states(impedance_sensor) not in ['unavailable', 'unknown'] }}"
+                        value_template: "{{ mode != 'none' and impedance_lf > 0 and user6_impedance != '' }}"
                     sequence:
                       - action: input_number.set_value
                         target:
                           entity_id: "{{ user6_impedance }}"
                         data:
-                          value: "{{ impedance }}"
+                          value: "{{ computed_z_lf }}"
               - choose:
                   - conditions:
                       - condition: template
-                        value_template: "{{ user6_impedance_high != '' and impedance_high_sensor is defined and impedance_high_sensor != '' and states(impedance_high_sensor) not in ['unavailable', 'unknown'] }}"
+                        value_template: "{{ mode == 'dual_frequency' and computed_z_hf > 0 and user6_impedance_high != '' }}"
                     sequence:
                       - action: input_number.set_value
                         target:
                           entity_id: "{{ user6_impedance_high }}"
                         data:
-                          value: "{{ impedance_high }}"
+                          value: "{{ computed_z_hf }}"
               - choose:
                   - conditions:
                       - condition: template
