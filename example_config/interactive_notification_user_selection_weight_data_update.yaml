@@ -46,19 +46,6 @@ blueprint:
           unit_of_measurement: seconds
       description: The number of seconds to wait for a response to the interactive notification.
       # Le nombre de secondes à attendre pour une réponse à la notification interactive
-    impedance_mode:
-      name: Impedance Mode
-      description: "Select 'No Impedance' to make all impedance fields optional."
-      default: "none"
-      selector:
-        select:
-          options:
-            - label: "No Impedance (Weight only)"
-              value: "none"
-            - label: "Single-frequency (Standard)"
-              value: "standard"
-            - label: "Dual-frequency (S400)"
-              value: "dual_frequency"
     weight_sensor:
       name: Weight Sensor Entity
       description: The entity ID of your weight sensor.
@@ -493,7 +480,6 @@ variables:
   title_notify: !input title_notify
   message_notify: !input message_notify
   response_timeout_seconds: !input response_timeout_seconds
-  mode: !input impedance_mode
   weight_sensor: !input weight_sensor
   z1_entity: !input impedance_sensor
   z2_entity: !input impedance_high_sensor
@@ -550,17 +536,25 @@ variables:
   has_z1: "{{ z1_entity != '' and states(z1_entity) not in ['unavailable', 'unknown'] }}"
   has_z2: "{{ z2_entity != '' and states(z2_entity) not in ['unavailable', 'unknown'] }}"
 
+  # Checking for freshness (to avoid using yesterday's measurement)
+  z1_is_fresh: "{{ has_z1 and (as_timestamp(now()) - as_timestamp(states[z1_entity].last_updated) < 30) }}"
+  z2_is_fresh: "{{ has_z2 and (as_timestamp(now()) - as_timestamp(states[z2_entity].last_updated) < 30) }}"
+
+  # Raw values ​​are retrieved only if they are recent
+  val_z1: "{{ states(z1_entity) | float(0) if z1_is_fresh else 0 }}"
+  val_z2: "{{ states(z2_entity) | float(0) if z2_is_fresh else 0 }}"
+
   # Min/Max safety only if both sensors are present for S400
-  impedance_lf: >
-    {% if mode == 'dual_frequency' and has_z1 and has_z2 %}
-      {{ [states(z1_entity)|float, states(z2_entity)|float] | max }}
-    {% elif has_z1 %}
-      {{ states(z1_entity)|float }}
+  final_z_lf: >
+    {% if val_z1 > 0 and val_z2 > 0 %}
+      {{ [val_z1, val_z2] | max }}
+    {% elif val_z1 > 0 %}
+      {{ val_z1 }}
     {% else %} 0 {% endif %}
 
-  impedance_hf: >
-    {% if mode == 'dual_frequency' and has_z1 and has_z2 %}
-      {{ [states(z1_entity)|float, states(z2_entity)|float] | min }}
+  final_z_hf: >
+    {% if val_z1 > 0 and val_z2 > 0 %}
+      {{ [val_z1, val_z2] | min }}
     {% else %} 0 {% endif %}
 
 trigger:
@@ -573,8 +567,6 @@ action:
   - variables:
       notification_id: "{{ context.id }}"
       current_weight: "{{ states(weight_sensor) | float(0) }}"
-      computed_z_lf: "{{ impedance_lf }}"
-      computed_z_hf: "{{ impedance_hf }}"
       group2_condition: >
         {{ (user4_name | string != '' or user5_name | string != '' or user6_name | string != '') and (
             (split_weight_direction == 'below' and current_weight <= split_weight_threshold | float(0)) or
@@ -651,9 +643,9 @@ action:
               - variables:
                   final_weight_user1: >
                     {% if user1_enable_assistance_mode and user1_source_weight_entity is defined and states(user1_source_weight_entity) not in ['unavailable', 'unknown'] %}
-                      {{ current_weight - states(user1_source_weight_entity) | float(0) }}
+                      {{ current_weight - states(user1_source_weight_entity) | float(0)| round(2) }}
                     {% else %}
-                      {{ current_weight }}
+                      {{ current_weight | round(2) }}
                     {% endif %}
               - action: input_number.set_value
                 target:
@@ -663,23 +655,23 @@ action:
               - choose:
                   - conditions:
                       - condition: template
-                        value_template: "{{ mode != 'none' and impedance_lf > 0 and user1_impedance != '' }}"
+                        value_template: "{{ user1_impedance != '' and final_z_lf > 0 }}"
                     sequence:
                       - action: input_number.set_value
                         target:
                           entity_id: "{{ user1_impedance }}"
                         data:
-                          value: "{{ computed_z_lf }}"
+                          value: "{{ final_z_lf }}"
               - choose:
                   - conditions:
                       - condition: template
-                        value_template: "{{ mode == 'dual_frequency' and computed_z_hf > 0 and user1_impedance_high != '' }}"
+                        value_template: "{{ user1_impedance_high != '' and final_z_hf > 0 }}"
                     sequence:
                       - action: input_number.set_value
                         target:
                           entity_id: "{{ user1_impedance_high }}"
                         data:
-                          value: "{{ computed_z_hf }}"
+                          value: "{{ final_z_hf }}"
               - choose:
                   - conditions:
                       - condition: template
@@ -697,9 +689,9 @@ action:
               - variables:
                   final_weight_user2: >
                     {% if user2_enable_assistance_mode and user2_source_weight_entity is defined and states(user2_source_weight_entity) not in ['unavailable', 'unknown'] %}
-                      {{ current_weight - states(user2_source_weight_entity) | float(0) }}
+                      {{ current_weight - states(user2_source_weight_entity) | float(0)| round(2) }}
                     {% else %}
-                      {{ current_weight }}
+                      {{ current_weight | round(2) }}
                     {% endif %}
               - action: input_number.set_value
                 target:
@@ -709,23 +701,23 @@ action:
               - choose:
                   - conditions:
                       - condition: template
-                        value_template: "{{ mode != 'none' and impedance_lf > 0 and user2_impedance != '' }}"
+                        value_template: "{{ user2_impedance != '' and final_z_lf > 0 }}"
                     sequence:
                       - action: input_number.set_value
                         target:
                           entity_id: "{{ user2_impedance }}"
                         data:
-                          value: "{{ computed_z_lf }}"
+                          value: "{{ final_z_lf }}"
               - choose:
                   - conditions:
                       - condition: template
-                        value_template: "{{ mode == 'dual_frequency' and computed_z_hf > 0 and user2_impedance_high != '' }}"
+                        value_template: "{{ user2_impedance_high != '' and final_z_hf > 0 }}"
                     sequence:
                       - action: input_number.set_value
                         target:
                           entity_id: "{{ user2_impedance_high }}"
                         data:
-                          value: "{{ computed_z_hf }}"
+                          value: "{{ final_z_hf }}"
               - choose:
                   - conditions:
                       - condition: template
@@ -743,9 +735,9 @@ action:
               - variables:
                   final_weight_user3: >
                     {% if user3_enable_assistance_mode and user3_source_weight_entity is defined and states(user3_source_weight_entity) not in ['unavailable', 'unknown'] %}
-                      {{ current_weight - states(user3_source_weight_entity) | float(0) }}
+                      {{ current_weight - states(user3_source_weight_entity) | float(0)| round(2) }}
                     {% else %}
-                      {{ current_weight }}
+                      {{ current_weight | round(2) }}
                     {% endif %}
               - action: input_number.set_value
                 target:
@@ -755,23 +747,23 @@ action:
               - choose:
                   - conditions:
                       - condition: template
-                        value_template: "{{ mode != 'none' and impedance_lf > 0 and user3_impedance != '' }}"
+                        value_template: "{{ user3_impedance != '' and final_z_lf > 0 }}"
                     sequence:
                       - action: input_number.set_value
                         target:
                           entity_id: "{{ user3_impedance }}"
                         data:
-                          value: "{{ computed_z_lf }}"
+                          value: "{{ final_z_lf }}"
               - choose:
                   - conditions:
                       - condition: template
-                        value_template: "{{ mode == 'dual_frequency' and computed_z_hf > 0 and user3_impedance_high != '' }}"
+                        value_template: "{{ user3_impedance_high != '' and final_z_hf > 0 }}"
                     sequence:
                       - action: input_number.set_value
                         target:
                           entity_id: "{{ user3_impedance_high }}"
                         data:
-                          value: "{{ computed_z_hf }}"
+                          value: "{{ final_z_hf }}"
               - choose:
                   - conditions:
                       - condition: template
@@ -789,9 +781,9 @@ action:
               - variables:
                   final_weight_user4: >
                     {% if user4_enable_assistance_mode and user4_source_weight_entity is defined and states(user4_source_weight_entity) not in ['unavailable', 'unknown'] %}
-                      {{ current_weight - states(user4_source_weight_entity) | float(0) }}
+                      {{ current_weight - states(user4_source_weight_entity) | float(0)| round(2) }}
                     {% else %}
-                      {{ current_weight }}
+                      {{ current_weight | round(2) }}
                     {% endif %}
               - action: input_number.set_value
                 target:
@@ -801,23 +793,23 @@ action:
               - choose:
                   - conditions:
                       - condition: template
-                        value_template: "{{ mode != 'none' and impedance_lf > 0 and user4_impedance != '' }}"
+                        value_template: "{{ user4_impedance != '' and final_z_lf > 0 }}"
                     sequence:
                       - action: input_number.set_value
                         target:
                           entity_id: "{{ user4_impedance }}"
                         data:
-                          value: "{{ computed_z_lf }}"
+                          value: "{{ final_z_lf }}"
               - choose:
                   - conditions:
                       - condition: template
-                        value_template: "{{ mode == 'dual_frequency' and computed_z_hf > 0 and user4_impedance_high != '' }}"
+                        value_template: "{{ user4_impedance_high != '' and final_z_hf > 0 }}"
                     sequence:
                       - action: input_number.set_value
                         target:
                           entity_id: "{{ user4_impedance_high }}"
                         data:
-                          value: "{{ computed_z_hf }}"
+                          value: "{{ final_z_hf }}"
               - choose:
                   - conditions:
                       - condition: template
@@ -835,9 +827,9 @@ action:
               - variables:
                   final_weight_user5: >
                     {% if user5_enable_assistance_mode and user5_source_weight_entity is defined and states(user5_source_weight_entity) not in ['unavailable', 'unknown'] %}
-                      {{ current_weight - states(user5_source_weight_entity) | float(0) }}
+                      {{ current_weight - states(user5_source_weight_entity) | float(0)| round(2) }}
                     {% else %}
-                      {{ current_weight }}
+                      {{ current_weight | round(2) }}
                     {% endif %}
               - action: input_number.set_value
                 target:
@@ -847,23 +839,23 @@ action:
               - choose:
                   - conditions:
                       - condition: template
-                        value_template: "{{ mode != 'none' and impedance_lf > 0 and user5_impedance != '' }}"
+                        value_template: "{{ user5_impedance != '' and final_z_lf > 0 }}"
                     sequence:
                       - action: input_number.set_value
                         target:
                           entity_id: "{{ user5_impedance }}"
                         data:
-                          value: "{{ computed_z_lf }}"
+                          value: "{{ final_z_lf }}"
               - choose:
                   - conditions:
                       - condition: template
-                        value_template: "{{ mode == 'dual_frequency' and computed_z_hf > 0 and user5_impedance_high != '' }}"
+                        value_template: "{{ user5_impedance_high != '' and final_z_hf > 0 }}"
                     sequence:
                       - action: input_number.set_value
                         target:
                           entity_id: "{{ user5_impedance_high }}"
                         data:
-                          value: "{{ computed_z_hf }}"
+                          value: "{{ final_z_hf }}"
               - choose:
                   - conditions:
                       - condition: template
@@ -881,9 +873,9 @@ action:
               - variables:
                   final_weight_user6: >
                     {% if user6_enable_assistance_mode and user6_source_weight_entity is defined and states(user6_source_weight_entity) not in ['unavailable', 'unknown'] %}
-                      {{ current_weight - states(user6_source_weight_entity) | float(0) }}
+                      {{ current_weight - states(user6_source_weight_entity) | float(0)| round(2) }}
                     {% else %}
-                      {{ current_weight }}
+                      {{ current_weight | round(2) }}
                     {% endif %}
               - action: input_number.set_value
                 target:
@@ -893,23 +885,23 @@ action:
               - choose:
                   - conditions:
                       - condition: template
-                        value_template: "{{ mode != 'none' and impedance_lf > 0 and user6_impedance != '' }}"
+                        value_template: "{{ user6_impedance != '' and final_z_lf > 0 }}"
                     sequence:
                       - action: input_number.set_value
                         target:
                           entity_id: "{{ user6_impedance }}"
                         data:
-                          value: "{{ computed_z_lf }}"
+                          value: "{{ final_z_lf }}"
               - choose:
                   - conditions:
                       - condition: template
-                        value_template: "{{ mode == 'dual_frequency' and computed_z_hf > 0 and user6_impedance_high != '' }}"
+                        value_template: "{{ user6_impedance_high != '' and final_z_hf > 0 }}"
                     sequence:
                       - action: input_number.set_value
                         target:
                           entity_id: "{{ user6_impedance_high }}"
                         data:
-                          value: "{{ computed_z_hf }}"
+                          value: "{{ final_z_hf }}"
               - choose:
                   - conditions:
                       - condition: template
