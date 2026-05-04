@@ -8,6 +8,95 @@ All notable changes to this project will be documented in this file.
 
 > 🙏 This release is dedicated to [@mano3m](https://github.com/mano3m), whose PR [#355](https://github.com/dckiller51/bodymiscale/pull/355) was the inspiration and technical foundation for this version — state restoration, Dutch translations, profile ID filtering and weight range filtering. Thank you for this outstanding contribution.
 
+### 🆕 New features
+
+#### Profile system and interactive notifications
+
+- New `profile.py` — complete profile management architecture:
+  - `NotificationCoordinator`: central coordinator for sending interactive push notifications to mobile devices
+  - `ProfileFilter` (ABC) + implementations `NoFilterProfile`, `WeightRangeFilter`, `ProfileIdFilter`: automatic profile selection based on measured weight, a sensor identifier, or no filter
+  - `build_profile_filter()`: factory that instantiates the correct filter based on configuration
+  - Support for 4 profile detection methods: `none`, `weight_range`, `notification`, `profile_id`
+- New sensor `sensor.profile_id` — active profile identifier during a weigh-in
+
+#### Dutch translations
+
+- Added `translations/nl.json`
+
+#### Impedance sensors created by the integration
+
+- bodymiscale now creates its own impedance sensors (no more external `input_number` helpers needed for storage)
+- Automatic state restoration on startup via `RestoreSensor` — no more `unknown` state after HA restart
+
+#### Improved cold start
+
+- Current state of scale sensors is read at startup in `BodyScaleMetricsHandler.__init__` — calculations are available immediately without waiting for a new weigh-in, including after migration from a previous version
+
+---
+
+### ⚙️ Changes
+
+#### Restructured config flow (VERSION 2 → 4)
+
+- Added `async_migrate_entry` — automatic migration of existing v2 and v3 config entries:
+  - v2 → v3: move `height`/sensors to `options`, add `impedance_mode` and `calculation_mode`
+  - v3 → v4: add `profile_method`
+- Refactored form schemas into 4 distinct functions:
+  - `_get_user_schema` — identity (name, birthday, gender, height)
+  - `_get_sensors_schema` — scale sensors
+  - `_get_modes_schema` — impedance and calculation modes
+  - `_get_profile_schema` — profile method and notification
+- Removed `_get_impedance_schema` and `_get_main_options_schema` (replaced)
+- Added `_purge_impedance_keys`, `_purge_other_method_keys`, `_validate_weight_range`
+
+#### Internal metrics (`metrics/__init__.py`)
+
+- New `_MetricsStore` — internal store with differentiated TTL between source metrics (weight, impedance) and derived metrics, replaces the simple dict
+
+#### New constants (`const.py`)
+
+- `CONF_NOTIFY_DEVICE_ID`, `CONF_NOTIFY_SERVICE` — notification configuration
+- `CONF_PROFILE_ID`, `CONF_SENSOR_PROFILE_ID` — profile identification
+- `CONF_PROFILE_METHOD`, `PROFILE_METHOD_NONE/NOTIFY/WEIGHT/ID`, `PROFILE_METHOD_OPTIONS`
+- `CONF_WEIGHT_MIN`, `CONF_WEIGHT_MAX` — weight range for profile filter
+- `EVENT_MOBILE_APP_NOTIFICATION_ACTION` — HA event for notification response
+- `NOTIFICATION_COORDINATOR`, `NOTIFICATION_TAG`, `PENDING_MEASUREMENT_TIMEOUT`
+- `MAIN_ENTITIES`, `CONSTRAINT_PROFILE_ID_MIN/MAX`
+
+#### Developer tooling
+
+- Migration from `setup.cfg` + `mypy.ini` + `requirements.txt` + `bandit.yaml` → unified `pyproject.toml`
+- Replaced flake8/black/isort with **Ruff** (lint + format)
+- Modernized `.devcontainer.json` — `astral-sh.ruff` extension, removed black/flake8/autopep8
+- Added `.codespell-ignore` for scientific terms in docstrings
+- `pre-commit`: added `codespell`, `yamllint`, `bandit` hooks
+
+---
+
+### 🗑️ Removals
+
+- `cachetools` removed from `requirements` in `manifest.json` — no longer used
+- `bandit.yaml` removed — bandit config migrated to `pyproject.toml`
+- `setup.cfg`, `mypy.ini`, `requirements.txt` removed — consolidated into `pyproject.toml`
+
+---
+
+### 🔧 Bug fixes
+
+- Fixed [[#362](https://github.com/dckiller51/bodymiscale/issues/362)] — `Metric.SKELETAL_MUSCLE_MASS` was incorrectly listed as a dependency of `Metric.BODY_SCORE` but is only available in dual frequency mode; removed from dependencies so body score is correctly calculated in single impedance mode
+- Fixed [[#276](https://github.com/dckiller51/bodymiscale/issues/276)], [[#342](https://github.com/dckiller51/bodymiscale/issues/342)], [[#343](https://github.com/dckiller51/bodymiscale/issues/343)] — the S400 is now supported via profile ID filtering (the S400 sends a profile ID per user via BLE); note that the S400 uses its own calculation engine.
+- Fixed [[#320](https://github.com/dckiller51/bodymiscale/issues/320)] — profile ID filtering is now natively supported; configure a profile ID sensor per user and bodymiscale will automatically route measurements to the correct profile
+- Fixed [[#11](https://github.com/dckiller51/bodymiscale/issues/11)], [[#38](https://github.com/dckiller51/bodymiscale/issues/38)], [[#238](https://github.com/dckiller51/bodymiscale/issues/238)], [[#252](https://github.com/dckiller51/bodymiscale/issues/252)], [[#282](https://github.com/dckiller51/bodymiscale/issues/282)] — profile filtering (weight range, profile ID, notification) allows multiple users to share the same scale sensors; combined with automatic state restoration, dedicated per-user `input_number` helpers are no longer needed
+- Fixed [[#171](https://github.com/dckiller51/bodymiscale/issues/171)], [[#235](https://github.com/dckiller51/bodymiscale/issues/235)], [[#330](https://github.com/dckiller51/bodymiscale/issues/330)] — TTLCache expiry during reload caused metrics to be cleared for all but the first user to trigger a callback; replaced by `_MetricsStore` which preserves source metrics independently per user across restarts and reloads
+- Possibly fixed [[#117](https://github.com/dckiller51/bodymiscale/issues/117)] — the new `_MetricsStore` with differentiated TTL ensures derived metrics are recalculated even when source values are unchanged
+- Fixed [[#37](https://github.com/dckiller51/bodymiscale/issues/37)] — automatic state restoration via `RestoreSensor` ensures all metrics persist across restarts and reloads
+- YAML → UI migration: `birthday`, `height` and impedance sensors correctly preserved when migrating from an old YAML config to UI configuration
+- Notification translations loaded dynamically based on HA server language (`_get_notify_translations`)
+
+---
+
+### 📐 Blueprint
+
 - **Blueprint**: Updated `interactive_notification_user_selection_weight_data_update.yaml`. (thank you @DJaeger)
   - Added **dual-impedance** support (Low & High Frequency) for Xiaomi S400 scales.
   - Integrated smart Min/Max sorting for LF/HF values.
