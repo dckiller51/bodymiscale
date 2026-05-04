@@ -45,15 +45,13 @@
           "impedance": "Impedanssensor (enkelt-frekvens)",
           "impedance_high": "Højfrekvens impedanssensor (250 kHz)",
           "impedance_low": "Lavfrekvens impedanssensor (50 kHz)",
-          "last_measurement_time": "Tidssensor for sidste måling",
           "profile_id_sensor": "ID-sensor (Vægt-ID)",
           "weight": "Vægtsensor"
         },
         "data_description": {
           "impedance": "Enkelt impedansværdi leveret af din vægt.",
           "impedance_high": "Impedans målt ved 250 kHz (S400).",
-          "impedance_low": "Impedans målt ved 50 kHz (S400).",
-          "last_measurement_time": "Valgfrit. Efterlad tom, hvis du ikke har denne sensor."
+          "impedance_low": "Impedans målt ved 50 kHz (S400)."
         },
         "title": "Valg af sensor"
       },
@@ -228,15 +226,13 @@
           "impedance": "Impedanssensor (enkelt-frekvens)",
           "impedance_high": "Højfrekvens impedanssensor (250 kHz)",
           "impedance_low": "Lavfrekvens impedanssensor (50 kHz)",
-          "last_measurement_time": "Tidssensor for sidste måling",
           "profile_id_sensor": "ID-sensor (Vægt-ID)",
           "weight": "Vægtsensor"
         },
         "data_description": {
           "impedance": "Enkelt impedansværdi leveret af din vægt.",
           "impedance_high": "Impedans målt ved 250 kHz (S400).",
-          "impedance_low": "Impedans målt ved 50 kHz (S400).",
-          "last_measurement_time": "Valgfrit. Efterlad tom, hvis du ikke har denne sensor."
+          "impedance_low": "Impedans målt ved 50 kHz (S400)."
         },
         "title": "Rediger sensorer"
       }

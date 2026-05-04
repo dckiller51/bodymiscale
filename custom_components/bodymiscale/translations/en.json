@@ -45,15 +45,13 @@
           "impedance": "Impedance sensor (single-frequency)",
           "impedance_high": "High-frequency impedance sensor (250 kHz)",
           "impedance_low": "Low-frequency impedance sensor (50 kHz)",
-          "last_measurement_time": "Last measurement time sensor",
           "profile_id_sensor": "ID sensor (Scale ID)",
           "weight": "Weight sensor"
         },
         "data_description": {
           "impedance": "Single impedance value provided by your scale.",
           "impedance_high": "Impedance measured at 250 kHz (S400).",
-          "impedance_low": "Impedance measured at 50 kHz (S400).",
-          "last_measurement_time": "Optional. Leave blank if you do not have this sensor."
+          "impedance_low": "Impedance measured at 50 kHz (S400)."
         },
         "title": "Sensor selection"
       },
@@ -228,15 +226,13 @@
           "impedance": "Impedance sensor (single-frequency)",
           "impedance_high": "High-frequency impedance sensor (250 kHz)",
           "impedance_low": "Low-frequency impedance sensor (50 kHz)",
-          "last_measurement_time": "Last measurement time sensor",
           "profile_id_sensor": "ID sensor (Scale ID)",
           "weight": "Weight sensor"
         },
         "data_description": {
           "impedance": "Single impedance value provided by your scale.",
           "impedance_high": "Impedance measured at 250 kHz (S400).",
-          "impedance_low": "Impedance measured at 50 kHz (S400).",
-          "last_measurement_time": "Optional. Leave blank if you do not have this sensor."
+          "impedance_low": "Impedance measured at 50 kHz (S400)."
         },
         "title": "Edit sensors"
       }

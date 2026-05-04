@@ -48,6 +48,7 @@ All notable changes to this project will be documented in this file.
   - `_get_profile_schema` — profile method and notification
 - Removed `_get_impedance_schema` and `_get_main_options_schema` (replaced)
 - Added `_purge_impedance_keys`, `_purge_other_method_keys`, `_validate_weight_range`
+- Removed manual `last_measurement_time` sensor configuration — bodymiscale now manages the timestamp automatically from `state.last_changed` after each valid measurement, simplifying setup and avoiding stale timestamps
 
 #### Internal metrics (`metrics/__init__.py`)
 

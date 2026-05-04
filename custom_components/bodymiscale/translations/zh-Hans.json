@@ -25,13 +25,11 @@
           "calculation_mode": "计算方法",
           "height": "身高 (cm)",
           "impedance_mode": "阻抗模式",
-          "last_measurement_time": "上次称重时间传感器",
           "weight": "体重传感器"
         },
         "data_description": {
           "calculation_mode": "小米：与 Zepp Life 算法一致。科学：基于 WHO / Schofield 公式。对 S400 双频模式无效。",
-          "impedance_mode": "无：秤不带阻抗测量。标准：单频（小米二代秤）。双频 S400：支持 50 kHz + 250 kHz 双频传感器。",
-          "last_measurement_time": "可选。如果没有该传感器请留空。"
+          "impedance_mode": "无：秤不带阻抗测量。标准：单频（小米二代秤）。双频 S400：支持 50 kHz + 250 kHz 双频传感器。"
         },
         "title": "配置选项"
       },
@@ -177,13 +175,11 @@
           "calculation_mode": "计算方法",
           "height": "身高 (cm)",
           "impedance_mode": "阻抗模式",
-          "last_measurement_time": "上次称重时间传感器",
           "weight": "体重传感器"
         },
         "data_description": {
           "calculation_mode": "小米：与 Zepp Life 算法一致。科学：基于 WHO / Schofield 公式。对 S400 双频模式无效。",
-          "impedance_mode": "无：秤不带阻抗测量。标准：单频（小米二代秤）。双频 S400：支持 50 kHz + 250 kHz 双频传感器。",
-          "last_measurement_time": "可选。如果没有该传感器请留空。"
+          "impedance_mode": "无：秤不带阻抗测量。标准：单频（小米二代秤）。双频 S400：支持 50 kHz + 250 kHz 双频传感器。"
         },
         "title": "配置选项"
       }

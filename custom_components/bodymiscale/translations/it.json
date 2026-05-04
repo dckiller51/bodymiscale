@@ -25,13 +25,11 @@
           "calculation_mode": "Metodo di calcolo",
           "height": "Altezza (cm)",
           "impedance_mode": "Modalità impedenza",
-          "last_measurement_time": "Sensore dell'ultima ora di pesatura",
           "weight": "Sensore peso"
         },
         "data_description": {
           "calculation_mode": "Xiaomi: identico all'app Zepp Life. Scientifico: formule OMS / Schofield. Non ha effetto in modalità S400 a doppia frequenza.",
-          "impedance_mode": "Nessuna: bilancia senza impedenza. Standard: singola frequenza (Xiaomi Gen2). Dual-frequency S400: sensori 50 kHz + 250 kHz.",
-          "last_measurement_time": "Opzionale. Lascia vuoto se non hai questo sensore."
+          "impedance_mode": "Nessuna: bilancia senza impedenza. Standard: singola frequenza (Xiaomi Gen2). Dual-frequency S400: sensori 50 kHz + 250 kHz."
         },
         "title": "Configurazione"
       },
@@ -177,13 +175,11 @@
           "calculation_mode": "Metodo di calcolo",
           "height": "Altezza (cm)",
           "impedance_mode": "Modalità impedenza",
-          "last_measurement_time": "Sensore dell'ultima ora di pesatura",
           "weight": "Sensore peso"
         },
         "data_description": {
           "calculation_mode": "Xiaomi: identico all'app Zepp Life. Scientifico: formule OMS / Schofield. Non ha effetto in modalità S400 a doppia frequenza.",
-          "impedance_mode": "Nessuna: bilancia senza impedenza. Standard: singola frequenza (Xiaomi Gen2). Dual-frequency S400: sensori 50 kHz + 250 kHz.",
-          "last_measurement_time": "Opzionale. Lascia vuoto se non hai questo sensore."
+          "impedance_mode": "Nessuna: bilancia senza impedenza. Standard: singola frequenza (Xiaomi Gen2). Dual-frequency S400: sensori 50 kHz + 250 kHz."
         },
         "title": "Configurazione"
       }

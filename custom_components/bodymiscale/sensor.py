@@ -29,6 +29,7 @@ from .const import (
     ATTR_FAT,
     ATTR_IDEAL,
     ATTR_INTRACELLULAR_WATER,
+    ATTR_LAST_MEASUREMENT_TIME,
     ATTR_LBM,
     ATTR_METABOLIC,
     ATTR_MUSCLE,
@@ -40,7 +41,6 @@ from .const import (
     CONF_SENSOR_IMPEDANCE,
     CONF_SENSOR_IMPEDANCE_HIGH,
     CONF_SENSOR_IMPEDANCE_LOW,
-    CONF_SENSOR_LAST_MEASUREMENT_TIME,
     CONF_SENSOR_WEIGHT,
     DOMAIN,
     HANDLERS,
@@ -112,7 +112,7 @@ _BASE_SENSORS: tuple[
     ),
     (
         SensorEntityDescription(
-            key=CONF_SENSOR_LAST_MEASUREMENT_TIME,
+            key=ATTR_LAST_MEASUREMENT_TIME,
             translation_key="last_measurement_time",
             device_class=SensorDeviceClass.TIMESTAMP,
         ),
@@ -390,9 +390,8 @@ class BodyScaleSensor(BodyScaleBaseEntity, RestoreSensor):
         # handler so derived metrics can be recalculated immediately.
         last_sensor_data = await self.async_get_last_sensor_data()
         if last_sensor_data is not None and last_sensor_data.native_value is not None:
-            if (
-                self.entity_description.key == CONF_SENSOR_LAST_MEASUREMENT_TIME
-                and isinstance(last_sensor_data.native_value, str)
+            if self.entity_description.key == ATTR_LAST_MEASUREMENT_TIME and isinstance(
+                last_sensor_data.native_value, str
             ):
                 # Timestamp sensors may be persisted as ISO strings.
                 try:
@@ -424,7 +423,7 @@ class BodyScaleSensor(BodyScaleBaseEntity, RestoreSensor):
         # ── Live updates ──────────────────────────────────────────────────
         def on_value(value: StateType | datetime) -> None:
             """Handle a new sensor value and update the entity state."""
-            if self.entity_description.key == CONF_SENSOR_LAST_MEASUREMENT_TIME:
+            if self.entity_description.key == ATTR_LAST_MEASUREMENT_TIME:
                 if isinstance(value, datetime):
                     self._attr_native_value = value
                 elif isinstance(value, str):

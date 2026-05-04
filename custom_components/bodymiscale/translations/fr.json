@@ -45,15 +45,13 @@
           "impedance": "Capteur d'impédance (mono-fréquence)",
           "impedance_high": "Capteur d'impédance haute fréquence (250 kHz)",
           "impedance_low": "Capteur d'impédance basse fréquence (50 kHz)",
-          "last_measurement_time": "Capteur de la dernière pesée",
           "profile_id_sensor": "Capteur d'ID (Scale ID)",
           "weight": "Capteur de poids"
         },
         "data_description": {
           "impedance": "Capteur unique fourni par votre balance.",
           "impedance_high": "Impédance mesurée à 250 kHz (S400).",
-          "impedance_low": "Impédance mesurée à 50 kHz (S400).",
-          "last_measurement_time": "Optionnel. Laissez vide si vous n'avez pas ce capteur."
+          "impedance_low": "Impédance mesurée à 50 kHz (S400)."
         },
         "title": "Sélection des capteurs"
       },
@@ -228,15 +226,13 @@
           "impedance": "Capteur d'impédance (mono-fréquence)",
           "impedance_high": "Capteur d'impédance haute fréquence (250 kHz)",
           "impedance_low": "Capteur d'impédance basse fréquence (50 kHz)",
-          "last_measurement_time": "Capteur de la dernière pesée",
           "profile_id_sensor": "Capteur d'ID (Scale ID)",
           "weight": "Capteur de poids"
         },
         "data_description": {
           "impedance": "Capteur unique fourni par votre balance.",
           "impedance_high": "Impédance mesurée à 250 kHz (S400).",
-          "impedance_low": "Impédance mesurée à 50 kHz (S400).",
-          "last_measurement_time": "Optionnel. Laissez vide si vous n'avez pas ce capteur."
+          "impedance_low": "Impédance mesurée à 50 kHz (S400)."
         },
         "title": "Modifier les capteurs"
       }

@@ -25,13 +25,11 @@
           "calculation_mode": "Metodă de calcul",
           "height": "Înălțime (cm)",
           "impedance_mode": "Mod impedanță",
-          "last_measurement_time": "Senzor ultima oră de cântărire",
           "weight": "Senzor greutate"
         },
         "data_description": {
           "calculation_mode": "Xiaomi: identic cu aplicația Zepp Life. Științific: formule OMS / Schofield. Nu are efect în modul S400 cu dublă frecvență.",
-          "impedance_mode": "Niciunul: fără impedanță. Standard: frecvență unică (Xiaomi Gen2). Dual-frequency S400: senzori 50 kHz + 250 kHz.",
-          "last_measurement_time": "Opțional. Lăsați gol dacă nu aveți acest senzor."
+          "impedance_mode": "Niciunul: fără impedanță. Standard: frecvență unică (Xiaomi Gen2). Dual-frequency S400: senzori 50 kHz + 250 kHz."
         },
         "title": "Configurare"
       },
@@ -177,13 +175,11 @@
           "calculation_mode": "Metodă de calcul",
           "height": "Înălțime (cm)",
           "impedance_mode": "Mod impedanță",
-          "last_measurement_time": "Senzor ultima oră de cântărire",
           "weight": "Senzor greutate"
         },
         "data_description": {
           "calculation_mode": "Xiaomi: identic cu aplicația Zepp Life. Științific: formule OMS / Schofield. Nu are efect în modul S400 cu dublă frecvență.",
-          "impedance_mode": "Niciunul: fără impedanță. Standard: frecvență unică (Xiaomi Gen2). Dual-frequency S400: senzori 50 kHz + 250 kHz.",
-          "last_measurement_time": "Opțional. Lăsați gol dacă nu aveți acest senzor."
+          "impedance_mode": "Niciunul: fără impedanță. Standard: frecvență unică (Xiaomi Gen2). Dual-frequency S400: senzori 50 kHz + 250 kHz."
         },
         "title": "Configurare"
       }

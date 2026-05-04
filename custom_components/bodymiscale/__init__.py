@@ -200,11 +200,16 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry) ->
                 new_options[CONF_IMPEDANCE_MODE] = IMPEDANCE_MODE_NONE
 
         new_options.setdefault(CONF_CALCULATION_MODE, ALGO_XIAOMI)
-
+        # Purge last_measurement_time — managed internally since 2026.5.0
+        new_data.pop("last_measurement_time", None)
+        new_options.pop("last_measurement_time", None)
         current_version = 3
 
     if current_version == 3:
         new_options.setdefault(CONF_PROFILE_METHOD, PROFILE_METHOD_NONE)
+        # Purge last_measurement_time — managed internally since 2026.5.0
+        new_data.pop("last_measurement_time", None)
+        new_options.pop("last_measurement_time", None)
         current_version = 4
 
     if current_version != config_entry.version:

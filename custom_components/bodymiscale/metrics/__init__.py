@@ -22,7 +22,6 @@ from homeassistant.core import (
 )
 from homeassistant.helpers.event import async_call_later, async_track_state_change_event
 from homeassistant.helpers.typing import StateType
-from homeassistant.util.dt import get_time_zone
 
 from ..const import (
     CONF_BIRTHDAY,
@@ -33,7 +32,6 @@ from ..const import (
     CONF_SENSOR_IMPEDANCE,
     CONF_SENSOR_IMPEDANCE_HIGH,
     CONF_SENSOR_IMPEDANCE_LOW,
-    CONF_SENSOR_LAST_MEASUREMENT_TIME,
     CONF_SENSOR_WEIGHT,
     CONSTRAINT_IMPEDANCE_MAX,
     CONSTRAINT_IMPEDANCE_MIN,
@@ -46,7 +44,12 @@ from ..const import (
     UNIT_POUNDS,
 )
 from ..models import Gender, Metric
-from ..profile import NotificationCoordinator, ProfileFilter, build_profile_filter
+from ..profile import (
+    NotificationCoordinator,
+    NotificationFilter,
+    ProfileFilter,
+    build_profile_filter,
+)
 from ..util import get_age
 from .body_score import get_body_score
 from .impedance import (
@@ -293,6 +296,7 @@ class BodyScaleMetricsHandler:
 
         self._pending_weight: float | None = None
         self._pending_state: State | None = None
+        self._pending_impedance: dict[Metric, tuple[float, State]] = {}
         self._replaying: bool = False
         # Callback returned by async_call_later — cancel it when no longer needed.
         self._pending_timeout_cancel: CALLBACK_TYPE | None = None
@@ -331,9 +335,6 @@ class BodyScaleMetricsHandler:
                 sensors.append(self._config[CONF_SENSOR_IMPEDANCE_LOW])
             if CONF_SENSOR_IMPEDANCE_HIGH in self._config:
                 sensors.append(self._config[CONF_SENSOR_IMPEDANCE_HIGH])
-
-        if CONF_SENSOR_LAST_MEASUREMENT_TIME in self._config:
-            sensors.append(self._config[CONF_SENSOR_LAST_MEASUREMENT_TIME])
 
         self._remove_listener: CALLBACK_TYPE | None = async_track_state_change_event(
             self._hass,
@@ -395,6 +396,7 @@ class BodyScaleMetricsHandler:
         )
         self._pending_weight = None
         self._pending_state = None
+        self._pending_impedance.clear()
 
     @callback
     def accept_pending_measurement(self) -> None:
@@ -428,6 +430,16 @@ class BodyScaleMetricsHandler:
         if problem:
             self._set_sensor_problem(self._config[CONF_SENSOR_WEIGHT], problem)
         if valid:
+            # Replay the stored impedance while waiting
+            if self._pending_impedance:
+                for metric, (val, _state) in self._pending_impedance.items():
+                    _LOGGER.debug(
+                        "accept_pending_measurement: replaying impedance %s=%.2f",
+                        metric,
+                        val,
+                    )
+                    self._update_available_metric(metric, val)
+                self._pending_impedance.clear()
             self._trigger_dependent_recalculation()
 
     # ── Lifecycle ────────────────────────────────────────────────────────────
@@ -556,15 +568,6 @@ class BodyScaleMetricsHandler:
         elif entity_id == self._config.get(CONF_SENSOR_IMPEDANCE_HIGH):
             valid, problem = self._process_impedance(new_state, Metric.IMPEDANCE_HIGH)
 
-        elif entity_id == self._config.get(CONF_SENSOR_LAST_MEASUREMENT_TIME):
-            if self._notification_coordinator is not None and not self._replaying:
-                _LOGGER.debug(
-                    "Notification method: deferring last_measurement_time update "
-                    "until user confirms"
-                )
-                return
-            problem = self._process_last_measurement_time(new_state)
-
         # Update global status
         if problem:
             self._set_sensor_problem(entity_id, problem)
@@ -580,7 +583,8 @@ class BodyScaleMetricsHandler:
         raw = state.state
 
         if raw == STATE_UNAVAILABLE:
-            return False, "unavailable"
+            _LOGGER.debug("Weight sensor unavailable — ignoring (scale disconnected)")
+            return False, None
 
         try:
             val = float(raw)
@@ -588,7 +592,8 @@ class BodyScaleMetricsHandler:
             return False, "invalid_format"
 
         if val < CONSTRAINT_WEIGHT_MIN:
-            return False, "low"
+            _LOGGER.debug("Weight %.2f kg below minimum — ignoring (scale reset)", val)
+            return False, None
         if val > CONSTRAINT_WEIGHT_MAX:
             return False, "high"
 
@@ -602,6 +607,7 @@ class BodyScaleMetricsHandler:
 
             self._pending_weight = val
             self._pending_state = state
+            self._pending_impedance.clear()
 
             self._pending_timeout_cancel = async_call_later(
                 self._hass,
@@ -620,14 +626,8 @@ class BodyScaleMetricsHandler:
 
         self._update_available_metric(Metric.WEIGHT, val)
 
-        # Fallback timestamp if no dedicated sensor
-        if (
-            CONF_SENSOR_LAST_MEASUREMENT_TIME not in self._config
-            or self._available_metrics.get(Metric.LAST_MEASUREMENT_TIME) is None
-        ):
-            self._update_available_metric(
-                Metric.LAST_MEASUREMENT_TIME, state.last_changed
-            )
+        # Fallback timestamp — set after profile filter validation
+        self._update_available_metric(Metric.LAST_MEASUREMENT_TIME, state.last_changed)
 
         return True, None
 
@@ -637,7 +637,10 @@ class BodyScaleMetricsHandler:
         raw = state.state
 
         if raw == STATE_UNAVAILABLE:
-            return False, "unavailable"
+            _LOGGER.debug(
+                "Impedance sensor unavailable — ignoring (scale disconnected)"
+            )
+            return False, None
 
         try:
             val = float(raw)
@@ -645,38 +648,29 @@ class BodyScaleMetricsHandler:
             return False, "invalid_format"
 
         if val < CONSTRAINT_IMPEDANCE_MIN:
-            return False, "low"
+            _LOGGER.debug("Impedance %.2f below minimum — ignoring (scale reset)", val)
+            return False, None
         if val > CONSTRAINT_IMPEDANCE_MAX:
             return False, "high"
 
+        # ── Profile filter for impedance ──────────────────────────────────────
+        # For notification mode: check confirmation without consuming it
+        # (the weight processing already consumed/will consume the flag).
+        # For other filter types: apply normally.
+        if isinstance(self._profile_filter, NotificationFilter):
+            if not self._profile_filter.is_confirmed():
+                _LOGGER.debug(
+                    "Notification filter: impedance %.2f stored as pending", val
+                )
+                self._pending_impedance[metric] = (val, state)
+                return False, None
+        elif not self._profile_filter.accepts(self._hass, self._config, val):
+            _LOGGER.debug("Profile filter rejected impedance: %.2f", val)
+            return False, None
+
         self._update_available_metric(metric, val)
 
-        if (
-            CONF_SENSOR_LAST_MEASUREMENT_TIME not in self._config
-            or self._available_metrics.get(Metric.LAST_MEASUREMENT_TIME) is None
-        ):
-            self._update_available_metric(
-                Metric.LAST_MEASUREMENT_TIME, state.last_changed
-            )
-
         return True, None
-
-    def _process_last_measurement_time(self, state: State) -> str | None:
-        raw = state.state
-
-        if raw in (STATE_UNAVAILABLE, STATE_UNKNOWN):
-            return "unavailable"
-
-        try:
-            dt = datetime.fromisoformat(raw)
-            tz = get_time_zone(self._hass.config.time_zone)
-            dt = dt.replace(tzinfo=tz) if dt.tzinfo is None else dt.astimezone(tz)
-            self._update_available_metric(Metric.LAST_MEASUREMENT_TIME, dt)
-            self._trigger_dependent_recalculation()
-            return None
-        except (ValueError, TypeError) as exc:
-            _LOGGER.error("Invalid date format for last measurement: %s (%s)", raw, exc)
-            return "invalid_format"
 
     # ── Problem management ────────────────────────────────────────────────────
 
@@ -690,8 +684,6 @@ class BodyScaleMetricsHandler:
             return "impedance_low"
         if entity_id == self._config.get(CONF_SENSOR_IMPEDANCE_HIGH):
             return "impedance_high"
-        if entity_id == self._config.get(CONF_SENSOR_LAST_MEASUREMENT_TIME):
-            return "last_time"
         return None
 
     def _set_sensor_problem(self, entity_id: str, error: str) -> None:
@@ -715,13 +707,12 @@ class BodyScaleMetricsHandler:
         if not self._sensor_problems:
             status = PROBLEM_NONE
         else:
-            # Deterministic order: weight → impedance → last_time → others
+            # Deterministic order: weight → impedance → others
             order = [
                 "weight",
                 "impedance",
                 "impedance_low",
                 "impedance_high",
-                "last_time",
             ]
             parts = []
             for key in order:

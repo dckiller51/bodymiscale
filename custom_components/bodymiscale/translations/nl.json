@@ -45,15 +45,13 @@
           "impedance": "Impedantiesensor (enkele frequentie)",
           "impedance_high": "Hoogfrequente impedantiesensor (250 kHz)",
           "impedance_low": "Laagfrequente impedantiesensor (50 kHz)",
-          "last_measurement_time": "Sensor voor laatste meettijd",
           "profile_id_sensor": "Profiel-ID-sensor",
           "weight": "Gewichtssensor"
         },
         "data_description": {
           "impedance": "Enkele impedantiewaarde geleverd door je weegschaal.",
           "impedance_high": "Impedantie gemeten op 250 kHz (S400).",
-          "impedance_low": "Impedantie gemeten op 50 kHz (S400).",
-          "last_measurement_time": "Optioneel. Laat leeg als je deze sensor niet hebt."
+          "impedance_low": "Impedantie gemeten op 50 kHz (S400)."
         },
         "title": "Sensorselectie"
       },
@@ -228,15 +226,13 @@
           "impedance": "Impedantiesensor (enkele frequentie)",
           "impedance_high": "Hoogfrequente impedantiesensor (250 kHz)",
           "impedance_low": "Laagfrequente impedantiesensor (50 kHz)",
-          "last_measurement_time": "Sensor voor laatste meettijd",
           "profile_id_sensor": "Profiel-ID-sensor",
           "weight": "Gewichtssensor"
         },
         "data_description": {
           "impedance": "Enkele impedantiewaarde geleverd door je weegschaal.",
           "impedance_high": "Impedantie gemeten op 250 kHz (S400).",
-          "impedance_low": "Impedantie gemeten op 50 kHz (S400).",
-          "last_measurement_time": "Optioneel. Laat leeg als je deze sensor niet hebt."
+          "impedance_low": "Impedantie gemeten op 50 kHz (S400)."
         },
         "title": "Sensoren bewerken"
       }

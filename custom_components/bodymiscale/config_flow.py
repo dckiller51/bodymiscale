@@ -31,7 +31,6 @@ from .const import (
     CONF_SENSOR_IMPEDANCE,
     CONF_SENSOR_IMPEDANCE_HIGH,
     CONF_SENSOR_IMPEDANCE_LOW,
-    CONF_SENSOR_LAST_MEASUREMENT_TIME,
     CONF_SENSOR_PROFILE_ID,
     CONF_SENSOR_WEIGHT,
     CONF_WEIGHT_MAX,
@@ -146,14 +145,6 @@ def _get_sensors_schema(
             description={"suggested_value": defaults.get(CONF_SENSOR_WEIGHT)},
         ): selector.EntitySelector(
             selector.EntitySelectorConfig(domain=["sensor", "input_number", "number"])
-        ),
-        vol.Optional(
-            CONF_SENSOR_LAST_MEASUREMENT_TIME,
-            description={
-                "suggested_value": defaults.get(CONF_SENSOR_LAST_MEASUREMENT_TIME)
-            },
-        ): selector.EntitySelector(
-            selector.EntitySelectorConfig(domain=["sensor", "input_datetime"])
         ),
     }
 
@@ -413,7 +404,7 @@ class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):
             data_schema=_get_modes_schema(self._data),
         )
 
-    # ── Step 3: sensors (weight, impedance, last time, profile sensor) ────
+    # ── Step 3: sensors (weight, impedance, profile sensor) ───────────────
 
     async def async_step_sensors(
         self, user_input: dict[str, Any] | None = None
@@ -502,6 +493,8 @@ class BodyMiScaleOptionsFlowHandler(OptionsFlow):
     def __init__(self, config_entry: ConfigEntry) -> None:
         self._config_entry = config_entry
         self._data = dict(config_entry.data) | dict(config_entry.options)
+        # Silently purge last_measurement_time — managed internally since 2026.5.0
+        self._data.pop("last_measurement_time", None)
 
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None

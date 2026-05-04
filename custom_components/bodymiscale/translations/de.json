@@ -45,15 +45,13 @@
           "impedance": "Impedanzsensor (Einzelfrequenz)",
           "impedance_high": "Hochfrequenz-Impedanzsensor (250 kHz)",
           "impedance_low": "Niederfrequenz-Impedanzsensor (50 kHz)",
-          "last_measurement_time": "Sensor für die letzte Messzeit",
           "profile_id_sensor": "ID-Sensor (Waage-ID)",
           "weight": "Gewichtssensor"
         },
         "data_description": {
           "impedance": "Einzelner Impedanzwert, der von Ihrer Waage geliefert wird.",
           "impedance_high": "Impedanz gemessen bei 250 kHz (S400).",
-          "impedance_low": "Impedanz gemessen bei 50 kHz (S400).",
-          "last_measurement_time": "Optional. Leer lassen, wenn Sie diesen Sensor nicht haben."
+          "impedance_low": "Impedanz gemessen bei 50 kHz (S400)."
         },
         "title": "Sensorauswahl"
       },
@@ -228,15 +226,13 @@
           "impedance": "Impedanzsensor (Einzelfrequenz)",
           "impedance_high": "Hochfrequenz-Impedanzsensor (250 kHz)",
           "impedance_low": "Niederfrequenz-Impedanzsensor (50 kHz)",
-          "last_measurement_time": "Sensor für die letzte Messzeit",
           "profile_id_sensor": "ID-Sensor (Waage-ID)",
           "weight": "Gewichtssensor"
         },
         "data_description": {
           "impedance": "Einzelner Impedanzwert, der von Ihrer Waage geliefert wird.",
           "impedance_high": "Impedanz gemessen bei 250 kHz (S400).",
-          "impedance_low": "Impedanz gemessen bei 50 kHz (S400).",
-          "last_measurement_time": "Optional. Leer lassen, wenn Sie diesen Sensor nicht haben."
+          "impedance_low": "Impedanz gemessen bei 50 kHz (S400)."
         },
         "title": "Sensoren bearbeiten"
       }

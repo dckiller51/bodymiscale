@@ -180,6 +180,10 @@ class NotificationFilter(ProfileFilter):
         """Mark this filter as confirmed when the user taps their name."""
         self._confirmed = True
 
+    def is_confirmed(self) -> bool:
+        """Return True if confirmation is pending without consuming it."""
+        return self._confirmed
+
     def accepts(
         self, hass: HomeAssistant, config: dict[str, Any], weight: float
     ) -> bool:
