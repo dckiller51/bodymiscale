@@ -8,6 +8,8 @@
       "height_low": "Lengte is te laag (min: 50 cm)",
       "invalid_date": "Ongeldige datum",
       "name_already_used": "Deze naam wordt al gebruikt door een ander profiel. Kies een andere naam.",
+      "weight_limit": "Het gewicht is te hoog (limiet: 200 kg)",
+      "weight_low": "Het gewicht is te laag (min: 10 kg)",
       "weight_range_invalid": "Het maximumgewicht moet groter zijn dan het minimumgewicht.",
       "weight_range_overlap": "Dit bereik overlapt met dat van een andere gebruiker. Pas de grenzen aan zodat ze geen waarde delen (bijv.: als de volgende gebruiker begint bij 65 kg, moet uw maximum hier maximaal 64,99 kg zijn)."
     },
@@ -193,6 +195,8 @@
     "error": {
       "height_limit": "Lengte is te hoog (limiet: 220 cm)",
       "height_low": "Lengte is te laag (min: 50 cm)",
+      "weight_limit": "Het gewicht is te hoog (limiet: 200 kg)",
+      "weight_low": "Het gewicht is te laag (min: 10 kg)",
       "weight_range_invalid": "Het maximumgewicht moet groter zijn dan het minimumgewicht.",
       "weight_range_overlap": "Dit bereik overlapt met dat van een andere gebruiker. Pas de grenzen aan zodat ze geen waarde delen (bijv.: als de volgende gebruiker begint bij 65 kg, moet uw maximum hier maximaal 64,99 kg zijn)."
     },

@@ -8,6 +8,8 @@
       "height_low": "La taille est trop basse (min : 50 cm)",
       "invalid_date": "Date non valide",
       "name_already_used": "Ce nom est déjà utilisé par un autre profil. Choisissez-en un autre.",
+      "weight_limit": "Le poids est trop élevé (limite : 200 kg)",
+      "weight_low": "Le poids est trop bas (min : 10 kg)",
       "weight_range_invalid": "Le poids minimum doit être strictement inférieur au poids maximum.",
       "weight_range_overlap": "Cette plage chevauche celle d'un autre utilisateur. Ajustez les bornes pour qu'elles ne se partagent pas de valeur (ex : si l'utilisateur suivant commence à 65 kg, votre maximum doit être au plus 64,99 kg)."
     },
@@ -193,6 +195,8 @@
     "error": {
       "height_limit": "La taille est trop élevée (limite : 220 cm)",
       "height_low": "La taille est trop basse (min : 50 cm)",
+      "weight_limit": "Le poids est trop élevé (limite : 200 kg)",
+      "weight_low": "Le poids est trop bas (min : 10 kg)",
       "weight_range_invalid": "Le poids minimum doit être strictement inférieur au poids maximum.",
       "weight_range_overlap": "Cette plage chevauche celle d'un autre utilisateur. Ajustez les bornes pour qu'elles ne se partagent pas de valeur (ex : si l'utilisateur suivant commence à 65 kg, votre maximum doit être au plus 64,99 kg)."
     },

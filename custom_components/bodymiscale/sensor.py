@@ -45,6 +45,7 @@ from .const import (
     DOMAIN,
     HANDLERS,
     IMPEDANCE_MODE_DUAL,
+    IMPEDANCE_MODE_STANDARD,
 )
 from .entity import BodyScaleBaseEntity
 from .metrics import BodyScaleMetricsHandler
@@ -121,6 +122,7 @@ _BASE_SENSORS: tuple[
     ),
 )
 
+# Sensors available in BOTH standard and dual impedance modes
 _IMPEDANCE_SENSORS: tuple[
     tuple[SensorEntityDescription, Metric, Callable | None],
     ...,
@@ -215,6 +217,13 @@ _IMPEDANCE_SENSORS: tuple[
         Metric.BODY_SCORE,
         None,
     ),
+)
+
+# Sensor only available in standard impedance mode
+_STANDARD_ONLY_SENSORS: tuple[
+    tuple[SensorEntityDescription, Metric, Callable | None],
+    ...,
+] = (
     (
         SensorEntityDescription(
             key=CONF_SENSOR_IMPEDANCE,
@@ -228,6 +237,7 @@ _IMPEDANCE_SENSORS: tuple[
     ),
 )
 
+# Sensors only available in dual impedance mode
 _DUAL_SENSORS: tuple[
     tuple[SensorEntityDescription, Metric, Callable | None],
     ...,
@@ -302,7 +312,7 @@ _DUAL_SENSORS: tuple[
             suggested_display_precision=0,
             icon="mdi:omega",
         ),
-        Metric.IMPEDANCE,
+        Metric.IMPEDANCE_HIGH,
         None,
     ),
     (
@@ -313,7 +323,7 @@ _DUAL_SENSORS: tuple[
             suggested_display_precision=0,
             icon="mdi:omega",
         ),
-        Metric.IMPEDANCE,
+        Metric.IMPEDANCE_LOW,
         None,
     ),
 )
@@ -329,20 +339,29 @@ async def async_setup_entry(
         config_entry.entry_id
     ]
 
-    # Build sensor list from immutable definitions
+    impedance_mode = handler.config.get(CONF_IMPEDANCE_MODE, "none")
+
+    # Base sensors — always created
     new_sensors: list[BodyScaleSensor] = [
         BodyScaleSensor(handler, description, metric, get_attributes)
         for description, metric, get_attributes in _BASE_SENSORS
     ]
 
-    impedance_mode = handler.config.get(CONF_IMPEDANCE_MODE, "none")
-
-    if impedance_mode != "none":
+    # Impedance-dependent sensors — common to standard and dual modes
+    if impedance_mode in (IMPEDANCE_MODE_STANDARD, IMPEDANCE_MODE_DUAL):
         new_sensors.extend(
             BodyScaleSensor(handler, description, metric, get_attributes)
             for description, metric, get_attributes in _IMPEDANCE_SENSORS
         )
 
+    # Standard-only sensor — single impedance value
+    if impedance_mode == IMPEDANCE_MODE_STANDARD:
+        new_sensors.extend(
+            BodyScaleSensor(handler, description, metric, get_attributes)
+            for description, metric, get_attributes in _STANDARD_ONLY_SENSORS
+        )
+
+    # Dual-only sensors — low/high frequency impedance and derived metrics
     if impedance_mode == IMPEDANCE_MODE_DUAL:
         new_sensors.extend(
             BodyScaleSensor(handler, description, metric, get_attributes)

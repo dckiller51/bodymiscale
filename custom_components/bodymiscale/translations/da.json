@@ -8,6 +8,8 @@
       "height_low": "Højde minimum overskredet (min: 50 cm)",
       "invalid_date": "Ugyldig dato",
       "name_already_used": "Dette navn bruges allerede af en anden profil. Vælg et andet navn.",
+      "weight_limit": "Vægten er for høj (grænse: 200 kg)",
+      "weight_low": "Vægten er for lav (min: 10 kg)",
       "weight_range_invalid": "Ugyldigt vægtområde: minimum skal være mindre end maksimum",
       "weight_range_overlap": "Dette interval overlapper med en anden brugers interval. Juster grænserne, så de ikke deler en værdi (f.eks. hvis den næste bruger starter ved 65 kg, skal dit maksimum være højst 64,99 kg)."
     },
@@ -193,6 +195,8 @@
     "error": {
       "height_limit": "Højde maximum overskredet (grænse: 220 cm)",
       "height_low": "Højde minimum overskredet (min: 50 cm)",
+      "weight_limit": "Vægten er for høj (grænse: 200 kg)",
+      "weight_low": "Vægten er for lav (min: 10 kg)",
       "weight_range_invalid": "Ugyldigt vægtområde: minimum skal være mindre end maksimum",
       "weight_range_overlap": "Dette interval overlapper med en anden brugers interval. Juster grænserne, så de ikke deler en værdi (f.eks. hvis den næste bruger starter ved 65 kg, skal dit maksimum være højst 64,99 kg)."
     },

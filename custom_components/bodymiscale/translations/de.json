@@ -8,6 +8,8 @@
       "height_low": "Die Körpergröße ist zu niedrig (min: 50 cm)",
       "invalid_date": "Ungültiges Datum",
       "name_already_used": "Dieser Name wird bereits von einem anderen Profil verwendet. Bitte wählen Sie einen anderen Namen.",
+      "weight_limit": "Das Gewicht ist zu hoch (Limit: 200 kg)",
+      "weight_low": "Das Gewicht ist zu niedrig (Min: 10 kg)",
       "weight_range_invalid": "Das Mindestgewicht muss strikt unter dem Maximalgewicht liegen.",
       "weight_range_overlap": "Dieser Bereich überschneidet sich mit dem Bereich eines anderen Benutzers. Passen Sie die Grenzen so an, dass sie keinen gemeinsamen Wert haben (z. B. wenn der nächste Benutzer bei 65 kg beginnt, darf Ihr Maximum höchstens 64,99 kg betragen)."
     },
@@ -193,6 +195,8 @@
     "error": {
       "height_limit": "Die Körpergröße ist zu hoch (Grenze: 220 cm)",
       "height_low": "Die Körpergröße ist zu niedrig (min: 50 cm)",
+      "weight_limit": "Das Gewicht ist zu hoch (Limit: 200 kg)",
+      "weight_low": "Das Gewicht ist zu niedrig (Min: 10 kg)",
       "weight_range_invalid": "Das Mindestgewicht muss strikt unter dem Maximalgewicht liegen.",
       "weight_range_overlap": "Dieser Bereich überschneidet sich mit dem Bereich eines anderen Benutzers. Passen Sie die Grenzen so an, dass sie keinen gemeinsamen Wert haben (z. B. wenn der nächste Benutzer bei 65 kg beginnt, darf Ihr Maximum höchstens 64,99 kg betragen)."
     },
