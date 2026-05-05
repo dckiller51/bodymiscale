@@ -26,6 +26,8 @@ from .const import (
     CONF_HEIGHT,
     CONF_IMPEDANCE_MODE,
     CONF_NOTIFY_DEVICE_ID,
+    CONF_NOTIFY_WEIGHT_MAX,
+    CONF_NOTIFY_WEIGHT_MIN,
     CONF_PROFILE_ID,
     CONF_PROFILE_METHOD,
     CONF_SENSOR_IMPEDANCE,
@@ -256,6 +258,34 @@ def _get_profile_schema(method: str, defaults: dict[str, Any]) -> vol.Schema | N
                 ): selector.DeviceSelector(
                     selector.DeviceSelectorConfig(integration="mobile_app")
                 ),
+                vol.Optional(
+                    CONF_NOTIFY_WEIGHT_MIN,
+                    description={
+                        "suggested_value": defaults.get(CONF_NOTIFY_WEIGHT_MIN)
+                    },
+                ): selector.NumberSelector(
+                    selector.NumberSelectorConfig(
+                        mode=selector.NumberSelectorMode.BOX,
+                        min=CONSTRAINT_WEIGHT_MIN,
+                        max=CONSTRAINT_WEIGHT_MAX,
+                        step=0.1,
+                        unit_of_measurement="kg",
+                    )
+                ),
+                vol.Optional(
+                    CONF_NOTIFY_WEIGHT_MAX,
+                    description={
+                        "suggested_value": defaults.get(CONF_NOTIFY_WEIGHT_MAX)
+                    },
+                ): selector.NumberSelector(
+                    selector.NumberSelectorConfig(
+                        mode=selector.NumberSelectorMode.BOX,
+                        min=CONSTRAINT_WEIGHT_MIN,
+                        max=CONSTRAINT_WEIGHT_MAX,
+                        step=0.1,
+                        unit_of_measurement="kg",
+                    )
+                ),
             }
         )
 
@@ -282,7 +312,11 @@ def _validate_weight_range(
 _METHOD_KEYS: dict[str, list[str]] = {
     PROFILE_METHOD_ID: [CONF_SENSOR_PROFILE_ID, CONF_PROFILE_ID],
     PROFILE_METHOD_WEIGHT: [CONF_WEIGHT_MIN, CONF_WEIGHT_MAX],
-    PROFILE_METHOD_NOTIFY: [CONF_NOTIFY_DEVICE_ID],
+    PROFILE_METHOD_NOTIFY: [
+        CONF_NOTIFY_DEVICE_ID,
+        CONF_NOTIFY_WEIGHT_MIN,
+        CONF_NOTIFY_WEIGHT_MAX,
+    ],
     PROFILE_METHOD_NONE: [],
 }
 

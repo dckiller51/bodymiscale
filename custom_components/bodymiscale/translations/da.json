@@ -29,12 +29,16 @@
       "profile": {
         "data": {
           "notify_device_id": "Mobil enhed, der modtager notifikationen",
+          "notify_weight_max": "Maximumsvægt (valgfri)",
+          "notify_weight_min": "Minimumsvægt (valgfri)",
           "profile_id": "Profil-ID (1-5)",
           "weight_max": "Maksimumsvægt (kg, ekskluderet)",
           "weight_min": "Minimumsvægt (kg, inkluderet)"
         },
         "data_description": {
           "notify_device_id": "Den telefon, der modtager en interaktiv notifikation efter hver vejning. Tryk på dit navn for at bekræfte målingen.",
+          "notify_weight_max": "Giv kun besked til denne bruger, hvis den målte vægt er under denne værdi. Lad feltet være tomt for altid at give besked.",
+          "notify_weight_min": "Giv kun besked til denne bruger, hvis den målte vægt er over denne værdi. Lad feltet være tomt for altid at give besked.",
           "weight_max": "Denne værdi er ekskluderet. Tilstødende intervaller må ikke dele en grænseværdi — hvis den næste bruger starter ved 65 kg, skal du her indtaste højst 64,99 kg.",
           "weight_min": "Intervallet er [min, max): Denne værdi er inkluderet i dit interval."
         },
@@ -210,12 +214,16 @@
       "profile": {
         "data": {
           "notify_device_id": "Mobil enhed, der modtager notifikationen",
+          "notify_weight_max": "Maximumsvægt (valgfri)",
+          "notify_weight_min": "Minimumsvægt (valgfri)",
           "profile_id": "Profil-ID (1-5)",
           "weight_max": "Maksimumsvægt (kg, ekskluderet)",
           "weight_min": "Minimumsvægt (kg, inkluderet)"
         },
         "data_description": {
           "notify_device_id": "Den telefon, der modtager en interaktiv notifikation efter hver vejning. Tryk på dit navn for at bekræfte målingen.",
+          "notify_weight_max": "Giv kun besked til denne bruger, hvis den målte vægt er under denne værdi. Lad feltet være tomt for altid at give besked.",
+          "notify_weight_min": "Giv kun besked til denne bruger, hvis den målte vægt er over denne værdi. Lad feltet være tomt for altid at give besked.",
           "weight_max": "Denne værdi er ekskluderet. Tilstødende intervaller må ikke dele en grænseværdi — hvis den næste bruger starter ved 65 kg, skal du her indtaste højst 64,99 kg.",
           "weight_min": "Intervallet er [min, max): Denne værdi er inkluderet i dit interval."
         },

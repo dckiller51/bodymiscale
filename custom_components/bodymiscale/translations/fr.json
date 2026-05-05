@@ -29,12 +29,16 @@
       "profile": {
         "data": {
           "notify_device_id": "Appareil mobile recevant la notification",
+          "notify_weight_max": "Poids maximum (optionnel)",
+          "notify_weight_min": "Poids minimum (optionnel)",
           "profile_id": "ID du profil (1-5)",
           "weight_max": "Poids maximum (kg, exclu)",
           "weight_min": "Poids minimum (kg, inclus)"
         },
         "data_description": {
           "notify_device_id": "Le téléphone qui recevra une notification interactive après chaque pesée. Appuyez sur votre nom pour confirmer la mesure.",
+          "notify_weight_max": "Avertir cet utilisateur uniquement si le poids mesuré est inférieur à cette valeur. Laissez vide pour toujours avertir.",
+          "notify_weight_min": "Avertir cet utilisateur uniquement si le poids mesuré est supérieur à cette valeur. Laissez vide pour toujours avertir.",
           "weight_max": "Cette valeur est exclue. Les plages adjacentes ne doivent pas partager une borne — si l'utilisateur suivant commence à 65 kg, entrez au maximum 64,99 kg ici.",
           "weight_min": "L'intervalle est [min, max[ : cette valeur est incluse dans votre plage."
         },
@@ -210,12 +214,16 @@
       "profile": {
         "data": {
           "notify_device_id": "Appareil mobile recevant la notification",
+          "notify_weight_max": "Poids maximum (optionnel)",
+          "notify_weight_min": "Poids minimum (optionnel)",
           "profile_id": "ID du profil (1-5)",
           "weight_max": "Poids maximum (kg, exclu)",
           "weight_min": "Poids minimum (kg, inclus)"
         },
         "data_description": {
           "notify_device_id": "Le téléphone qui recevra une notification interactive après chaque pesée. Appuyez sur votre nom pour confirmer la mesure.",
+          "notify_weight_max": "Avertir cet utilisateur uniquement si le poids mesuré est inférieur à cette valeur. Laissez vide pour toujours avertir.",
+          "notify_weight_min": "Avertir cet utilisateur uniquement si le poids mesuré est supérieur à cette valeur. Laissez vide pour toujours avertir.",
           "weight_max": "Cette valeur est exclue. Les plages adjacentes ne doivent pas partager une borne — si l'utilisateur suivant commence à 65 kg, entrez au maximum 64,99 kg ici.",
           "weight_min": "L'intervalle est [min, max[ : cette valeur est incluse dans votre plage."
         },

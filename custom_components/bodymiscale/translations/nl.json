@@ -29,12 +29,16 @@
       "profile": {
         "data": {
           "notify_device_id": "Mobiel apparaat dat de melding ontvangt",
+          "notify_weight_max": "Maximumgewicht (optioneel)",
+          "notify_weight_min": "Minimumgewicht (optioneel)",
           "profile_id": "Profiel-ID",
           "weight_max": "Maximumgewicht (kg, exclusief)",
           "weight_min": "Minimumgewicht (kg, inclusief)"
         },
         "data_description": {
           "notify_device_id": "De telefoon die een interactieve melding ontvangt na elke weging. Tik op je naam om de meting te bevestigen.",
+          "notify_weight_max": "Stuur deze gebruiker alleen een melding als het gemeten gewicht onder deze waarde ligt. Laat leeg om altijd een melding te sturen.",
+          "notify_weight_min": "Stuur deze gebruiker alleen een melding als het gemeten gewicht boven deze waarde ligt. Laat leeg om altijd een melding te sturen.",
           "weight_max": "Deze waarde is uitgesloten. Aangrenzende bereiken mogen geen grens delen — als de volgende gebruiker begint bij 65 kg, voer hier maximaal 64,99 kg in.",
           "weight_min": "Het interval is [min, max): deze waarde is opgenomen in je bereik."
         },
@@ -210,12 +214,16 @@
       "profile": {
         "data": {
           "notify_device_id": "Mobiel apparaat dat de melding ontvangt",
+          "notify_weight_max": "Maximumgewicht (optioneel)",
+          "notify_weight_min": "Minimumgewicht (optioneel)",
           "profile_id": "Profiel-ID",
           "weight_max": "Maximumgewicht (kg, exclusief)",
           "weight_min": "Minimumgewicht (kg, inclusief)"
         },
         "data_description": {
           "notify_device_id": "De telefoon die een interactieve melding ontvangt na elke weging. Tik op je naam om de meting te bevestigen.",
+          "notify_weight_max": "Stuur deze gebruiker alleen een melding als het gemeten gewicht onder deze waarde ligt. Laat leeg om altijd een melding te sturen.",
+          "notify_weight_min": "Stuur deze gebruiker alleen een melding als het gemeten gewicht boven deze waarde ligt. Laat leeg om altijd een melding te sturen.",
           "weight_max": "Deze waarde is uitgesloten. Aangrenzende bereiken mogen geen grens delen — als de volgende gebruiker begint bij 65 kg, voer hier maximaal 64,99 kg in.",
           "weight_min": "Het interval is [min, max): deze waarde is opgenomen in je bereik."
         },

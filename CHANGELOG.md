@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 
 - New `profile.py` — complete profile management architecture:
   - `NotificationCoordinator`: central coordinator for sending interactive push notifications to mobile devices
+  - Added optional weight pre-filter for notification profiles (`notify_weight_min` / `notify_weight_max`) — when configured, a notification is only sent to a user if the measured weight falls within their range, allowing up to 5+ users to share the same scale without exceeding the 3-action limit on mobile notifications
   - `ProfileFilter` (ABC) + implementations `NoFilterProfile`, `WeightRangeFilter`, `ProfileIdFilter`: automatic profile selection based on measured weight, a sensor identifier, or no filter
   - `build_profile_filter()`: factory that instantiates the correct filter based on configuration
   - Support for 4 profile detection methods: `none`, `weight_range`, `notification`, `profile_id`
@@ -57,6 +58,7 @@ All notable changes to this project will be documented in this file.
 #### New constants (`const.py`)
 
 - `CONF_NOTIFY_DEVICE_ID`, `CONF_NOTIFY_SERVICE` — notification configuration
+- `CONF_NOTIFY_WEIGHT_MIN`, `CONF_NOTIFY_WEIGHT_MAX` - weight range for the notification
 - `CONF_PROFILE_ID`, `CONF_SENSOR_PROFILE_ID` — profile identification
 - `CONF_PROFILE_METHOD`, `PROFILE_METHOD_NONE/NOTIFY/WEIGHT/ID`, `PROFILE_METHOD_OPTIONS`
 - `CONF_WEIGHT_MIN`, `CONF_WEIGHT_MAX` — weight range for profile filter

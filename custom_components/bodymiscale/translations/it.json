@@ -1,44 +1,71 @@
 {
   "config": {
+    "abort": {
+      "already_configured": "Un profilo con questo nome è già configurato."
+    },
     "error": {
-      "already_configured": "Già configurato",
       "height_limit": "L'altezza è troppo elevata (limite: 220 cm)",
       "height_low": "L'altezza è troppo bassa (min: 50 cm)",
-      "invalid_date": "Data non valida"
+      "invalid_date": "Data non valida",
+      "name_already_used": "Questo nome è già utilizzato da un altro profilo. Scegline uno diverso.",
+      "weight_range_invalid": "Il peso minimo deve essere rigorosamente inferiore al peso massimo.",
+      "weight_range_overlap": "Questo intervallo si sovrappone a quello di un altro utente. Regola i limiti in modo che non condividano un valore (ad esempio, se l'utente successivo inizia a 65 kg, il tuo massimo deve essere al massimo 64,99 kg)."
     },
     "step": {
-      "impedance": {
-        "data": {
-          "impedance": "Sensore impedenza (singola frequenza)",
-          "impedance_high": "Sensore impedenza alta frequenza (250 kHz)",
-          "impedance_low": "Sensore impedenza bassa frequenza (50 kHz)"
-        },
-        "data_description": {
-          "impedance": "Singolo valore di impedenza fornito dalla bilancia.",
-          "impedance_high": "Impedenza misurata a 250 kHz (S400).",
-          "impedance_low": "Impedenza misurata a 50 kHz (S400)."
-        },
-        "title": "Sensori di impedenza"
-      },
-      "options": {
+      "modes": {
         "data": {
           "calculation_mode": "Metodo di calcolo",
           "height": "Altezza (cm)",
           "impedance_mode": "Modalità impedenza",
-          "weight": "Sensore peso"
+          "profile_method": "Metodo di identificazione del profilo"
         },
         "data_description": {
           "calculation_mode": "Xiaomi: identico all'app Zepp Life. Scientifico: formule OMS / Schofield. Non ha effetto in modalità S400 a doppia frequenza.",
-          "impedance_mode": "Nessuna: bilancia senza impedenza. Standard: singola frequenza (Xiaomi Gen2). Dual-frequency S400: sensori 50 kHz + 250 kHz."
+          "impedance_mode": "Nessuna: bilancia senza impedenza. Standard: singola frequenza (Xiaomi Gen2). Dual-frequency S400: sensori 50 kHz + 250 kHz.",
+          "profile_method": "Come identificare quale utente sale sulla bilancia. Scegli \"Nessuno\" se utilizzi sensori dedicati per ogni persona."
         },
-        "title": "Configurazione"
+        "title": "Modalità operative"
+      },
+      "profile": {
+        "data": {
+          "notify_device_id": "Dispositivo mobile che riceve la notifica",
+          "notify_weight_max": "Peso massimo (opzionale)",
+          "notify_weight_min": "Peso minimo (opzionale)",
+          "profile_id": "ID profilo (1-5)",
+          "weight_max": "Peso massimo (kg, escluso)",
+          "weight_min": "Peso minimo (kg, incluso)"
+        },
+        "data_description": {
+          "notify_device_id": "Il telefono che riceverà una notifica interattiva dopo ogni pesata. Tocca il tuo nome per confermare la misurazione.",
+          "notify_weight_max": "Notifica l'utente solo se il peso misurato è inferiore a questo valore. Lascia vuoto per notificare sempre.",
+          "notify_weight_min": "Notifica l'utente solo se il peso misurato è superiore a questo valore. Lascia vuoto per notificare sempre.",
+          "weight_max": "Questo valore è escluso. Gli intervalli adiacenti non devono condividere un limite: se l'utente successivo inizia a 65 kg, inserisci al massimo 64,99 kg qui.",
+          "weight_min": "L'intervallo è [min, max): questo valore è incluso nel tuo intervallo."
+        },
+        "title": "Impostazioni del profilo"
+      },
+      "sensors": {
+        "data": {
+          "impedance": "Sensore impedenza (singola frequenza)",
+          "impedance_high": "Sensore impedenza alta frequenza (250 kHz)",
+          "impedance_low": "Sensore impedenza bassa frequenza (50 kHz)",
+          "profile_id_sensor": "ID sensore (ID bilancia)",
+          "weight": "Sensore peso"
+        },
+        "data_description": {
+          "impedance": "Singolo valore di impedenza della bilancia.",
+          "impedance_high": "Impedenza misurata a 250 kHz (S400).",
+          "impedance_low": "Impedenza misurata a 50 kHz (S400)."
+        },
+        "title": "Selezione sensori"
       },
       "user": {
         "data": {
           "birthday": "Data di nascita",
           "gender": "Genere",
           "name": "Nome"
-        }
+        },
+        "title": "Identità utente"
       }
     }
   },
@@ -52,6 +79,9 @@
       "bone_mass": { "name": "Massa ossea" },
       "ecw_tbw_ratio": { "name": "Rapporto ECW/TBW" },
       "extracellular_water": { "name": "Acqua extracellulare" },
+      "impedance": { "name": "Impedenza" },
+      "impedance_high": { "name": "Impedenza (250 kHz)" },
+      "impedance_low": { "name": "Impedenza (50 kHz)" },
       "intracellular_water": { "name": "Acqua intracellulare" },
       "last_measurement_time": { "name": "Ultima ora di pesatura" },
       "lean_body_mass": { "name": "Massa corporea magra" },
@@ -155,33 +185,64 @@
       }
     }
   },
+  "notify": {
+    "weighing_message": "Nuova misurazione: {weight:.1f} kg",
+    "weighing_title": "Bodymiscale — Chi è sulla bilancia?"
+  },
   "options": {
+    "error": {
+      "height_limit": "L'altezza è troppo elevata (limite: 220 cm)",
+      "height_low": "L'altezza è troppo bassa (min: 50 cm)",
+      "weight_range_invalid": "Il peso minimo deve essere rigorosamente inferiore al peso massimo.",
+      "weight_range_overlap": "Questo intervallo si sovrappone a quello di un altro utente. Regola i limiti in modo che non condividano un valore (ad esempio, se l'utente successivo inizia a 65 kg, il tuo massimo deve essere al massimo 64,99 kg)."
+    },
     "step": {
-      "impedance": {
+      "init": {
+        "data": {
+          "calculation_mode": "Metodo di calcolo",
+          "height": "Altezza (cm)",
+          "impedance_mode": "Modalità impedenza",
+          "profile_method": "Metodo di identificazione del profilo"
+        },
+        "data_description": {
+          "calculation_mode": "Xiaomi: identico all'app Zepp Life. Scientifico: formule OMS / Schofield. Non ha effetto in modalità S400 a doppia frequenza.",
+          "impedance_mode": "Nessuna: bilancia senza impedenza. Standard: singola frequenza (Xiaomi Gen2). Dual-frequency S400: sensori 50 kHz + 250 kHz.",
+          "profile_method": "Come identificare quale utente sale sulla bilancia. Scegli \"Nessuno\" se utilizzi sensori dedicati per ogni persona."
+        },
+        "title": "Modifica modalità operative"
+      },
+      "profile": {
+        "data": {
+          "notify_device_id": "Dispositivo mobile che riceve la notifica",
+          "notify_weight_max": "Peso massimo (opzionale)",
+          "notify_weight_min": "Peso minimo (opzionale)",
+          "profile_id": "ID profilo (1-5)",
+          "weight_max": "Peso massimo (kg, escluso)",
+          "weight_min": "Peso minimo (kg, incluso)"
+        },
+        "data_description": {
+          "notify_device_id": "Il telefono che riceverà una notifica interattiva dopo ogni pesata. Tocca il tuo nome per confermare la misurazione.",
+          "notify_weight_max": "Notifica l'utente solo se il peso misurato è inferiore a questo valore. Lascia vuoto per notificare sempre.",
+          "notify_weight_min": "Notifica l'utente solo se il peso misurato è superiore a questo valore. Lascia vuoto per notificare sempre.",
+          "weight_max": "Questo valore è escluso. Gli intervalli adiacenti non devono condividere un limite: se l'utente successivo inizia a 65 kg, inserisci al massimo 64,99 kg qui.",
+          "weight_min": "L'intervallo è [min, max): questo valore è incluso nel tuo intervallo."
+        },
+        "title": "Modifica profilo"
+      },
+      "sensors": {
         "data": {
           "impedance": "Sensore impedenza (singola frequenza)",
           "impedance_high": "Sensore impedenza alta frequenza (250 kHz)",
-          "impedance_low": "Sensore impedenza bassa frequenza (50 kHz)"
+          "impedance_low": "Sensore impedenza bassa frequenza (50 kHz)",
+          "profile_id_sensor": "ID sensore (ID bilancia)",
+          "weight": "Sensore peso"
         },
         "data_description": {
           "impedance": "Singolo valore di impedenza della bilancia.",
           "impedance_high": "Impedenza misurata a 250 kHz (S400).",
           "impedance_low": "Impedenza misurata a 50 kHz (S400)."
         },
-        "title": "Sensori di impedenza"
-      },
-      "init": {
-        "data": {
-          "calculation_mode": "Metodo di calcolo",
-          "height": "Altezza (cm)",
-          "impedance_mode": "Modalità impedenza",
-          "weight": "Sensore peso"
-        },
-        "data_description": {
-          "calculation_mode": "Xiaomi: identico all'app Zepp Life. Scientifico: formule OMS / Schofield. Non ha effetto in modalità S400 a doppia frequenza.",
-          "impedance_mode": "Nessuna: bilancia senza impedenza. Standard: singola frequenza (Xiaomi Gen2). Dual-frequency S400: sensori 50 kHz + 250 kHz."
-        },
-        "title": "Configurazione"
+        "title": "Modifica sensori"
       }
     }
   },
@@ -197,6 +258,14 @@
         "dual_frequency": "Doppia frequenza S400 (50 kHz + 250 kHz)",
         "none": "Senza impedenza",
         "standard": "Singola frequenza (Xiaomi Gen2, Mi Body Scale 2…)"
+      }
+    },
+    "profile_method": {
+      "options": {
+        "none": "Nessuno — manuale (senza filtro)",
+        "notification": "Notifica mobile interattiva",
+        "profile_id": "ID profilo (dalla bilancia / Xiaomi Home)",
+        "weight_range": "Intervallo di peso"
       }
     }
   },

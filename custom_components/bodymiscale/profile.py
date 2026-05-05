@@ -28,6 +28,8 @@ from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
 
 from .const import (
+    CONF_NOTIFY_WEIGHT_MAX,
+    CONF_NOTIFY_WEIGHT_MIN,
     CONF_PROFILE_ID,
     CONF_PROFILE_METHOD,
     CONF_SENSOR_PROFILE_ID,
@@ -300,7 +302,33 @@ class NotificationCoordinator:
         # Group by device_id so users on the same phone share one notification.
         by_device: dict[str, list[tuple[str, str]]] = defaultdict(list)
         for entry_id, (name, _, device_id, _handler) in self._entries.items():
+            # Weight pre-filter — if configured, only include if within the range.
+            entry_config = _handler.config
+            w_min = entry_config.get(CONF_NOTIFY_WEIGHT_MIN)
+            w_max = entry_config.get(CONF_NOTIFY_WEIGHT_MAX)
+            if (
+                w_min is not None
+                and w_max is not None
+                and not (float(w_min) <= weight < float(w_max))
+            ):
+                _LOGGER.debug(
+                    "NotificationCoordinator: '%s' excluded by weight pre-filter "
+                    "(%.2f not in [%.2f, %.2f[)",
+                    name,
+                    weight,
+                    w_min,
+                    w_max,
+                )
+                continue
             by_device[device_id].append((entry_id, name))
+
+        if not by_device:
+            _LOGGER.debug(
+                "NotificationCoordinator: no users match weight %.2f — "
+                "no notification sent",
+                weight,
+            )
+            return
 
         notify_t = await self._get_notify_translations(self._hass.config.language)
         title = notify_t.get("weighing_title", "Bodymiscale — Who is weighing?")

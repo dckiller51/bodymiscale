@@ -29,12 +29,16 @@
       "profile": {
         "data": {
           "notify_device_id": "Mobile device receiving the notification",
+          "notify_weight_max": "Maximum weight (optional)",
+          "notify_weight_min": "Minimum weight (optional)",
           "profile_id": "Profile ID (1-5)",
           "weight_max": "Maximum weight (kg, excluded)",
           "weight_min": "Minimum weight (kg, included)"
         },
         "data_description": {
           "notify_device_id": "The phone that will receive an interactive notification after each weighing. Tap your name to confirm the measurement.",
+          "notify_weight_max": "Only notify this user if the measured weight is below this value. Leave empty to always notify.",
+          "notify_weight_min": "Only notify this user if the measured weight is above this value. Leave empty to always notify.",
           "weight_max": "This value is excluded. Adjacent ranges must not share a bound — if the next user starts at 65 kg, enter at most 64.99 kg here.",
           "weight_min": "The interval is [min, max): this value is included in your range."
         },
@@ -210,12 +214,16 @@
       "profile": {
         "data": {
           "notify_device_id": "Mobile device receiving the notification",
+          "notify_weight_max": "Maximum weight (optional)",
+          "notify_weight_min": "Minimum weight (optional)",
           "profile_id": "Profile ID (1-5)",
           "weight_max": "Maximum weight (kg, excluded)",
           "weight_min": "Minimum weight (kg, included)"
         },
         "data_description": {
           "notify_device_id": "The phone that will receive an interactive notification after each weighing. Tap your name to confirm the measurement.",
+          "notify_weight_max": "Only notify this user if the measured weight is below this value. Leave empty to always notify.",
+          "notify_weight_min": "Only notify this user if the measured weight is above this value. Leave empty to always notify.",
           "weight_max": "This value is excluded. Adjacent ranges must not share a bound — if the next user starts at 65 kg, enter at most 64.99 kg here.",
           "weight_min": "The interval is [min, max): this value is included in your range."
         },

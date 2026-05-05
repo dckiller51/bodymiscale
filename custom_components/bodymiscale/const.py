@@ -52,6 +52,8 @@ CONF_WEIGHT_MAX = "weight_max"
 # Method 3: notification
 CONF_NOTIFY_DEVICE_ID = "notify_device_id"
 CONF_NOTIFY_SERVICE = "notify_service"
+CONF_NOTIFY_WEIGHT_MIN = "notify_weight_min"
+CONF_NOTIFY_WEIGHT_MAX = "notify_weight_max"
 PENDING_MEASUREMENT_TIMEOUT = 300
 EVENT_MOBILE_APP_NOTIFICATION_ACTION = "mobile_app_notification_action"
 NOTIFICATION_TAG = "bodymiscale_user_selection"

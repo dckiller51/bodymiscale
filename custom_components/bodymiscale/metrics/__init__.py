@@ -198,9 +198,6 @@ class _MetricsStore(MutableMapping):
     Derived metrics (BMI, fat%, muscle mass, score…) expire after ``ttl``
     seconds so that stale calculated values are not served if the sensors
     go silent.
-
-    Implements MutableMapping so it is a drop-in replacement for a plain dict
-    or TTLCache throughout the handler.
     """
 
     def __init__(self, ttl: float) -> None:
@@ -268,12 +265,7 @@ class _MetricsStore(MutableMapping):
 
 
 class BodyScaleMetricsHandler:
-    """Handles metric propagation for a single body scale profile.
-
-    Subscribes to HA state-change events for the configured sensors, validates
-    incoming values, propagates changes through the dependency graph, and
-    notifies registered sensor entities of updated values.
-    """
+    """Handles metric propagation for a single body scale profile."""
 
     def __init__(
         self,
@@ -298,11 +290,14 @@ class BodyScaleMetricsHandler:
         self._pending_state: State | None = None
         self._pending_impedance: dict[Metric, tuple[float, State]] = {}
         self._replaying: bool = False
-        # Callback returned by async_call_later — cancel it when no longer needed.
         self._pending_timeout_cancel: CALLBACK_TYPE | None = None
 
-        # Source metrics (weight, impedance…) are kept without TTL.
-        # Derived metrics (BMI, fat%…) expire after 60 s.
+        # _last_accepted_weight tracks the weight accepted in the current
+        # measurement cycle. Used to validate impedance for weight-based
+        # filters without relying on the stored metric (which could be from
+        # a previous session and belong to a different user).
+        self._last_accepted_weight: float | None = None
+
         self._available_metrics: MutableMapping[Metric, StateType | datetime] = (
             _MetricsStore(ttl=60)
         )
@@ -379,11 +374,7 @@ class BodyScaleMetricsHandler:
 
     @callback
     def _expire_pending_measurement(self, _now: datetime) -> None:
-        """Discard the pending measurement after PENDING_MEASUREMENT_TIMEOUT seconds.
-
-        Called by HA when the timer fires. Prevents a stale notification from
-        being confirmed during a later unrelated weighing session.
-        """
+        """Discard the pending measurement after PENDING_MEASUREMENT_TIMEOUT seconds."""
         self._pending_timeout_cancel = None
 
         if self._pending_weight is None:
@@ -397,14 +388,11 @@ class BodyScaleMetricsHandler:
         self._pending_weight = None
         self._pending_state = None
         self._pending_impedance.clear()
+        self._last_accepted_weight = None
 
     @callback
     def accept_pending_measurement(self) -> None:
-        """Replay the pending measurement after the user confirms via notification.
-
-        Called by NotificationCoordinator when the user taps their name.
-        Decorated @callback because it schedules coroutines via async_create_task.
-        """
+        """Replay the pending measurement after the user confirms via notification."""
         if self._pending_weight is None or self._pending_state is None:
             _LOGGER.debug(
                 "accept_pending_measurement: no pending measurement to replay"
@@ -430,7 +418,6 @@ class BodyScaleMetricsHandler:
         if problem:
             self._set_sensor_problem(self._config[CONF_SENSOR_WEIGHT], problem)
         if valid:
-            # Replay the stored impedance while waiting
             if self._pending_impedance:
                 for metric, (val, _state) in self._pending_impedance.items():
                     _LOGGER.debug(
@@ -468,7 +455,6 @@ class BodyScaleMetricsHandler:
             if callback_func in self._subscribers.get(metric, []):
                 self._subscribers[metric].remove(callback_func)
 
-        # Send current value immediately if already available
         current = self._available_metrics.get(metric)
         if current is not None:
             callback_func(
@@ -480,11 +466,7 @@ class BodyScaleMetricsHandler:
     # ── Restoration ───────────────────────────────────────────────────────────
 
     def restore_metric(self, metric: Metric, state: StateType | datetime) -> None:
-        """Seed a metric from a value restored by RestoreSensor / RestoreEntity.
-
-        Only source metrics (raw sensor readings) are accepted.
-        Derived metrics are always recalculated from their dependencies.
-        """
+        """Seed a metric from a value restored by RestoreSensor / RestoreEntity."""
         restorable_metrics: frozenset[Metric] = frozenset(
             {
                 Metric.WEIGHT,
@@ -529,6 +511,10 @@ class BodyScaleMetricsHandler:
                 metric,
             )
             return
+
+        # Restore _last_accepted_weight so impedance validation works after restart
+        if metric is Metric.WEIGHT:
+            self._last_accepted_weight = val
 
         self._update_available_metric(metric, val)
 
@@ -592,6 +578,8 @@ class BodyScaleMetricsHandler:
             return False, "invalid_format"
 
         if val < CONSTRAINT_WEIGHT_MIN:
+            # Scale reset to zero — clear last accepted weight for this cycle
+            self._last_accepted_weight = None
             _LOGGER.debug("Weight %.2f kg below minimum — ignoring (scale reset)", val)
             return False, None
         if val > CONSTRAINT_WEIGHT_MAX:
@@ -602,19 +590,17 @@ class BodyScaleMetricsHandler:
 
         # ── Mode notification ─────────────────────────────────────────────────
         if self._notification_coordinator is not None and not self._replaying:
-            # Replace any unconfirmed pending measurement with the new one.
             self._cancel_pending_timeout()
-
             self._pending_weight = val
             self._pending_state = state
             self._pending_impedance.clear()
+            self._last_accepted_weight = None
 
             self._pending_timeout_cancel = async_call_later(
                 self._hass,
                 PENDING_MEASUREMENT_TIMEOUT,
                 self._expire_pending_measurement,
             )
-
             self._hass.async_create_task(
                 self._notification_coordinator.async_notify(val)
             )
@@ -624,9 +610,9 @@ class BodyScaleMetricsHandler:
             _LOGGER.debug("Profile filter rejected measurement: %.2f kg", val)
             return False, None
 
+        # Weight accepted for this cycle — store for impedance validation
+        self._last_accepted_weight = val
         self._update_available_metric(Metric.WEIGHT, val)
-
-        # Fallback timestamp — set after profile filter validation
         self._update_available_metric(Metric.LAST_MEASUREMENT_TIME, state.last_changed)
 
         return True, None
@@ -654,9 +640,6 @@ class BodyScaleMetricsHandler:
             return False, "high"
 
         # ── Profile filter for impedance ──────────────────────────────────────
-        # For notification mode: check confirmation without consuming it
-        # (the weight processing already consumed/will consume the flag).
-        # For other filter types: apply normally.
         if isinstance(self._profile_filter, NotificationFilter):
             if not self._profile_filter.is_confirmed():
                 _LOGGER.debug(
@@ -664,9 +647,21 @@ class BodyScaleMetricsHandler:
                 )
                 self._pending_impedance[metric] = (val, state)
                 return False, None
-        elif not self._profile_filter.accepts(self._hass, self._config, val):
-            _LOGGER.debug("Profile filter rejected impedance: %.2f", val)
-            return False, None
+        else:
+            # Use the weight accepted in the current measurement cycle.
+            # This prevents a user whose weight was rejected from inheriting
+            # the impedance of another user whose weight was accepted.
+            if self._last_accepted_weight is None:
+                _LOGGER.debug(
+                    "Profile filter: no weight accepted in current cycle "
+                    "— impedance rejected"
+                )
+                return False, None
+            if not self._profile_filter.accepts(
+                self._hass, self._config, self._last_accepted_weight
+            ):
+                _LOGGER.debug("Profile filter rejected impedance: %.2f", val)
+                return False, None
 
         self._update_available_metric(metric, val)
 
