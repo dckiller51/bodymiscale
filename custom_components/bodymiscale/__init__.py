@@ -174,6 +174,18 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry) ->
     new_options = {**config_entry.options}
     current_version = config_entry.version
 
+    if current_version == 1:
+        for key in [CONF_HEIGHT, CONF_SENSOR_WEIGHT, CONF_SENSOR_IMPEDANCE]:
+            if key in new_data:
+                new_options.setdefault(key, new_data.pop(key))
+        if CONF_NAME in new_options:
+            new_data.setdefault(CONF_NAME, new_options.pop(CONF_NAME))
+        if CONF_BIRTHDAY in new_options:
+            new_data.setdefault(CONF_BIRTHDAY, new_options.pop(CONF_BIRTHDAY))
+        if CONF_GENDER in new_options:
+            new_data.setdefault(CONF_GENDER, new_options.pop(CONF_GENDER))
+        current_version = 2
+
     if current_version == 2:
         for key in [CONF_NAME, CONF_BIRTHDAY, CONF_GENDER]:
             if key not in new_data and key in new_options:
@@ -194,7 +206,9 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry) ->
                 CONF_SENSOR_IMPEDANCE_HIGH
             ):
                 new_options[CONF_IMPEDANCE_MODE] = IMPEDANCE_MODE_DUAL
-            elif new_options.get(CONF_SENSOR_IMPEDANCE):
+            elif new_options.get(CONF_SENSOR_IMPEDANCE) or new_data.get(
+                CONF_SENSOR_IMPEDANCE
+            ):
                 new_options[CONF_IMPEDANCE_MODE] = IMPEDANCE_MODE_STANDARD
             else:
                 new_options[CONF_IMPEDANCE_MODE] = IMPEDANCE_MODE_NONE
