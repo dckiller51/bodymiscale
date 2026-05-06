@@ -1,17 +1,17 @@
 {
   "config": {
     "abort": {
-      "already_configured": "Denne vægt er allerede konfigureret"
+      "already_configured": "En profil med dette navn er allerede konfigureret."
     },
     "error": {
-      "height_limit": "Højde maximum overskredet (grænse: 220 cm)",
-      "height_low": "Højde minimum overskredet (min: 50 cm)",
-      "invalid_date": "Ugyldig dato",
+      "height_limit": "Højde for høj (maksimum: 220 cm).",
+      "height_low": "Højde for lav (minimum: 50 cm).",
+      "invalid_date": "Ugyldig dato.",
       "name_already_used": "Dette navn bruges allerede af en anden profil. Vælg et andet navn.",
-      "weight_limit": "Vægten er for høj (grænse: 200 kg)",
-      "weight_low": "Vægten er for lav (min: 10 kg)",
-      "weight_range_invalid": "Ugyldigt vægtområde: minimum skal være mindre end maksimum",
-      "weight_range_overlap": "Dette interval overlapper med en anden brugers interval. Juster grænserne, så de ikke deler en værdi (f.eks. hvis den næste bruger starter ved 65 kg, skal dit maksimum være højst 64,99 kg)."
+      "weight_limit": "Vægt for høj (maksimum: 200 kg).",
+      "weight_low": "Vægt for lav (minimum: 10 kg).",
+      "weight_range_invalid": "Minimumsvægten skal være strengt mindre end maksimumsvægten.",
+      "weight_range_overlap": "Dette interval overlapper med en anden brugers interval. Intervaller må ikke dele en værdi — juster grænserne i overensstemmelse hermed."
     },
     "step": {
       "modes": {
@@ -19,30 +19,30 @@
           "calculation_mode": "Beregningsmetode",
           "height": "Højde (cm)",
           "impedance_mode": "Impedanstilstand",
-          "profile_method": "Profilmetode"
+          "profile_method": "Brugeridentifikationsmetode"
         },
         "data_description": {
-          "calculation_mode": "Xiaomi: identisk med Zepp Life app. Videnskabelig: WHO / Schofield formler. Har ingen effekt i S400 dual-frequency tilstand.",
-          "impedance_mode": "Ingen: vægt uden impedans. Standard: enkelt-frekvens (Xiaomi Gen2). Dual-frequency S400: 50 kHz + 250 kHz sensorer.",
-          "profile_method": "Sådan identificeres hvilken bruger, der træder op på vægten. Vælg \"Ingen\", hvis du bruger dedikerede sensorer pr. person."
+          "calculation_mode": "Xiaomi: identisk med Zepp Life-appen. Videnskabelig: WHO / Schofield-formler. Ikke tilgængelig i S400 dual-frequency tilstand.",
+          "impedance_mode": "Ingen: vægt uden impedanssensor. Standard: enkelt-frekvens (Xiaomi Gen2). Dual-frequency S400: to sensorer ved 50 kHz og 250 kHz.",
+          "profile_method": "Hvordan bodymiscale afgør, hvilken bruger en måling skal tildeles. Vælg \"Ingen\", hvis du bruger dedikerede sensorer pr. person."
         },
         "title": "Driftstilstande"
       },
       "profile": {
         "data": {
-          "notify_device_id": "Mobil enhed, der modtager notifikationen",
-          "notify_weight_max": "Maximumsvægt (valgfri)",
-          "notify_weight_min": "Minimumsvægt (valgfri)",
-          "profile_id": "Profil-ID (1-5)",
-          "weight_max": "Maksimumsvægt (kg, ekskluderet)",
-          "weight_min": "Minimumsvægt (kg, inkluderet)"
+          "notify_device_id": "Mobil enhed der modtager notifikationen",
+          "notify_weight_max": "Maksimumsvægt for notifikation (valgfri)",
+          "notify_weight_min": "Minimumsvægt for notifikation (valgfri)",
+          "profile_id": "Profil-ID (1–5)",
+          "weight_max": "Intervallets maksimumsvægt (kg, ekskluderet)",
+          "weight_min": "Intervallets minimumsvægt (kg, inkluderet)"
         },
         "data_description": {
-          "notify_device_id": "Den telefon, der modtager en interaktiv notifikation efter hver vejning. Tryk på dit navn for at bekræfte målingen.",
-          "notify_weight_max": "Giv kun besked til denne bruger, hvis den målte vægt er under denne værdi. Lad feltet være tomt for altid at give besked.",
-          "notify_weight_min": "Giv kun besked til denne bruger, hvis den målte vægt er over denne værdi. Lad feltet være tomt for altid at give besked.",
-          "weight_max": "Denne værdi er ekskluderet. Tilstødende intervaller må ikke dele en grænseværdi — hvis den næste bruger starter ved 65 kg, skal du her indtaste højst 64,99 kg.",
-          "weight_min": "Intervallet er [min, max): Denne værdi er inkluderet i dit interval."
+          "notify_device_id": "Den telefon der modtager en interaktiv notifikation efter hver vejning. Tryk på dit navn for at bekræfte målingen.",
+          "notify_weight_max": "Notificer kun denne bruger, hvis det målte vægt er mindre end eller lig med denne værdi. Lad stå tom for altid at notificere.",
+          "notify_weight_min": "Notificer kun denne bruger, hvis det målte vægt er større end eller lig med denne værdi. Lad stå tom for altid at notificere.",
+          "weight_max": "Øvre grænse, ekskluderet fra intervallet. Hvis den næste bruger starter ved 65 kg, skal du indtaste højst 64,99 kg her.",
+          "weight_min": "Nedre grænse, inkluderet i intervallet. Målingen tildeles denne bruger, hvis deres vægt er ≥ denne værdi."
         },
         "title": "Profilindstillinger"
       },
@@ -51,7 +51,7 @@
           "impedance": "Impedanssensor (enkelt-frekvens)",
           "impedance_high": "Højfrekvens impedanssensor (250 kHz)",
           "impedance_low": "Lavfrekvens impedanssensor (50 kHz)",
-          "profile_id_sensor": "ID-sensor (Vægt-ID)",
+          "profile_id_sensor": "Profil-ID-sensor (vægt-ID)",
           "weight": "Vægtsensor"
         },
         "data_description": {
@@ -63,7 +63,7 @@
       },
       "user": {
         "data": {
-          "birthday": "Fødselsdag",
+          "birthday": "Fødselsdato",
           "gender": "Køn",
           "name": "Navn"
         },
@@ -80,12 +80,12 @@
       "body_score": { "name": "Kropsscore" },
       "bone_mass": { "name": "Knoglemasse" },
       "ecw_tbw_ratio": { "name": "ECW/TBW-forhold" },
-      "extracellular_water": { "name": "Extracellulært vand" },
+      "extracellular_water": { "name": "Ekstracellulært vand" },
       "impedance": { "name": "Impedans" },
       "impedance_high": { "name": "Impedans (250 kHz)" },
       "impedance_low": { "name": "Impedans (50 kHz)" },
       "intracellular_water": { "name": "Intracellulært vand" },
-      "last_measurement_time": { "name": "Tidspunkt for sidste måling" },
+      "last_measurement_time": { "name": "Sidste måling" },
       "lean_body_mass": { "name": "Mager kropsmasse" },
       "metabolic_age": { "name": "Metabolisk alder" },
       "muscle_mass": { "name": "Muskelmasse" },
@@ -116,7 +116,7 @@
             "overweight": "Overvægtig",
             "severe_obesity": "Alvorlig fedme",
             "slight_overweight": "Let overvægt",
-            "unavailable": "ikke tilgængelig",
+            "unavailable": "Ikke tilgængelig",
             "underweight": "Undervægtig"
           }
         },
@@ -135,19 +135,19 @@
             "skinny": "Slank",
             "skinny_muscular": "Muskuløs slank",
             "thick_set": "Kraftig",
-            "unavailable": "ikke tilgængelig"
+            "unavailable": "Ikke tilgængelig"
           }
         },
         "bone_mass": { "name": "Knoglemasse" },
         "ecw_tbw_ratio": { "name": "ECW/TBW-forhold" },
-        "extracellular_water": { "name": "Extracellulært vand" },
+        "extracellular_water": { "name": "Ekstracellulært vand" },
         "fat_mass_to_gain": { "name": "Fedtmasse at tage på" },
         "fat_mass_to_lose": { "name": "Fedtmasse at tabe" },
         "gender": {
           "name": "Køn",
           "state": {
-            "female": "kvinde",
-            "male": "mand"
+            "female": "Kvinde",
+            "male": "Mand"
           }
         },
         "height": { "name": "Højde" },
@@ -156,18 +156,18 @@
         "impedance_high": { "name": "Impedans (250 kHz)" },
         "impedance_low": { "name": "Impedans (50 kHz)" },
         "intracellular_water": { "name": "Intracellulært vand" },
-        "last_measurement_time": { "name": "Tidspunkt for sidste måling" },
+        "last_measurement_time": { "name": "Sidste måling" },
         "lean_body_mass": { "name": "Mager kropsmasse" },
         "metabolic_age": { "name": "Metabolisk alder" },
         "muscle_mass": { "name": "Muskelmasse" },
         "problem": {
           "name": "Problem",
           "state": {
-            "impedance_high": "Høj impedans",
+            "impedance_high": "Impedans for høj",
             "impedance_high_high": "Impedans 250 kHz for høj",
             "impedance_high_low": "Impedans 250 kHz for lav",
             "impedance_high_unavailable": "Impedans 250 kHz ikke tilgængelig",
-            "impedance_low": "Lav impedans",
+            "impedance_low": "Impedans for lav",
             "impedance_low_high": "Impedans 50 kHz for høj",
             "impedance_low_low": "Impedans 50 kHz for lav",
             "impedance_low_unavailable": "Impedans 50 kHz ikke tilgængelig",
@@ -193,12 +193,12 @@
   },
   "options": {
     "error": {
-      "height_limit": "Højde maximum overskredet (grænse: 220 cm)",
-      "height_low": "Højde minimum overskredet (min: 50 cm)",
-      "weight_limit": "Vægten er for høj (grænse: 200 kg)",
-      "weight_low": "Vægten er for lav (min: 10 kg)",
-      "weight_range_invalid": "Ugyldigt vægtområde: minimum skal være mindre end maksimum",
-      "weight_range_overlap": "Dette interval overlapper med en anden brugers interval. Juster grænserne, så de ikke deler en værdi (f.eks. hvis den næste bruger starter ved 65 kg, skal dit maksimum være højst 64,99 kg)."
+      "height_limit": "Højde for høj (maksimum: 220 cm).",
+      "height_low": "Højde for lav (minimum: 50 cm).",
+      "weight_limit": "Vægt for høj (maksimum: 200 kg).",
+      "weight_low": "Vægt for lav (minimum: 10 kg).",
+      "weight_range_invalid": "Minimumsvægten skal være strengt mindre end maksimumsvægten.",
+      "weight_range_overlap": "Dette interval overlapper med en anden brugers interval. Intervaller må ikke dele en værdi — juster grænserne i overensstemmelse hermed."
     },
     "step": {
       "init": {
@@ -206,30 +206,30 @@
           "calculation_mode": "Beregningsmetode",
           "height": "Højde (cm)",
           "impedance_mode": "Impedanstilstand",
-          "profile_method": "Profilmetode"
+          "profile_method": "Brugeridentifikationsmetode"
         },
         "data_description": {
-          "calculation_mode": "Xiaomi: identisk med Zepp Life app. Videnskabelig: WHO / Schofield formler. Har ingen effekt i S400 dual-frequency tilstand.",
-          "impedance_mode": "Ingen: vægt uden impedans. Standard: enkelt-frekvens (Xiaomi Gen2). Dual-frequency S400: 50 kHz + 250 kHz sensorer.",
-          "profile_method": "Sådan identificeres hvilken bruger, der træder op på vægten. Vælg \"Ingen\", hvis du bruger dedikerede sensorer pr. person."
+          "calculation_mode": "Xiaomi: identisk med Zepp Life-appen. Videnskabelig: WHO / Schofield-formler. Ikke tilgængelig i S400 dual-frequency tilstand.",
+          "impedance_mode": "Ingen: vægt uden impedanssensor. Standard: enkelt-frekvens (Xiaomi Gen2). Dual-frequency S400: to sensorer ved 50 kHz og 250 kHz.",
+          "profile_method": "Hvordan bodymiscale afgør, hvilken bruger en måling skal tildeles. Vælg \"Ingen\", hvis du bruger dedikerede sensorer pr. person."
         },
         "title": "Rediger driftstilstande"
       },
       "profile": {
         "data": {
-          "notify_device_id": "Mobil enhed, der modtager notifikationen",
-          "notify_weight_max": "Maximumsvægt (valgfri)",
-          "notify_weight_min": "Minimumsvægt (valgfri)",
-          "profile_id": "Profil-ID (1-5)",
-          "weight_max": "Maksimumsvægt (kg, ekskluderet)",
-          "weight_min": "Minimumsvægt (kg, inkluderet)"
+          "notify_device_id": "Mobil enhed der modtager notifikationen",
+          "notify_weight_max": "Maksimumsvægt for notifikation (valgfri)",
+          "notify_weight_min": "Minimumsvægt for notifikation (valgfri)",
+          "profile_id": "Profil-ID (1–5)",
+          "weight_max": "Intervallets maksimumsvægt (kg, ekskluderet)",
+          "weight_min": "Intervallets minimumsvægt (kg, inkluderet)"
         },
         "data_description": {
-          "notify_device_id": "Den telefon, der modtager en interaktiv notifikation efter hver vejning. Tryk på dit navn for at bekræfte målingen.",
-          "notify_weight_max": "Giv kun besked til denne bruger, hvis den målte vægt er under denne værdi. Lad feltet være tomt for altid at give besked.",
-          "notify_weight_min": "Giv kun besked til denne bruger, hvis den målte vægt er over denne værdi. Lad feltet være tomt for altid at give besked.",
-          "weight_max": "Denne værdi er ekskluderet. Tilstødende intervaller må ikke dele en grænseværdi — hvis den næste bruger starter ved 65 kg, skal du her indtaste højst 64,99 kg.",
-          "weight_min": "Intervallet er [min, max): Denne værdi er inkluderet i dit interval."
+          "notify_device_id": "Den telefon der modtager en interaktiv notifikation efter hver vejning. Tryk på dit navn for at bekræfte målingen.",
+          "notify_weight_max": "Notificer kun denne bruger, hvis det målte vægt er mindre end eller lig med denne værdi. Lad stå tom for altid at notificere.",
+          "notify_weight_min": "Notificer kun denne bruger, hvis det målte vægt er større end eller lig med denne værdi. Lad stå tom for altid at notificere.",
+          "weight_max": "Øvre grænse, ekskluderet fra intervallet. Hvis den næste bruger starter ved 65 kg, skal du indtaste højst 64,99 kg her.",
+          "weight_min": "Nedre grænse, inkluderet i intervallet. Målingen tildeles denne bruger, hvis deres vægt er ≥ denne værdi."
         },
         "title": "Rediger profil"
       },
@@ -238,7 +238,7 @@
           "impedance": "Impedanssensor (enkelt-frekvens)",
           "impedance_high": "Højfrekvens impedanssensor (250 kHz)",
           "impedance_low": "Lavfrekvens impedanssensor (50 kHz)",
-          "profile_id_sensor": "ID-sensor (Vægt-ID)",
+          "profile_id_sensor": "Profil-ID-sensor (vægt-ID)",
           "weight": "Vægtsensor"
         },
         "data_description": {
@@ -266,8 +266,8 @@
     },
     "profile_method": {
       "options": {
-        "none": "Ingen — manuel (intet filter)",
-        "notification": "Interaktiv mobilnotifikation",
+        "none": "Ingen — manuel tildeling",
+        "notification": "Interaktiv push-notifikation",
         "profile_id": "Profil-ID (fra vægt / Xiaomi Home)",
         "weight_range": "Vægtinterval"
       }

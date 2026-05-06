@@ -4,14 +4,14 @@
       "already_configured": "A profile with this name is already configured."
     },
     "error": {
-      "height_limit": "Height is too high (limit: 220 cm)",
-      "height_low": "Height is too low (min: 50 cm)",
-      "invalid_date": "Invalid date",
+      "height_limit": "Height is too high (limit: 220 cm).",
+      "height_low": "Height is too low (min: 50 cm).",
+      "invalid_date": "Invalid date.",
       "name_already_used": "This name is already used by another profile. Choose a different one.",
-      "weight_limit": "Weight is too high (limit: 200 kg)",
-      "weight_low": "Weight is too low (min: 10 kg)",
+      "weight_limit": "Weight is too high (limit: 200 kg).",
+      "weight_low": "Weight is too low (min: 10 kg).",
       "weight_range_invalid": "Minimum weight must be strictly less than maximum weight.",
-      "weight_range_overlap": "This range overlaps another user's range. Adjust the bounds so they don't share a value (e.g., if the next user starts at 65 kg, your maximum must be at most 64.99 kg)."
+      "weight_range_overlap": "This range overlaps another user's range. Ranges must not share a value — adjust the bounds accordingly."
     },
     "step": {
       "modes": {
@@ -19,30 +19,30 @@
           "calculation_mode": "Calculation method",
           "height": "Height (cm)",
           "impedance_mode": "Impedance mode",
-          "profile_method": "Profile identification method"
+          "profile_method": "User identification method"
         },
         "data_description": {
-          "calculation_mode": "Xiaomi: identical to Zepp Life app. Science: WHO / Schofield formulas. Has no effect in S400 dual-frequency mode.",
-          "impedance_mode": "None: scale without impedance. Standard: single-frequency (Xiaomi Gen2). Dual-frequency S400: 50 kHz + 250 kHz sensors.",
-          "profile_method": "How to identify which user steps on the scale. Choose \"None\" if you use dedicated sensors per person."
+          "calculation_mode": "Xiaomi: identical to the Zepp Life app. Scientific: WHO / Schofield formulas. Not available in S400 dual-frequency mode.",
+          "impedance_mode": "None: scale without impedance sensor. Standard: single-frequency (Xiaomi Gen2). Dual-frequency S400: two sensors at 50 kHz and 250 kHz.",
+          "profile_method": "How bodymiscale determines which user to assign a measurement to. Choose \"None\" if you use dedicated sensors per person."
         },
         "title": "Operating modes"
       },
       "profile": {
         "data": {
           "notify_device_id": "Mobile device receiving the notification",
-          "notify_weight_max": "Maximum weight (optional)",
-          "notify_weight_min": "Minimum weight (optional)",
-          "profile_id": "Profile ID (1-5)",
-          "weight_max": "Maximum weight (kg, excluded)",
-          "weight_min": "Minimum weight (kg, included)"
+          "notify_weight_max": "Maximum weight to notify (optional)",
+          "notify_weight_min": "Minimum weight to notify (optional)",
+          "profile_id": "Profile ID (1–5)",
+          "weight_max": "Range maximum weight (kg, excluded)",
+          "weight_min": "Range minimum weight (kg, included)"
         },
         "data_description": {
           "notify_device_id": "The phone that will receive an interactive notification after each weighing. Tap your name to confirm the measurement.",
-          "notify_weight_max": "Only notify this user if the measured weight is below this value. Leave empty to always notify.",
-          "notify_weight_min": "Only notify this user if the measured weight is above this value. Leave empty to always notify.",
-          "weight_max": "This value is excluded. Adjacent ranges must not share a bound — if the next user starts at 65 kg, enter at most 64.99 kg here.",
-          "weight_min": "The interval is [min, max): this value is included in your range."
+          "notify_weight_max": "Notify this user only if the measured weight is less than or equal to this value. Leave empty to always notify.",
+          "notify_weight_min": "Notify this user only if the measured weight is greater than or equal to this value. Leave empty to always notify.",
+          "weight_max": "Upper bound, excluded from the range. If the next user starts at 65 kg, enter at most 64.99 kg here.",
+          "weight_min": "Lower bound, included in the range. The measurement is assigned to this user if their weight is ≥ this value."
         },
         "title": "Profile settings"
       },
@@ -51,7 +51,7 @@
           "impedance": "Impedance sensor (single-frequency)",
           "impedance_high": "High-frequency impedance sensor (250 kHz)",
           "impedance_low": "Low-frequency impedance sensor (50 kHz)",
-          "profile_id_sensor": "ID sensor (Scale ID)",
+          "profile_id_sensor": "Profile ID sensor (Scale ID)",
           "weight": "Weight sensor"
         },
         "data_description": {
@@ -63,7 +63,7 @@
       },
       "user": {
         "data": {
-          "birthday": "Birthday",
+          "birthday": "Date of birth",
           "gender": "Gender",
           "name": "Name"
         },
@@ -85,7 +85,7 @@
       "impedance_high": { "name": "Impedance (250 kHz)" },
       "impedance_low": { "name": "Impedance (50 kHz)" },
       "intracellular_water": { "name": "Intracellular water" },
-      "last_measurement_time": { "name": "Last measurement time" },
+      "last_measurement_time": { "name": "Last measurement" },
       "lean_body_mass": { "name": "Lean body mass" },
       "metabolic_age": { "name": "Metabolic age" },
       "muscle_mass": { "name": "Muscle mass" },
@@ -116,7 +116,7 @@
             "overweight": "Overweight",
             "severe_obesity": "Severe obesity",
             "slight_overweight": "Slight overweight",
-            "unavailable": "unavailable",
+            "unavailable": "Unavailable",
             "underweight": "Underweight"
           }
         },
@@ -135,7 +135,7 @@
             "skinny": "Skinny",
             "skinny_muscular": "Skinny-muscular",
             "thick_set": "Thick-set",
-            "unavailable": "unavailable"
+            "unavailable": "Unavailable"
           }
         },
         "bone_mass": { "name": "Bone mass" },
@@ -146,8 +146,8 @@
         "gender": {
           "name": "Gender",
           "state": {
-            "female": "female",
-            "male": "male"
+            "female": "Female",
+            "male": "Male"
           }
         },
         "height": { "name": "Height" },
@@ -156,18 +156,18 @@
         "impedance_high": { "name": "Impedance (250 kHz)" },
         "impedance_low": { "name": "Impedance (50 kHz)" },
         "intracellular_water": { "name": "Intracellular water" },
-        "last_measurement_time": { "name": "Last measurement time" },
+        "last_measurement_time": { "name": "Last measurement" },
         "lean_body_mass": { "name": "Lean body mass" },
         "metabolic_age": { "name": "Metabolic age" },
         "muscle_mass": { "name": "Muscle mass" },
         "problem": {
           "name": "Problem",
           "state": {
-            "impedance_high": "Impedance high",
+            "impedance_high": "Impedance too high",
             "impedance_high_high": "Impedance 250 kHz too high",
             "impedance_high_low": "Impedance 250 kHz too low",
             "impedance_high_unavailable": "Impedance 250 kHz unavailable",
-            "impedance_low": "Impedance low",
+            "impedance_low": "Impedance too low",
             "impedance_low_high": "Impedance 50 kHz too high",
             "impedance_low_low": "Impedance 50 kHz too low",
             "impedance_low_unavailable": "Impedance 50 kHz unavailable",
@@ -193,12 +193,12 @@
   },
   "options": {
     "error": {
-      "height_limit": "Height is too high (limit: 220 cm)",
-      "height_low": "Height is too low (min: 50 cm)",
-      "weight_limit": "Weight is too high (limit: 200 kg)",
-      "weight_low": "Weight is too low (min: 10 kg)",
+      "height_limit": "Height is too high (limit: 220 cm).",
+      "height_low": "Height is too low (min: 50 cm).",
+      "weight_limit": "Weight is too high (limit: 200 kg).",
+      "weight_low": "Weight is too low (min: 10 kg).",
       "weight_range_invalid": "Minimum weight must be strictly less than maximum weight.",
-      "weight_range_overlap": "This range overlaps another user's range. Adjust the bounds so they don't share a value (e.g., if the next user starts at 65 kg, your maximum must be at most 64.99 kg)."
+      "weight_range_overlap": "This range overlaps another user's range. Ranges must not share a value — adjust the bounds accordingly."
     },
     "step": {
       "init": {
@@ -206,30 +206,30 @@
           "calculation_mode": "Calculation method",
           "height": "Height (cm)",
           "impedance_mode": "Impedance mode",
-          "profile_method": "Profile identification method"
+          "profile_method": "User identification method"
         },
         "data_description": {
-          "calculation_mode": "Xiaomi: identical to Zepp Life app. Science: WHO / Schofield formulas. Has no effect in S400 dual-frequency mode.",
-          "impedance_mode": "None: scale without impedance. Standard: single-frequency (Xiaomi Gen2). Dual-frequency S400: 50 kHz + 250 kHz sensors.",
-          "profile_method": "How to identify which user steps on the scale. Choose \"None\" if you use dedicated sensors per person."
+          "calculation_mode": "Xiaomi: identical to the Zepp Life app. Scientific: WHO / Schofield formulas. Not available in S400 dual-frequency mode.",
+          "impedance_mode": "None: scale without impedance sensor. Standard: single-frequency (Xiaomi Gen2). Dual-frequency S400: two sensors at 50 kHz and 250 kHz.",
+          "profile_method": "How bodymiscale determines which user to assign a measurement to. Choose \"None\" if you use dedicated sensors per person."
         },
         "title": "Edit operating modes"
       },
       "profile": {
         "data": {
           "notify_device_id": "Mobile device receiving the notification",
-          "notify_weight_max": "Maximum weight (optional)",
-          "notify_weight_min": "Minimum weight (optional)",
-          "profile_id": "Profile ID (1-5)",
-          "weight_max": "Maximum weight (kg, excluded)",
-          "weight_min": "Minimum weight (kg, included)"
+          "notify_weight_max": "Maximum weight to notify (optional)",
+          "notify_weight_min": "Minimum weight to notify (optional)",
+          "profile_id": "Profile ID (1–5)",
+          "weight_max": "Range maximum weight (kg, excluded)",
+          "weight_min": "Range minimum weight (kg, included)"
         },
         "data_description": {
           "notify_device_id": "The phone that will receive an interactive notification after each weighing. Tap your name to confirm the measurement.",
-          "notify_weight_max": "Only notify this user if the measured weight is below this value. Leave empty to always notify.",
-          "notify_weight_min": "Only notify this user if the measured weight is above this value. Leave empty to always notify.",
-          "weight_max": "This value is excluded. Adjacent ranges must not share a bound — if the next user starts at 65 kg, enter at most 64.99 kg here.",
-          "weight_min": "The interval is [min, max): this value is included in your range."
+          "notify_weight_max": "Notify this user only if the measured weight is less than or equal to this value. Leave empty to always notify.",
+          "notify_weight_min": "Notify this user only if the measured weight is greater than or equal to this value. Leave empty to always notify.",
+          "weight_max": "Upper bound, excluded from the range. If the next user starts at 65 kg, enter at most 64.99 kg here.",
+          "weight_min": "Lower bound, included in the range. The measurement is assigned to this user if their weight is ≥ this value."
         },
         "title": "Edit profile"
       },
@@ -238,7 +238,7 @@
           "impedance": "Impedance sensor (single-frequency)",
           "impedance_high": "High-frequency impedance sensor (250 kHz)",
           "impedance_low": "Low-frequency impedance sensor (50 kHz)",
-          "profile_id_sensor": "ID sensor (Scale ID)",
+          "profile_id_sensor": "Profile ID sensor (Scale ID)",
           "weight": "Weight sensor"
         },
         "data_description": {
@@ -266,8 +266,8 @@
     },
     "profile_method": {
       "options": {
-        "none": "None — manual (no filter)",
-        "notification": "Interactive mobile notification",
+        "none": "None — manual assignment",
+        "notification": "Interactive push notification",
         "profile_id": "Profile ID (from scale / Xiaomi Home)",
         "weight_range": "Weight range"
       }

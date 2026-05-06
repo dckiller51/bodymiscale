@@ -1,44 +1,73 @@
 {
   "config": {
+    "abort": {
+      "already_configured": "Profil o tej nazwie jest już skonfigurowany."
+    },
     "error": {
-      "already_configured": "Już skonfigurowane",
-      "height_limit": "Podano za wysoki wzrost (limit: 220 cm)",
-      "height_low": "Wzrost uznano za zbyt niski (min: 50 cm)",
-      "invalid_date": "Błędna data"
+      "height_limit": "Wzrost za wysoki (maksimum: 220 cm).",
+      "height_low": "Wzrost za niski (minimum: 50 cm).",
+      "invalid_date": "Błędna data.",
+      "name_already_used": "Ta nazwa jest już używana przez inny profil. Wybierz inną.",
+      "weight_limit": "Waga za wysoka (maksimum: 200 kg).",
+      "weight_low": "Waga za niska (minimum: 10 kg).",
+      "weight_range_invalid": "Waga minimalna musi być ściśle mniejsza niż waga maksymalna.",
+      "weight_range_overlap": "Ten zakres pokrywa się z zakresem innego użytkownika. Zakresy nie mogą mieć wspólnych wartości — dostosuj granice odpowiednio."
     },
     "step": {
-      "impedance": {
-        "data": {
-          "impedance": "Sensor impedancji (pojedyncza częstotliwość)",
-          "impedance_high": "Sensor impedancji wysokiej częstotliwości (250 kHz)",
-          "impedance_low": "Sensor impedancji niskiej częstotliwości (50 kHz)"
-        },
-        "data_description": {
-          "impedance": "Pojedyncza wartość impedancji dostarczana przez wagę.",
-          "impedance_high": "Impedancja mierzona przy 250 kHz (S400).",
-          "impedance_low": "Impedancja mierzona przy 50 kHz (S400)."
-        },
-        "title": "Sensory impedancji"
-      },
-      "options": {
+      "modes": {
         "data": {
           "calculation_mode": "Metoda obliczeń",
           "height": "Wzrost (cm)",
           "impedance_mode": "Tryb impedancji",
+          "profile_method": "Metoda identyfikacji użytkownika"
+        },
+        "data_description": {
+          "calculation_mode": "Xiaomi: identyczna z aplikacją Zepp Life. Naukowa: formuły WHO / Schofield. Niedostępna w trybie dwuczęstotliwościowym S400.",
+          "impedance_mode": "Brak: waga bez czujnika impedancji. Standard: jedna częstotliwość (Xiaomi Gen2). Dwuczęstotliwościowy S400: dwa sensory przy 50 kHz i 250 kHz.",
+          "profile_method": "Jak bodymiscale określa, któremu użytkownikowi przypisać pomiar. Wybierz \"Brak\", jeśli używasz dedykowanych sensorów dla każdej osoby."
+        },
+        "title": "Tryby pracy"
+      },
+      "profile": {
+        "data": {
+          "notify_device_id": "Urządzenie mobilne otrzymujące powiadomienie",
+          "notify_weight_max": "Maksymalna waga do powiadamiania (opcjonalnie)",
+          "notify_weight_min": "Minimalna waga do powiadamiania (opcjonalnie)",
+          "profile_id": "ID profilu (1–5)",
+          "weight_max": "Maksymalna waga zakresu (kg, wykluczona)",
+          "weight_min": "Minimalna waga zakresu (kg, włączona)"
+        },
+        "data_description": {
+          "notify_device_id": "Telefon, który otrzyma interaktywne powiadomienie po każdym ważeniu. Dotknij swojego imienia, aby potwierdzić pomiar.",
+          "notify_weight_max": "Powiadamiaj tego użytkownika tylko wtedy, gdy zmierzona waga jest mniejsza lub równa tej wartości. Pozostaw puste, aby powiadamiać zawsze.",
+          "notify_weight_min": "Powiadamiaj tego użytkownika tylko wtedy, gdy zmierzona waga jest większa lub równa tej wartości. Pozostaw puste, aby powiadamiać zawsze.",
+          "weight_max": "Górna granica, wykluczona z zakresu. Jeśli następny użytkownik zaczyna od 65 kg, wpisz tutaj co najwyżej 64,99 kg.",
+          "weight_min": "Dolna granica, włączona do zakresu. Pomiar jest przypisywany temu użytkownikowi, jeśli jego waga wynosi ≥ tej wartości."
+        },
+        "title": "Ustawienia profilu"
+      },
+      "sensors": {
+        "data": {
+          "impedance": "Sensor impedancji (pojedyncza częstotliwość)",
+          "impedance_high": "Sensor impedancji wysokiej częstotliwości (250 kHz)",
+          "impedance_low": "Sensor impedancji niskiej częstotliwości (50 kHz)",
+          "profile_id_sensor": "Sensor ID profilu (ID wagi)",
           "weight": "Sensor wagi"
         },
         "data_description": {
-          "calculation_mode": "Xiaomi: identyczna z aplikacją Zepp Life. Naukowa: formuły WHO / Schofield. Nie dotyczy trybu dwuczęstotliwościowego S400.",
-          "impedance_mode": "Brak: waga bez impedancji. Standard: jedna częstotliwość (Xiaomi Gen2). Dual-frequency S400: sensory 50 kHz + 250 kHz."
+          "impedance": "Pojedyncza wartość impedancji dostarczona przez wagę.",
+          "impedance_high": "Impedancja mierzona przy 250 kHz (S400).",
+          "impedance_low": "Impedancja mierzona przy 50 kHz (S400)."
         },
-        "title": "Konfiguracja"
+        "title": "Wybór sensorów"
       },
       "user": {
         "data": {
           "birthday": "Data urodzenia",
           "gender": "Płeć",
           "name": "Imię"
-        }
+        },
+        "title": "Tożsamość użytkownika"
       }
     }
   },
@@ -46,19 +75,22 @@
     "sensor": {
       "basal_metabolism": { "name": "Podstawowa przemiana materii" },
       "bmi": { "name": "BMI" },
-      "body_cell_mass": { "name": "Masa komórek ciała" },
+      "body_cell_mass": { "name": "Masa komórkowa ciała" },
       "body_fat": { "name": "Tkanka tłuszczowa" },
       "body_score": { "name": "Ocena sylwetki" },
       "bone_mass": { "name": "Masa kości" },
       "ecw_tbw_ratio": { "name": "Stosunek ECW/TBW" },
-      "extracellular_water": { "name": "Woda extracellularna" },
-      "intracellular_water": { "name": "Woda intracellularna" },
-      "last_measurement_time": { "name": "Czas ostatniego ważenia" },
+      "extracellular_water": { "name": "Woda zewnątrzkomórkowa" },
+      "impedance": { "name": "Impedancja" },
+      "impedance_high": { "name": "Impedancja (250 kHz)" },
+      "impedance_low": { "name": "Impedancja (50 kHz)" },
+      "intracellular_water": { "name": "Woda wewnątrzkomórkowa" },
+      "last_measurement_time": { "name": "Ostatni pomiar" },
       "lean_body_mass": { "name": "Beztłuszczowa masa ciała" },
       "metabolic_age": { "name": "Wiek metaboliczny" },
       "muscle_mass": { "name": "Masa mięśniowa" },
       "protein": { "name": "Białko" },
-      "skeletal_muscle_mass": { "name": "Masa mięśniowa szkieletowych" },
+      "skeletal_muscle_mass": { "name": "Masa mięśni szkieletowych" },
       "visceral_fat": { "name": "Tłuszcz trzewny" },
       "water": { "name": "Woda w organizmie" },
       "weight": { "name": "Waga" }
@@ -84,11 +116,11 @@
             "overweight": "Nadwaga",
             "severe_obesity": "Otyłość znaczna",
             "slight_overweight": "Lekka nadwaga",
-            "unavailable": "niedostępne",
+            "unavailable": "Niedostępne",
             "underweight": "Niedowaga"
           }
         },
-        "body_cell_mass": { "name": "Masa komórek ciała" },
+        "body_cell_mass": { "name": "Masa komórkowa ciała" },
         "body_fat": { "name": "Tkanka tłuszczowa" },
         "body_score": { "name": "Ocena sylwetki" },
         "body_type": {
@@ -103,19 +135,19 @@
             "skinny": "Szczupła",
             "skinny_muscular": "Szczupła muskularna",
             "thick_set": "Krępa",
-            "unavailable": "niedostępne"
+            "unavailable": "Niedostępne"
           }
         },
         "bone_mass": { "name": "Masa kości" },
         "ecw_tbw_ratio": { "name": "Stosunek ECW/TBW" },
-        "extracellular_water": { "name": "Woda extracellularna" },
+        "extracellular_water": { "name": "Woda zewnątrzkomórkowa" },
         "fat_mass_to_gain": { "name": "Masa tłuszczowa do przybrania" },
         "fat_mass_to_lose": { "name": "Masa tłuszczowa do utraty" },
         "gender": {
           "name": "Płeć",
           "state": {
-            "female": "kobieta",
-            "male": "mężczyzna"
+            "female": "Kobieta",
+            "male": "Mężczyzna"
           }
         },
         "height": { "name": "Wzrost" },
@@ -123,8 +155,8 @@
         "impedance": { "name": "Impedancja" },
         "impedance_high": { "name": "Impedancja (250 kHz)" },
         "impedance_low": { "name": "Impedancja (50 kHz)" },
-        "intracellular_water": { "name": "Woda intracellularna" },
-        "last_measurement_time": { "name": "Czas ostatniego ważenia" },
+        "intracellular_water": { "name": "Woda wewnątrzkomórkowa" },
+        "last_measurement_time": { "name": "Ostatni pomiar" },
         "lean_body_mass": { "name": "Beztłuszczowa masa ciała" },
         "metabolic_age": { "name": "Wiek metaboliczny" },
         "muscle_mass": { "name": "Masa mięśniowa" },
@@ -148,40 +180,73 @@
           }
         },
         "protein": { "name": "Białko" },
-        "skeletal_muscle_mass": { "name": "Masa mięśniowa szkieletowych" },
+        "skeletal_muscle_mass": { "name": "Masa mięśni szkieletowych" },
         "visceral_fat": { "name": "Tłuszcz trzewny" },
         "water": { "name": "Woda" },
         "weight": { "name": "Waga" }
       }
     }
   },
+  "notify": {
+    "weighing_message": "Nowy pomiar: {weight:.1f} kg",
+    "weighing_title": "Bodymiscale — Kto stoi na wadze?"
+  },
   "options": {
+    "error": {
+      "height_limit": "Wzrost za wysoki (maksimum: 220 cm).",
+      "height_low": "Wzrost za niski (minimum: 50 cm).",
+      "weight_limit": "Waga za wysoka (maksimum: 200 kg).",
+      "weight_low": "Waga za niska (minimum: 10 kg).",
+      "weight_range_invalid": "Waga minimalna musi być ściśle mniejsza niż waga maksymalna.",
+      "weight_range_overlap": "Ten zakres pokrywa się z zakresem innego użytkownika. Zakresy nie mogą mieć wspólnych wartości — dostosuj granice odpowiednio."
+    },
     "step": {
-      "impedance": {
-        "data": {
-          "impedance": "Sensor impedancji (pojedyncza częstotliwość)",
-          "impedance_high": "Sensor impedancji wysokiej częstotliwości (250 kHz)",
-          "impedance_low": "Sensor impedancji niskiej częstotliwości (50 kHz)"
-        },
-        "data_description": {
-          "impedance": "Pojedyncza wartość impedancji twojej wagi.",
-          "impedance_high": "Impedancja mierzona przy 250 kHz (S400).",
-          "impedance_low": "Impedancja mierzona przy 50 kHz (S400)."
-        },
-        "title": "Sensory impedancji"
-      },
       "init": {
         "data": {
           "calculation_mode": "Metoda obliczeń",
           "height": "Wzrost (cm)",
           "impedance_mode": "Tryb impedancji",
+          "profile_method": "Metoda identyfikacji użytkownika"
+        },
+        "data_description": {
+          "calculation_mode": "Xiaomi: identyczna z aplikacją Zepp Life. Naukowa: formuły WHO / Schofield. Niedostępna w trybie dwuczęstotliwościowym S400.",
+          "impedance_mode": "Brak: waga bez czujnika impedancji. Standard: jedna częstotliwość (Xiaomi Gen2). Dwuczęstotliwościowy S400: dwa sensory przy 50 kHz i 250 kHz.",
+          "profile_method": "Jak bodymiscale określa, któremu użytkownikowi przypisać pomiar. Wybierz \"Brak\", jeśli używasz dedykowanych sensorów dla każdej osoby."
+        },
+        "title": "Edytuj tryby pracy"
+      },
+      "profile": {
+        "data": {
+          "notify_device_id": "Urządzenie mobilne otrzymujące powiadomienie",
+          "notify_weight_max": "Maksymalna waga do powiadamiania (opcjonalnie)",
+          "notify_weight_min": "Minimalna waga do powiadamiania (opcjonalnie)",
+          "profile_id": "ID profilu (1–5)",
+          "weight_max": "Maksymalna waga zakresu (kg, wykluczona)",
+          "weight_min": "Minimalna waga zakresu (kg, włączona)"
+        },
+        "data_description": {
+          "notify_device_id": "Telefon, który otrzyma interaktywne powiadomienie po każdym ważeniu. Dotknij swojego imienia, aby potwierdzić pomiar.",
+          "notify_weight_max": "Powiadamiaj tego użytkownika tylko wtedy, gdy zmierzona waga jest mniejsza lub równa tej wartości. Pozostaw puste, aby powiadamiać zawsze.",
+          "notify_weight_min": "Powiadamiaj tego użytkownika tylko wtedy, gdy zmierzona waga jest większa lub równa tej wartości. Pozostaw puste, aby powiadamiać zawsze.",
+          "weight_max": "Górna granica, wykluczona z zakresu. Jeśli następny użytkownik zaczyna od 65 kg, wpisz tutaj co najwyżej 64,99 kg.",
+          "weight_min": "Dolna granica, włączona do zakresu. Pomiar jest przypisywany temu użytkownikowi, jeśli jego waga wynosi ≥ tej wartości."
+        },
+        "title": "Edytuj profil"
+      },
+      "sensors": {
+        "data": {
+          "impedance": "Sensor impedancji (pojedyncza częstotliwość)",
+          "impedance_high": "Sensor impedancji wysokiej częstotliwości (250 kHz)",
+          "impedance_low": "Sensor impedancji niskiej częstotliwości (50 kHz)",
+          "profile_id_sensor": "Sensor ID profilu (ID wagi)",
           "weight": "Sensor wagi"
         },
         "data_description": {
-          "calculation_mode": "Xiaomi: identyczna z aplikacją Zepp Life. Naukowa: formuły WHO / Schofield. Nie dotyczy trybu dwuczęstotliwościowego S400.",
-          "impedance_mode": "Brak: waga bez impedancji. Standard: jedna częstotliwość (Xiaomi Gen2). Dual-frequency S400: sensory 50 kHz + 250 kHz."
+          "impedance": "Pojedyncza wartość impedancji dostarczona przez wagę.",
+          "impedance_high": "Impedancja mierzona przy 250 kHz (S400).",
+          "impedance_low": "Impedancja mierzona przy 50 kHz (S400)."
         },
-        "title": "Konfiguracja"
+        "title": "Edytuj sensory"
       }
     }
   },
@@ -194,9 +259,17 @@
     },
     "impedance_mode": {
       "options": {
-        "dual_frequency": "Dual-frequency S400 (50 kHz + 250 kHz)",
+        "dual_frequency": "Dwuczęstotliwościowy S400 (50 kHz + 250 kHz)",
         "none": "Brak impedancji",
-        "standard": "Pojedyncza częstotliwość (Xiaomi Gen2, Mi Body Scale 2…)"
+        "standard": "Jednotczęstotliwościowy (Xiaomi Gen2, Mi Body Scale 2…)"
+      }
+    },
+    "profile_method": {
+      "options": {
+        "none": "Brak — ręczne przypisanie",
+        "notification": "Interaktywne powiadomienie push",
+        "profile_id": "ID profilu (z wagi / Xiaomi Home)",
+        "weight_range": "Zakres wagowy"
       }
     }
   },
