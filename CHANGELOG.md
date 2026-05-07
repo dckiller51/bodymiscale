@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 
 - New `profile.py` — complete profile management architecture:
   - `NotificationCoordinator`: central coordinator for sending interactive push notifications to mobile devices
+  - Notification translations loaded dynamically based on HA server language (`_get_notify_translations`)
   - Added optional weight pre-filter for notification profiles (`notify_weight_min` / `notify_weight_max`) — when configured, a notification is only sent to a user if the measured weight falls within their range, allowing up to 5+ users to share the same scale without exceeding the 3-action limit on mobile notifications
   - `ProfileFilter` (ABC) + implementations `NoFilterProfile`, `WeightRangeFilter`, `ProfileIdFilter`: automatic profile selection based on measured weight, a sensor identifier, or no filter
   - `build_profile_filter()`: factory that instantiates the correct filter based on configuration
@@ -94,7 +95,7 @@ All notable changes to this project will be documented in this file.
 - Possibly fixed [[#117](https://github.com/dckiller51/bodymiscale/issues/117)] — the new `_MetricsStore` with differentiated TTL ensures derived metrics are recalculated even when source values are unchanged
 - Fixed [[#37](https://github.com/dckiller51/bodymiscale/issues/37)] — automatic state restoration via `RestoreSensor` ensures all metrics persist across restarts and reloads
 - YAML → UI migration: `birthday`, `height` and impedance sensors correctly preserved when migrating from an old YAML config to UI configuration
-- Notification translations loaded dynamically based on HA server language (`_get_notify_translations`)
+- Fixed metric dependency graph being shared across all profile instances — `depended_by` was mutated on global `_METRIC_DEPS` objects, causing each metric recalculation to fire N times (where N = number of configured users). Each `BodyScaleMetricsHandler` now owns an isolated copy of the dependency graph.
 
 ---
 

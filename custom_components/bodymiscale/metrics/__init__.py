@@ -310,9 +310,15 @@ class BodyScaleMetricsHandler:
         ] = {}
 
         # Build the dependency graph
-        self._dependencies: dict[Metric, MetricInfo] = {}
-        for key, value in _METRIC_DEPS.items():
-            self._dependencies[key] = value
+        self._dependencies: dict[Metric, MetricInfo] = {
+            key: MetricInfo(
+                depends_on=list(value.depends_on),
+                calculate=value.calculate,
+                decimals=value.decimals,
+            )
+            for key, value in _METRIC_DEPS.items()
+        }
+        for key, value in self._dependencies.items():
             for dep in value.depends_on:
                 self._dependencies[dep].depended_by.append(key)
 
