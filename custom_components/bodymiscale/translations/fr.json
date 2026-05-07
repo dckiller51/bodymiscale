@@ -172,7 +172,7 @@
             "impedance_low_low": "Impédance 50 kHz trop faible",
             "impedance_low_unavailable": "Impédance 50 kHz indisponible",
             "impedance_unavailable": "Impédance indisponible",
-            "none": "Aucune",
+            "none": "Aucun",
             "weight_high": "Poids trop élevé",
             "weight_invalid_format": "Format de poids invalide",
             "weight_low": "Poids trop faible",

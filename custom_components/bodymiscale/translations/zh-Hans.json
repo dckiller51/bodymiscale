@@ -1,44 +1,73 @@
 {
   "config": {
+    "abort": {
+      "already_configured": "已存在同名配置文件。"
+    },
     "error": {
-      "already_configured": "已配置",
-      "height_limit": "身高过高（限制：220 厘米）",
-      "height_low": "身高过低（最低：50 厘米）",
-      "invalid_date": "日期无效"
+      "height_limit": "身高过高（最大：220 厘米）。",
+      "height_low": "身高过低（最小：50 厘米）。",
+      "invalid_date": "日期无效。",
+      "name_already_used": "此名称已被另一个配置文件使用，请选择其他名称。",
+      "weight_limit": "体重过高（最大：200 千克）。",
+      "weight_low": "体重过低（最小：10 千克）。",
+      "weight_range_invalid": "最小体重必须严格小于最大体重。",
+      "weight_range_overlap": "此区间与另一用户的区间重叠。各区间不得共享任何值 — 请相应调整边界。"
     },
     "step": {
-      "impedance": {
-        "data": {
-          "impedance": "阻抗传感器（单频）",
-          "impedance_high": "高频阻抗传感器 (250 kHz)",
-          "impedance_low": "低频阻抗传感器 (50 kHz)"
-        },
-        "data_description": {
-          "impedance": "您的体脂秤提供的单频率阻抗值。",
-          "impedance_high": "S400 型号测得的 250 kHz 高频阻抗值。",
-          "impedance_low": "S400 型号测得的 50 kHz 低频阻抗值。"
-        },
-        "title": "阻抗传感器设置"
-      },
-      "options": {
+      "modes": {
         "data": {
           "calculation_mode": "计算方法",
-          "height": "身高 (cm)",
+          "height": "身高（cm）",
           "impedance_mode": "阻抗模式",
+          "profile_method": "用户识别方法"
+        },
+        "data_description": {
+          "calculation_mode": "小米：与 Zepp Life 算法一致。科学：基于 WHO / Schofield 公式。S400 双频模式下不可用。",
+          "impedance_mode": "无：秤不带阻抗传感器。标准：单频（小米二代秤）。双频 S400：两个传感器，分别为 50 kHz 和 250 kHz。",
+          "profile_method": "bodymiscale 如何确定将测量结果分配给哪位用户。若每人使用独立传感器，请选择「无」。"
+        },
+        "title": "工作模式"
+      },
+      "profile": {
+        "data": {
+          "notify_device_id": "接收通知的移动设备",
+          "notify_weight_max": "通知上限体重（可选）",
+          "notify_weight_min": "通知下限体重（可选）",
+          "profile_id": "配置文件 ID（1–5）",
+          "weight_max": "区间最大体重（千克，不含）",
+          "weight_min": "区间最小体重（千克，含）"
+        },
+        "data_description": {
+          "notify_device_id": "每次称重后将收到互动通知的手机。点击您的名字以确认测量结果。",
+          "notify_weight_max": "仅当测量体重小于或等于此值时通知该用户。留空则始终通知。",
+          "notify_weight_min": "仅当测量体重大于或等于此值时通知该用户。留空则始终通知。",
+          "weight_max": "区间上限（不含）。若下一用户从 65 kg 开始，此处最多输入 64.99 kg。",
+          "weight_min": "区间下限（含）。若用户体重 ≥ 此值，则将测量结果分配给该用户。"
+        },
+        "title": "配置文件设置"
+      },
+      "sensors": {
+        "data": {
+          "impedance": "阻抗传感器（单频）",
+          "impedance_high": "高频阻抗传感器（250 kHz）",
+          "impedance_low": "低频阻抗传感器（50 kHz）",
+          "profile_id_sensor": "配置文件 ID 传感器（秤 ID）",
           "weight": "体重传感器"
         },
         "data_description": {
-          "calculation_mode": "小米：与 Zepp Life 算法一致。科学：基于 WHO / Schofield 公式。对 S400 双频模式无效。",
-          "impedance_mode": "无：秤不带阻抗测量。标准：单频（小米二代秤）。双频 S400：支持 50 kHz + 250 kHz 双频传感器。"
+          "impedance": "您的体脂秤提供的单频阻抗值。",
+          "impedance_high": "S400 型号测得的 250 kHz 高频阻抗值。",
+          "impedance_low": "S400 型号测得的 50 kHz 低频阻抗值。"
         },
-        "title": "配置选项"
+        "title": "传感器选择"
       },
       "user": {
         "data": {
           "birthday": "出生日期",
           "gender": "性别",
           "name": "姓名"
-        }
+        },
+        "title": "用户信息"
       }
     }
   },
@@ -51,9 +80,12 @@
       "body_score": { "name": "身体评分" },
       "bone_mass": { "name": "骨量" },
       "ecw_tbw_ratio": { "name": "ECW/TBW 比率" },
-      "extracellular_water": { "name": "细胞外水" },
-      "intracellular_water": { "name": "细胞内水" },
-      "last_measurement_time": { "name": "上次称重时间" },
+      "extracellular_water": { "name": "细胞外水分" },
+      "impedance": { "name": "阻抗" },
+      "impedance_high": { "name": "高频阻抗（250 kHz）" },
+      "impedance_low": { "name": "低频阻抗（50 kHz）" },
+      "intracellular_water": { "name": "细胞内水分" },
+      "last_measurement_time": { "name": "最近称重时间" },
       "lean_body_mass": { "name": "瘦体重" },
       "metabolic_age": { "name": "身体年龄" },
       "muscle_mass": { "name": "肌肉量" },
@@ -108,7 +140,7 @@
         },
         "bone_mass": { "name": "骨量" },
         "ecw_tbw_ratio": { "name": "ECW/TBW 比率" },
-        "extracellular_water": { "name": "细胞外水" },
+        "extracellular_water": { "name": "细胞外水分" },
         "fat_mass_to_gain": { "name": "需增加脂肪量" },
         "fat_mass_to_lose": { "name": "需减少脂肪量" },
         "gender": {
@@ -121,10 +153,10 @@
         "height": { "name": "身高" },
         "ideal": { "name": "理想体重" },
         "impedance": { "name": "阻抗" },
-        "impedance_high": { "name": "高频阻抗 (250 kHz)" },
-        "impedance_low": { "name": "低频阻抗 (50 kHz)" },
-        "intracellular_water": { "name": "细胞内水" },
-        "last_measurement_time": { "name": "上次称重时间" },
+        "impedance_high": { "name": "高频阻抗（250 kHz）" },
+        "impedance_low": { "name": "低频阻抗（50 kHz）" },
+        "intracellular_water": { "name": "细胞内水分" },
+        "last_measurement_time": { "name": "最近称重时间" },
         "lean_body_mass": { "name": "瘦体重" },
         "metabolic_age": { "name": "身体年龄" },
         "muscle_mass": { "name": "肌肉量" },
@@ -155,48 +187,89 @@
       }
     }
   },
+  "notify": {
+    "weighing_message": "新测量：{weight:.1f} 千克",
+    "weighing_title": "Bodymiscale — 谁在秤上？"
+  },
   "options": {
+    "error": {
+      "height_limit": "身高过高（最大：220 厘米）。",
+      "height_low": "身高过低（最小：50 厘米）。",
+      "weight_limit": "体重过高（最大：200 千克）。",
+      "weight_low": "体重过低（最小：10 千克）。",
+      "weight_range_invalid": "最小体重必须严格小于最大体重。",
+      "weight_range_overlap": "此区间与另一用户的区间重叠。各区间不得共享任何值 — 请相应调整边界。"
+    },
     "step": {
-      "impedance": {
-        "data": {
-          "impedance": "阻抗传感器（单频）",
-          "impedance_high": "高频阻抗传感器 (250 kHz)",
-          "impedance_low": "低频阻抗传感器 (50 kHz)"
-        },
-        "data_description": {
-          "impedance": "来自体脂秤的阻抗值。",
-          "impedance_high": "高频测量值 (S400)。",
-          "impedance_low": "低频测量值 (S400)。"
-        },
-        "title": "阻抗传感器设置"
-      },
       "init": {
         "data": {
           "calculation_mode": "计算方法",
-          "height": "身高 (cm)",
+          "height": "身高（cm）",
           "impedance_mode": "阻抗模式",
+          "profile_method": "用户识别方法"
+        },
+        "data_description": {
+          "calculation_mode": "小米：与 Zepp Life 算法一致。科学：基于 WHO / Schofield 公式。S400 双频模式下不可用。",
+          "impedance_mode": "无：秤不带阻抗传感器。标准：单频（小米二代秤）。双频 S400：两个传感器，分别为 50 kHz 和 250 kHz。",
+          "profile_method": "bodymiscale 如何确定将测量结果分配给哪位用户。若每人使用独立传感器，请选择「无」。"
+        },
+        "title": "编辑工作模式"
+      },
+      "profile": {
+        "data": {
+          "notify_device_id": "接收通知的移动设备",
+          "notify_weight_max": "通知上限体重（可选）",
+          "notify_weight_min": "通知下限体重（可选）",
+          "profile_id": "配置文件 ID（1–5）",
+          "weight_max": "区间最大体重（千克，不含）",
+          "weight_min": "区间最小体重（千克，含）"
+        },
+        "data_description": {
+          "notify_device_id": "每次称重后将收到互动通知的手机。点击您的名字以确认测量结果。",
+          "notify_weight_max": "仅当测量体重小于或等于此值时通知该用户。留空则始终通知。",
+          "notify_weight_min": "仅当测量体重大于或等于此值时通知该用户。留空则始终通知。",
+          "weight_max": "区间上限（不含）。若下一用户从 65 kg 开始，此处最多输入 64.99 kg。",
+          "weight_min": "区间下限（含）。若用户体重 ≥ 此值，则将测量结果分配给该用户。"
+        },
+        "title": "编辑配置文件"
+      },
+      "sensors": {
+        "data": {
+          "impedance": "阻抗传感器（单频）",
+          "impedance_high": "高频阻抗传感器（250 kHz）",
+          "impedance_low": "低频阻抗传感器（50 kHz）",
+          "profile_id_sensor": "配置文件 ID 传感器（秤 ID）",
           "weight": "体重传感器"
         },
         "data_description": {
-          "calculation_mode": "小米：与 Zepp Life 算法一致。科学：基于 WHO / Schofield 公式。对 S400 双频模式无效。",
-          "impedance_mode": "无：秤不带阻抗测量。标准：单频（小米二代秤）。双频 S400：支持 50 kHz + 250 kHz 双频传感器。"
+          "impedance": "您的体脂秤提供的单频阻抗值。",
+          "impedance_high": "S400 型号测得的 250 kHz 高频阻抗值。",
+          "impedance_low": "S400 型号测得的 50 kHz 低频阻抗值。"
         },
-        "title": "配置选项"
+        "title": "编辑传感器"
       }
     }
   },
   "selector": {
     "calculation_mode": {
       "options": {
-        "science": "科学算法 (WHO / Schofield)",
-        "xiaomi": "小米算法 (Legacy 2017 / Zepp Life)"
+        "science": "科学算法（WHO / Schofield）",
+        "xiaomi": "小米算法（Legacy 2017）"
       }
     },
     "impedance_mode": {
       "options": {
-        "dual_frequency": "双频模式 S400 (50 kHz + 250 kHz)",
+        "dual_frequency": "双频模式 S400（50 kHz + 250 kHz）",
         "none": "无阻抗测量",
-        "standard": "单频模式 (小米二代秤等)"
+        "standard": "单频模式（小米二代秤等）"
+      }
+    },
+    "profile_method": {
+      "options": {
+        "none": "无 — 手动分配",
+        "notification": "互动推送通知",
+        "profile_id": "配置文件 ID（来自秤 / 小米Home）",
+        "weight_range": "体重区间"
       }
     }
   },
