@@ -1,6 +1,6 @@
 """Models module."""
 
-from enum import Enum
+from enum import StrEnum
 
 from .const import (
     ATTR_AGE,
@@ -14,6 +14,7 @@ from .const import (
     ATTR_EXTRACELLULAR_WATER,
     ATTR_FAT,
     ATTR_INTRACELLULAR_WATER,
+    ATTR_LAST_MEASUREMENT_TIME,
     ATTR_LBM,
     ATTR_METABOLIC,
     ATTR_MUSCLE,
@@ -24,19 +25,18 @@ from .const import (
     CONF_SENSOR_IMPEDANCE,
     CONF_SENSOR_IMPEDANCE_HIGH,
     CONF_SENSOR_IMPEDANCE_LOW,
-    CONF_SENSOR_LAST_MEASUREMENT_TIME,
     CONF_SENSOR_WEIGHT,
 )
 
 
-class Gender(str, Enum):
+class Gender(StrEnum):
     """Gender enum."""
 
     MALE = "male"
     FEMALE = "female"
 
 
-class Metric(str, Enum):
+class Metric(StrEnum):
     """Metric enum."""
 
     STATUS = "status"
@@ -48,7 +48,7 @@ class Metric(str, Enum):
     IMPEDANCE_LOW = CONF_SENSOR_IMPEDANCE_LOW
     IMPEDANCE_HIGH = CONF_SENSOR_IMPEDANCE_HIGH
 
-    LAST_MEASUREMENT_TIME = CONF_SENSOR_LAST_MEASUREMENT_TIME
+    LAST_MEASUREMENT_TIME = ATTR_LAST_MEASUREMENT_TIME
 
     # calculated metrics
     BMI = ATTR_BMI

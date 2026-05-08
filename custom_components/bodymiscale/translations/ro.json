@@ -1,46 +1,77 @@
 {
+  "common": {
+    "weighing_message": "Nouă măsurătoare: {weight:.1f} kg",
+    "weighing_title": "Bodymiscale — Cine este pe cântar?"
+  },
   "config": {
+    "abort": {
+      "already_configured": "Un profil cu acest nume este deja configurat."
+    },
     "error": {
-      "already_configured": "Deja configurat",
-      "height_limit": "Înălțimea este prea mare (limita: 220 cm)",
-      "height_low": "Înălțimea este prea mică (min: 50 cm)",
-      "invalid_date": "Dată invalidă"
+      "height_limit": "Înălțime prea mare (maximum: 220 cm).",
+      "height_low": "Înălțime prea mică (minimum: 50 cm).",
+      "invalid_date": "Dată invalidă.",
+      "name_already_used": "Acest nume este deja folosit de un alt profil. Alegeți un altul.",
+      "weight_limit": "Greutate prea mare (maximum: 200 kg).",
+      "weight_low": "Greutate prea mică (minimum: 10 kg).",
+      "weight_range_invalid": "Greutatea minimă trebuie să fie strict mai mică decât greutatea maximă.",
+      "weight_range_overlap": "Acest interval se suprapune cu cel al unui alt utilizator. Intervalele nu trebuie să partajeze nicio valoare — ajustați limitele în consecință."
     },
     "step": {
-      "impedance": {
-        "data": {
-          "impedance": "Senzor impedanță (frecvență unică)",
-          "impedance_high": "Senzor impedanță înaltă frecvență (250 kHz)",
-          "impedance_low": "Senzor impedanță joasă frecvență (50 kHz)"
-        },
-        "data_description": {
-          "impedance": "Valoarea unică de impedanță furnizată de cântar.",
-          "impedance_high": "Impedanța măsurată la 250 kHz (S400).",
-          "impedance_low": "Impedanța măsurată la 50 kHz (S400)."
-        },
-        "title": "Senzori impedanță"
-      },
-      "options": {
+      "modes": {
         "data": {
           "calculation_mode": "Metodă de calcul",
           "height": "Înălțime (cm)",
           "impedance_mode": "Mod impedanță",
-          "last_measurement_time": "Senzor ultima oră de cântărire",
+          "profile_method": "Metodă de identificare a utilizatorului"
+        },
+        "data_description": {
+          "calculation_mode": "Xiaomi: identic cu aplicația Zepp Life. Științific: formule OMS / Schofield. Nu este disponibil în modul S400 cu dublă frecvență.",
+          "impedance_mode": "Niciunul: cântar fără senzor de impedanță. Standard: frecvență unică (Xiaomi Gen2). Dublă frecvență S400: doi senzori la 50 kHz și 250 kHz.",
+          "profile_method": "Cum determină bodymiscale căruia utilizator să îi atribuie o măsurătoare. Alegeți \"Niciunul\" dacă folosiți senzori dedicați per persoană."
+        },
+        "title": "Moduri de funcționare"
+      },
+      "profile": {
+        "data": {
+          "notify_device_id": "Dispozitiv mobil care primește notificarea",
+          "notify_weight_max": "Greutate maximă pentru notificare (opțional)",
+          "notify_weight_min": "Greutate minimă pentru notificare (opțional)",
+          "profile_id": "ID profil (1–5)",
+          "weight_max": "Greutatea maximă a intervalului (kg, exclusă)",
+          "weight_min": "Greutatea minimă a intervalului (kg, inclusă)"
+        },
+        "data_description": {
+          "notify_device_id": "Telefonul care va primi o notificare interactivă după fiecare cântărire. Apăsați pe numele dumneavoastră pentru a confirma măsurătoarea.",
+          "notify_weight_max": "Notificați acest utilizator doar dacă greutatea măsurată este mai mică sau egală cu această valoare. Lăsați gol pentru a notifica întotdeauna.",
+          "notify_weight_min": "Notificați acest utilizator doar dacă greutatea măsurată este mai mare sau egală cu această valoare. Lăsați gol pentru a notifica întotdeauna.",
+          "weight_max": "Limita superioară, exclusă din interval. Dacă următorul utilizator începe de la 65 kg, introduceți cel mult 64,99 kg aici.",
+          "weight_min": "Limita inferioară, inclusă în interval. Măsurătoarea este atribuită acestui utilizator dacă greutatea sa este ≥ această valoare."
+        },
+        "title": "Setările profilului"
+      },
+      "sensors": {
+        "data": {
+          "impedance": "Senzor impedanță (frecvență unică)",
+          "impedance_high": "Senzor impedanță înaltă frecvență (250 kHz)",
+          "impedance_low": "Senzor impedanță joasă frecvență (50 kHz)",
+          "profile_id_sensor": "Senzor ID profil (ID cântar)",
           "weight": "Senzor greutate"
         },
         "data_description": {
-          "calculation_mode": "Xiaomi: identic cu aplicația Zepp Life. Științific: formule OMS / Schofield. Nu are efect în modul S400 cu dublă frecvență.",
-          "impedance_mode": "Niciunul: fără impedanță. Standard: frecvență unică (Xiaomi Gen2). Dual-frequency S400: senzori 50 kHz + 250 kHz.",
-          "last_measurement_time": "Opțional. Lăsați gol dacă nu aveți acest senzor."
+          "impedance": "Valoarea unică de impedanță furnizată de cântarul dumneavoastră.",
+          "impedance_high": "Impedanța măsurată la 250 kHz (S400).",
+          "impedance_low": "Impedanța măsurată la 50 kHz (S400)."
         },
-        "title": "Configurare"
+        "title": "Selecție senzori"
       },
       "user": {
         "data": {
           "birthday": "Dată naștere",
           "gender": "Gen",
           "name": "Nume"
-        }
+        },
+        "title": "Identitatea utilizatorului"
       }
     }
   },
@@ -48,21 +79,24 @@
     "sensor": {
       "basal_metabolism": { "name": "Metabolism bazal" },
       "bmi": { "name": "IMC" },
-      "body_cell_mass": { "name": "Masă celulară" },
+      "body_cell_mass": { "name": "Masă celulară corporală" },
       "body_fat": { "name": "Grăsime corporală" },
       "body_score": { "name": "Scor corporal" },
       "bone_mass": { "name": "Masă osoasă" },
-      "ecw_tbw_ratio": { "name": "Rație ECW/TBW" },
+      "ecw_tbw_ratio": { "name": "Raport ECW/TBW" },
       "extracellular_water": { "name": "Apă extracelulară" },
+      "impedance": { "name": "Impedanță" },
+      "impedance_high": { "name": "Impedanță (250 kHz)" },
+      "impedance_low": { "name": "Impedanță (50 kHz)" },
       "intracellular_water": { "name": "Apă intracelulară" },
-      "last_measurement_time": { "name": "Ultima oră de cântărire" },
+      "last_measurement_time": { "name": "Ultima măsurătoare" },
       "lean_body_mass": { "name": "Masă corporală slabă" },
       "metabolic_age": { "name": "Vârstă metabolică" },
       "muscle_mass": { "name": "Masă musculară" },
       "protein": { "name": "Proteine" },
       "skeletal_muscle_mass": { "name": "Masă musculară scheletică" },
       "visceral_fat": { "name": "Grăsime viscerală" },
-      "water": { "name": "Apă corporală" },
+      "water": { "name": "Apă" },
       "weight": { "name": "Greutate" }
     }
   },
@@ -86,11 +120,11 @@
             "overweight": "Supraponderal",
             "severe_obesity": "Obezitate severă",
             "slight_overweight": "Ușor supraponderal",
-            "unavailable": "indisponibil",
+            "unavailable": "Indisponibil",
             "underweight": "Subponderal"
           }
         },
-        "body_cell_mass": { "name": "Masă celulară" },
+        "body_cell_mass": { "name": "Masă celulară corporală" },
         "body_fat": { "name": "Grăsime corporală" },
         "body_score": { "name": "Scor corporal" },
         "body_type": {
@@ -105,19 +139,19 @@
             "skinny": "Slab",
             "skinny_muscular": "Slab muscular",
             "thick_set": "Robust",
-            "unavailable": "indisponibil"
+            "unavailable": "Indisponibil"
           }
         },
         "bone_mass": { "name": "Masă osoasă" },
-        "ecw_tbw_ratio": { "name": "Rație ECW/TBW" },
+        "ecw_tbw_ratio": { "name": "Raport ECW/TBW" },
         "extracellular_water": { "name": "Apă extracelulară" },
         "fat_mass_to_gain": { "name": "Masă grasă de acumulat" },
         "fat_mass_to_lose": { "name": "Masă grasă de pierdut" },
         "gender": {
           "name": "Gen",
           "state": {
-            "female": "feminin",
-            "male": "masculin"
+            "female": "Feminin",
+            "male": "Masculin"
           }
         },
         "height": { "name": "Înălțime" },
@@ -126,7 +160,7 @@
         "impedance_high": { "name": "Impedanță (250 kHz)" },
         "impedance_low": { "name": "Impedanță (50 kHz)" },
         "intracellular_water": { "name": "Apă intracelulară" },
-        "last_measurement_time": { "name": "Ultima oră de cântărire" },
+        "last_measurement_time": { "name": "Ultima măsurătoare" },
         "lean_body_mass": { "name": "Masă corporală slabă" },
         "metabolic_age": { "name": "Vârstă metabolică" },
         "muscle_mass": { "name": "Masă musculară" },
@@ -158,34 +192,61 @@
     }
   },
   "options": {
+    "error": {
+      "height_limit": "Înălțime prea mare (maximum: 220 cm).",
+      "height_low": "Înălțime prea mică (minimum: 50 cm).",
+      "weight_limit": "Greutate prea mare (maximum: 200 kg).",
+      "weight_low": "Greutate prea mică (minimum: 10 kg).",
+      "weight_range_invalid": "Greutatea minimă trebuie să fie strict mai mică decât greutatea maximă.",
+      "weight_range_overlap": "Acest interval se suprapune cu cel al unui alt utilizator. Intervalele nu trebuie să partajeze nicio valoare — ajustați limitele în consecință."
+    },
     "step": {
-      "impedance": {
-        "data": {
-          "impedance": "Senzor impedanță (frecvență unică)",
-          "impedance_high": "Senzor impedanță înaltă frecvență (250 kHz)",
-          "impedance_low": "Senzor impedanță joasă frecvență (50 kHz)"
-        },
-        "data_description": {
-          "impedance": "Valoarea impedanței cântarului.",
-          "impedance_high": "Impedanța măsurată la 250 kHz (S400).",
-          "impedance_low": "Impedanța măsurată la 50 kHz (S400)."
-        },
-        "title": "Senzori impedanță"
-      },
       "init": {
         "data": {
           "calculation_mode": "Metodă de calcul",
           "height": "Înălțime (cm)",
           "impedance_mode": "Mod impedanță",
-          "last_measurement_time": "Senzor ultima oră de cântărire",
+          "profile_method": "Metodă de identificare a utilizatorului"
+        },
+        "data_description": {
+          "calculation_mode": "Xiaomi: identic cu aplicația Zepp Life. Științific: formule OMS / Schofield. Nu este disponibil în modul S400 cu dublă frecvență.",
+          "impedance_mode": "Niciunul: cântar fără senzor de impedanță. Standard: frecvență unică (Xiaomi Gen2). Dublă frecvență S400: doi senzori la 50 kHz și 250 kHz.",
+          "profile_method": "Cum determină bodymiscale căruia utilizator să îi atribuie o măsurătoare. Alegeți \"Niciunul\" dacă folosiți senzori dedicați per persoană."
+        },
+        "title": "Editare moduri de funcționare"
+      },
+      "profile": {
+        "data": {
+          "notify_device_id": "Dispozitiv mobil care primește notificarea",
+          "notify_weight_max": "Greutate maximă pentru notificare (opțional)",
+          "notify_weight_min": "Greutate minimă pentru notificare (opțional)",
+          "profile_id": "ID profil (1–5)",
+          "weight_max": "Greutatea maximă a intervalului (kg, exclusă)",
+          "weight_min": "Greutatea minimă a intervalului (kg, inclusă)"
+        },
+        "data_description": {
+          "notify_device_id": "Telefonul care va primi o notificare interactivă după fiecare cântărire. Apăsați pe numele dumneavoastră pentru a confirma măsurătoarea.",
+          "notify_weight_max": "Notificați acest utilizator doar dacă greutatea măsurată este mai mică sau egală cu această valoare. Lăsați gol pentru a notifica întotdeauna.",
+          "notify_weight_min": "Notificați acest utilizator doar dacă greutatea măsurată este mai mare sau egală cu această valoare. Lăsați gol pentru a notifica întotdeauna.",
+          "weight_max": "Limita superioară, exclusă din interval. Dacă următorul utilizator începe de la 65 kg, introduceți cel mult 64,99 kg aici.",
+          "weight_min": "Limita inferioară, inclusă în interval. Măsurătoarea este atribuită acestui utilizator dacă greutatea sa este ≥ această valoare."
+        },
+        "title": "Editare profil"
+      },
+      "sensors": {
+        "data": {
+          "impedance": "Senzor impedanță (frecvență unică)",
+          "impedance_high": "Senzor impedanță înaltă frecvență (250 kHz)",
+          "impedance_low": "Senzor impedanță joasă frecvență (50 kHz)",
+          "profile_id_sensor": "Senzor ID profil (ID cântar)",
           "weight": "Senzor greutate"
         },
         "data_description": {
-          "calculation_mode": "Xiaomi: identic cu aplicația Zepp Life. Științific: formule OMS / Schofield. Nu are efect în modul S400 cu dublă frecvență.",
-          "impedance_mode": "Niciunul: fără impedanță. Standard: frecvență unică (Xiaomi Gen2). Dual-frequency S400: senzori 50 kHz + 250 kHz.",
-          "last_measurement_time": "Opțional. Lăsați gol dacă nu aveți acest senzor."
+          "impedance": "Valoarea unică de impedanță furnizată de cântarul dumneavoastră.",
+          "impedance_high": "Impedanța măsurată la 250 kHz (S400).",
+          "impedance_low": "Impedanța măsurată la 50 kHz (S400)."
         },
-        "title": "Configurare"
+        "title": "Editare senzori"
       }
     }
   },
@@ -198,9 +259,17 @@
     },
     "impedance_mode": {
       "options": {
-        "dual_frequency": "Dual-frequency S400 (50 kHz + 250 kHz)",
+        "dual_frequency": "Dublă frecvență S400 (50 kHz + 250 kHz)",
         "none": "Fără impedanță",
         "standard": "Frecvență unică (Xiaomi Gen2, Mi Body Scale 2…)"
+      }
+    },
+    "profile_method": {
+      "options": {
+        "none": "Niciunul — atribuire manuală",
+        "notification": "Notificare push interactivă",
+        "profile_id": "ID profil (de la cântar / Xiaomi Home)",
+        "weight_range": "Interval de greutate"
       }
     }
   },

@@ -134,10 +134,7 @@ def get_lbm(
     w = to_float(metrics.get(Metric.WEIGHT))
     a = to_float(metrics.get(Metric.AGE))
 
-    if _is_dual(config):
-        z = _get_z_lf(metrics)
-    else:
-        z = _get_z_std(metrics)
+    z = _get_z_lf(metrics) if _is_dual(config) else _get_z_std(metrics)
 
     if h <= 0 or w <= 0 or z <= 0:
         return 0.0
@@ -447,9 +444,9 @@ def get_bone_mass(
     else:
         bone_mass -= 0.1
 
-    if gender == Gender.FEMALE and bone_mass > 5.1:
-        bone_mass = 8.0
-    elif gender == Gender.MALE and bone_mass > 5.2:
+    if (gender == Gender.FEMALE and bone_mass > 5.1) or (
+        gender == Gender.MALE and bone_mass > 5.2
+    ):
         bone_mass = 8.0
 
     return check_value_constraints(bone_mass, 0.5, 8)
@@ -475,9 +472,9 @@ def get_muscle_mass(
 
     muscle_mass = w - (fat_pct * 0.01 * w) - bone_mass
 
-    if gender == Gender.FEMALE and muscle_mass >= 84:
-        muscle_mass = 120.0
-    elif gender == Gender.MALE and muscle_mass >= 93.5:
+    if (gender == Gender.FEMALE and muscle_mass >= 84) or (
+        gender == Gender.MALE and muscle_mass >= 93.5
+    ):
         muscle_mass = 120.0
 
     return check_value_constraints(muscle_mass, 10, 120)

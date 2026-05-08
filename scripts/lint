@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
-
 set -e
-
 cd "$(dirname "$0")/.."
 
-pre-commit install-hooks;
-pre-commit run --hook-stage manual --all-files;
+# Ruff (lint + format)
+ruff check --fix custom_components/ tests/
+ruff format custom_components/ tests/
 
-#bellybutton lint
-
-#vulture . --min-confidence 75 --ignore-names policy
+# Pre-commit hooks
+pre-commit install-hooks
+pre-commit run --hook-stage manual --all-files

@@ -1,5 +1,16 @@
 # Example configurations for Xiaomi Mi Scale with multi-user management
 
+> **Note — v2026.5.0 and later**
+>
+> Since v2026.5.0, multi-user management is built directly into Bodymiscale. You can now point each profile at your scale's native sensors and let Bodymiscale handle user identification automatically — via **weight range**, **interactive push notification**, or **profile ID** (for supported scales such as the Xiaomi S400).
+>
+> The examples in this folder remain fully functional and are still relevant in two cases:
+>
+> - **Example 1** (ESPHome direct): if you prefer to keep all logic on the ESP32 side.
+> - **Examples 2 & 3**: if you are migrating from an existing setup based on `input_number` helpers and want to preserve your historical data before switching to the new native approach.
+>
+> New installations are encouraged to use the built-in identification methods instead.
+
 This project offers three example configurations for integrating a Xiaomi Mi Scale with Home Assistant, with an emphasis on multi-user management and data persistence.
 
 ## Example 1: Complete Management by ESPHome
@@ -11,7 +22,7 @@ This project offers three example configurations for integrating a Xiaomi Mi Sca
   - Data Persistence: Data is retained even after an ESPHome restart.
 - **Usage:** Ideal for users who want a robust and self-contained solution.
 
-## Example 2: ESPHome or BLE Monitor + Home Assistant (User Management by HA)
+## Example 2 _(legacy)_ — ESPHome or BLE Monitor + Home Assistant (User Management by HA)
 
 - **Files:**
   - `esphome_base_configuration.yaml`: Basic ESPHome configuration to provide raw data to Home Assistant.
@@ -21,7 +32,7 @@ This project offers three example configurations for integrating a Xiaomi Mi Sca
 - **Advantages:**
   - Flexibility: Allows for extensive customization of user management in Home Assistant.
   - Home Assistant Integration: Leverages Home Assistant's features for user data management.
-- **Usage:** Ideal for users who want advanced customization of user management in Home Assistant.
+- **Usage:** Still useful for users migrating from an existing `input_number`-based setup who want to preserve historical data. New installations should use Bodymiscale's built-in weight range or notification methods instead.
 
 ## Common Features
 
@@ -30,7 +41,7 @@ This project offers three example configurations for integrating a Xiaomi Mi Sca
 - **Flexibility for Scales Without Impedance:** Users can easily adapt the configurations to their scales.
 - **Weight Range Filtering:** Measurements are associated with users based on configurable weight ranges.
 
-## Example 3: Home Assistant Blueprint for Interactive User Selection
+## Example 3 _(legacy)_ — Home Assistant Blueprint for Interactive User Selection
 
 - **File:** `interactive_notification_user_selection_weight_data_update.yaml` (Example Automation using the Blueprint)
 - **Description:** This example utilizes a Home Assistant Blueprint to send an interactive notification when a weight measurement is detected. Users can select who is on the scale, and the blueprint updates the corresponding weight (and optionally impedance/last weigh-in) input numbers/datetimes in Home Assistant. This method requires the Mobile Home Assistant app to receive and respond to the notification.
@@ -39,7 +50,7 @@ This project offers three example configurations for integrating a Xiaomi Mi Sca
   - Interactive: Provides a user-friendly way to identify who is being weighed.
   - Flexible User Management: User configuration is done directly in the Home Assistant automation created from the blueprint.
   - No Weight Range Configuration: Relies on direct user interaction for identification.
-- **Usage:** Ideal for users who prefer a direct, interactive approach to user identification and want to manage user data within Home Assistant using input helpers.
+- **Usage:** Still useful for users migrating from an `input_number`-based setup. Since v2026.5.0, the interactive notification method is available natively in Bodymiscale — new installations should use it directly from the integration's configuration instead.
 
 **Interactive Notification Screenshot:**
 

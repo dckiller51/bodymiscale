@@ -12,8 +12,6 @@
   "loggers": [
     "custom_components.bodymiscale"
   ],
-  "requirements": [
-    "cachetools==6.2.4"
-  ],
-  "version": "2026.4.5"
+  "requirements": [],
+  "version": "2026.5.0"
 }

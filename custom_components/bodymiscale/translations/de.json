@@ -1,46 +1,77 @@
 {
+  "common": {
+    "weighing_message": "Neue Messung: {weight:.1f} kg",
+    "weighing_title": "Bodymiscale — Wer steht auf der Waage?"
+  },
   "config": {
+    "abort": {
+      "already_configured": "Ein Profil mit diesem Namen ist bereits konfiguriert."
+    },
     "error": {
-      "already_configured": "Bereits konfiguriert",
-      "height_limit": "Die Körpergröße ist zu hoch (Grenze: 220 cm)",
-      "height_low": "Die Körpergröße ist zu niedrig (min: 50 cm)",
-      "invalid_date": "Ungültiges Datum"
+      "height_limit": "Körpergröße zu hoch (Maximum: 220 cm).",
+      "height_low": "Körpergröße zu niedrig (Minimum: 50 cm).",
+      "invalid_date": "Ungültiges Datum.",
+      "name_already_used": "Dieser Name wird bereits von einem anderen Profil verwendet. Bitte wählen Sie einen anderen.",
+      "weight_limit": "Gewicht zu hoch (Maximum: 200 kg).",
+      "weight_low": "Gewicht zu niedrig (Minimum: 10 kg).",
+      "weight_range_invalid": "Das Mindestgewicht muss strikt unter dem Maximalgewicht liegen.",
+      "weight_range_overlap": "Dieser Bereich überschneidet sich mit dem Bereich eines anderen Benutzers. Bereiche dürfen keinen gemeinsamen Wert haben — passen Sie die Grenzen entsprechend an."
     },
     "step": {
-      "impedance": {
-        "data": {
-          "impedance": "Impedanzsensor (Einzelfrequenz)",
-          "impedance_high": "Hochfrequenz-Impedanzsensor (250 kHz)",
-          "impedance_low": "Niederfrequenz-Impedanzsensor (50 kHz)"
-        },
-        "data_description": {
-          "impedance": "Einzelner Impedanzwert, der von Ihrer Waage geliefert wird.",
-          "impedance_high": "Impedanz gemessen bei 250 kHz (S400).",
-          "impedance_low": "Impedanz gemessen bei 50 kHz (S400)."
-        },
-        "title": "Impedanzsensoren"
-      },
-      "options": {
+      "modes": {
         "data": {
           "calculation_mode": "Berechnungsmethode",
           "height": "Körpergröße (cm)",
           "impedance_mode": "Impedanz-Modus",
-          "last_measurement_time": "Sensor für die letzte Messzeit",
+          "profile_method": "Benutzeridentifikationsmethode"
+        },
+        "data_description": {
+          "calculation_mode": "Xiaomi: identisch mit der Zepp Life App. Wissenschaftlich: WHO / Schofield Formeln. Nicht verfügbar im S400 Dual-Frequenz-Modus.",
+          "impedance_mode": "Keine: Waage ohne Impedanzsensor. Standard: Einzelfrequenz (Xiaomi Gen2). Dual-Frequenz S400: zwei Sensoren bei 50 kHz und 250 kHz.",
+          "profile_method": "Wie bodymiscale bestimmt, welchem Benutzer eine Messung zugewiesen wird. Wählen Sie \"Keine\", wenn Sie dedizierte Sensoren pro Person verwenden."
+        },
+        "title": "Betriebsarten"
+      },
+      "profile": {
+        "data": {
+          "notify_device_id": "Mobilgerät, das die Benachrichtigung erhält",
+          "notify_weight_max": "Maximalgewicht für Benachrichtigung (optional)",
+          "notify_weight_min": "Mindestgewicht für Benachrichtigung (optional)",
+          "profile_id": "Profil-ID (1–5)",
+          "weight_max": "Bereichs-Maximalgewicht (kg, ausgeschlossen)",
+          "weight_min": "Bereichs-Mindestgewicht (kg, eingeschlossen)"
+        },
+        "data_description": {
+          "notify_device_id": "Das Telefon, das nach jeder Wägung eine interaktive Benachrichtigung erhält. Tippen Sie auf Ihren Namen, um die Messung zu bestätigen.",
+          "notify_weight_max": "Diesen Benutzer nur benachrichtigen, wenn das gemessene Gewicht kleiner oder gleich diesem Wert ist. Leer lassen, um immer zu benachrichtigen.",
+          "notify_weight_min": "Diesen Benutzer nur benachrichtigen, wenn das gemessene Gewicht größer oder gleich diesem Wert ist. Leer lassen, um immer zu benachrichtigen.",
+          "weight_max": "Obere Grenze, vom Bereich ausgeschlossen. Wenn der nächste Benutzer bei 65 kg beginnt, geben Sie hier höchstens 64,99 kg ein.",
+          "weight_min": "Untere Grenze, im Bereich eingeschlossen. Die Messung wird diesem Benutzer zugewiesen, wenn sein Gewicht ≥ diesem Wert ist."
+        },
+        "title": "Profileinstellungen"
+      },
+      "sensors": {
+        "data": {
+          "impedance": "Impedanzsensor (Einzelfrequenz)",
+          "impedance_high": "Hochfrequenz-Impedanzsensor (250 kHz)",
+          "impedance_low": "Niederfrequenz-Impedanzsensor (50 kHz)",
+          "profile_id_sensor": "Profil-ID-Sensor (Waage-ID)",
           "weight": "Gewichtssensor"
         },
         "data_description": {
-          "calculation_mode": "Xiaomi: Identisch mit der Zepp Life App. Wissenschaftlich: WHO / Schofield Formeln. Hat im S400 Dual-Frequenz-Modus keine Auswirkung.",
-          "impedance_mode": "Keine: Waage ohne Impedanzmessung. Standard: Einzelfrequenz (Xiaomi Gen2). Dual-Frequenz S400: 50 kHz + 250 kHz Sensoren.",
-          "last_measurement_time": "Optional. Leer lassen, wenn Sie diesen Sensor nicht haben."
+          "impedance": "Einzelner Impedanzwert Ihrer Waage.",
+          "impedance_high": "Impedanz gemessen bei 250 kHz (S400).",
+          "impedance_low": "Impedanz gemessen bei 50 kHz (S400)."
         },
-        "title": "Konfiguration"
+        "title": "Sensorauswahl"
       },
       "user": {
         "data": {
-          "birthday": "Geburtstag",
+          "birthday": "Geburtsdatum",
           "gender": "Geschlecht",
           "name": "Name"
-        }
+        },
+        "title": "Benutzeridentität"
       }
     }
   },
@@ -52,8 +83,11 @@
       "body_fat": { "name": "Körperfett" },
       "body_score": { "name": "Körperbewertung" },
       "bone_mass": { "name": "Knochenmasse" },
-      "ecw_tbw_ratio": { "name": "ECW/TBW Verhältnis" },
+      "ecw_tbw_ratio": { "name": "ECW/TBW-Verhältnis" },
       "extracellular_water": { "name": "Extrazelluläres Wasser" },
+      "impedance": { "name": "Impedanz" },
+      "impedance_high": { "name": "Impedanz (250 kHz)" },
+      "impedance_low": { "name": "Impedanz (50 kHz)" },
       "intracellular_water": { "name": "Intrazelluläres Wasser" },
       "last_measurement_time": { "name": "Letzte Messzeit" },
       "lean_body_mass": { "name": "Magere Körpermasse" },
@@ -109,15 +143,15 @@
           }
         },
         "bone_mass": { "name": "Knochenmasse" },
-        "ecw_tbw_ratio": { "name": "ECW/TBW Verhältnis" },
+        "ecw_tbw_ratio": { "name": "ECW/TBW-Verhältnis" },
         "extracellular_water": { "name": "Extrazelluläres Wasser" },
-        "fat_mass_to_gain": { "name": "Fettmasse aufzubauen" },
-        "fat_mass_to_lose": { "name": "Fettmasse zu verlieren" },
+        "fat_mass_to_gain": { "name": "Zuzunehmende Fettmasse" },
+        "fat_mass_to_lose": { "name": "Abzunehmende Fettmasse" },
         "gender": {
           "name": "Geschlecht",
           "state": {
-            "female": "weiblich",
-            "male": "männlich"
+            "female": "Weiblich",
+            "male": "Männlich"
           }
         },
         "height": { "name": "Körpergröße" },
@@ -134,19 +168,19 @@
           "name": "Problem",
           "state": {
             "impedance_high": "Impedanz zu hoch",
-            "impedance_high_high": "Impedans 250 kHz zu hoch",
-            "impedance_high_low": "Impedans 250 kHz zu niedrig",
-            "impedance_high_unavailable": "Impedans 250 kHz nicht verfügbar",
+            "impedance_high_high": "Impedanz 250 kHz zu hoch",
+            "impedance_high_low": "Impedanz 250 kHz zu niedrig",
+            "impedance_high_unavailable": "Impedanz 250 kHz nicht verfügbar",
             "impedance_low": "Impedanz zu niedrig",
-            "impedance_low_high": "Impedans 50 kHz zu hoch",
-            "impedance_low_low": "Impedans 50 kHz zu niedrig",
-            "impedance_low_unavailable": "Impedans 50 kHz nicht verfügbar",
-            "impedance_unavailable": "Impedanzmessung nicht verfügbar",
+            "impedance_low_high": "Impedanz 50 kHz zu hoch",
+            "impedance_low_low": "Impedanz 50 kHz zu niedrig",
+            "impedance_low_unavailable": "Impedanz 50 kHz nicht verfügbar",
+            "impedance_unavailable": "Impedanz nicht verfügbar",
             "none": "Keine",
             "weight_high": "Gewicht zu hoch",
             "weight_invalid_format": "Ungültiges Gewichtsformat",
             "weight_low": "Gewicht zu niedrig",
-            "weight_unavailable": "Gewichtsmessung nicht verfügbar"
+            "weight_unavailable": "Gewicht nicht verfügbar"
           }
         },
         "protein": { "name": "Protein" },
@@ -158,34 +192,61 @@
     }
   },
   "options": {
+    "error": {
+      "height_limit": "Körpergröße zu hoch (Maximum: 220 cm).",
+      "height_low": "Körpergröße zu niedrig (Minimum: 50 cm).",
+      "weight_limit": "Gewicht zu hoch (Maximum: 200 kg).",
+      "weight_low": "Gewicht zu niedrig (Minimum: 10 kg).",
+      "weight_range_invalid": "Das Mindestgewicht muss strikt unter dem Maximalgewicht liegen.",
+      "weight_range_overlap": "Dieser Bereich überschneidet sich mit dem Bereich eines anderen Benutzers. Bereiche dürfen keinen gemeinsamen Wert haben — passen Sie die Grenzen entsprechend an."
+    },
     "step": {
-      "impedance": {
+      "init": {
+        "data": {
+          "calculation_mode": "Berechnungsmethode",
+          "height": "Körpergröße (cm)",
+          "impedance_mode": "Impedanz-Modus",
+          "profile_method": "Benutzeridentifikationsmethode"
+        },
+        "data_description": {
+          "calculation_mode": "Xiaomi: identisch mit der Zepp Life App. Wissenschaftlich: WHO / Schofield Formeln. Nicht verfügbar im S400 Dual-Frequenz-Modus.",
+          "impedance_mode": "Keine: Waage ohne Impedanzsensor. Standard: Einzelfrequenz (Xiaomi Gen2). Dual-Frequenz S400: zwei Sensoren bei 50 kHz und 250 kHz.",
+          "profile_method": "Wie bodymiscale bestimmt, welchem Benutzer eine Messung zugewiesen wird. Wählen Sie \"Keine\", wenn Sie dedizierte Sensoren pro Person verwenden."
+        },
+        "title": "Betriebsarten bearbeiten"
+      },
+      "profile": {
+        "data": {
+          "notify_device_id": "Mobilgerät, das die Benachrichtigung erhält",
+          "notify_weight_max": "Maximalgewicht für Benachrichtigung (optional)",
+          "notify_weight_min": "Mindestgewicht für Benachrichtigung (optional)",
+          "profile_id": "Profil-ID (1–5)",
+          "weight_max": "Bereichs-Maximalgewicht (kg, ausgeschlossen)",
+          "weight_min": "Bereichs-Mindestgewicht (kg, eingeschlossen)"
+        },
+        "data_description": {
+          "notify_device_id": "Das Telefon, das nach jeder Wägung eine interaktive Benachrichtigung erhält. Tippen Sie auf Ihren Namen, um die Messung zu bestätigen.",
+          "notify_weight_max": "Diesen Benutzer nur benachrichtigen, wenn das gemessene Gewicht kleiner oder gleich diesem Wert ist. Leer lassen, um immer zu benachrichtigen.",
+          "notify_weight_min": "Diesen Benutzer nur benachrichtigen, wenn das gemessene Gewicht größer oder gleich diesem Wert ist. Leer lassen, um immer zu benachrichtigen.",
+          "weight_max": "Obere Grenze, vom Bereich ausgeschlossen. Wenn der nächste Benutzer bei 65 kg beginnt, geben Sie hier höchstens 64,99 kg ein.",
+          "weight_min": "Untere Grenze, im Bereich eingeschlossen. Die Messung wird diesem Benutzer zugewiesen, wenn sein Gewicht ≥ diesem Wert ist."
+        },
+        "title": "Profil bearbeiten"
+      },
+      "sensors": {
         "data": {
           "impedance": "Impedanzsensor (Einzelfrequenz)",
           "impedance_high": "Hochfrequenz-Impedanzsensor (250 kHz)",
-          "impedance_low": "Niederfrequenz-Impedanzsensor (50 kHz)"
+          "impedance_low": "Niederfrequenz-Impedanzsensor (50 kHz)",
+          "profile_id_sensor": "Profil-ID-Sensor (Waage-ID)",
+          "weight": "Gewichtssensor"
         },
         "data_description": {
           "impedance": "Einzelner Impedanzwert Ihrer Waage.",
           "impedance_high": "Impedanz gemessen bei 250 kHz (S400).",
           "impedance_low": "Impedanz gemessen bei 50 kHz (S400)."
         },
-        "title": "Impedanzsensoren"
-      },
-      "init": {
-        "data": {
-          "calculation_mode": "Berechnungsmethode",
-          "height": "Körpergröße (cm)",
-          "impedance_mode": "Impedanz-Modus",
-          "last_measurement_time": "Sensor für die letzte Messzeit",
-          "weight": "Gewichtssensor"
-        },
-        "data_description": {
-          "calculation_mode": "Xiaomi: Identisch mit der Zepp Life App. Wissenschaftlich: WHO / Schofield Formeln. Hat im S400 Dual-Frequenz-Modus keine Auswirkung.",
-          "impedance_mode": "Keine: Waage ohne Impedanzmessung. Standard: Einzelfrequenz (Xiaomi Gen2). Dual-Frequenz S400: 50 kHz + 250 kHz Sensoren.",
-          "last_measurement_time": "Optional. Leer lassen, wenn Sie diesen Sensor nicht haben."
-        },
-        "title": "Konfiguration"
+        "title": "Sensoren bearbeiten"
       }
     }
   },
@@ -201,6 +262,14 @@
         "dual_frequency": "Dual-Frequenz S400 (50 kHz + 250 kHz)",
         "none": "Keine Impedanz",
         "standard": "Einzelfrequenz (Xiaomi Gen2, Mi Body Scale 2…)"
+      }
+    },
+    "profile_method": {
+      "options": {
+        "none": "Keine — manuelle Zuweisung",
+        "notification": "Interaktive Push-Benachrichtigung",
+        "profile_id": "Profil-ID (von Waage / Xiaomi Home)",
+        "weight_range": "Gewichtsbereich"
       }
     }
   },

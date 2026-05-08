@@ -1,7 +1,0 @@
-cachetools==7.0.6
-homeassistant>=2026.4.3
-mypy==1.20.2
-pre-commit==4.6.0
-pylint==4.0.5
-types-cachetools
-#pytest-homeassistant-custom-component==0.4.4

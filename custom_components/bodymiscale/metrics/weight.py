@@ -70,12 +70,9 @@ def get_bmr(
     # 1. S400 MODE : Katch-McArdle (Uses LBM for precision)
     if _is_dual(config):
         lbm = to_float(metrics.get(Metric.LBM))
-        if lbm > 0:
-            # Katch-McArdle formula: 370 + (21.6 * LBM)
-            bmr = 370 + 21.6 * lbm
-        else:
-            # Fallback to Schofield if LBM calculation failed
-            bmr = get_bmr_schofield(w, a, gender)
+
+        # BMR: Katch-McArdle (if LBM available) else fallback to Schofield
+        bmr = 370 + 21.6 * lbm if lbm > 0 else get_bmr_schofield(w, a, gender)
 
     # 2. SCIENCE MODE : Schofield (WHO Standard)
     elif mode == ALGO_SCIENCE:

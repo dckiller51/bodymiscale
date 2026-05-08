@@ -49,25 +49,24 @@ Let's say you've configured a weight sensor called `sensor.my_weight`. When you 
 
 Before installing Bodymiscale, ensure you have the following:
 
-1. **A user-dedicated weight sensor in Home Assistant:** There is no relationship between Bodymiscale and a specific connected scale. Bodymiscale works with any weight sensor integrated into Home Assistant. This can be:
+1. **A weight sensor in Home Assistant:** There is no relationship between Bodymiscale and a specific connected scale. Bodymiscale works with any weight sensor integrated into Home Assistant.
 
-   - A user-dedicated `sensor` entity. **Warning:** Using a sensor directly from a scale can lead to complications.
-   - An `input_number` entity offers a robust solution for recording your weight measurements in Home Assistant, with the crucial advantage of data persistence even after a system restart.
+   > **New in v2026.5.0:** You can now point Bodymiscale directly at your scale's native weight and impedance sensors — no per-user dedicated sensors required. Bodymiscale handles user identification automatically through one of the methods described in the [Configuration](#configuration) section (interactive notification, weight range, or profile ID).
 
-   **Important:** It is mandatory that each Bodymiscale user has their own dedicated weight sensor. This must be persistent, meaning that when you restart Home Assistant, the data is still available. Indeed, Bodymiscale retrieves the sensor value at the time of its initialization, which will distort the calculation data with an unavailable or zero sensor.
+   If you prefer the traditional approach or need data persistence across restarts, an `input_number` entity remains a robust alternative: its value survives a Home Assistant restart, ensuring Bodymiscale always initialises with a valid weight.
 
 2. **Home Assistant installed.**
 
-**(Optional) User-dedicated impedance sensor:**
+**(Optional) Impedance sensor:**
 
-If you plan to use an impedance sensor for more advanced metrics (lean body mass, body fat mass, etc.), make sure you also have a dedicated impedance sensor configured in Home Assistant. The same recommendation applies: each user should have their own dedicated impedance sensor for best results.
+If you plan to use an impedance sensor for advanced metrics (lean body mass, body fat mass, etc.), make sure an impedance sensor is available in Home Assistant. Since v2026.5.0, the scale's own impedance sensor can be shared across profiles — Bodymiscale assigns the measurement to the correct user automatically.
 
-**(Optional) Last weigh-in sensor dedicated to the user:**
+**(Optional) Last weigh-in sensor:**
 
-If you plan to integrate your own last weigh-in sensor, make sure a dedicated sensor is properly configured in Home Assistant. The same recommendation applies: each user should have their own last weigh-in sensor for optimal results.
+If you plan to integrate your own last weigh-in sensor, make sure a dedicated sensor is properly configured in Home Assistant.
 
 **(Optional) Last measurement time sensor:**
-Previously mandatory for accurate history, this is now optional. Bodymiscale now automatically generates a timestamp based on Home Assistant's internal clock whenever a weight change is detected. If you provide a dedicated sensor, Bodymiscale will prioritize that "real" measurement time over the system time.
+Previously mandatory for accurate history, this is now optional. Bodymiscale automatically generates a timestamp based on Home Assistant's internal clock whenever a weight change is detected. If you provide a dedicated sensor, Bodymiscale will prioritise that "real" measurement time over the system time.
 
 ## Generated data
 
@@ -169,23 +168,28 @@ Exclusive to dual-frequency hardware capable of measuring impedance at 50 kHz an
    - **Calculation Mode:** Choose between **Xiaomi (Legacy 2017)** or **Scientific**. The Scientific mode (added in v2026.4.0) provides a more granular approach to body composition for specific profiles.
      > **S400 users:** The S400 dual-frequency engine is activated automatically when you configure two impedance sensors (`impedance_low` + `impedance_high`) and select `Dual-frequency S400` as the `impedance_mode`. It uses its own dedicated clinical formulas regardless of the `calculation_mode` setting.
    - **Gender:** Select your gender (Male/Female).
+   - **User identification method** _(new in v2026.5.0)_: Choose how Bodymiscale determines which user to assign a measurement to when using the scale's native sensors:
+     - **Weight range:** Each user is assigned a weight interval (e.g. 60–75 kg). Bodymiscale routes the measurement automatically.
+     - **Interactive push notification:** After each weighing, a notification is sent to a chosen mobile device. The user taps their name to confirm the measurement.
+     - **Profile ID:** For recent scales (e.g. Xiaomi S400 via Xiaomi Home) that broadcast a user slot ID — Bodymiscale matches it directly with no extra step.
+     - **None — manual assignment:** No automatic identification. Use this if each person still has their own dedicated sensors.
 4. **Select your weight sensor:** Choose the existing weight sensor in Home Assistant (e.g., a `sensor`, or an `input_number`).
-   - **Important Recommendation:** It is **strongly recommended** that each Bodymiscale user has their own dedicated weight sensor. Using a shared weight sensor (e.g., one directly linked to a scale) can cause issues when Home Assistant restarts. This is because Bodymiscale retrieves the sensor's value upon initialization, which can skew calculations if multiple users weigh themselves successively on the same scale before the restart.
-5. **Impedance sensor (optional):** If you have an impedance sensor, select it here. This sensor is required to calculate some advanced metrics (lean body mass, body fat mass, etc.).
-   - **Recommendation:** As with the weight sensor, it is best for each user to have their own dedicated impedance sensor to avoid issues during restarts.
+   Since v2026.5.0, you can select the scale's shared native sensor directly. If you prefer data persistence across restarts, an `input_number` entity is still a solid choice.
+5. **Impedance sensor (optional):** If you have an impedance sensor, select it here. Since v2026.5.0, the scale's own sensor can be shared across profiles. This sensor is required to calculate advanced metrics (lean body mass, body fat mass, etc.).
 6. **Last measurement time sensor (optional):**
    If you have a last weigh-in sensor, select it here (e.g., a `sensor`, or an `input_datetime`). This sensor is used to record the date and time of the most recent measurement.
-   Recommendation: Just like the weight and impedance sensors, it is strongly recommended that each user has their own dedicated last weigh-in sensor to prevent conflicts or errors during Home Assistant restarts.
 7. Click "Save".
 
 **Explanation of choices:**
 
-- **First Name/Identifier:** This field is important because it allows you to personalize the integration and avoid conflicts if multiple people use Bodymiscale in your home. The name you choose will be used to name the entities created by the integration (e.g., `sensor.firstname_weight`, `sensor.firstname_bmi`, etc.).
+- **First Name/Identifier:** This field is important because it allows you to personalise the integration and avoid conflicts if multiple people use Bodymiscale in your home. The name you choose will be used to name the entities created by the integration (e.g., `sensor.firstname_weight`, `sensor.firstname_bmi`, etc.).
 - **Date of Birth and Gender:** This information is needed to calculate some metrics, such as basal metabolism.
+- **User identification method:** Since v2026.5.0, Bodymiscale can share the scale's native sensors across multiple profiles and route each measurement to the right user automatically — no per-user dedicated sensors needed.
 
 **Tips:**
 
 - If you do not have an impedance sensor, some metrics will not be available. You can still use Bodymiscale to get basic information (weight, BMI, etc.).
+- If you are migrating from a setup with per-user dedicated sensors, you can keep your existing `input_number` entities and select **None — manual assignment** as the identification method to preserve your current workflow.
 
 ---
 
@@ -196,7 +200,9 @@ Exclusive to dual-frequency hardware capable of measuring impedance at 50 kHz an
 
 ## Data Persistence & Multi-user Management
 
-For detailed configuration examples regarding data persistence and multi-user setups, please refer to the [example_config](example_config/) folder.
+Since v2026.5.0, multi-user management no longer requires per-user dedicated sensors. Bodymiscale assigns measurements to the correct profile using the identification method configured for each user (weight range, interactive notification, or profile ID).
+
+For detailed configuration examples, please refer to the [example_config README](example_config/README_EXAMPLE_CONFIG.md).
 
 This folder includes:
 
