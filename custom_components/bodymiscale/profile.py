@@ -283,7 +283,7 @@ class NotificationCoordinator:
                     data: dict[str, Any] = cast(
                         dict[str, Any], await self._hass.async_add_executor_job(_load)
                     )
-                    notify: dict[str, Any] = data.get("notify", {})
+                    notify: dict[str, Any] = data.get("common", {})
                     if notify:
                         return dict(notify)
                 except Exception:  # noqa: BLE001  # pylint: disable=broad-exception-caught

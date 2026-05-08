@@ -1,4 +1,8 @@
 {
+  "common": {
+    "weighing_message": "Ny måling: {weight:.1f} kg",
+    "weighing_title": "Bodymiscale — Hvem står på vægten?"
+  },
   "config": {
     "abort": {
       "already_configured": "En profil med dette navn er allerede konfigureret."
@@ -186,10 +190,6 @@
         "weight": { "name": "Vægt" }
       }
     }
-  },
-  "notify": {
-    "weighing_message": "Ny måling: {weight:.1f} kg",
-    "weighing_title": "Bodymiscale — Hvem står på vægten?"
   },
   "options": {
     "error": {

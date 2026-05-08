@@ -19,7 +19,14 @@ classifiers = [
 dependencies = ["homeassistant>=2026.4.3"]
 
 [project.optional-dependencies]
-dev = ["mypy==1.20.2", "pre-commit==4.6.0", "pylint==4.0.5", "ruff==0.15.12"]
+dev = [
+    "mypy==1.20.2",
+    "pre-commit==4.6.0",
+    "pylint==4.0.5",
+    "pytest-cov",
+    "pytest-homeassistant-custom-component",
+    "ruff==0.15.12",
+]
 
 [tool.setuptools.packages.find]
 include = ["custom_components*"]
@@ -78,6 +85,8 @@ warn_unreachable = true
 # ============================================================
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+asyncio_mode = "auto"
+pythonpath = ["."]
 addopts = "-rxf -x -v -l --cov=./ --cov-report=xml"
 
 # ============================================================

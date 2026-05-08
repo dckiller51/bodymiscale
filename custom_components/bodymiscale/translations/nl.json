@@ -1,4 +1,8 @@
 {
+  "common": {
+    "weighing_message": "Nieuwe meting: {weight:.1f} kg",
+    "weighing_title": "Bodymiscale — Wie staat op de weegschaal?"
+  },
   "config": {
     "abort": {
       "already_configured": "Een profiel met deze naam is al geconfigureerd."
@@ -186,10 +190,6 @@
         "weight": { "name": "Gewicht" }
       }
     }
-  },
-  "notify": {
-    "weighing_message": "Nieuwe meting: {weight:.1f} kg",
-    "weighing_title": "Bodymiscale — Wie staat op de weegschaal?"
   },
   "options": {
     "error": {

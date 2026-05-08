@@ -16,8 +16,7 @@
           "editor.codeActionsOnSave": {
             "source.fixAll.ruff": "explicit",
             "source.organizeImports.ruff": "explicit"
-          },
-          "editor.defaultFormatter": "astral-sh.ruff"
+          }
         },
 
         "editor.formatOnPaste": false,

@@ -1,4 +1,8 @@
 {
+  "common": {
+    "weighing_message": "新测量：{weight:.1f} 千克",
+    "weighing_title": "Bodymiscale — 谁在秤上？"
+  },
   "config": {
     "abort": {
       "already_configured": "已存在同名配置文件。"
@@ -186,10 +190,6 @@
         "weight": { "name": "体重" }
       }
     }
-  },
-  "notify": {
-    "weighing_message": "新测量：{weight:.1f} 千克",
-    "weighing_title": "Bodymiscale — 谁在秤上？"
   },
   "options": {
     "error": {

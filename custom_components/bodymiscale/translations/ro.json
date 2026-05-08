@@ -1,4 +1,8 @@
 {
+  "common": {
+    "weighing_message": "Nouă măsurătoare: {weight:.1f} kg",
+    "weighing_title": "Bodymiscale — Cine este pe cântar?"
+  },
   "config": {
     "abort": {
       "already_configured": "Un profil cu acest nume este deja configurat."
@@ -186,10 +190,6 @@
         "weight": { "name": "Greutate" }
       }
     }
-  },
-  "notify": {
-    "weighing_message": "Nouă măsurătoare: {weight:.1f} kg",
-    "weighing_title": "Bodymiscale — Cine este pe cântar?"
   },
   "options": {
     "error": {

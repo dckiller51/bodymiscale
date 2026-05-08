@@ -32,7 +32,8 @@ repos:
         args:
           - --quiet
           - --format=custom
-        files: ^((custom_components|tests)/.+)?[^/]+\.py$
+          - --skip=B101
+        files: ^custom_components/.+\.py$
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0

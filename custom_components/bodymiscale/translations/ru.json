@@ -1,4 +1,8 @@
 {
+  "common": {
+    "weighing_message": "Новое измерение: {weight:.1f} кг",
+    "weighing_title": "Bodymiscale — Кто на весах?"
+  },
   "config": {
     "abort": {
       "already_configured": "Профиль с таким именем уже настроен."
@@ -186,10 +190,6 @@
         "weight": { "name": "Вес" }
       }
     }
-  },
-  "notify": {
-    "weighing_message": "Новое измерение: {weight:.1f} кг",
-    "weighing_title": "Bodymiscale — Кто на весах?"
   },
   "options": {
     "error": {

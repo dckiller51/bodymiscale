@@ -1,4 +1,8 @@
 {
+  "common": {
+    "weighing_message": "Nova medição: {weight:.1f} kg",
+    "weighing_title": "Bodymiscale — Quem está na balança?"
+  },
   "config": {
     "abort": {
       "already_configured": "Um perfil com este nome já está configurado."
@@ -186,10 +190,6 @@
         "weight": { "name": "Peso" }
       }
     }
-  },
-  "notify": {
-    "weighing_message": "Nova medição: {weight:.1f} kg",
-    "weighing_title": "Bodymiscale — Quem está na balança?"
   },
   "options": {
     "error": {

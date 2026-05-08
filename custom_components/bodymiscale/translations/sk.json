@@ -1,4 +1,8 @@
 {
+  "common": {
+    "weighing_message": "Nové meranie: {weight:.1f} kg",
+    "weighing_title": "Bodymiscale — Kto stojí na váhe?"
+  },
   "config": {
     "abort": {
       "already_configured": "Profil s týmto názvom je už nakonfigurovaný."
@@ -186,10 +190,6 @@
         "weight": { "name": "Hmotnosť" }
       }
     }
-  },
-  "notify": {
-    "weighing_message": "Nové meranie: {weight:.1f} kg",
-    "weighing_title": "Bodymiscale — Kto stojí na váhe?"
   },
   "options": {
     "error": {
