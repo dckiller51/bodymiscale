@@ -20,7 +20,7 @@ dependencies = ["homeassistant>=2026.4.3"]
 
 [project.optional-dependencies]
 dev = [
-    "mypy==1.20.2",
+    "mypy==2.0.0",
     "pre-commit==4.6.0",
     "pylint==4.0.5",
     "pytest-cov",
