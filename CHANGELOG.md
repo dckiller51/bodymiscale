@@ -38,15 +38,16 @@ All notable changes to this project will be documented in this file.
 
 ### ⚙️ Changes
 
-#### Restructured config flow (VERSION 2 → 4)
+#### Restructured config flow (VERSION 1 → 4)
 
-- Added `async_migrate_entry` — automatic migration of existing v2 and v3 config entries:
-  - v2 → v3: move `height`/sensors to `options`, add `impedance_mode` and `calculation_mode`
+- Added `async_migrate_entry` — automatic migration of existing v1, v2 and v3 config entries:
+  - v1 → v2: move `name`/`birthday`/`gender` to `data`, move `height`/sensors to `options`
+  - v2 → v3: add `impedance_mode` and `calculation_mode`, purge `last_measurement_time`
   - v3 → v4: add `profile_method`
 - Refactored form schemas into 4 distinct functions:
-  - `_get_user_schema` — identity (name, birthday, gender, height)
+  - `_get_user_schema` — identity (name, birthday, gender)
+  - `_get_modes_schema` — height, impedance mode, calculation mode, profile method
   - `_get_sensors_schema` — scale sensors
-  - `_get_modes_schema` — impedance and calculation modes
   - `_get_profile_schema` — profile method and notification
 - Removed `_get_impedance_schema` and `_get_main_options_schema` (replaced)
 - Added `_purge_impedance_keys`, `_purge_other_method_keys`, `_validate_weight_range`
