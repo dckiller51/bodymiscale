@@ -19,6 +19,7 @@ from __future__ import annotations
 import json
 import logging
 import os
+import unicodedata
 from abc import ABC, abstractmethod
 from collections import defaultdict
 from typing import Any, cast
@@ -458,7 +459,12 @@ class NotificationCoordinator:
         fragments = set()
         if device.name:
             # Normalise display name the same way the companion app does.
-            normalized = device.name.strip().lower()
+            # Strip accents first (e.g. "Frédéric" → "Frederic") so the result
+            # matches the ASCII service name registered by the companion app.
+            nfkd = unicodedata.normalize("NFKD", device.name.strip())
+            normalized = "".join(
+                c for c in nfkd if not unicodedata.combining(c)
+            ).lower()
             for ch in (" ", "-", ".", "(", ")"):
                 normalized = normalized.replace(ch, "_")
             # Remove consecutive/trailing underscores
