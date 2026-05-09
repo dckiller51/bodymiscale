@@ -28,6 +28,8 @@ from ..const import (
     CONF_GENDER,
     CONF_HEIGHT,
     CONF_IMPEDANCE_MODE,
+    CONF_INITIAL_WEIGHT,
+    CONF_PROFILE_METHOD,
     CONF_SCALE,
     CONF_SENSOR_IMPEDANCE,
     CONF_SENSOR_IMPEDANCE_HIGH,
@@ -41,6 +43,7 @@ from ..const import (
     IMPEDANCE_MODE_STANDARD,
     PENDING_MEASUREMENT_TIMEOUT,
     PROBLEM_NONE,
+    PROFILE_METHOD_NEAREST,
     UNIT_POUNDS,
 )
 from ..models import Gender, Metric
@@ -322,6 +325,13 @@ class BodyScaleMetricsHandler:
             for dep in value.depends_on:
                 self._dependencies[dep].depended_by.append(key)
 
+        if self._config.get(CONF_PROFILE_METHOD) == PROFILE_METHOD_NEAREST:
+            initial_weight = self._config.get(CONF_INITIAL_WEIGHT)
+            if initial_weight is not None:
+                bootstrap_weight = float(initial_weight)
+                self._last_accepted_weight = bootstrap_weight
+                self._update_available_metric(Metric.WEIGHT, bootstrap_weight)
+
         sensors = [self._config[CONF_SENSOR_WEIGHT]]
 
         # Subscribe to sensors based on impedance mode
@@ -363,6 +373,14 @@ class BodyScaleMetricsHandler:
     def profile_filter(self) -> ProfileFilter:
         """Return the profile filter instance."""
         return self._profile_filter
+
+    @property
+    def current_weight(self) -> float | None:
+        """Return the latest known weight for this profile."""
+        current = self._available_metrics.get(Metric.WEIGHT)
+        if current is None:
+            return None
+        return float(current)
 
     def set_notification_coordinator(
         self, coordinator: NotificationCoordinator

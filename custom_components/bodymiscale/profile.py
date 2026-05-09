@@ -1,11 +1,12 @@
 """Profile identification strategies for bodymiscale.
 
-Four strategies:
+Five strategies:
 
-  NONE   (method 4 — manual / no filter)
-  ID     (method 1 — numeric profile ID from scale)
-  WEIGHT (method 2 — weight range [min, max[)
-  NOTIFY (method 3 — interactive push notification to mobile device)
+  NONE    (method 0 — manual / no filter)
+  ID      (method 1 — numeric profile ID from scale)
+  WEIGHT  (method 2 — weight range [min, max[)
+  NEAREST (method 3 — nearest current weight)
+  NOTIFY  (method 4 — interactive push notification to mobile device)
 
 For NOTIFY: when a weight change occurs the integration's
 NotificationCoordinator sends an interactive push notification to the
@@ -24,6 +25,7 @@ from abc import ABC, abstractmethod
 from collections import defaultdict
 from typing import Any, cast
 
+from homeassistant.const import CONF_NAME
 from homeassistant.core import Event, HomeAssistant, callback
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
@@ -36,8 +38,11 @@ from .const import (
     CONF_SENSOR_PROFILE_ID,
     CONF_WEIGHT_MAX,
     CONF_WEIGHT_MIN,
+    DOMAIN,
+    HANDLERS,
     NOTIFICATION_TAG,
     PROFILE_METHOD_ID,
+    PROFILE_METHOD_NEAREST,
     PROFILE_METHOD_NONE,
     PROFILE_METHOD_NOTIFY,
     PROFILE_METHOD_WEIGHT,
@@ -66,7 +71,7 @@ class ProfileFilter(ABC):
 
 
 # ---------------------------------------------------------------------------
-# Method 4: no filter (default)
+# Method 0: no filter (default)
 # ---------------------------------------------------------------------------
 
 
@@ -164,7 +169,78 @@ class WeightRangeFilter(ProfileFilter):
 
 
 # ---------------------------------------------------------------------------
-# Method 3: interactive mobile notification
+# Method 3: nearest current weight
+# ---------------------------------------------------------------------------
+
+
+class NearestWeightFilter(ProfileFilter):
+    """Assign the measurement to the user whose current weight is closest."""
+
+    def accepts(
+        self, hass: HomeAssistant, config: dict[str, Any], weight: float
+    ) -> bool:
+        """Return True if this user's current weight is nearest to the measurement."""
+        current_name = config.get(CONF_NAME)
+        current_name_cf = str(current_name).casefold() if current_name else ""
+        if not current_name:
+            _LOGGER.warning("Nearest-weight filter: missing user name — rejected")
+            return False
+
+        domain_data = hass.data.get(DOMAIN, {})
+        handlers = domain_data.get(HANDLERS, {})
+
+        candidates: list[tuple[float, str]] = []
+        current_distance: float | None = None
+
+        for handler in handlers.values():
+            handler_config = handler.config
+
+            handler_name = handler_config.get(CONF_NAME)
+            current_weight = handler.current_weight
+            # Only consider handlers that have a known current weight
+            if handler_name is None or current_weight is None:
+                continue
+
+            distance = abs(float(current_weight) - float(weight))
+            candidates.append((distance, str(handler_name).casefold()))
+
+            if str(handler_name).casefold() == current_name_cf:
+                current_distance = distance
+
+        if current_distance is None or not candidates:
+            _LOGGER.debug(
+                "Nearest-weight filter: no current weight available for %s — rejected",
+                current_name,
+            )
+            return False
+
+        best_distance = min(distance for distance, _name in candidates)
+        tied_names = sorted(
+            name for distance, name in candidates if distance == best_distance
+        )
+
+        if current_distance != best_distance:
+            _LOGGER.debug(
+                "Nearest-weight filter: %.2f kg not nearest for %s (best %.2f) — rejected",
+                weight,
+                current_name,
+                best_distance,
+            )
+            return False
+
+        if current_name_cf != tied_names[0]:
+            _LOGGER.debug(
+                "Nearest-weight filter: tie broken in favor of %s — rejected for %s",
+                tied_names[0],
+                current_name,
+            )
+            return False
+
+        return True
+
+
+# ---------------------------------------------------------------------------
+# Method 4: interactive mobile notification
 # ---------------------------------------------------------------------------
 
 
@@ -547,6 +623,7 @@ _FILTERS: dict[str, type[ProfileFilter]] = {
     PROFILE_METHOD_NONE: NoFilterProfile,
     PROFILE_METHOD_ID: ProfileIdFilter,
     PROFILE_METHOD_WEIGHT: WeightRangeFilter,
+    PROFILE_METHOD_NEAREST: NearestWeightFilter,
     PROFILE_METHOD_NOTIFY: NotificationFilter,
 }
 

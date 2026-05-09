@@ -23,19 +23,22 @@ CONF_SCALE = "scale"
 # ---------------------------------------------------------------------------
 # Profile identification method
 # ---------------------------------------------------------------------------
-# none         : accept all measurements (default, backward-compatible)
-# profile_id   : filter by numeric ID from scale sensor
-# weight_range : filter by half-open interval [min, max[
-# notification : interactive mobile notification, user taps their name
+# none           : accept all measurements (default, backward-compatible)
+# profile_id     : filter by numeric ID from scale sensor
+# weight_range   : filter by half-open interval [min, max[
+# nearest_weight : filter by nearest current user weight
+# notification   : interactive mobile notification, user taps their name
 CONF_PROFILE_METHOD = "profile_method"
 PROFILE_METHOD_NONE = "none"
 PROFILE_METHOD_ID = "profile_id"
 PROFILE_METHOD_WEIGHT = "weight_range"
+PROFILE_METHOD_NEAREST = "nearest_weight"
 PROFILE_METHOD_NOTIFY = "notification"
 PROFILE_METHOD_OPTIONS = [
     PROFILE_METHOD_NONE,
     PROFILE_METHOD_ID,
     PROFILE_METHOD_WEIGHT,
+    PROFILE_METHOD_NEAREST,
     PROFILE_METHOD_NOTIFY,
 ]
 
@@ -49,7 +52,10 @@ CONSTRAINT_PROFILE_ID_MAX = 5
 CONF_WEIGHT_MIN = "weight_min"
 CONF_WEIGHT_MAX = "weight_max"
 
-# Method 3: notification
+# Method 3: nearest current weight
+CONF_INITIAL_WEIGHT = "initial_weight"
+
+# Method 4: notification
 CONF_NOTIFY_DEVICE_ID = "notify_device_id"
 CONF_NOTIFY_SERVICE = "notify_service"
 CONF_NOTIFY_WEIGHT_MIN = "notify_weight_min"

@@ -25,6 +25,7 @@ from .const import (
     CONF_GENDER,
     CONF_HEIGHT,
     CONF_IMPEDANCE_MODE,
+    CONF_INITIAL_WEIGHT,
     CONF_NOTIFY_DEVICE_ID,
     CONF_NOTIFY_WEIGHT_MAX,
     CONF_NOTIFY_WEIGHT_MIN,
@@ -49,6 +50,7 @@ from .const import (
     IMPEDANCE_MODE_OPTIONS,
     IMPEDANCE_MODE_STANDARD,
     PROFILE_METHOD_ID,
+    PROFILE_METHOD_NEAREST,
     PROFILE_METHOD_NONE,
     PROFILE_METHOD_NOTIFY,
     PROFILE_METHOD_OPTIONS,
@@ -247,6 +249,24 @@ def _get_profile_schema(method: str, defaults: dict[str, Any]) -> vol.Schema | N
             }
         )
 
+    if method == PROFILE_METHOD_NEAREST:
+        return vol.Schema(
+            {
+                vol.Required(
+                    CONF_INITIAL_WEIGHT,
+                    description={"suggested_value": defaults.get(CONF_INITIAL_WEIGHT)},
+                ): selector.NumberSelector(
+                    selector.NumberSelectorConfig(
+                        mode=selector.NumberSelectorMode.BOX,
+                        min=CONSTRAINT_WEIGHT_MIN,
+                        max=CONSTRAINT_WEIGHT_MAX,
+                        step=0.1,
+                        unit_of_measurement="kg",
+                    )
+                ),
+            }
+        )
+
     if method == PROFILE_METHOD_NOTIFY:
         return vol.Schema(
             {
@@ -312,6 +332,7 @@ def _validate_weight_range(
 _METHOD_KEYS: dict[str, list[str]] = {
     PROFILE_METHOD_ID: [CONF_SENSOR_PROFILE_ID, CONF_PROFILE_ID],
     PROFILE_METHOD_WEIGHT: [CONF_WEIGHT_MIN, CONF_WEIGHT_MAX],
+    PROFILE_METHOD_NEAREST: [CONF_INITIAL_WEIGHT],
     PROFILE_METHOD_NOTIFY: [
         CONF_NOTIFY_DEVICE_ID,
         CONF_NOTIFY_WEIGHT_MIN,
@@ -494,6 +515,20 @@ class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):
                         if err:
                             errors["base"] = err
 
+            elif method == PROFILE_METHOD_NEAREST:
+                w = user_input.get(CONF_INITIAL_WEIGHT)
+                if w is None:
+                    errors[CONF_INITIAL_WEIGHT] = "weight_range_invalid"
+                else:
+                    try:
+                        value = float(w)
+                        if value < CONSTRAINT_WEIGHT_MIN:
+                            errors[CONF_INITIAL_WEIGHT] = "weight_low"
+                        elif value > CONSTRAINT_WEIGHT_MAX:
+                            errors[CONF_INITIAL_WEIGHT] = "weight_limit"
+                    except TypeError, ValueError:
+                        errors[CONF_INITIAL_WEIGHT] = "weight_range_invalid"
+
             elif method == PROFILE_METHOD_NOTIFY:
                 w_min = user_input.get(CONF_NOTIFY_WEIGHT_MIN)
                 w_max = user_input.get(CONF_NOTIFY_WEIGHT_MAX)
@@ -644,6 +679,20 @@ class BodyMiScaleOptionsFlowHandler(OptionsFlow):
                         )
                         if err:
                             errors["base"] = err
+
+            elif method == PROFILE_METHOD_NEAREST:
+                w = user_input.get(CONF_INITIAL_WEIGHT)
+                if w is None:
+                    errors[CONF_INITIAL_WEIGHT] = "weight_range_invalid"
+                else:
+                    try:
+                        value = float(w)
+                        if value < CONSTRAINT_WEIGHT_MIN:
+                            errors[CONF_INITIAL_WEIGHT] = "weight_low"
+                        elif value > CONSTRAINT_WEIGHT_MAX:
+                            errors[CONF_INITIAL_WEIGHT] = "weight_limit"
+                    except TypeError, ValueError:
+                        errors[CONF_INITIAL_WEIGHT] = "weight_range_invalid"
 
             elif method == PROFILE_METHOD_NOTIFY:
                 w_min = user_input.get(CONF_NOTIFY_WEIGHT_MIN)
