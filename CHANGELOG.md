@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## 2026.5.2
+
+### Bug Fixes
+
+- Fix notification service resolution failing for devices with accented names (e.g. `Smartphone Frédéric` → `mobile_app_smartphone_frederic`) by applying Unicode NFKD normalization before fuzzy matching in `_resolve_notify_service`.
+
 ## 2026.5.1
 
 ### Bug Fixes

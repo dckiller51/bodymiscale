@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "bodymiscale"
-version = "2026.5.1"
+version = "2026.5.2"
 description = "Home Assistant custom integration for body composition tracking"
 readme = "README.md"
 license = { text = "Apache-2.0" }
@@ -87,7 +87,8 @@ warn_unreachable = true
 testpaths = ["tests"]
 asyncio_mode = "auto"
 pythonpath = ["."]
-addopts = "-rxf -x -v -l --cov=./ --cov-report=xml"
+markers = ["slow: marks tests as slow (deselect with '-m \"not slow\"')"]
+addopts = "-rxf -x -v -l --tb=short --cov=./ --cov-report=xml"
 
 # ============================================================
 # COVERAGE CONFIGURATION
