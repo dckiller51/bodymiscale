@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## 2026.5.1
+
+### Bug Fixes
+
+- Set minimum Home Assistant version to **2026.3.0** (Python 3.14 required) [[#374](https://github.com/dckiller51/bodymiscale/issues/374)].
+
 ## 2026.5.0
 
 > 🙏 This release is dedicated to [@mano3m](https://github.com/mano3m), whose PR [#355](https://github.com/dckiller51/bodymiscale/pull/355) was the inspiration and technical foundation for this version — state restoration, Dutch translations, profile ID filtering and weight range filtering. Thank you for this outstanding contribution.
