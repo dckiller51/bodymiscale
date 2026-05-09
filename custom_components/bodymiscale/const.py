@@ -54,6 +54,7 @@ CONF_WEIGHT_MAX = "weight_max"
 
 # Method 3: nearest current weight
 CONF_INITIAL_WEIGHT = "initial_weight"
+CONF_NEAREST_TOLERANCE = "nearest_tolerance"
 
 # Method 4: notification
 CONF_NOTIFY_DEVICE_ID = "notify_device_id"

@@ -31,6 +31,7 @@ from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
 
 from .const import (
+    CONF_NEAREST_TOLERANCE,
     CONF_NOTIFY_WEIGHT_MAX,
     CONF_NOTIFY_WEIGHT_MIN,
     CONF_PROFILE_ID,
@@ -215,6 +216,16 @@ class NearestWeightFilter(ProfileFilter):
             return False
 
         best_distance = min(distance for distance, _name in candidates)
+        tolerance = float(config.get(CONF_NEAREST_TOLERANCE, 5))
+        if best_distance > tolerance:
+            _LOGGER.debug(
+                "Nearest-weight filter: %.2f kg outside tolerance %.2f for %s — rejected",
+                weight,
+                tolerance,
+                current_name,
+            )
+            return False
+
         tied_names = sorted(
             name for distance, name in candidates if distance == best_distance
         )
