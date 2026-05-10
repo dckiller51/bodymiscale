@@ -378,7 +378,7 @@ class BodyScaleMetricsHandler:
     def current_weight(self) -> float | None:
         """Return the latest known weight for this profile."""
         current = self._available_metrics.get(Metric.WEIGHT)
-        if current is None:
+        if not isinstance(current, (int, float)):
             return None
         return float(current)
 
