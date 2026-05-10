@@ -542,7 +542,7 @@ class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):
                             errors[CONF_INITIAL_WEIGHT] = "weight_low"
                         elif value > CONSTRAINT_WEIGHT_MAX:
                             errors[CONF_INITIAL_WEIGHT] = "weight_limit"
-                    except (TypeError, ValueError):
+                    except TypeError, ValueError:
                         errors[CONF_INITIAL_WEIGHT] = "weight_range_invalid"
                 if tolerance is None:
                     errors[CONF_NEAREST_TOLERANCE] = "weight_range_invalid"
@@ -553,7 +553,7 @@ class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):
                             errors[CONF_NEAREST_TOLERANCE] = "weight_low"
                         elif tol_value > 99:
                             errors[CONF_NEAREST_TOLERANCE] = "weight_limit"
-                    except (TypeError, ValueError):
+                    except TypeError, ValueError:
                         errors[CONF_NEAREST_TOLERANCE] = "weight_range_invalid"
 
             elif method == PROFILE_METHOD_NOTIFY:
@@ -719,7 +719,7 @@ class BodyMiScaleOptionsFlowHandler(OptionsFlow):
                             errors[CONF_INITIAL_WEIGHT] = "weight_low"
                         elif value > CONSTRAINT_WEIGHT_MAX:
                             errors[CONF_INITIAL_WEIGHT] = "weight_limit"
-                    except (TypeError, ValueError):
+                    except TypeError, ValueError:
                         errors[CONF_INITIAL_WEIGHT] = "weight_range_invalid"
                 if tolerance is None:
                     errors[CONF_NEAREST_TOLERANCE] = "weight_range_invalid"
@@ -730,7 +730,7 @@ class BodyMiScaleOptionsFlowHandler(OptionsFlow):
                             errors[CONF_NEAREST_TOLERANCE] = "weight_low"
                         elif tol_value > 99:
                             errors[CONF_NEAREST_TOLERANCE] = "weight_limit"
-                    except (TypeError, ValueError):
+                    except TypeError, ValueError:
                         errors[CONF_NEAREST_TOLERANCE] = "weight_range_invalid"
 
             elif method == PROFILE_METHOD_NOTIFY:
