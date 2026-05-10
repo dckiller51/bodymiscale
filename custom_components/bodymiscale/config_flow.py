@@ -343,6 +343,36 @@ def _validate_weight_range(
     return None
 
 
+def _validate_nearest(user_input: dict[str, Any], errors: dict[str, str]) -> None:
+    """Validate NEAREST method fields."""
+    w = user_input.get(CONF_INITIAL_WEIGHT)
+    tolerance = user_input.get(CONF_NEAREST_TOLERANCE)
+
+    if w is None:
+        errors[CONF_INITIAL_WEIGHT] = "weight_range_invalid"
+    else:
+        try:
+            value = float(w)
+            if value < CONSTRAINT_WEIGHT_MIN:
+                errors[CONF_INITIAL_WEIGHT] = "weight_low"
+            elif value > CONSTRAINT_WEIGHT_MAX:
+                errors[CONF_INITIAL_WEIGHT] = "weight_limit"
+        except TypeError, ValueError:
+            errors[CONF_INITIAL_WEIGHT] = "weight_range_invalid"
+
+    if tolerance is None:
+        errors[CONF_NEAREST_TOLERANCE] = "weight_range_invalid"
+    else:
+        try:
+            tol_value = float(tolerance)
+            if tol_value < 0:
+                errors[CONF_NEAREST_TOLERANCE] = "weight_low"
+            elif tol_value > 99:
+                errors[CONF_NEAREST_TOLERANCE] = "weight_limit"
+        except TypeError, ValueError:
+            errors[CONF_NEAREST_TOLERANCE] = "weight_range_invalid"
+
+
 # Keys that belong exclusively to each profile method.
 _METHOD_KEYS: dict[str, list[str]] = {
     PROFILE_METHOD_ID: [CONF_SENSOR_PROFILE_ID, CONF_PROFILE_ID],
@@ -531,30 +561,7 @@ class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):
                             errors["base"] = err
 
             elif method == PROFILE_METHOD_NEAREST:
-                w = user_input.get(CONF_INITIAL_WEIGHT)
-                tolerance = user_input.get(CONF_NEAREST_TOLERANCE)
-                if w is None:
-                    errors[CONF_INITIAL_WEIGHT] = "weight_range_invalid"
-                else:
-                    try:
-                        value = float(w)
-                        if value < CONSTRAINT_WEIGHT_MIN:
-                            errors[CONF_INITIAL_WEIGHT] = "weight_low"
-                        elif value > CONSTRAINT_WEIGHT_MAX:
-                            errors[CONF_INITIAL_WEIGHT] = "weight_limit"
-                    except TypeError, ValueError:
-                        errors[CONF_INITIAL_WEIGHT] = "weight_range_invalid"
-                if tolerance is None:
-                    errors[CONF_NEAREST_TOLERANCE] = "weight_range_invalid"
-                else:
-                    try:
-                        tol_value = float(tolerance)
-                        if tol_value < 0:
-                            errors[CONF_NEAREST_TOLERANCE] = "weight_low"
-                        elif tol_value > 99:
-                            errors[CONF_NEAREST_TOLERANCE] = "weight_limit"
-                    except TypeError, ValueError:
-                        errors[CONF_NEAREST_TOLERANCE] = "weight_range_invalid"
+                _validate_nearest(user_input, errors)
 
             elif method == PROFILE_METHOD_NOTIFY:
                 w_min = user_input.get(CONF_NOTIFY_WEIGHT_MIN)
@@ -708,30 +715,7 @@ class BodyMiScaleOptionsFlowHandler(OptionsFlow):
                             errors["base"] = err
 
             elif method == PROFILE_METHOD_NEAREST:
-                w = user_input.get(CONF_INITIAL_WEIGHT)
-                tolerance = user_input.get(CONF_NEAREST_TOLERANCE)
-                if w is None:
-                    errors[CONF_INITIAL_WEIGHT] = "weight_range_invalid"
-                else:
-                    try:
-                        value = float(w)
-                        if value < CONSTRAINT_WEIGHT_MIN:
-                            errors[CONF_INITIAL_WEIGHT] = "weight_low"
-                        elif value > CONSTRAINT_WEIGHT_MAX:
-                            errors[CONF_INITIAL_WEIGHT] = "weight_limit"
-                    except TypeError, ValueError:
-                        errors[CONF_INITIAL_WEIGHT] = "weight_range_invalid"
-                if tolerance is None:
-                    errors[CONF_NEAREST_TOLERANCE] = "weight_range_invalid"
-                else:
-                    try:
-                        tol_value = float(tolerance)
-                        if tol_value < 0:
-                            errors[CONF_NEAREST_TOLERANCE] = "weight_low"
-                        elif tol_value > 99:
-                            errors[CONF_NEAREST_TOLERANCE] = "weight_limit"
-                    except TypeError, ValueError:
-                        errors[CONF_NEAREST_TOLERANCE] = "weight_range_invalid"
+                _validate_nearest(user_input, errors)
 
             elif method == PROFILE_METHOD_NOTIFY:
                 w_min = user_input.get(CONF_NOTIFY_WEIGHT_MIN)
