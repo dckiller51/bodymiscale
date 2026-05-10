@@ -251,25 +251,25 @@ def _get_profile_schema(method: str, defaults: dict[str, Any]) -> vol.Schema | N
         )
 
     if method == PROFILE_METHOD_NEAREST:
+        initial_weight = defaults.get(CONF_INITIAL_WEIGHT)
         return vol.Schema(
             {
-                vol.Required(
-                    CONF_INITIAL_WEIGHT,
-                    description={"suggested_value": defaults.get(CONF_INITIAL_WEIGHT)},
+                (
+                    vol.Required(CONF_INITIAL_WEIGHT, default=float(initial_weight))
+                    if initial_weight is not None
+                    else vol.Required(CONF_INITIAL_WEIGHT)
                 ): selector.NumberSelector(
                     selector.NumberSelectorConfig(
                         mode=selector.NumberSelectorMode.BOX,
-                        min=CONSTRAINT_WEIGHT_MIN,
-                        max=CONSTRAINT_WEIGHT_MAX,
+                        min=0,
+                        max=999,
                         step=0.1,
                         unit_of_measurement="kg",
                     )
                 ),
                 vol.Required(
                     CONF_NEAREST_TOLERANCE,
-                    description={
-                        "suggested_value": defaults.get(CONF_NEAREST_TOLERANCE, 5)
-                    },
+                    default=defaults.get(CONF_NEAREST_TOLERANCE, 5),
                 ): selector.NumberSelector(
                     selector.NumberSelectorConfig(
                         mode=selector.NumberSelectorMode.BOX,
