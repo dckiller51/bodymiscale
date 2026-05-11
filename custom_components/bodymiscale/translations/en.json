@@ -34,6 +34,8 @@
       },
       "profile": {
         "data": {
+          "initial_weight": "Initial weight (kg)",
+          "nearest_tolerance": "Nearest-weight tolerance (kg)",
           "notify_device_id": "Mobile device receiving the notification",
           "notify_weight_max": "Maximum weight to notify (optional)",
           "notify_weight_min": "Minimum weight to notify (optional)",
@@ -42,6 +44,8 @@
           "weight_min": "Range minimum weight (kg, included)"
         },
         "data_description": {
+          "initial_weight": "Current weight used to initialize this user when nearest-weight matching is first enabled.",
+          "nearest_tolerance": "Maximum allowed distance between the sensor value and the user's current weight. Default is ±5 kg.",
           "notify_device_id": "The phone that will receive an interactive notification after each weighing. Tap your name to confirm the measurement.",
           "notify_weight_max": "Notify this user only if the measured weight is less than or equal to this value. Leave empty to always notify.",
           "notify_weight_min": "Notify this user only if the measured weight is greater than or equal to this value. Leave empty to always notify.",
@@ -217,6 +221,8 @@
       },
       "profile": {
         "data": {
+          "initial_weight": "Initial weight (kg)",
+          "nearest_tolerance": "Nearest-weight tolerance (kg)",
           "notify_device_id": "Mobile device receiving the notification",
           "notify_weight_max": "Maximum weight to notify (optional)",
           "notify_weight_min": "Minimum weight to notify (optional)",
@@ -225,6 +231,8 @@
           "weight_min": "Range minimum weight (kg, included)"
         },
         "data_description": {
+          "initial_weight": "Current weight used to initialize this user when nearest-weight matching is first enabled.",
+          "nearest_tolerance": "Maximum allowed distance between the sensor value and the user's current weight. Default is ±5 kg.",
           "notify_device_id": "The phone that will receive an interactive notification after each weighing. Tap your name to confirm the measurement.",
           "notify_weight_max": "Notify this user only if the measured weight is less than or equal to this value. Leave empty to always notify.",
           "notify_weight_min": "Notify this user only if the measured weight is greater than or equal to this value. Leave empty to always notify.",
@@ -266,6 +274,7 @@
     },
     "profile_method": {
       "options": {
+        "nearest_weight": "Nearest current weight",
         "none": "None — manual assignment",
         "notification": "Interactive push notification",
         "profile_id": "Profile ID (from scale / Xiaomi Home)",

@@ -25,6 +25,8 @@ from .const import (
     CONF_GENDER,
     CONF_HEIGHT,
     CONF_IMPEDANCE_MODE,
+    CONF_INITIAL_WEIGHT,
+    CONF_NEAREST_TOLERANCE,
     CONF_NOTIFY_DEVICE_ID,
     CONF_NOTIFY_WEIGHT_MAX,
     CONF_NOTIFY_WEIGHT_MIN,
@@ -49,6 +51,7 @@ from .const import (
     IMPEDANCE_MODE_OPTIONS,
     IMPEDANCE_MODE_STANDARD,
     PROFILE_METHOD_ID,
+    PROFILE_METHOD_NEAREST,
     PROFILE_METHOD_NONE,
     PROFILE_METHOD_NOTIFY,
     PROFILE_METHOD_OPTIONS,
@@ -247,6 +250,38 @@ def _get_profile_schema(method: str, defaults: dict[str, Any]) -> vol.Schema | N
             }
         )
 
+    if method == PROFILE_METHOD_NEAREST:
+        initial_weight = defaults.get(CONF_INITIAL_WEIGHT)
+        return vol.Schema(
+            {
+                (
+                    vol.Required(CONF_INITIAL_WEIGHT, default=float(initial_weight))
+                    if initial_weight is not None
+                    else vol.Required(CONF_INITIAL_WEIGHT)
+                ): selector.NumberSelector(
+                    selector.NumberSelectorConfig(
+                        mode=selector.NumberSelectorMode.BOX,
+                        min=0,
+                        max=999,
+                        step=0.1,
+                        unit_of_measurement="kg",
+                    )
+                ),
+                vol.Required(
+                    CONF_NEAREST_TOLERANCE,
+                    default=defaults.get(CONF_NEAREST_TOLERANCE, 5),
+                ): selector.NumberSelector(
+                    selector.NumberSelectorConfig(
+                        mode=selector.NumberSelectorMode.BOX,
+                        min=0,
+                        max=99,
+                        step=1,
+                        unit_of_measurement="kg",
+                    )
+                ),
+            }
+        )
+
     if method == PROFILE_METHOD_NOTIFY:
         return vol.Schema(
             {
@@ -308,10 +343,87 @@ def _validate_weight_range(
     return None
 
 
+def _validate_nearest(user_input: dict[str, Any], errors: dict[str, str]) -> None:
+    """Validate NEAREST method fields."""
+    w = user_input.get(CONF_INITIAL_WEIGHT)
+    tolerance = user_input.get(CONF_NEAREST_TOLERANCE)
+
+    if w is None:
+        errors[CONF_INITIAL_WEIGHT] = "weight_range_invalid"
+    else:
+        try:
+            value = float(w)
+            if value < CONSTRAINT_WEIGHT_MIN:
+                errors[CONF_INITIAL_WEIGHT] = "weight_low"
+            elif value > CONSTRAINT_WEIGHT_MAX:
+                errors[CONF_INITIAL_WEIGHT] = "weight_limit"
+        except TypeError, ValueError:
+            errors[CONF_INITIAL_WEIGHT] = "weight_range_invalid"
+
+    if tolerance is None:
+        errors[CONF_NEAREST_TOLERANCE] = "weight_range_invalid"
+    else:
+        try:
+            tol_value = float(tolerance)
+            if tol_value < 0:
+                errors[CONF_NEAREST_TOLERANCE] = "weight_low"
+            elif tol_value > 99:
+                errors[CONF_NEAREST_TOLERANCE] = "weight_limit"
+        except TypeError, ValueError:
+            errors[CONF_NEAREST_TOLERANCE] = "weight_range_invalid"
+
+
+def _validate_weight(
+    user_input: dict, errors: dict, existing: list[tuple[float, float]]
+) -> None:
+    """Validate WEIGHT method fields."""
+    w_min = user_input.get(CONF_WEIGHT_MIN)
+    w_max = user_input.get(CONF_WEIGHT_MAX)
+    if w_min is None or w_max is None:
+        errors["base"] = "weight_range_invalid"
+        return
+    if float(w_min) < CONSTRAINT_WEIGHT_MIN:
+        errors[CONF_WEIGHT_MIN] = "weight_low"
+    elif float(w_min) > CONSTRAINT_WEIGHT_MAX:
+        errors[CONF_WEIGHT_MIN] = "weight_limit"
+    if float(w_max) < CONSTRAINT_WEIGHT_MIN:
+        errors[CONF_WEIGHT_MAX] = "weight_low"
+    elif float(w_max) > CONSTRAINT_WEIGHT_MAX:
+        errors[CONF_WEIGHT_MAX] = "weight_limit"
+    if not errors:
+        err = _validate_weight_range(float(w_min), float(w_max), existing)
+        if err:
+            errors["base"] = err
+
+
+def _validate_notify(user_input: dict, errors: dict) -> None:
+    """Validate NOTIFY method fields."""
+    w_min = user_input.get(CONF_NOTIFY_WEIGHT_MIN)
+    w_max = user_input.get(CONF_NOTIFY_WEIGHT_MAX)
+    if w_min is not None:
+        if float(w_min) < CONSTRAINT_WEIGHT_MIN:
+            errors[CONF_NOTIFY_WEIGHT_MIN] = "weight_low"
+        elif float(w_min) > CONSTRAINT_WEIGHT_MAX:
+            errors[CONF_NOTIFY_WEIGHT_MIN] = "weight_limit"
+    if w_max is not None:
+        if float(w_max) < CONSTRAINT_WEIGHT_MIN:
+            errors[CONF_NOTIFY_WEIGHT_MAX] = "weight_low"
+        elif float(w_max) > CONSTRAINT_WEIGHT_MAX:
+            errors[CONF_NOTIFY_WEIGHT_MAX] = "weight_limit"
+    if (
+        not errors
+        and w_min is not None
+        and w_max is not None
+        and float(w_min) >= float(w_max)
+    ):
+        errors["base"] = "weight_range_invalid"
+
+
 # Keys that belong exclusively to each profile method.
 _METHOD_KEYS: dict[str, list[str]] = {
     PROFILE_METHOD_ID: [CONF_SENSOR_PROFILE_ID, CONF_PROFILE_ID],
     PROFILE_METHOD_WEIGHT: [CONF_WEIGHT_MIN, CONF_WEIGHT_MAX],
+    PROFILE_METHOD_NEAREST: [CONF_INITIAL_WEIGHT, CONF_NEAREST_TOLERANCE],
     PROFILE_METHOD_NOTIFY: [
         CONF_NOTIFY_DEVICE_ID,
         CONF_NOTIFY_WEIGHT_MIN,
@@ -473,47 +585,11 @@ class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):
 
         if user_input is not None:
             if method == PROFILE_METHOD_WEIGHT:
-                w_min = user_input.get(CONF_WEIGHT_MIN)
-                w_max = user_input.get(CONF_WEIGHT_MAX)
-                if w_min is None or w_max is None:
-                    errors["base"] = "weight_range_invalid"
-                else:
-                    if float(w_min) < CONSTRAINT_WEIGHT_MIN:
-                        errors[CONF_WEIGHT_MIN] = "weight_low"
-                    elif float(w_min) > CONSTRAINT_WEIGHT_MAX:
-                        errors[CONF_WEIGHT_MIN] = "weight_limit"
-                    if float(w_max) < CONSTRAINT_WEIGHT_MIN:
-                        errors[CONF_WEIGHT_MAX] = "weight_low"
-                    elif float(w_max) > CONSTRAINT_WEIGHT_MAX:
-                        errors[CONF_WEIGHT_MAX] = "weight_limit"
-                    if not errors:
-                        existing = self._get_existing_weight_ranges()
-                        err = _validate_weight_range(
-                            float(w_min), float(w_max), existing
-                        )
-                        if err:
-                            errors["base"] = err
-
+                _validate_weight(user_input, errors, self._get_existing_weight_ranges())
+            elif method == PROFILE_METHOD_NEAREST:
+                _validate_nearest(user_input, errors)
             elif method == PROFILE_METHOD_NOTIFY:
-                w_min = user_input.get(CONF_NOTIFY_WEIGHT_MIN)
-                w_max = user_input.get(CONF_NOTIFY_WEIGHT_MAX)
-                if w_min is not None:
-                    if float(w_min) < CONSTRAINT_WEIGHT_MIN:
-                        errors[CONF_NOTIFY_WEIGHT_MIN] = "weight_low"
-                    elif float(w_min) > CONSTRAINT_WEIGHT_MAX:
-                        errors[CONF_NOTIFY_WEIGHT_MIN] = "weight_limit"
-                if w_max is not None:
-                    if float(w_max) < CONSTRAINT_WEIGHT_MIN:
-                        errors[CONF_NOTIFY_WEIGHT_MAX] = "weight_low"
-                    elif float(w_max) > CONSTRAINT_WEIGHT_MAX:
-                        errors[CONF_NOTIFY_WEIGHT_MAX] = "weight_limit"
-                if (
-                    not errors
-                    and w_min is not None
-                    and w_max is not None
-                    and float(w_min) >= float(w_max)
-                ):
-                    errors["base"] = "weight_range_invalid"
+                _validate_notify(user_input, errors)
 
             if not errors:
                 self._data.update(user_input)
@@ -624,47 +700,11 @@ class BodyMiScaleOptionsFlowHandler(OptionsFlow):
 
         if user_input is not None:
             if method == PROFILE_METHOD_WEIGHT:
-                w_min = user_input.get(CONF_WEIGHT_MIN)
-                w_max = user_input.get(CONF_WEIGHT_MAX)
-                if w_min is None or w_max is None:
-                    errors["base"] = "weight_range_invalid"
-                else:
-                    if float(w_min) < CONSTRAINT_WEIGHT_MIN:
-                        errors[CONF_WEIGHT_MIN] = "weight_low"
-                    elif float(w_min) > CONSTRAINT_WEIGHT_MAX:
-                        errors[CONF_WEIGHT_MIN] = "weight_limit"
-                    if float(w_max) < CONSTRAINT_WEIGHT_MIN:
-                        errors[CONF_WEIGHT_MAX] = "weight_low"
-                    elif float(w_max) > CONSTRAINT_WEIGHT_MAX:
-                        errors[CONF_WEIGHT_MAX] = "weight_limit"
-                    if not errors:
-                        existing = self._get_other_weight_ranges()
-                        err = _validate_weight_range(
-                            float(w_min), float(w_max), existing
-                        )
-                        if err:
-                            errors["base"] = err
-
+                _validate_weight(user_input, errors, self._get_other_weight_ranges())
+            elif method == PROFILE_METHOD_NEAREST:
+                _validate_nearest(user_input, errors)
             elif method == PROFILE_METHOD_NOTIFY:
-                w_min = user_input.get(CONF_NOTIFY_WEIGHT_MIN)
-                w_max = user_input.get(CONF_NOTIFY_WEIGHT_MAX)
-                if w_min is not None:
-                    if float(w_min) < CONSTRAINT_WEIGHT_MIN:
-                        errors[CONF_NOTIFY_WEIGHT_MIN] = "weight_low"
-                    elif float(w_min) > CONSTRAINT_WEIGHT_MAX:
-                        errors[CONF_NOTIFY_WEIGHT_MIN] = "weight_limit"
-                if w_max is not None:
-                    if float(w_max) < CONSTRAINT_WEIGHT_MIN:
-                        errors[CONF_NOTIFY_WEIGHT_MAX] = "weight_low"
-                    elif float(w_max) > CONSTRAINT_WEIGHT_MAX:
-                        errors[CONF_NOTIFY_WEIGHT_MAX] = "weight_limit"
-                if (
-                    not errors
-                    and w_min is not None
-                    and w_max is not None
-                    and float(w_min) >= float(w_max)
-                ):
-                    errors["base"] = "weight_range_invalid"
+                _validate_notify(user_input, errors)
 
             if not errors:
                 self._data.update(user_input)

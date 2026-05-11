@@ -13,6 +13,8 @@ from custom_components.bodymiscale.const import (
     CONF_GENDER,
     CONF_HEIGHT,
     CONF_IMPEDANCE_MODE,
+    CONF_INITIAL_WEIGHT,
+    CONF_NEAREST_TOLERANCE,
     CONF_NOTIFY_DEVICE_ID,
     CONF_NOTIFY_WEIGHT_MAX,
     CONF_NOTIFY_WEIGHT_MIN,
@@ -30,6 +32,7 @@ from custom_components.bodymiscale.const import (
     IMPEDANCE_MODE_NONE,
     IMPEDANCE_MODE_STANDARD,
     PROFILE_METHOD_ID,
+    PROFILE_METHOD_NEAREST,
     PROFILE_METHOD_NONE,
     PROFILE_METHOD_NOTIFY,
     PROFILE_METHOD_WEIGHT,
@@ -233,6 +236,38 @@ async def test_flow_profile_method_weight(hass: HomeAssistant) -> None:
     assert result["type"] == FlowResultType.CREATE_ENTRY
     assert result["data"][CONF_WEIGHT_MIN] == 50.0
     assert result["data"][CONF_WEIGHT_MAX] == 80.0
+
+
+async def test_flow_profile_method_nearest(hass: HomeAssistant) -> None:
+    """Complete flow: profile_method=nearest → step 'profile' with initial weight and tolerance."""
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": config_entries.SOURCE_USER}
+    )
+
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"], USER_STEP
+    )
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"],
+        {
+            CONF_HEIGHT: 165.0,
+            CONF_CALCULATION_MODE: "xiaomi",
+            CONF_IMPEDANCE_MODE: IMPEDANCE_MODE_NONE,
+            CONF_PROFILE_METHOD: PROFILE_METHOD_NEAREST,
+        },
+    )
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"], SENSORS_STEP_NONE
+    )
+    assert result["step_id"] == "profile"
+
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"],
+        {CONF_INITIAL_WEIGHT: 72.5, CONF_NEAREST_TOLERANCE: 5.0},
+    )
+    assert result["type"] == FlowResultType.CREATE_ENTRY
+    assert result["data"][CONF_INITIAL_WEIGHT] == 72.5
+    assert result["data"][CONF_NEAREST_TOLERANCE] == 5.0
 
 
 async def test_flow_profile_method_notify(hass: HomeAssistant) -> None:
