@@ -4,6 +4,40 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## 2026.5.3
+
+> 🙏 Thank you to [@Eskander](https://github.com/Eskander) for contributing the `nearest_weight` profile method — [[#379](https://github.com/dckiller51/bodymiscale/pull/379)].
+
+### 🆕 New features
+
+#### Nearest-weight profile method
+
+- New `nearest_weight` profile method — automatically assigns a measurement to the
+  user whose current weight is closest to the sensor value, following the approach
+  proposed in [#11 (comment)](https://github.com/dckiller51/bodymiscale/issues/11#issuecomment-2009918440).
+  Closes [#373](https://github.com/dckiller51/bodymiscale/issues/373).
+- Configurable tolerance (`nearest_tolerance`, default ±5 kg) — measurement is
+  rejected if no user's current weight falls within the tolerance window.
+- `initial_weight` field — seeds the user's current weight on first setup so the
+  filter is operational immediately without waiting for a prior accepted measurement.
+- Tie-breaking: when two users are equidistant, the match is awarded alphabetically.
+
+---
+
+### ⚙️ Changes
+
+#### New constants (`const.py`)
+
+- `PROFILE_METHOD_NEAREST`
+- `CONF_INITIAL_WEIGHT`
+- `CONF_NEAREST_TOLERANCE`
+
+---
+
+### 🔧 Bug fixes
+
+- Fixed `async_step_profile` exceeding pylint branch limit — extracted `_validate_weight`, `_validate_nearest` and `_validate_notify` as module-level helpers.
+
 ## 2026.5.2
 
 ### Bug Fixes
