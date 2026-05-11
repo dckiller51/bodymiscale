@@ -410,7 +410,12 @@ def _validate_notify(user_input: dict, errors: dict) -> None:
             errors[CONF_NOTIFY_WEIGHT_MAX] = "weight_low"
         elif float(w_max) > CONSTRAINT_WEIGHT_MAX:
             errors[CONF_NOTIFY_WEIGHT_MAX] = "weight_limit"
-    if not errors and w_min is not None and w_max is not None and float(w_min) >= float(w_max):
+    if (
+        not errors
+        and w_min is not None
+        and w_max is not None
+        and float(w_min) >= float(w_max)
+    ):
         errors["base"] = "weight_range_invalid"
 
 
