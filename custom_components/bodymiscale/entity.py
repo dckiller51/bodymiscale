@@ -36,10 +36,11 @@ class BodyScaleBaseEntity(Entity):
         name = handler.config[CONF_NAME]
         self._attr_unique_id = "_".join([DOMAIN, name, self.entity_description.key])
 
-        if self.entity_description.name == UNDEFINED:
-            # Name not provided... get it from the key
-            self._attr_name = self.entity_description.key.replace("_", " ").capitalize()
+        if self.entity_description.name is UNDEFINED:
+            # Normal sensor — let HA resolve the name via translation_key
+            pass
         else:
+            # Main umbrella entity — use the profile name directly
             self._attr_name = (
                 self._handler.config[CONF_NAME].replace("_", " ").capitalize()
             )

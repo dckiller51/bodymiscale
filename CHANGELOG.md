@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## 2026.5.5
+
+### 🔧 Bug fixes
+
+- Fixed sensor name translations not being applied in the UI [[#222](https://github.com/dckiller51/bodymiscale/issues/222)] — `_attr_name` was overriding `translation_key` for all entities. The main umbrella entity now sets its name explicitly while normal sensors delegate name resolution to HA via `translation_key`
+
 ## 2026.5.4
 
 ### 🌍 Translations
