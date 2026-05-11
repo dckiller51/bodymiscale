@@ -34,6 +34,8 @@
       },
       "profile": {
         "data": {
+          "initial_weight": "Startvægt (kg)",
+          "nearest_tolerance": "Tolerance for nærmeste vægt (kg)",
           "notify_device_id": "Mobil enhed der modtager notifikationen",
           "notify_weight_max": "Maksimumsvægt for notifikation (valgfri)",
           "notify_weight_min": "Minimumsvægt for notifikation (valgfri)",
@@ -42,6 +44,8 @@
           "weight_min": "Intervallets minimumsvægt (kg, inkluderet)"
         },
         "data_description": {
+          "initial_weight": "Aktuel vægt brugt til at initialisere denne bruger, når nærmeste-vægt-matching først aktiveres.",
+          "nearest_tolerance": "Maksimal tilladt afstand mellem sensorværdien og brugerens aktuelle vægt. Standard er ±5 kg.",
           "notify_device_id": "Den telefon der modtager en interaktiv notifikation efter hver vejning. Tryk på dit navn for at bekræfte målingen.",
           "notify_weight_max": "Notificer kun denne bruger, hvis det målte vægt er mindre end eller lig med denne værdi. Lad stå tom for altid at notificere.",
           "notify_weight_min": "Notificer kun denne bruger, hvis det målte vægt er større end eller lig med denne værdi. Lad stå tom for altid at notificere.",
@@ -217,6 +221,8 @@
       },
       "profile": {
         "data": {
+          "initial_weight": "Startvægt (kg)",
+          "nearest_tolerance": "Tolerance for nærmeste vægt (kg)",
           "notify_device_id": "Mobil enhed der modtager notifikationen",
           "notify_weight_max": "Maksimumsvægt for notifikation (valgfri)",
           "notify_weight_min": "Minimumsvægt for notifikation (valgfri)",
@@ -225,6 +231,8 @@
           "weight_min": "Intervallets minimumsvægt (kg, inkluderet)"
         },
         "data_description": {
+          "initial_weight": "Aktuel vægt brugt til at initialisere denne bruger, når nærmeste-vægt-matching først aktiveres.",
+          "nearest_tolerance": "Maksimal tilladt afstand mellem sensorværdien og brugerens aktuelle vægt. Standard er ±5 kg.",
           "notify_device_id": "Den telefon der modtager en interaktiv notifikation efter hver vejning. Tryk på dit navn for at bekræfte målingen.",
           "notify_weight_max": "Notificer kun denne bruger, hvis det målte vægt er mindre end eller lig med denne værdi. Lad stå tom for altid at notificere.",
           "notify_weight_min": "Notificer kun denne bruger, hvis det målte vægt er større end eller lig med denne værdi. Lad stå tom for altid at notificere.",
@@ -266,6 +274,7 @@
     },
     "profile_method": {
       "options": {
+        "nearest_weight": "Nærmeste aktuelle vægt",
         "none": "Ingen — manuel tildeling",
         "notification": "Interaktiv push-notifikation",
         "profile_id": "Profil-ID (fra vægt / Xiaomi Home)",
