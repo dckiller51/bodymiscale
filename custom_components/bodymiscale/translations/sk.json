@@ -34,6 +34,8 @@
       },
       "profile": {
         "data": {
+          "initial_weight": "Počiatočná hmotnosť (kg)",
+          "nearest_tolerance": "Tolerancia najbližšej hmotnosti (kg)",
           "notify_device_id": "Mobilné zariadenie prijímajúce notifikáciu",
           "notify_weight_max": "Maximálna hmotnosť pre notifikáciu (voliteľné)",
           "notify_weight_min": "Minimálna hmotnosť pre notifikáciu (voliteľné)",
@@ -42,6 +44,8 @@
           "weight_min": "Minimálna hmotnosť rozsahu (kg, zahrnutá)"
         },
         "data_description": {
+          "initial_weight": "Aktuálna hmotnosť použitá na inicializáciu tohto používateľa pri prvom aktivovaní zhody podľa najbližšej hmotnosti.",
+          "nearest_tolerance": "Maximálna povolená vzdialenosť medzi hodnotou senzora a aktuálnou hmotnosťou používateľa. Predvolená hodnota: ±5 kg.",
           "notify_device_id": "Telefón, ktorý dostane interaktívnu notifikáciu po každom vážení. Klepnite na svoje meno pre potvrdenie merania.",
           "notify_weight_max": "Notifikovať tohto používateľa iba ak nameraná hmotnosť je menšia alebo rovná tejto hodnote. Nechajte prázdne pre vždy notifikovať.",
           "notify_weight_min": "Notifikovať tohto používateľa iba ak nameraná hmotnosť je väčšia alebo rovná tejto hodnote. Nechajte prázdne pre vždy notifikovať.",
@@ -217,6 +221,8 @@
       },
       "profile": {
         "data": {
+          "initial_weight": "Počiatočná hmotnosť (kg)",
+          "nearest_tolerance": "Tolerancia najbližšej hmotnosti (kg)",
           "notify_device_id": "Mobilné zariadenie prijímajúce notifikáciu",
           "notify_weight_max": "Maximálna hmotnosť pre notifikáciu (voliteľné)",
           "notify_weight_min": "Minimálna hmotnosť pre notifikáciu (voliteľné)",
@@ -225,6 +231,8 @@
           "weight_min": "Minimálna hmotnosť rozsahu (kg, zahrnutá)"
         },
         "data_description": {
+          "initial_weight": "Aktuálna hmotnosť použitá na inicializáciu tohto používateľa pri prvom aktivovaní zhody podľa najbližšej hmotnosti.",
+          "nearest_tolerance": "Maximálna povolená vzdialenosť medzi hodnotou senzora a aktuálnou hmotnosťou používateľa. Predvolená hodnota: ±5 kg.",
           "notify_device_id": "Telefón, ktorý dostane interaktívnu notifikáciu po každom vážení. Klepnite na svoje meno pre potvrdenie merania.",
           "notify_weight_max": "Notifikovať tohto používateľa iba ak nameraná hmotnosť je menšia alebo rovná tejto hodnote. Nechajte prázdne pre vždy notifikovať.",
           "notify_weight_min": "Notifikovať tohto používateľa iba ak nameraná hmotnosť je väčšia alebo rovná tejto hodnote. Nechajte prázdne pre vždy notifikovať.",
@@ -266,6 +274,7 @@
     },
     "profile_method": {
       "options": {
+        "nearest_weight": "Najbližšia aktuálna hmotnosť",
         "none": "Žiadny — manuálne priradenie",
         "notification": "Interaktívna push notifikácia",
         "profile_id": "ID profilu (z váhy / Xiaomi Home)",

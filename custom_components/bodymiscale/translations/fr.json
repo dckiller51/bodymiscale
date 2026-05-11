@@ -34,6 +34,8 @@
       },
       "profile": {
         "data": {
+          "initial_weight": "Poids initial (kg)",
+          "nearest_tolerance": "Tolérance poids le plus proche (kg)",
           "notify_device_id": "Appareil mobile destinataire de la notification",
           "notify_weight_max": "Poids maximum pour notifier (optionnel)",
           "notify_weight_min": "Poids minimum pour notifier (optionnel)",
@@ -42,6 +44,8 @@
           "weight_min": "Poids minimum de la plage (kg, inclus)"
         },
         "data_description": {
+          "initial_weight": "Poids actuel connu de cet utilisateur, utilisé pour amorcer le filtre dès la première pesée.",
+          "nearest_tolerance": "Écart maximal autorisé entre la valeur du capteur et le dernier poids connu de l'utilisateur. Par défaut : ±5 kg.",
           "notify_device_id": "Le téléphone qui recevra une notification interactive après chaque pesée. Appuyez sur votre nom pour confirmer la mesure.",
           "notify_weight_max": "Notifier cet utilisateur uniquement si le poids mesuré est inférieur ou égal à cette valeur. Laisser vide pour toujours notifier.",
           "notify_weight_min": "Notifier cet utilisateur uniquement si le poids mesuré est supérieur ou égal à cette valeur. Laisser vide pour toujours notifier.",
@@ -217,6 +221,8 @@
       },
       "profile": {
         "data": {
+          "initial_weight": "Poids initial (kg)",
+          "nearest_tolerance": "Tolérance poids le plus proche (kg)",
           "notify_device_id": "Appareil mobile destinataire de la notification",
           "notify_weight_max": "Poids maximum pour notifier (optionnel)",
           "notify_weight_min": "Poids minimum pour notifier (optionnel)",
@@ -225,6 +231,8 @@
           "weight_min": "Poids minimum de la plage (kg, inclus)"
         },
         "data_description": {
+          "initial_weight": "Poids actuel connu de cet utilisateur, utilisé pour amorcer le filtre dès la première pesée.",
+          "nearest_tolerance": "Écart maximal autorisé entre la valeur du capteur et le dernier poids connu de l'utilisateur. Par défaut : ±5 kg.",
           "notify_device_id": "Le téléphone qui recevra une notification interactive après chaque pesée. Appuyez sur votre nom pour confirmer la mesure.",
           "notify_weight_max": "Notifier cet utilisateur uniquement si le poids mesuré est inférieur ou égal à cette valeur. Laisser vide pour toujours notifier.",
           "notify_weight_min": "Notifier cet utilisateur uniquement si le poids mesuré est supérieur ou égal à cette valeur. Laisser vide pour toujours notifier.",
@@ -266,6 +274,7 @@
     },
     "profile_method": {
       "options": {
+        "nearest_weight": "Poids le plus proche",
         "none": "Aucun — attribution manuelle",
         "notification": "Notification push interactive",
         "profile_id": "ID de profil (balance / Xiaomi Home)",

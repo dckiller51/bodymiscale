@@ -34,6 +34,8 @@
       },
       "profile": {
         "data": {
+          "initial_weight": "初始體重（kg）",
+          "nearest_tolerance": "最近體重容差（kg）",
           "notify_device_id": "接收通知的行動裝置",
           "notify_weight_max": "通知上限體重（選填）",
           "notify_weight_min": "通知下限體重（選填）",
@@ -42,6 +44,8 @@
           "weight_min": "區間最小體重（公斤，含）"
         },
         "data_description": {
+          "initial_weight": "首次啟用最近體重比對時，用於初始化該使用者的目前體重。",
+          "nearest_tolerance": "感測器值與使用者目前體重之間允許的最大差距。預設值：±5 kg。",
           "notify_device_id": "每次稱重後將收到互動通知的手機。點擊您的名字以確認測量結果。",
           "notify_weight_max": "僅當測量體重小於或等於此值時通知該使用者。留空則始終通知。",
           "notify_weight_min": "僅當測量體重大於或等於此值時通知該使用者。留空則始終通知。",
@@ -217,6 +221,8 @@
       },
       "profile": {
         "data": {
+          "initial_weight": "初始體重（kg）",
+          "nearest_tolerance": "最近體重容差（kg）",
           "notify_device_id": "接收通知的行動裝置",
           "notify_weight_max": "通知上限體重（選填）",
           "notify_weight_min": "通知下限體重（選填）",
@@ -225,6 +231,8 @@
           "weight_min": "區間最小體重（公斤，含）"
         },
         "data_description": {
+          "initial_weight": "首次啟用最近體重比對時，用於初始化該使用者的目前體重。",
+          "nearest_tolerance": "感測器值與使用者目前體重之間允許的最大差距。預設值：±5 kg。",
           "notify_device_id": "每次稱重後將收到互動通知的手機。點擊您的名字以確認測量結果。",
           "notify_weight_max": "僅當測量體重小於或等於此值時通知該使用者。留空則始終通知。",
           "notify_weight_min": "僅當測量體重大於或等於此值時通知該使用者。留空則始終通知。",
@@ -266,6 +274,7 @@
     },
     "profile_method": {
       "options": {
+        "nearest_weight": "最近目前體重",
         "none": "無 — 手動分配",
         "notification": "互動推播通知",
         "profile_id": "配置文件 ID（來自秤 / 小米Home）",

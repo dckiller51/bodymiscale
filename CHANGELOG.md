@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## 2026.5.4
+
+### 🌍 Translations
+
+- Added `nearest_weight`, `initial_weight` and `nearest_tolerance` translations for all supported languages (DA, DE, ES, FR, IT, NL, PL, pt-BR, RO, RU, SK, zh-Hans, zh-Hant).
+
 ## 2026.5.3
 
 > 🙏 Thank you to [@Eskander](https://github.com/Eskander) for contributing the `nearest_weight` profile method — [[#379](https://github.com/dckiller51/bodymiscale/pull/379)].

@@ -34,6 +34,8 @@
       },
       "profile": {
         "data": {
+          "initial_weight": "Greutate inițială (kg)",
+          "nearest_tolerance": "Toleranță greutate cea mai apropiată (kg)",
           "notify_device_id": "Dispozitiv mobil care primește notificarea",
           "notify_weight_max": "Greutate maximă pentru notificare (opțional)",
           "notify_weight_min": "Greutate minimă pentru notificare (opțional)",
@@ -42,6 +44,8 @@
           "weight_min": "Greutatea minimă a intervalului (kg, inclusă)"
         },
         "data_description": {
+          "initial_weight": "Greutatea curentă folosită pentru inițializarea acestui utilizator când potrivirea după greutatea cea mai apropiată este activată pentru prima dată.",
+          "nearest_tolerance": "Distanța maximă admisă între valoarea senzorului și greutatea curentă a utilizatorului. Implicit: ±5 kg.",
           "notify_device_id": "Telefonul care va primi o notificare interactivă după fiecare cântărire. Apăsați pe numele dumneavoastră pentru a confirma măsurătoarea.",
           "notify_weight_max": "Notificați acest utilizator doar dacă greutatea măsurată este mai mică sau egală cu această valoare. Lăsați gol pentru a notifica întotdeauna.",
           "notify_weight_min": "Notificați acest utilizator doar dacă greutatea măsurată este mai mare sau egală cu această valoare. Lăsați gol pentru a notifica întotdeauna.",
@@ -217,6 +221,8 @@
       },
       "profile": {
         "data": {
+          "initial_weight": "Greutate inițială (kg)",
+          "nearest_tolerance": "Toleranță greutate cea mai apropiată (kg)",
           "notify_device_id": "Dispozitiv mobil care primește notificarea",
           "notify_weight_max": "Greutate maximă pentru notificare (opțional)",
           "notify_weight_min": "Greutate minimă pentru notificare (opțional)",
@@ -225,6 +231,8 @@
           "weight_min": "Greutatea minimă a intervalului (kg, inclusă)"
         },
         "data_description": {
+          "initial_weight": "Greutatea curentă folosită pentru inițializarea acestui utilizator când potrivirea după greutatea cea mai apropiată este activată pentru prima dată.",
+          "nearest_tolerance": "Distanța maximă admisă între valoarea senzorului și greutatea curentă a utilizatorului. Implicit: ±5 kg.",
           "notify_device_id": "Telefonul care va primi o notificare interactivă după fiecare cântărire. Apăsați pe numele dumneavoastră pentru a confirma măsurătoarea.",
           "notify_weight_max": "Notificați acest utilizator doar dacă greutatea măsurată este mai mică sau egală cu această valoare. Lăsați gol pentru a notifica întotdeauna.",
           "notify_weight_min": "Notificați acest utilizator doar dacă greutatea măsurată este mai mare sau egală cu această valoare. Lăsați gol pentru a notifica întotdeauna.",
@@ -266,6 +274,7 @@
     },
     "profile_method": {
       "options": {
+        "nearest_weight": "Greutatea curentă cea mai apropiată",
         "none": "Niciunul — atribuire manuală",
         "notification": "Notificare push interactivă",
         "profile_id": "ID profil (de la cântar / Xiaomi Home)",

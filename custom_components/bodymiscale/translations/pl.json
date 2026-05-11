@@ -34,6 +34,8 @@
       },
       "profile": {
         "data": {
+          "initial_weight": "Waga początkowa (kg)",
+          "nearest_tolerance": "Tolerancja najbliższej wagi (kg)",
           "notify_device_id": "Urządzenie mobilne otrzymujące powiadomienie",
           "notify_weight_max": "Maksymalna waga do powiadamiania (opcjonalnie)",
           "notify_weight_min": "Minimalna waga do powiadamiania (opcjonalnie)",
@@ -42,6 +44,8 @@
           "weight_min": "Minimalna waga zakresu (kg, włączona)"
         },
         "data_description": {
+          "initial_weight": "Aktualna waga używana do inicjalizacji tego użytkownika przy pierwszym włączeniu dopasowywania po najbliższej wadze.",
+          "nearest_tolerance": "Maksymalna dozwolona odległość między wartością czujnika a aktualną wagą użytkownika. Domyślnie: ±5 kg.",
           "notify_device_id": "Telefon, który otrzyma interaktywne powiadomienie po każdym ważeniu. Dotknij swojego imienia, aby potwierdzić pomiar.",
           "notify_weight_max": "Powiadamiaj tego użytkownika tylko wtedy, gdy zmierzona waga jest mniejsza lub równa tej wartości. Pozostaw puste, aby powiadamiać zawsze.",
           "notify_weight_min": "Powiadamiaj tego użytkownika tylko wtedy, gdy zmierzona waga jest większa lub równa tej wartości. Pozostaw puste, aby powiadamiać zawsze.",
@@ -217,6 +221,8 @@
       },
       "profile": {
         "data": {
+          "initial_weight": "Waga początkowa (kg)",
+          "nearest_tolerance": "Tolerancja najbliższej wagi (kg)",
           "notify_device_id": "Urządzenie mobilne otrzymujące powiadomienie",
           "notify_weight_max": "Maksymalna waga do powiadamiania (opcjonalnie)",
           "notify_weight_min": "Minimalna waga do powiadamiania (opcjonalnie)",
@@ -225,6 +231,8 @@
           "weight_min": "Minimalna waga zakresu (kg, włączona)"
         },
         "data_description": {
+          "initial_weight": "Aktualna waga używana do inicjalizacji tego użytkownika przy pierwszym włączeniu dopasowywania po najbliższej wadze.",
+          "nearest_tolerance": "Maksymalna dozwolona odległość między wartością czujnika a aktualną wagą użytkownika. Domyślnie: ±5 kg.",
           "notify_device_id": "Telefon, który otrzyma interaktywne powiadomienie po każdym ważeniu. Dotknij swojego imienia, aby potwierdzić pomiar.",
           "notify_weight_max": "Powiadamiaj tego użytkownika tylko wtedy, gdy zmierzona waga jest mniejsza lub równa tej wartości. Pozostaw puste, aby powiadamiać zawsze.",
           "notify_weight_min": "Powiadamiaj tego użytkownika tylko wtedy, gdy zmierzona waga jest większa lub równa tej wartości. Pozostaw puste, aby powiadamiać zawsze.",
@@ -266,6 +274,7 @@
     },
     "profile_method": {
       "options": {
+        "nearest_weight": "Najbliższa aktualna waga",
         "none": "Brak — ręczne przypisanie",
         "notification": "Interaktywne powiadomienie push",
         "profile_id": "ID profilu (z wagi / Xiaomi Home)",

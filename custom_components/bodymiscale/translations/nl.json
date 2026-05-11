@@ -34,6 +34,8 @@
       },
       "profile": {
         "data": {
+          "initial_weight": "Begingewicht (kg)",
+          "nearest_tolerance": "Tolerantie dichtstbijzijnd gewicht (kg)",
           "notify_device_id": "Mobiel apparaat dat de melding ontvangt",
           "notify_weight_max": "Maximumgewicht voor melding (optioneel)",
           "notify_weight_min": "Minimumgewicht voor melding (optioneel)",
@@ -42,6 +44,8 @@
           "weight_min": "Bereik minimumgewicht (kg, inclusief)"
         },
         "data_description": {
+          "initial_weight": "Huidig gewicht om deze gebruiker te initialiseren wanneer gewichtsmatching voor het eerst wordt ingeschakeld.",
+          "nearest_tolerance": "Maximaal toegestane afstand tussen de sensorwaarde en het huidige gewicht van de gebruiker. Standaard: ±5 kg.",
           "notify_device_id": "De telefoon die na elke weging een interactieve melding ontvangt. Tik op je naam om de meting te bevestigen.",
           "notify_weight_max": "Deze gebruiker alleen melden als het gemeten gewicht kleiner dan of gelijk is aan deze waarde. Leeg laten om altijd te melden.",
           "notify_weight_min": "Deze gebruiker alleen melden als het gemeten gewicht groter dan of gelijk is aan deze waarde. Leeg laten om altijd te melden.",
@@ -217,6 +221,8 @@
       },
       "profile": {
         "data": {
+          "initial_weight": "Begingewicht (kg)",
+          "nearest_tolerance": "Tolerantie dichtstbijzijnd gewicht (kg)",
           "notify_device_id": "Mobiel apparaat dat de melding ontvangt",
           "notify_weight_max": "Maximumgewicht voor melding (optioneel)",
           "notify_weight_min": "Minimumgewicht voor melding (optioneel)",
@@ -225,6 +231,8 @@
           "weight_min": "Bereik minimumgewicht (kg, inclusief)"
         },
         "data_description": {
+          "initial_weight": "Huidig gewicht om deze gebruiker te initialiseren wanneer gewichtsmatching voor het eerst wordt ingeschakeld.",
+          "nearest_tolerance": "Maximaal toegestane afstand tussen de sensorwaarde en het huidige gewicht van de gebruiker. Standaard: ±5 kg.",
           "notify_device_id": "De telefoon die na elke weging een interactieve melding ontvangt. Tik op je naam om de meting te bevestigen.",
           "notify_weight_max": "Deze gebruiker alleen melden als het gemeten gewicht kleiner dan of gelijk is aan deze waarde. Leeg laten om altijd te melden.",
           "notify_weight_min": "Deze gebruiker alleen melden als het gemeten gewicht groter dan of gelijk is aan deze waarde. Leeg laten om altijd te melden.",
@@ -266,6 +274,7 @@
     },
     "profile_method": {
       "options": {
+        "nearest_weight": "Dichtstbijzijnd huidig gewicht",
         "none": "Geen — handmatige toewijzing",
         "notification": "Interactieve push-melding",
         "profile_id": "Profiel-ID (vanaf weegschaal / Xiaomi Home)",
