@@ -13,6 +13,9 @@ All notable changes to this project will be documented in this file.
   until all sensors have settled. In dual-frequency mode (S400), this reduces
   three successive recalculations (weight → impedance_low → impedance_high) to
   a single one. Closes [#378](https://github.com/dckiller51/bodymiscale/issues/378).
+- Fixed `last_measurement_time` not refreshing on subsequent measurements when
+  the weight value is unchanged — timestamp is now also updated when impedance
+  is accepted. Closes [#378](https://github.com/dckiller51/bodymiscale/issues/378).
 
 ## 2026.5.5
 
