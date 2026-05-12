@@ -44,6 +44,7 @@ from ..const import (
     PENDING_MEASUREMENT_TIMEOUT,
     PROBLEM_NONE,
     PROFILE_METHOD_NEAREST,
+    RECALCULATION_DEBOUNCE,
     UNIT_POUNDS,
 )
 from ..models import Gender, Metric
@@ -294,6 +295,7 @@ class BodyScaleMetricsHandler:
         self._pending_impedance: dict[Metric, tuple[float, State]] = {}
         self._replaying: bool = False
         self._pending_timeout_cancel: CALLBACK_TYPE | None = None
+        self._debounce_cancel: CALLBACK_TYPE | None = None
 
         # _last_accepted_weight tracks the weight accepted in the current
         # measurement cycle. Used to validate impedance for weight-based
@@ -457,7 +459,10 @@ class BodyScaleMetricsHandler:
 
     @callback
     def unload(self) -> None:
-        """Remove HA listeners and clear subscribers."""
+        """Unload the handler."""
+        if self._debounce_cancel is not None:
+            self._debounce_cancel()
+            self._debounce_cancel = None
         self._cancel_pending_timeout()
 
         if self._remove_listener is not None:
@@ -585,7 +590,7 @@ class BodyScaleMetricsHandler:
             self._clear_sensor_problem(entity_id)
 
         if valid:
-            self._trigger_dependent_recalculation()
+            self._schedule_recalculation()
 
     # ── Process helpers ─────────────────────────────────────────────────────
 
@@ -688,6 +693,9 @@ class BodyScaleMetricsHandler:
                 return False, None
 
         self._update_available_metric(metric, val)
+        # Refresh timestamp when impedance is accepted — covers the case where
+        # weight is unchanged between two measurements (no weight state change fired)
+        self._update_available_metric(Metric.LAST_MEASUREMENT_TIME, state.last_changed)
 
         return True, None
 
@@ -783,6 +791,29 @@ class BodyScaleMetricsHandler:
         val = info.calculate(self._config, self._available_metrics)
         if val is not None:
             self._update_available_metric(metric, val)
+
+    def _schedule_recalculation(self) -> None:
+        """Debounce recalculation — wait for all sensors to settle.
+
+        Resets the timer on every valid sensor update so the full
+        recalculation only fires once all sensors (weight, impedance_low,
+        impedance_high) have reported their values for this measurement cycle.
+        """
+        if self._debounce_cancel is not None:
+            self._debounce_cancel()
+            self._debounce_cancel = None
+
+        self._debounce_cancel = async_call_later(
+            self._hass,
+            RECALCULATION_DEBOUNCE,
+            self._on_debounce_elapsed,
+        )
+
+    @callback
+    def _on_debounce_elapsed(self, _now: Any) -> None:
+        """Fire after the debounce window — all sensors should have settled."""
+        self._debounce_cancel = None
+        self._trigger_dependent_recalculation()
 
     def _trigger_dependent_recalculation(self) -> None:
         """Recalculate all metrics whose dependencies are now met."""

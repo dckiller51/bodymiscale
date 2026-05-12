@@ -5,7 +5,7 @@ from homeassistant.const import Platform
 MIN_REQUIRED_HA_VERSION = "2026.3.0"
 NAME = "BodyMiScale"
 DOMAIN = "bodymiscale"
-VERSION = "2026.5.5"
+VERSION = "2026.5.6"
 ISSUE_URL = "https://github.com/dckiller51/bodymiscale/issues"
 
 # System keys for hass.data[DOMAIN]
@@ -143,4 +143,8 @@ CONSTRAINT_WEIGHT_MAX = 200
 
 # Home Assistant
 PLATFORMS: set[Platform] = {Platform.SENSOR}
-UPDATE_DELAY = 2.0
+
+# Debounce delays
+# waits for all sensors to settle before recalculating
+RECALCULATION_DEBOUNCE: float = 2.0
+UPDATE_DELAY: float = 2.0  # waits before writing state to HA

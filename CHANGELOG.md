@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## 2026.5.6
+
+### 🔧 Bug fixes
+
+- Fixed redundant recalculations when weight and impedance arrive as separate
+  state updates — a 2-second debounce now delays `_trigger_dependent_recalculation`
+  until all sensors have settled. In dual-frequency mode (S400), this reduces
+  three successive recalculations (weight → impedance_low → impedance_high) to
+  a single one. Closes [#378](https://github.com/dckiller51/bodymiscale/issues/378).
+
 ## 2026.5.5
 
 ### 🔧 Bug fixes
