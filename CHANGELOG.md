@@ -8,14 +8,16 @@ All notable changes to this project will be documented in this file.
 
 ### 🔧 Bug fixes
 
-- Fixed redundant recalculations when weight and impedance arrive as separate
-  state updates — a 2-second debounce now delays `_trigger_dependent_recalculation`
-  until all sensors have settled. In dual-frequency mode (S400), this reduces
-  three successive recalculations (weight → impedance_low → impedance_high) to
-  a single one. Closes [#378](https://github.com/dckiller51/bodymiscale/issues/378).
+- Fixed double/redundant recalculations when weight and impedance arrive as
+  separate state updates — a `_settling` flag now blocks intermediate
+  recalculations until the debounce window elapses, reducing multiple
+  successive recalculations (e.g. weight → impedance_low → impedance_high
+  in dual-frequency mode) to a single one.
+  Closes [#378](https://github.com/dckiller51/bodymiscale/issues/378).
 - Fixed `last_measurement_time` not refreshing on subsequent measurements when
   the weight value is unchanged — timestamp is now also updated when impedance
-  is accepted. Closes [#378](https://github.com/dckiller51/bodymiscale/issues/378).
+  is accepted.
+  Closes [#378](https://github.com/dckiller51/bodymiscale/issues/378).
 
 ## 2026.5.5
 

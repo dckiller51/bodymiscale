@@ -22,6 +22,7 @@ from homeassistant.core import (
 )
 from homeassistant.helpers.event import async_call_later, async_track_state_change_event
 from homeassistant.helpers.typing import StateType
+from homeassistant.util import dt as dt_util
 
 from ..const import (
     CONF_BIRTHDAY,
@@ -296,6 +297,7 @@ class BodyScaleMetricsHandler:
         self._replaying: bool = False
         self._pending_timeout_cancel: CALLBACK_TYPE | None = None
         self._debounce_cancel: CALLBACK_TYPE | None = None
+        self._settling: bool = False
 
         # _last_accepted_weight tracks the weight accepted in the current
         # measurement cycle. Used to validate impedance for weight-based
@@ -453,7 +455,7 @@ class BodyScaleMetricsHandler:
                     )
                     self._update_available_metric(metric, val)
                 self._pending_impedance.clear()
-            self._trigger_dependent_recalculation()
+            self._schedule_recalculation()
 
     # ── Lifecycle ────────────────────────────────────────────────────────────
 
@@ -642,7 +644,6 @@ class BodyScaleMetricsHandler:
         # Weight accepted for this cycle — store for impedance validation
         self._last_accepted_weight = val
         self._update_available_metric(Metric.WEIGHT, val)
-        self._update_available_metric(Metric.LAST_MEASUREMENT_TIME, state.last_changed)
 
         return True, None
 
@@ -693,9 +694,6 @@ class BodyScaleMetricsHandler:
                 return False, None
 
         self._update_available_metric(metric, val)
-        # Refresh timestamp when impedance is accepted — covers the case where
-        # weight is unchanged between two measurements (no weight state change fired)
-        self._update_available_metric(Metric.LAST_MEASUREMENT_TIME, state.last_changed)
 
         return True, None
 
@@ -770,6 +768,8 @@ class BodyScaleMetricsHandler:
 
     def _recalculate_metric(self, metric: Metric) -> None:
         """Recalculate a single metric if its dependencies are met."""
+        if self._settling:
+            return
         info = self._dependencies.get(metric)
         if info is None:
             return
@@ -803,6 +803,8 @@ class BodyScaleMetricsHandler:
             self._debounce_cancel()
             self._debounce_cancel = None
 
+        self._settling = True
+
         self._debounce_cancel = async_call_later(
             self._hass,
             RECALCULATION_DEBOUNCE,
@@ -813,6 +815,8 @@ class BodyScaleMetricsHandler:
     def _on_debounce_elapsed(self, _now: Any) -> None:
         """Fire after the debounce window — all sensors should have settled."""
         self._debounce_cancel = None
+        self._settling = False
+        self._update_available_metric(Metric.LAST_MEASUREMENT_TIME, dt_util.utcnow())
         self._trigger_dependent_recalculation()
 
     def _trigger_dependent_recalculation(self) -> None:

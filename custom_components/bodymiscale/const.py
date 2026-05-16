@@ -146,5 +146,5 @@ PLATFORMS: set[Platform] = {Platform.SENSOR}
 
 # Debounce delays
 # waits for all sensors to settle before recalculating
-RECALCULATION_DEBOUNCE: float = 2.0
+RECALCULATION_DEBOUNCE: float = 5.0
 UPDATE_DELAY: float = 2.0  # waits before writing state to HA
