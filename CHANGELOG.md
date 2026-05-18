@@ -8,6 +8,10 @@ All notable changes to this project will be documented in this file.
 
 ### 🔧 Bug fixes
 
+- Refactored metric recalculation to use topological ordering — all derived
+  metrics are now computed in a single deterministic pass (BMI → LBM →
+  FAT_PERCENTAGE → ... → BODY_SCORE), eliminating redundant cascade
+  recalculations.
 - Fixed double/redundant recalculations when weight and impedance arrive as
   separate state updates — a `_settling` flag now blocks intermediate
   recalculations until the debounce window elapses, reducing multiple
