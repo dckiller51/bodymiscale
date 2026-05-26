@@ -298,6 +298,7 @@ class BodyScaleMetricsHandler:
         self._pending_timeout_cancel: CALLBACK_TYPE | None = None
         self._debounce_cancel: CALLBACK_TYPE | None = None
         self._settling: bool = False
+        self._received_this_cycle: set[Metric] = set()
 
         # _last_accepted_weight tracks the weight accepted in the current
         # measurement cycle. Used to validate impedance for weight-based
@@ -646,7 +647,7 @@ class BodyScaleMetricsHandler:
 
         # Weight accepted for this cycle — store for impedance validation
         self._last_accepted_weight = val
-        self._schedule_recalculation()
+        self._received_this_cycle = {Metric.WEIGHT}  # reset cycle tracking
         self._update_available_metric(Metric.WEIGHT, val)
 
         return True, None
@@ -700,7 +701,7 @@ class BodyScaleMetricsHandler:
                 _LOGGER.debug("Profile filter rejected impedance: %.2f", val)
                 return False, None
 
-        self._schedule_recalculation()
+        self._received_this_cycle.add(metric)
         self._update_available_metric(metric, val)
 
         return True, None
@@ -829,30 +830,54 @@ class BodyScaleMetricsHandler:
 
         return ordered
 
-    def _schedule_recalculation(self) -> None:
-        """Debounce recalculation — wait for all sensors to settle.
+    def _all_sensors_received(self) -> bool:
+        """Return True when all configured sensors have reported for this cycle."""
+        if Metric.WEIGHT not in self._received_this_cycle:
+            return False
+        if (
+            self._config.get(CONF_SENSOR_IMPEDANCE)
+            and Metric.IMPEDANCE not in self._received_this_cycle
+        ):
+            return False
+        if (
+            self._config.get(CONF_SENSOR_IMPEDANCE_LOW)
+            and Metric.IMPEDANCE_LOW not in self._received_this_cycle
+        ):
+            return False
+        return not (
+            self._config.get(CONF_SENSOR_IMPEDANCE_HIGH)
+            and Metric.IMPEDANCE_HIGH not in self._received_this_cycle
+        )
 
-        Resets the timer on every valid sensor update so the full
-        recalculation only fires once all sensors (weight, impedance_low,
-        impedance_high) have reported their values for this measurement cycle.
+    def _schedule_recalculation(self) -> None:
+        """Trigger recalculation immediately if all sensors have reported.
+
+        Otherwise start a debounce timer to wait for remaining sensors.
         """
         if self._debounce_cancel is not None:
+            _LOGGER.debug("[debounce] Timer cancelled — new sensor value arrived")
             self._debounce_cancel()
             self._debounce_cancel = None
 
         self._settling = True
 
-        self._debounce_cancel = async_call_later(
-            self._hass,
-            RECALCULATION_DEBOUNCE,
-            self._on_debounce_elapsed,
-        )
+        if self._all_sensors_received():
+            _LOGGER.debug("[debounce] All sensors received — firing immediately")
+            self._on_debounce_elapsed(None)
+        else:
+            _LOGGER.debug("[debounce] Waiting for remaining sensors — timer started")
+            self._debounce_cancel = async_call_later(
+                self._hass,
+                RECALCULATION_DEBOUNCE,
+                self._on_debounce_elapsed,
+            )
 
     @callback
     def _on_debounce_elapsed(self, _now: Any) -> None:
         """Fire after the debounce window — all sensors should have settled."""
         self._debounce_cancel = None
         self._settling = False
+        self._received_this_cycle = set()  # close this measurement cycle
         self._update_available_metric(Metric.LAST_MEASUREMENT_TIME, dt_util.utcnow())
         self._trigger_dependent_recalculation()
 

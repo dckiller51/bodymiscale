@@ -18,11 +18,16 @@ All notable changes to this project will be documented in this file.
   successive recalculations (e.g. weight → impedance_low → impedance_high
   in dual-frequency mode) to a single one.
   Closes [#378](https://github.com/dckiller51/bodymiscale/issues/378).
-- Fixed `last_measurement_time` not refreshing on subsequent measurements when
-  the weight value is unchanged — timestamp is now also updated when impedance
-  is accepted.
+- Fixed `last_measurement_time` updating twice per measurement cycle (once on
+  weight, once on impedance) — timestamp is now stamped once in
+  `_on_debounce_elapsed` after all sensors have settled.
   Closes [#378](https://github.com/dckiller51/bodymiscale/issues/378).
-- Fixed renamed `bone_cell_mass` to `bcm` in attributes to match the bodymiscale component attribute name.
+- Fixed recalculation firing immediately once all configured sensors have
+  reported for the current cycle, instead of always waiting the full debounce
+  window after the last sensor update.
+  Closes [#378](https://github.com/dckiller51/bodymiscale/issues/378).
+- Fixed renamed `bone_cell_mass` to `bcm` in attributes to match the
+  bodymiscale component attribute name.
 
 ## 2026.5.5
 
