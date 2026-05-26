@@ -114,6 +114,7 @@
       "state_attributes": {
         "age": { "name": "Alder" },
         "basal_metabolism": { "name": "Basal stofskifte" },
+        "bcm": { "name": "Kropscellemasse" },
         "bmi": { "name": "BMI" },
         "bmi_label": {
           "name": "BMI klasse",
@@ -128,7 +129,6 @@
             "underweight": "Undervægtig"
           }
         },
-        "body_cell_mass": { "name": "Kropscellemasse" },
         "body_fat": { "name": "Kropsfedt" },
         "body_score": { "name": "Kropsscore" },
         "body_type": {

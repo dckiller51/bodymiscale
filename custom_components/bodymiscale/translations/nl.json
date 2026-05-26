@@ -114,6 +114,7 @@
       "state_attributes": {
         "age": { "name": "Leeftijd" },
         "basal_metabolism": { "name": "Basaal metabolisme" },
+        "bcm": { "name": "Lichaamscelmassa" },
         "bmi": { "name": "BMI" },
         "bmi_label": {
           "name": "BMI-label",
@@ -128,7 +129,6 @@
             "underweight": "Ondergewicht"
           }
         },
-        "body_cell_mass": { "name": "Lichaamscelmassa" },
         "body_fat": { "name": "Lichaamsvet" },
         "body_score": { "name": "Lichaamsscore" },
         "body_type": {

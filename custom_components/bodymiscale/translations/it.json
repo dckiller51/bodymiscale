@@ -114,6 +114,7 @@
       "state_attributes": {
         "age": { "name": "Età" },
         "basal_metabolism": { "name": "Metabolismo basale" },
+        "bcm": { "name": "Massa cellulare corporea" },
         "bmi": { "name": "BMI" },
         "bmi_label": {
           "name": "Categoria BMI",
@@ -128,7 +129,6 @@
             "underweight": "Sottopeso"
           }
         },
-        "body_cell_mass": { "name": "Massa cellulare corporea" },
         "body_fat": { "name": "Massa grassa" },
         "body_score": { "name": "Punteggio corpo" },
         "body_type": {

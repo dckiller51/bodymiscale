@@ -22,6 +22,7 @@ All notable changes to this project will be documented in this file.
   the weight value is unchanged — timestamp is now also updated when impedance
   is accepted.
   Closes [#378](https://github.com/dckiller51/bodymiscale/issues/378).
+- Fixed renamed `bone_cell_mass` to `bcm` in attributes to match the bodymiscale component attribute name.
 
 ## 2026.5.5
 

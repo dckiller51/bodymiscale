@@ -114,6 +114,7 @@
       "state_attributes": {
         "age": { "name": "Wiek" },
         "basal_metabolism": { "name": "Podstawowa przemiana materii" },
+        "bcm": { "name": "Masa komórkowa ciała" },
         "bmi": { "name": "BMI" },
         "bmi_label": {
           "name": "Klasyfikacja BMI",
@@ -128,7 +129,6 @@
             "underweight": "Niedowaga"
           }
         },
-        "body_cell_mass": { "name": "Masa komórkowa ciała" },
         "body_fat": { "name": "Tkanka tłuszczowa" },
         "body_score": { "name": "Ocena sylwetki" },
         "body_type": {

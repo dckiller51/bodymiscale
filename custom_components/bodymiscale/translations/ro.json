@@ -114,6 +114,7 @@
       "state_attributes": {
         "age": { "name": "Vârstă" },
         "basal_metabolism": { "name": "Metabolism bazal" },
+        "bcm": { "name": "Masă celulară corporală" },
         "bmi": { "name": "IMC" },
         "bmi_label": {
           "name": "Clasificare IMC",
@@ -128,7 +129,6 @@
             "underweight": "Subponderal"
           }
         },
-        "body_cell_mass": { "name": "Masă celulară corporală" },
         "body_fat": { "name": "Grăsime corporală" },
         "body_score": { "name": "Scor corporal" },
         "body_type": {
