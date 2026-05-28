@@ -14,17 +14,14 @@ All notable changes to this project will be documented in this file.
   recalculations.
 - Fixed double/redundant recalculations when weight and impedance arrive as
   separate state updates — a `_settling` flag now blocks intermediate
-  recalculations until the debounce window elapses, reducing multiple
-  successive recalculations (e.g. weight → impedance_low → impedance_high
-  in dual-frequency mode) to a single one.
+  recalculations until the debounce window elapses. A 5-second debounce
+  (`RECALCULATION_DEBOUNCE` in `const.py`) ensures all sensors (weight,
+  impedance_low, impedance_high) have settled before the single recalculation
+  fires.
   Closes [#378](https://github.com/dckiller51/bodymiscale/issues/378).
 - Fixed `last_measurement_time` updating twice per measurement cycle (once on
   weight, once on impedance) — timestamp is now stamped once in
   `_on_debounce_elapsed` after all sensors have settled.
-  Closes [#378](https://github.com/dckiller51/bodymiscale/issues/378).
-- Fixed recalculation firing immediately once all configured sensors have
-  reported for the current cycle, instead of always waiting the full debounce
-  window after the last sensor update.
   Closes [#378](https://github.com/dckiller51/bodymiscale/issues/378).
 - Fixed renamed `bone_cell_mass` to `bcm` in attributes to match the
   bodymiscale component attribute name.
