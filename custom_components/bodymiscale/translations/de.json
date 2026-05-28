@@ -114,6 +114,7 @@
       "state_attributes": {
         "age": { "name": "Alter" },
         "basal_metabolism": { "name": "Grundumsatz" },
+        "bcm": { "name": "Körperzellmasse" },
         "bmi": { "name": "BMI" },
         "bmi_label": {
           "name": "BMI Klassifikation",
@@ -128,7 +129,6 @@
             "underweight": "Untergewicht"
           }
         },
-        "body_cell_mass": { "name": "Körperzellmasse" },
         "body_fat": { "name": "Körperfett" },
         "body_score": { "name": "Körperbewertung" },
         "body_type": {

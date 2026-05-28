@@ -114,6 +114,7 @@
       "state_attributes": {
         "age": { "name": "Edad" },
         "basal_metabolism": { "name": "Metabolismo basal" },
+        "bcm": { "name": "Masa celular corporal" },
         "bmi": { "name": "IMC" },
         "bmi_label": {
           "name": "Clasificación IMC",
@@ -128,7 +129,6 @@
             "underweight": "Bajo peso"
           }
         },
-        "body_cell_mass": { "name": "Masa celular corporal" },
         "body_fat": { "name": "Grasa corporal" },
         "body_score": { "name": "Puntuación corporal" },
         "body_type": {

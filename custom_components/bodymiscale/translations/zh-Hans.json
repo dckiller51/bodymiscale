@@ -114,6 +114,7 @@
       "state_attributes": {
         "age": { "name": "年龄" },
         "basal_metabolism": { "name": "基础代谢" },
+        "bcm": { "name": "体细胞量" },
         "bmi": { "name": "BMI" },
         "bmi_label": {
           "name": "BMI 状态",
@@ -128,7 +129,6 @@
             "underweight": "偏瘦"
           }
         },
-        "body_cell_mass": { "name": "体细胞量" },
         "body_fat": { "name": "体脂率" },
         "body_score": { "name": "身体评分" },
         "body_type": {

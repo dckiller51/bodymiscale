@@ -4,6 +4,28 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## 2026.5.6
+
+### 🔧 Bug fixes
+
+- Refactored metric recalculation to use topological ordering — all derived
+  metrics are now computed in a single deterministic pass (BMI → LBM →
+  FAT_PERCENTAGE → ... → BODY_SCORE), eliminating redundant cascade
+  recalculations.
+- Fixed double/redundant recalculations when weight and impedance arrive as
+  separate state updates — a `_settling` flag now blocks intermediate
+  recalculations until the debounce window elapses. A 5-second debounce
+  (`RECALCULATION_DEBOUNCE` in `const.py`) ensures all sensors (weight,
+  impedance_low, impedance_high) have settled before the single recalculation
+  fires.
+  Closes [#378](https://github.com/dckiller51/bodymiscale/issues/378).
+- Fixed `last_measurement_time` updating twice per measurement cycle (once on
+  weight, once on impedance) — timestamp is now stamped once in
+  `_on_debounce_elapsed` after all sensors have settled.
+  Closes [#378](https://github.com/dckiller51/bodymiscale/issues/378).
+- Fixed renamed `bone_cell_mass` to `bcm` in attributes to match the
+  bodymiscale component attribute name.
+
 ## 2026.5.5
 
 ### 🔧 Bug fixes

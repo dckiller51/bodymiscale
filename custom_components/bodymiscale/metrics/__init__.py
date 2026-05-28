@@ -22,6 +22,7 @@ from homeassistant.core import (
 )
 from homeassistant.helpers.event import async_call_later, async_track_state_change_event
 from homeassistant.helpers.typing import StateType
+from homeassistant.util import dt as dt_util
 
 from ..const import (
     CONF_BIRTHDAY,
@@ -44,6 +45,7 @@ from ..const import (
     PENDING_MEASUREMENT_TIMEOUT,
     PROBLEM_NONE,
     PROFILE_METHOD_NEAREST,
+    RECALCULATION_DEBOUNCE,
     UNIT_POUNDS,
 )
 from ..models import Gender, Metric
@@ -294,6 +296,8 @@ class BodyScaleMetricsHandler:
         self._pending_impedance: dict[Metric, tuple[float, State]] = {}
         self._replaying: bool = False
         self._pending_timeout_cancel: CALLBACK_TYPE | None = None
+        self._debounce_cancel: CALLBACK_TYPE | None = None
+        self._settling: bool = False
 
         # _last_accepted_weight tracks the weight accepted in the current
         # measurement cycle. Used to validate impedance for weight-based
@@ -451,13 +455,16 @@ class BodyScaleMetricsHandler:
                     )
                     self._update_available_metric(metric, val)
                 self._pending_impedance.clear()
-            self._trigger_dependent_recalculation()
+            self._schedule_recalculation()
 
     # ── Lifecycle ────────────────────────────────────────────────────────────
 
     @callback
     def unload(self) -> None:
-        """Remove HA listeners and clear subscribers."""
+        """Unload the handler."""
+        if self._debounce_cancel is not None:
+            self._debounce_cancel()
+            self._debounce_cancel = None
         self._cancel_pending_timeout()
 
         if self._remove_listener is not None:
@@ -585,7 +592,7 @@ class BodyScaleMetricsHandler:
             self._clear_sensor_problem(entity_id)
 
         if valid:
-            self._trigger_dependent_recalculation()
+            self._schedule_recalculation()
 
     # ── Process helpers ─────────────────────────────────────────────────────
 
@@ -604,8 +611,11 @@ class BodyScaleMetricsHandler:
         if val < CONSTRAINT_WEIGHT_MIN:
             # Scale reset to zero — clear last accepted weight for this cycle
             self._last_accepted_weight = None
+            if val == 0.0:
+                _LOGGER.debug("Weight 0.0 kg — scale reset, ignoring silently")
+                return False, None
             _LOGGER.debug("Weight %.2f kg below minimum — ignoring (scale reset)", val)
-            return False, None
+            return False, "low"
         if val > CONSTRAINT_WEIGHT_MAX:
             return False, "high"
 
@@ -636,8 +646,8 @@ class BodyScaleMetricsHandler:
 
         # Weight accepted for this cycle — store for impedance validation
         self._last_accepted_weight = val
+        self._schedule_recalculation()
         self._update_available_metric(Metric.WEIGHT, val)
-        self._update_available_metric(Metric.LAST_MEASUREMENT_TIME, state.last_changed)
 
         return True, None
 
@@ -658,8 +668,11 @@ class BodyScaleMetricsHandler:
             return False, "invalid_format"
 
         if val < CONSTRAINT_IMPEDANCE_MIN:
-            _LOGGER.debug("Impedance %.2f below minimum — ignoring (scale reset)", val)
-            return False, None
+            if val == 0.0:
+                _LOGGER.debug("Impedance 0.0 — scale reset, ignoring silently")
+                return False, None
+            _LOGGER.debug("Impedance %.2f below minimum — ignoring", val)
+            return False, "low"
         if val > CONSTRAINT_IMPEDANCE_MAX:
             return False, "high"
 
@@ -687,6 +700,7 @@ class BodyScaleMetricsHandler:
                 _LOGGER.debug("Profile filter rejected impedance: %.2f", val)
                 return False, None
 
+        self._schedule_recalculation()
         self._update_available_metric(metric, val)
 
         return True, None
@@ -760,37 +774,94 @@ class BodyScaleMetricsHandler:
             )
         return False
 
-    def _recalculate_metric(self, metric: Metric) -> None:
-        """Recalculate a single metric if its dependencies are met."""
+    def _can_compute(self, metric: Metric) -> bool:
+        """Return True if all dependencies for this metric are satisfied."""
         info = self._dependencies.get(metric)
         if info is None:
-            return
-
-        # LBM and METABOLIC_AGE require available impedance
+            return False
         if metric in (Metric.LBM, Metric.METABOLIC_AGE):
             if not self._has_impedance():
-                return
+                return False
             if Metric.WEIGHT not in self._available_metrics:
-                return
-            # Check other dependencies (AGE)
+                return False
             other_deps = [d for d in info.depends_on if d is not Metric.IMPEDANCE]
-            if not all(d in self._available_metrics for d in other_deps):
-                return
-        else:
-            if not all(d in self._available_metrics for d in info.depends_on):
-                return
+            return all(d in self._available_metrics for d in other_deps)
+        return all(d in self._available_metrics for d in info.depends_on)
 
+    def _compute_metric(self, metric: Metric) -> None:
+        """Compute a single metric value if dependencies are met and store it."""
+        if not self._can_compute(metric):
+            return
+        info = self._dependencies[metric]
         val = info.calculate(self._config, self._available_metrics)
         if val is not None:
+            _LOGGER.debug("[recalc] %s = %s", metric.name, val)
             self._update_available_metric(metric, val)
 
-    def _trigger_dependent_recalculation(self) -> None:
-        """Recalculate all metrics whose dependencies are now met."""
-        for metric in list(self._available_metrics.keys()):
+    def _topological_order(self) -> list[Metric]:
+        """Return derived metrics in topological order (dependencies before dependents)."""
+        derived = [m for m in _METRIC_DEPS if m not in _SOURCE_METRICS]
+
+        # Kahn's algorithm
+        graph_deps: dict[Metric, list[Metric]] = {}
+        for metric in derived:
+            info = self._dependencies.get(metric)
+            graph_deps[metric] = [
+                d
+                for d in (info.depends_on if info else [])
+                if d in _METRIC_DEPS and d not in _SOURCE_METRICS
+            ]
+
+        in_degree: dict[Metric, int] = {m: len(graph_deps[m]) for m in derived}
+        queue = [m for m, deg in in_degree.items() if deg == 0]
+        ordered: list[Metric] = []
+
+        while queue:
+            metric = queue.pop(0)
+            ordered.append(metric)
             info = self._dependencies.get(metric)
             if info:
-                for dep in info.depended_by:
-                    self._recalculate_metric(dep)
+                for dependent in info.depended_by:
+                    if dependent in in_degree:
+                        in_degree[dependent] -= 1
+                        if in_degree[dependent] == 0:
+                            queue.append(dependent)
+
+        return ordered
+
+    def _schedule_recalculation(self) -> None:
+        """Debounce recalculation — wait for all sensors to settle.
+
+        Resets the timer on every valid sensor update so the full
+        recalculation only fires once all sensors (weight, impedance_low,
+        impedance_high) have reported their values for this measurement cycle.
+        """
+        if self._debounce_cancel is not None:
+            self._debounce_cancel()
+            self._debounce_cancel = None
+
+        self._settling = True
+
+        self._debounce_cancel = async_call_later(
+            self._hass,
+            RECALCULATION_DEBOUNCE,
+            self._on_debounce_elapsed,
+        )
+
+    @callback
+    def _on_debounce_elapsed(self, _now: Any) -> None:
+        """Fire after the debounce window — all sensors should have settled."""
+        self._debounce_cancel = None
+        self._settling = False
+        self._update_available_metric(Metric.LAST_MEASUREMENT_TIME, dt_util.utcnow())
+        self._trigger_dependent_recalculation()
+
+    def _trigger_dependent_recalculation(self) -> None:
+        """Recalculate all derived metrics in topological order — one pass, no cascades."""
+        _LOGGER.debug("[recalc] Starting topological recalculation pass")
+        for metric in self._topological_order():
+            self._compute_metric(metric)
+        _LOGGER.debug("[recalc] Topological pass complete")
 
     def _update_available_metric(
         self, metric: Metric, state: StateType | datetime
@@ -816,6 +887,5 @@ class BodyScaleMetricsHandler:
                 for sub in subscribers:
                     sub(sub_state)
 
-            # Trigger recalculation of dependent metrics
-            for dep in info.depended_by:
-                self._recalculate_metric(dep)
+            # Cascade recalculation is handled by _trigger_dependent_recalculation
+            # in topological order — no per-update cascades needed.

@@ -114,6 +114,7 @@
       "state_attributes": {
         "age": { "name": "Возраст" },
         "basal_metabolism": { "name": "Базальный метаболизм" },
+        "bcm": { "name": "Масса клеток тела" },
         "bmi": { "name": "ИМТ" },
         "bmi_label": {
           "name": "Категория ИМТ",
@@ -128,7 +129,6 @@
             "underweight": "Дефицит массы тела"
           }
         },
-        "body_cell_mass": { "name": "Масса клеток тела" },
         "body_fat": { "name": "Жировая масса" },
         "body_score": { "name": "Оценка тела" },
         "body_type": {

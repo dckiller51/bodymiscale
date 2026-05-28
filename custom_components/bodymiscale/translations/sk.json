@@ -114,6 +114,7 @@
       "state_attributes": {
         "age": { "name": "Vek" },
         "basal_metabolism": { "name": "Bazálny metabolizmus" },
+        "bcm": { "name": "Bunková hmota tela" },
         "bmi": { "name": "BMI" },
         "bmi_label": {
           "name": "Klasifikácia BMI",
@@ -128,7 +129,6 @@
             "underweight": "Podváha"
           }
         },
-        "body_cell_mass": { "name": "Bunková hmota tela" },
         "body_fat": { "name": "Telesný tuk" },
         "body_score": { "name": "Skóre tela" },
         "body_type": {

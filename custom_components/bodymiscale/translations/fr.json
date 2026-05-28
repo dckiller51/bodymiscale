@@ -114,6 +114,7 @@
       "state_attributes": {
         "age": { "name": "Âge" },
         "basal_metabolism": { "name": "Métabolisme de base" },
+        "bcm": { "name": "Masse cellulaire corporelle" },
         "bmi": { "name": "IMC" },
         "bmi_label": {
           "name": "Classification IMC",
@@ -128,7 +129,6 @@
             "underweight": "Insuffisance pondérale"
           }
         },
-        "body_cell_mass": { "name": "Masse cellulaire corporelle" },
         "body_fat": { "name": "Masse grasse" },
         "body_score": { "name": "Score corporel" },
         "body_type": {
