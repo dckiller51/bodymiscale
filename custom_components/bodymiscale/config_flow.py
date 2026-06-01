@@ -36,6 +36,7 @@ from .const import (
     CONF_SENSOR_IMPEDANCE_HIGH,
     CONF_SENSOR_IMPEDANCE_LOW,
     CONF_SENSOR_PROFILE_ID,
+    CONF_SENSOR_STABILIZED,
     CONF_SENSOR_WEIGHT,
     CONF_WEIGHT_MAX,
     CONF_WEIGHT_MIN,
@@ -194,6 +195,13 @@ def _get_sensors_schema(
         ] = selector.EntitySelector(
             selector.EntitySelectorConfig(domain=["sensor", "input_number", "number"])
         )
+
+    fields[
+        vol.Optional(
+            CONF_SENSOR_STABILIZED,
+            description={"suggested_value": defaults.get(CONF_SENSOR_STABILIZED)},
+        )
+    ] = selector.EntitySelector(selector.EntitySelectorConfig(domain=["binary_sensor"]))
 
     return vol.Schema(fields)
 

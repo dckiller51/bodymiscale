@@ -60,12 +60,14 @@
           "impedance_high": "Senzor impedanță înaltă frecvență (250 kHz)",
           "impedance_low": "Senzor impedanță joasă frecvență (50 kHz)",
           "profile_id_sensor": "Senzor ID profil (ID cântar)",
+          "stabilized": "Senzor de stabilizare",
           "weight": "Senzor greutate"
         },
         "data_description": {
           "impedance": "Valoarea unică de impedanță furnizată de cântarul dumneavoastră.",
           "impedance_high": "Impedanța măsurată la 250 kHz (S400).",
-          "impedance_low": "Impedanța măsurată la 50 kHz (S400)."
+          "impedance_low": "Impedanța măsurată la 50 kHz (S400).",
+          "stabilized": "Senzor binar (binary_sensor) furnizat de cântar care indică faptul că o măsurătoare stabilă este disponibilă."
         },
         "title": "Selecție senzori"
       },
@@ -247,12 +249,14 @@
           "impedance_high": "Senzor impedanță înaltă frecvență (250 kHz)",
           "impedance_low": "Senzor impedanță joasă frecvență (50 kHz)",
           "profile_id_sensor": "Senzor ID profil (ID cântar)",
+          "stabilized": "Senzor de stabilizare",
           "weight": "Senzor greutate"
         },
         "data_description": {
           "impedance": "Valoarea unică de impedanță furnizată de cântarul dumneavoastră.",
           "impedance_high": "Impedanța măsurată la 250 kHz (S400).",
-          "impedance_low": "Impedanța măsurată la 50 kHz (S400)."
+          "impedance_low": "Impedanța măsurată la 50 kHz (S400).",
+          "stabilized": "Senzor binar (binary_sensor) furnizat de cântar care indică faptul că o măsurătoare stabilă este disponibilă."
         },
         "title": "Editare senzori"
       }

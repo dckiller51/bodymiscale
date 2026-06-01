@@ -60,12 +60,14 @@
           "impedance_high": "Sensore impedenza alta frequenza (250 kHz)",
           "impedance_low": "Sensore impedenza bassa frequenza (50 kHz)",
           "profile_id_sensor": "Sensore ID profilo (ID bilancia)",
+          "stabilized": "Sensore di stabilizzazione",
           "weight": "Sensore peso"
         },
         "data_description": {
           "impedance": "Singolo valore di impedenza fornito dalla tua bilancia.",
           "impedance_high": "Impedenza misurata a 250 kHz (S400).",
-          "impedance_low": "Impedenza misurata a 50 kHz (S400)."
+          "impedance_low": "Impedenza misurata a 50 kHz (S400).",
+          "stabilized": "Sensore binario (binary_sensor) fornito dalla bilancia che indica che una misurazione stabile è disponibile."
         },
         "title": "Selezione sensori"
       },
@@ -247,12 +249,14 @@
           "impedance_high": "Sensore impedenza alta frequenza (250 kHz)",
           "impedance_low": "Sensore impedenza bassa frequenza (50 kHz)",
           "profile_id_sensor": "Sensore ID profilo (ID bilancia)",
+          "stabilized": "Sensore di stabilizzazione",
           "weight": "Sensore peso"
         },
         "data_description": {
           "impedance": "Singolo valore di impedenza fornito dalla tua bilancia.",
           "impedance_high": "Impedenza misurata a 250 kHz (S400).",
-          "impedance_low": "Impedenza misurata a 50 kHz (S400)."
+          "impedance_low": "Impedenza misurata a 50 kHz (S400).",
+          "stabilized": "Sensore binario (binary_sensor) fornito dalla bilancia che indica che una misurazione stabile è disponibile."
         },
         "title": "Modifica sensori"
       }

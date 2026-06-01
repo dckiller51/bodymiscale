@@ -16,11 +16,16 @@ from homeassistant.core import (
     CALLBACK_TYPE,
     Event,
     EventStateChangedData,
+    EventStateReportedData,
     HomeAssistant,
     State,
     callback,
 )
-from homeassistant.helpers.event import async_call_later, async_track_state_change_event
+from homeassistant.helpers.event import (
+    async_call_later,
+    async_track_state_change_event,
+    async_track_state_report_event,
+)
 from homeassistant.helpers.typing import StateType
 from homeassistant.util import dt as dt_util
 
@@ -35,17 +40,18 @@ from ..const import (
     CONF_SENSOR_IMPEDANCE,
     CONF_SENSOR_IMPEDANCE_HIGH,
     CONF_SENSOR_IMPEDANCE_LOW,
+    CONF_SENSOR_STABILIZED,
     CONF_SENSOR_WEIGHT,
     CONSTRAINT_IMPEDANCE_MAX,
     CONSTRAINT_IMPEDANCE_MIN,
     CONSTRAINT_WEIGHT_MAX,
     CONSTRAINT_WEIGHT_MIN,
     IMPEDANCE_MODE_DUAL,
+    IMPEDANCE_MODE_NONE,
     IMPEDANCE_MODE_STANDARD,
     PENDING_MEASUREMENT_TIMEOUT,
     PROBLEM_NONE,
     PROFILE_METHOD_NEAREST,
-    RECALCULATION_DEBOUNCE,
     UNIT_POUNDS,
 )
 from ..models import Gender, Metric
@@ -288,6 +294,7 @@ class BodyScaleMetricsHandler:
             self._config[CONF_HEIGHT], self._config[CONF_GENDER]
         )
 
+        self._name: str = config.get("name", config_entry_id)
         self._profile_filter: ProfileFilter = build_profile_filter(self._config)
         self._notification_coordinator: NotificationCoordinator | None = None
 
@@ -296,8 +303,8 @@ class BodyScaleMetricsHandler:
         self._pending_impedance: dict[Metric, tuple[float, State]] = {}
         self._replaying: bool = False
         self._pending_timeout_cancel: CALLBACK_TYPE | None = None
-        self._debounce_cancel: CALLBACK_TYPE | None = None
-        self._settling: bool = False
+        # filled after HA starts
+        self._sensors_set: frozenset[str] = frozenset()
 
         # _last_accepted_weight tracks the weight accepted in the current
         # measurement cycle. Used to validate impedance for weight-based
@@ -351,11 +358,85 @@ class BodyScaleMetricsHandler:
             if CONF_SENSOR_IMPEDANCE_HIGH in self._config:
                 sensors.append(self._config[CONF_SENSOR_IMPEDANCE_HIGH])
 
-        self._remove_listener: CALLBACK_TYPE | None = async_track_state_change_event(
-            self._hass,
-            sensors,
-            self._state_changed_event,
+        # Stabilized binary sensor: only needs state_changed, not state_reported
+        stabilized_id: str | None = self._config.get(CONF_SENSOR_STABILIZED)
+        if stabilized_id:
+            sensors.append(stabilized_id)
+
+        self._sensors_set = frozenset(sensors)
+        self._last_reported_ts: dict[str, float] = {}
+        self._remove_listener: CALLBACK_TYPE | None = None
+        self._setup_listeners(sensors, stabilized_id)
+
+    def _setup_listeners(self, sensors: list[str], stabilized_id: str | None) -> None:
+        """Subscribe to state_changed and state_reported for measurement sensors."""
+        measurement_sensors = [s for s in sensors if s != stabilized_id]
+        _LOGGER.debug(
+            "[%s] subscribing to state_changed+state_reported for %s",
+            self._name,
+            measurement_sensors,
         )
+
+        @callback
+        def _on_state_change(event: Event[EventStateChangedData]) -> None:
+            """Handle state_changed — fires when value actually changes."""
+            new_state = event.data.get("new_state")
+            entity_id = event.data.get("entity_id")
+            _LOGGER.debug("[%s][state_changed] received: %s", self._name, entity_id)
+            if entity_id is None or new_state is None:
+                return
+            ts = new_state.last_reported.timestamp()
+            if self._last_reported_ts.get(entity_id) == ts:
+                return
+            self._last_reported_ts[entity_id] = ts
+            self._state_changed(entity_id, new_state)
+
+        @callback
+        def _on_state_report(event: Event[EventStateReportedData]) -> None:
+            """Handle state_reported — fires on every write, even if value unchanged."""
+            entity_id: str = event.data["entity_id"]
+            _LOGGER.debug("[%s][state_reported] received: %s", self._name, entity_id)
+            new_state = self._hass.states.get(entity_id)
+            if new_state is None:
+                return
+            self._last_reported_ts[entity_id] = new_state.last_reported.timestamp()
+            self._state_changed(entity_id, new_state)
+
+        removers: list[CALLBACK_TYPE] = [
+            async_track_state_change_event(
+                self._hass, measurement_sensors, _on_state_change
+            ),
+            async_track_state_report_event(
+                self._hass, measurement_sensors, _on_state_report
+            ),
+        ]
+
+        if stabilized_id:
+            _LOGGER.debug(
+                "[%s] subscribing to state_changed for stabilized: %s",
+                self._name,
+                stabilized_id,
+            )
+
+            @callback
+            def _on_stabilized_change(event: Event[EventStateChangedData]) -> None:
+                new_state = event.data.get("new_state")
+                entity_id = event.data.get("entity_id")
+                if entity_id is None or new_state is None:
+                    return
+                self._state_changed(entity_id, new_state)
+
+            removers.append(
+                async_track_state_change_event(
+                    self._hass, [stabilized_id], _on_stabilized_change
+                )
+            )
+
+        def _remove_all() -> None:
+            for r in removers:
+                r()
+
+        self._remove_listener = _remove_all
         for sensor_id in sensors:
             state = self._hass.states.get(sensor_id)
             if state is not None:
@@ -455,16 +536,16 @@ class BodyScaleMetricsHandler:
                     )
                     self._update_available_metric(metric, val)
                 self._pending_impedance.clear()
-            self._schedule_recalculation()
+            self._update_available_metric(
+                Metric.LAST_MEASUREMENT_TIME, dt_util.utcnow()
+            )
+            self._trigger_dependent_recalculation()
 
     # ── Lifecycle ────────────────────────────────────────────────────────────
 
     @callback
     def unload(self) -> None:
         """Unload the handler."""
-        if self._debounce_cancel is not None:
-            self._debounce_cancel()
-            self._debounce_cancel = None
         self._cancel_pending_timeout()
 
         if self._remove_listener is not None:
@@ -585,6 +666,10 @@ class BodyScaleMetricsHandler:
         elif entity_id == self._config.get(CONF_SENSOR_IMPEDANCE_HIGH):
             valid, problem = self._process_impedance(new_state, Metric.IMPEDANCE_HIGH)
 
+        elif entity_id == self._config.get(CONF_SENSOR_STABILIZED):
+            self._process_stabilized(new_state)
+            return  # binary sensor — no problem to report
+
         # Update global status
         if problem:
             self._set_sensor_problem(entity_id, problem)
@@ -592,7 +677,22 @@ class BodyScaleMetricsHandler:
             self._clear_sensor_problem(entity_id)
 
         if valid:
-            self._schedule_recalculation()
+            impedance_mode = self._config.get(CONF_IMPEDANCE_MODE, IMPEDANCE_MODE_NONE)
+            if entity_id == self._config[CONF_SENSOR_WEIGHT]:
+                # Weight received — compute weight-only metrics immediately
+                self._trigger_weight_only_metrics()
+                if impedance_mode == IMPEDANCE_MODE_NONE:
+                    # No impedance expected — full cycle complete
+                    self._update_available_metric(
+                        Metric.LAST_MEASUREMENT_TIME, dt_util.utcnow()
+                    )
+            elif entity_id == self._config.get(CONF_SENSOR_IMPEDANCE):
+                # Standard impedance — compute impedance-dependent metrics
+                self._trigger_impedance_metrics()
+            elif entity_id == self._config.get(CONF_SENSOR_IMPEDANCE_HIGH):
+                # Dual mode: impedance_high is the last packet — compute all
+                self._trigger_impedance_metrics()
+            # impedance_low in dual mode → wait for impedance_high, do nothing
 
     # ── Process helpers ─────────────────────────────────────────────────────
 
@@ -600,7 +700,7 @@ class BodyScaleMetricsHandler:
         raw = state.state
 
         if raw == STATE_UNAVAILABLE:
-            _LOGGER.debug("Weight sensor unavailable — ignoring (scale disconnected)")
+            _LOGGER.debug("[%s] Weight sensor unavailable — ignoring", self._name)
             return False, None
 
         try:
@@ -612,7 +712,9 @@ class BodyScaleMetricsHandler:
             # Scale reset to zero — clear last accepted weight for this cycle
             self._last_accepted_weight = None
             if val == 0.0:
-                _LOGGER.debug("Weight 0.0 kg — scale reset, ignoring silently")
+                _LOGGER.debug(
+                    "[%s] Weight 0.0 kg — scale reset, ignoring silently", self._name
+                )
                 return False, None
             _LOGGER.debug("Weight %.2f kg below minimum — ignoring (scale reset)", val)
             return False, "low"
@@ -641,12 +743,13 @@ class BodyScaleMetricsHandler:
             return False, None
 
         if not self._profile_filter.accepts(self._hass, self._config, val):
-            _LOGGER.debug("Profile filter rejected measurement: %.2f kg", val)
+            _LOGGER.debug(
+                "[%s] Profile filter rejected measurement: %.2f kg", self._name, val
+            )
             return False, None
 
         # Weight accepted for this cycle — store for impedance validation
         self._last_accepted_weight = val
-        self._schedule_recalculation()
         self._update_available_metric(Metric.WEIGHT, val)
 
         return True, None
@@ -700,7 +803,6 @@ class BodyScaleMetricsHandler:
                 _LOGGER.debug("Profile filter rejected impedance: %.2f", val)
                 return False, None
 
-        self._schedule_recalculation()
         self._update_available_metric(metric, val)
 
         return True, None
@@ -795,7 +897,7 @@ class BodyScaleMetricsHandler:
         info = self._dependencies[metric]
         val = info.calculate(self._config, self._available_metrics)
         if val is not None:
-            _LOGGER.debug("[recalc] %s = %s", metric.name, val)
+            _LOGGER.debug("[%s][recalc] %s = %s", self._name, metric.name, val)
             self._update_available_metric(metric, val)
 
     def _topological_order(self) -> list[Metric]:
@@ -829,32 +931,47 @@ class BodyScaleMetricsHandler:
 
         return ordered
 
-    def _schedule_recalculation(self) -> None:
-        """Debounce recalculation — wait for all sensors to settle.
+    # Metrics that depend only on weight (no impedance required)
+    _WEIGHT_ONLY_METRICS: frozenset[Metric] = frozenset(
+        {
+            Metric.BMI,
+            Metric.BMR,
+            Metric.VISCERAL_FAT,
+        }
+    )
 
-        Resets the timer on every valid sensor update so the full
-        recalculation only fires once all sensors (weight, impedance_low,
-        impedance_high) have reported their values for this measurement cycle.
+    def _process_stabilized(self, state: State) -> None:
+        """Force immediate full recalculation when stabilized sensor turns ON.
+
+        When configured, the stabilized sensor takes priority over the normal
+        debounce/timing logic — as soon as the scale signals a stable reading,
+        we recalculate with the latest accepted weight and impedance values.
         """
-        if self._debounce_cancel is not None:
-            self._debounce_cancel()
-            self._debounce_cancel = None
+        if state.state in (STATE_UNAVAILABLE, STATE_UNKNOWN):
+            return
+        if state.state == "on":
+            _LOGGER.debug(
+                "[%s][stabilized] ON — forcing immediate full recalculation", self._name
+            )
+            impedance_mode = self._config.get(CONF_IMPEDANCE_MODE, IMPEDANCE_MODE_NONE)
+            self._trigger_weight_only_metrics()
+            if impedance_mode != IMPEDANCE_MODE_NONE:
+                self._trigger_impedance_metrics()
 
-        self._settling = True
-
-        self._debounce_cancel = async_call_later(
-            self._hass,
-            RECALCULATION_DEBOUNCE,
-            self._on_debounce_elapsed,
-        )
-
-    @callback
-    def _on_debounce_elapsed(self, _now: Any) -> None:
-        """Fire after the debounce window — all sensors should have settled."""
-        self._debounce_cancel = None
-        self._settling = False
+    def _trigger_weight_only_metrics(self) -> None:
+        """Compute weight-only metrics and stamp measurement time."""
+        _LOGGER.debug("[%s][recalc] Weight-only pass", self._name)
         self._update_available_metric(Metric.LAST_MEASUREMENT_TIME, dt_util.utcnow())
-        self._trigger_dependent_recalculation()
+        for metric in self._topological_order():
+            if metric in self._WEIGHT_ONLY_METRICS:
+                self._compute_metric(metric)
+
+    def _trigger_impedance_metrics(self) -> None:
+        """Compute metrics that require impedance — skip weight-only metrics already computed."""
+        _LOGGER.debug("[%s][recalc] Impedance pass", self._name)
+        for metric in self._topological_order():
+            if metric not in self._WEIGHT_ONLY_METRICS:
+                self._compute_metric(metric)
 
     def _trigger_dependent_recalculation(self) -> None:
         """Recalculate all derived metrics in topological order — one pass, no cascades."""
@@ -867,10 +984,6 @@ class BodyScaleMetricsHandler:
         self, metric: Metric, state: StateType | datetime
     ) -> None:
         """Update a metric value, notify subscribers, cascade recalculations."""
-        old = self._available_metrics.get(metric)
-        if old is not None and old == state:
-            _LOGGER.debug("No update required for %s.", metric)
-            return
 
         # Inject age on first call
         self._available_metrics.setdefault(

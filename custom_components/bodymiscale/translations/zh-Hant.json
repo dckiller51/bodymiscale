@@ -60,12 +60,14 @@
           "impedance_high": "高頻阻抗感測器（250 kHz）",
           "impedance_low": "低頻阻抗感測器（50 kHz）",
           "profile_id_sensor": "配置文件 ID 感測器（秤 ID）",
+          "stabilized": "穩定感測器",
           "weight": "體重感測器"
         },
         "data_description": {
           "impedance": "您的體脂計提供的單頻阻抗值。",
           "impedance_high": "S400 型號測得的 250 kHz 高頻阻抗值。",
-          "impedance_low": "S400 型號測得的 50 kHz 低頻阻抗值。"
+          "impedance_low": "S400 型號測得的 50 kHz 低頻阻抗值。",
+          "stabilized": "由體重計提供的二元感測器（binary_sensor），指示穩定的測量值已可用。"
         },
         "title": "感測器選擇"
       },
@@ -247,12 +249,14 @@
           "impedance_high": "高頻阻抗感測器（250 kHz）",
           "impedance_low": "低頻阻抗感測器（50 kHz）",
           "profile_id_sensor": "配置文件 ID 感測器（秤 ID）",
+          "stabilized": "穩定感測器",
           "weight": "體重感測器"
         },
         "data_description": {
           "impedance": "您的體脂計提供的單頻阻抗值。",
           "impedance_high": "S400 型號測得的 250 kHz 高頻阻抗值。",
-          "impedance_low": "S400 型號測得的 50 kHz 低頻阻抗值。"
+          "impedance_low": "S400 型號測得的 50 kHz 低頻阻抗值。",
+          "stabilized": "由體重計提供的二元感測器（binary_sensor），指示穩定的測量值已可用。"
         },
         "title": "編輯感測器"
       }

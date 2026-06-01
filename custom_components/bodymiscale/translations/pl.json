@@ -60,12 +60,14 @@
           "impedance_high": "Sensor impedancji wysokiej częstotliwości (250 kHz)",
           "impedance_low": "Sensor impedancji niskiej częstotliwości (50 kHz)",
           "profile_id_sensor": "Sensor ID profilu (ID wagi)",
+          "stabilized": "Sensor stabilizacji",
           "weight": "Sensor wagi"
         },
         "data_description": {
           "impedance": "Pojedyncza wartość impedancji dostarczona przez wagę.",
           "impedance_high": "Impedancja mierzona przy 250 kHz (S400).",
-          "impedance_low": "Impedancja mierzona przy 50 kHz (S400)."
+          "impedance_low": "Impedancja mierzona przy 50 kHz (S400).",
+          "stabilized": "Binarne sensor (binary_sensor) dostarczane przez wagę wskazujące, że dostępna jest stabilna pomiary."
         },
         "title": "Wybór sensorów"
       },
@@ -247,12 +249,14 @@
           "impedance_high": "Sensor impedancji wysokiej częstotliwości (250 kHz)",
           "impedance_low": "Sensor impedancji niskiej częstotliwości (50 kHz)",
           "profile_id_sensor": "Sensor ID profilu (ID wagi)",
+          "stabilized": "Sensor stabilizacji",
           "weight": "Sensor wagi"
         },
         "data_description": {
           "impedance": "Pojedyncza wartość impedancji dostarczona przez wagę.",
           "impedance_high": "Impedancja mierzona przy 250 kHz (S400).",
-          "impedance_low": "Impedancja mierzona przy 50 kHz (S400)."
+          "impedance_low": "Impedancja mierzona przy 50 kHz (S400).",
+          "stabilized": "Binarne sensor (binary_sensor) dostarczane przez wagę wskazujące, że dostępna jest stabilna pomiary."
         },
         "title": "Edytuj sensory"
       }

@@ -5,7 +5,7 @@ from homeassistant.const import Platform
 MIN_REQUIRED_HA_VERSION = "2026.3.0"
 NAME = "BodyMiScale"
 DOMAIN = "bodymiscale"
-VERSION = "2026.5.6"
+VERSION = "2026.6.0"
 ISSUE_URL = "https://github.com/dckiller51/bodymiscale/issues"
 
 # System keys for hass.data[DOMAIN]
@@ -93,6 +93,7 @@ CONF_SENSOR_WEIGHT = "weight"
 CONF_SENSOR_IMPEDANCE = "impedance"
 CONF_SENSOR_IMPEDANCE_LOW = "impedance_low"
 CONF_SENSOR_IMPEDANCE_HIGH = "impedance_high"
+CONF_SENSOR_STABILIZED = "stabilized"
 
 # State attributes
 ATTR_AGE = "age"
