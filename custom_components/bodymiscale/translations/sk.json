@@ -60,12 +60,14 @@
           "impedance_high": "Senzor vysokofrekvenčnej impedancie (250 kHz)",
           "impedance_low": "Senzor nízkofrekvenčnej impedancie (50 kHz)",
           "profile_id_sensor": "Senzor ID profilu (ID váhy)",
+          "stabilized": "Senzor stabilizácie",
           "weight": "Senzor hmotnosti"
         },
         "data_description": {
           "impedance": "Jedna hodnota impedancie poskytovaná vašou váhou.",
           "impedance_high": "Impedancia meraná pri 250 kHz (S400).",
-          "impedance_low": "Impedancia meraná pri 50 kHz (S400)."
+          "impedance_low": "Impedancia meraná pri 50 kHz (S400).",
+          "stabilized": "Binárny senzor (binary_sensor) dodávaný váhou, ktorý indikuje, že je k dispozícii stabilné meranie."
         },
         "title": "Výber senzorov"
       },
@@ -247,12 +249,14 @@
           "impedance_high": "Senzor vysokofrekvenčnej impedancie (250 kHz)",
           "impedance_low": "Senzor nízkofrekvenčnej impedancie (50 kHz)",
           "profile_id_sensor": "Senzor ID profilu (ID váhy)",
+          "stabilized": "Senzor stabilizácie",
           "weight": "Senzor hmotnosti"
         },
         "data_description": {
           "impedance": "Jedna hodnota impedancie poskytovaná vašou váhou.",
           "impedance_high": "Impedancia meraná pri 250 kHz (S400).",
-          "impedance_low": "Impedancia meraná pri 50 kHz (S400)."
+          "impedance_low": "Impedancia meraná pri 50 kHz (S400).",
+          "stabilized": "Binárny senzor (binary_sensor) dodávaný váhou, který indikuje, že je k dispozici stabilní měření."
         },
         "title": "Upraviť senzory"
       }

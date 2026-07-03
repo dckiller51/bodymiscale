@@ -60,12 +60,14 @@
           "impedance_high": "高频阻抗传感器（250 kHz）",
           "impedance_low": "低频阻抗传感器（50 kHz）",
           "profile_id_sensor": "配置文件 ID 传感器（秤 ID）",
+          "stabilized": "稳定传感器",
           "weight": "体重传感器"
         },
         "data_description": {
           "impedance": "您的体脂秤提供的单频阻抗值。",
           "impedance_high": "S400 型号测得的 250 kHz 高频阻抗值。",
-          "impedance_low": "S400 型号测得的 50 kHz 低频阻抗值。"
+          "impedance_low": "S400 型号测得的 50 kHz 低频阻抗值。",
+          "stabilized": "由体重秤提供的二元传感器（binary_sensor），指示稳定的测量值已可用。"
         },
         "title": "传感器选择"
       },
@@ -247,12 +249,14 @@
           "impedance_high": "高频阻抗传感器（250 kHz）",
           "impedance_low": "低频阻抗传感器（50 kHz）",
           "profile_id_sensor": "配置文件 ID 传感器（秤 ID）",
+          "stabilized": "稳定传感器",
           "weight": "体重传感器"
         },
         "data_description": {
           "impedance": "您的体脂秤提供的单频阻抗值。",
           "impedance_high": "S400 型号测得的 250 kHz 高频阻抗值。",
-          "impedance_low": "S400 型号测得的 50 kHz 低频阻抗值。"
+          "impedance_low": "S400 型号测得的 50 kHz 低频阻抗值。",
+          "stabilized": "由体重秤提供的二元传感器（binary_sensor），指示稳定的测量值已可用。"
         },
         "title": "编辑传感器"
       }

@@ -4,6 +4,100 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## 2026.7.0
+
+### ✨ New features
+
+- Added optional `stabilized` binary sensor support (`CONF_SENSOR_STABILIZED`)
+  — when configured, recalculation fires immediately when the sensor turns `ON`,
+  bypassing the 5-second debounce window. This eliminates the measurement delay
+  for scales that expose a stabilization signal (e.g. Xiaomi S400 via ESPHome
+  or xiaomi_ble).
+
+- Switched state tracking from `state_changed` to `state_changed` + `state_reported`
+  — the handler now listens to both events. `state_reported` fires on every write
+  from the scale, even when the value is identical to the previous one. This ensures
+  `last_measurement_time` is always updated and recalculation always triggers,
+  regardless of whether the weight has changed between two weighings.
+
+### 🔧 Bug fixes
+
+- Fixed impedance leaking across profiles when using the weight-range
+  identification method (method 2) — when a measurement was rejected by a
+  profile's weight filter, `_last_accepted_weight` was not cleared and kept
+  the profile's own previous weight. The next impedance reading was then
+  re-validated against that stale weight, which still fell within the
+  profile's range, so it was wrongly accepted even though it belonged to a
+  different user's weighing. `_last_accepted_weight` is now reset whenever
+  a weight measurement is rejected by the profile filter.
+  Closes [#397](https://github.com/dckiller51/bodymiscale/issues/397).
+
+- Fixed interactive NOTIFY push notification being resent on every Home
+  Assistant restart / integration reload when the physical scale sensor
+  doesn't reset after a weighing and keeps exposing its last value. The
+  initial sensor-state replay performed at startup (used to prime problem
+  status and derived metrics) was being treated as a genuine new
+  measurement and re-entered the interactive notification flow. A
+  `_bootstrapping` flag now suppresses the notification side effect during
+  this initial replay.
+  Closes [#393](https://github.com/dckiller51/bodymiscale/issues/393).
+
+## 2026.5.6
+
+### 🔧 Bug fixes
+
+- Refactored metric recalculation to use topological ordering — all derived
+  metrics are now computed in a single deterministic pass (BMI → LBM →
+  FAT_PERCENTAGE → ... → BODY_SCORE), eliminating redundant cascade
+  recalculations.
+- Fixed double/redundant recalculations when weight and impedance arrive as
+  separate state updates — a `_settling` flag now blocks intermediate
+  recalculations until the debounce window elapses. A 5-second debounce
+  (`RECALCULATION_DEBOUNCE` in `const.py`) ensures all sensors (weight,
+  impedance_low, impedance_high) have settled before the single recalculation
+  fires.
+  Closes [#378](https://github.com/dckiller51/bodymiscale/issues/378).
+- Fixed `last_measurement_time` updating twice per measurement cycle (once on
+  weight, once on impedance) — timestamp is now stamped once in
+  `_on_debounce_elapsed` after all sensors have settled.
+  Closes [#378](https://github.com/dckiller51/bodymiscale/issues/378).
+- Fixed renamed `bone_cell_mass` to `bcm` in attributes to match the
+  bodymiscale component attribute name.
+
+## 2026.5.5
+
+### 🔧 Bug fixes
+
+- Fixed sensor name translations not being applied in the UI [[#222](https://github.com/dckiller51/bodymiscale/issues/222)] — `_attr_name` was overriding `translation_key` for all entities. The main umbrella entity now sets its name explicitly while normal sensors delegate name resolution to HA via `translation_key`
+
+## 2026.5.6
+
+### 🔧 Bug fixes
+
+- Refactored metric recalculation to use topological ordering — all derived
+  metrics are now computed in a single deterministic pass (BMI → LBM →
+  FAT_PERCENTAGE → ... → BODY_SCORE), eliminating redundant cascade
+  recalculations.
+- Fixed double/redundant recalculations when weight and impedance arrive as
+  separate state updates — a `_settling` flag now blocks intermediate
+  recalculations until the debounce window elapses. A 5-second debounce
+  (`RECALCULATION_DEBOUNCE` in `const.py`) ensures all sensors (weight,
+  impedance_low, impedance_high) have settled before the single recalculation
+  fires.
+  Closes [#378](https://github.com/dckiller51/bodymiscale/issues/378).
+- Fixed `last_measurement_time` updating twice per measurement cycle (once on
+  weight, once on impedance) — timestamp is now stamped once in
+  `_on_debounce_elapsed` after all sensors have settled.
+  Closes [#378](https://github.com/dckiller51/bodymiscale/issues/378).
+- Fixed renamed `bone_cell_mass` to `bcm` in attributes to match the
+  bodymiscale component attribute name.
+
+## 2026.5.5
+
+### 🔧 Bug fixes
+
+- Fixed sensor name translations not being applied in the UI [[#222](https://github.com/dckiller51/bodymiscale/issues/222)] — `_attr_name` was overriding `translation_key` for all entities. The main umbrella entity now sets its name explicitly while normal sensors delegate name resolution to HA via `translation_key`
+
 ## 2026.5.6
 
 ### 🔧 Bug fixes

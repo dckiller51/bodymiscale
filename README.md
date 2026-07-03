@@ -65,8 +65,9 @@ If you plan to use an impedance sensor for advanced metrics (lean body mass, bod
 
 If you plan to integrate your own last weigh-in sensor, make sure a dedicated sensor is properly configured in Home Assistant.
 
-**(Optional) Last measurement time sensor:**
-Previously mandatory for accurate history, this is now optional. Bodymiscale automatically generates a timestamp based on Home Assistant's internal clock whenever a weight change is detected. If you provide a dedicated sensor, Bodymiscale will prioritise that "real" measurement time over the system time.
+**(Optional) Stabilized sensor:**
+
+If your scale exposes a stabilization signal (e.g. Xiaomi S400 via ESPHome or `xiaomi_ble`), you can configure it here. When this sensor turns `ON`, Bodymiscale fires the recalculation immediately — bypassing the 5-second debounce window. This ensures instantaneous results regardless of whether the weight or impedance values have changed since the last measurement.
 
 ## Generated data
 
@@ -177,8 +178,7 @@ Exclusive to dual-frequency hardware capable of measuring impedance at 50 kHz an
 4. **Select your weight sensor:** Choose the existing weight sensor in Home Assistant (e.g., a `sensor`, or an `input_number`).
    Since v2026.5.x, you can select the scale's shared native sensor directly. If you prefer data persistence across restarts, an `input_number` entity is still a solid choice.
 5. **Impedance sensor (optional):** If you have an impedance sensor, select it here. Since v2026.5.x, the scale's own sensor can be shared across profiles. This sensor is required to calculate advanced metrics (lean body mass, body fat mass, etc.).
-6. **Last measurement time sensor (optional):**
-   If you have a last weigh-in sensor, select it here (e.g., a `sensor`, or an `input_datetime`). This sensor is used to record the date and time of the most recent measurement.
+6. **Stabilized sensor (optional):** If your scale exposes a stabilization binary sensor (e.g. Xiaomi S400 via ESPHome or `xiaomi_ble`), select it here. When it turns `ON`, Bodymiscale recalculates immediately without waiting for the debounce window. Particularly useful for scales where weight or impedance may not change between two consecutive measurements.
 7. Click "Save".
 
 **Explanation of choices:**

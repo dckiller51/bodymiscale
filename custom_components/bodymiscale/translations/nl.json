@@ -60,12 +60,14 @@
           "impedance_high": "Hoogfrequente impedantiesensor (250 kHz)",
           "impedance_low": "Laagfrequente impedantiesensor (50 kHz)",
           "profile_id_sensor": "Profiel-ID-sensor (weegschaal-ID)",
+          "stabilized": "Stabilisatiesensor",
           "weight": "Gewichtssensor"
         },
         "data_description": {
           "impedance": "Enkele impedantiewaarde geleverd door je weegschaal.",
           "impedance_high": "Impedantie gemeten op 250 kHz (S400).",
-          "impedance_low": "Impedantie gemeten op 50 kHz (S400)."
+          "impedance_low": "Impedantie gemeten op 50 kHz (S400).",
+          "stabilized": "Binaire sensor (binary_sensor) van de weegschaal die aangeeft dat een stabiele meting beschikbaar is."
         },
         "title": "Sensorselectie"
       },
@@ -247,12 +249,14 @@
           "impedance_high": "Hoogfrequente impedantiesensor (250 kHz)",
           "impedance_low": "Laagfrequente impedantiesensor (50 kHz)",
           "profile_id_sensor": "Profiel-ID-sensor (weegschaal-ID)",
+          "stabilized": "Stabilisatiesensor",
           "weight": "Gewichtssensor"
         },
         "data_description": {
           "impedance": "Enkele impedantiewaarde geleverd door je weegschaal.",
           "impedance_high": "Impedantie gemeten op 250 kHz (S400).",
-          "impedance_low": "Impedantie gemeten op 50 kHz (S400)."
+          "impedance_low": "Impedantie gemeten op 50 kHz (S400).",
+          "stabilized": "Binaire sensor (binary_sensor) van de weegschaal die aangeeft dat een stabiele meting beschikbaar is."
         },
         "title": "Sensoren bewerken"
       }
