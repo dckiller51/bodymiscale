@@ -312,6 +312,12 @@ class BodyScaleMetricsHandler:
         # a previous session and belong to a different user).
         self._last_accepted_weight: float | None = None
 
+        # True only while the initial sensor-state replay runs in
+        # _setup_listeners (HA restart / entry reload). Suppresses side
+        # effects meant only for a genuinely new measurement (see NOTIFY
+        # branch in _process_weight).
+        self._bootstrapping: bool = False
+
         self._available_metrics: MutableMapping[Metric, StateType | datetime] = (
             _MetricsStore(ttl=60)
         )
@@ -437,10 +443,20 @@ class BodyScaleMetricsHandler:
                 r()
 
         self._remove_listener = _remove_all
-        for sensor_id in sensors:
-            state = self._hass.states.get(sensor_id)
-            if state is not None:
-                self._state_changed(sensor_id, state)
+        # Prime problem status / derived metrics from whatever value each
+        # source sensor currently holds (e.g. after a HA restart). This is
+        # NOT a real new measurement: many scale sensors never reset after
+        # a weighing and simply keep exposing the last reading, so replaying
+        # it must not re-trigger side effects meant only for fresh
+        # measurements (in particular: sending an interactive NOTIFY push).
+        self._bootstrapping = True
+        try:
+            for sensor_id in sensors:
+                state = self._hass.states.get(sensor_id)
+                if state is not None:
+                    self._state_changed(sensor_id, state)
+        finally:
+            self._bootstrapping = False
 
     # ── Properties ───────────────────────────────────────────────────────────
 
@@ -725,7 +741,11 @@ class BodyScaleMetricsHandler:
             val *= 0.45359237
 
         # ── Mode notification ─────────────────────────────────────────────────
-        if self._notification_coordinator is not None and not self._replaying:
+        if (
+            self._notification_coordinator is not None
+            and not self._replaying
+            and not self._bootstrapping
+        ):
             self._cancel_pending_timeout()
             self._pending_weight = val
             self._pending_state = state
@@ -746,6 +766,18 @@ class BodyScaleMetricsHandler:
             _LOGGER.debug(
                 "[%s] Profile filter rejected measurement: %.2f kg", self._name, val
             )
+            # Clear any stale impedance stored from a previous session so a
+            # recalculation triggered by another profile's accepted weight
+            # cannot reuse this profile's old impedance values.
+            self._available_metrics.pop(Metric.IMPEDANCE, None)
+            self._available_metrics.pop(Metric.IMPEDANCE_LOW, None)
+            self._available_metrics.pop(Metric.IMPEDANCE_HIGH, None)
+            # Invalidate the last accepted weight too: otherwise the next
+            # impedance reading (which belongs to another user's weight)
+            # would be re-validated against this profile's own stale weight
+            # from a previous cycle — which still falls in this profile's
+            # range — and get wrongly accepted.
+            self._last_accepted_weight = None
             return False, None
 
         # Weight accepted for this cycle — store for impedance validation
@@ -956,7 +988,22 @@ class BodyScaleMetricsHandler:
             impedance_mode = self._config.get(CONF_IMPEDANCE_MODE, IMPEDANCE_MODE_NONE)
             self._trigger_weight_only_metrics()
             if impedance_mode != IMPEDANCE_MODE_NONE:
-                self._trigger_impedance_metrics()
+                # Only trigger impedance metrics if a weight was accepted for
+                # this profile in the current measurement cycle. This prevents
+                # a profile whose weight was rejected from recalculating
+                # impedance-derived metrics using stale or another user's data.
+                if self._last_accepted_weight is not None and (
+                    self._profile_filter.accepts(
+                        self._hass, self._config, self._last_accepted_weight
+                    )
+                ):
+                    self._trigger_impedance_metrics()
+                else:
+                    _LOGGER.debug(
+                        "[%s][stabilized] Skipping impedance pass — "
+                        "no weight accepted for this profile in current cycle",
+                        self._name,
+                    )
 
     def _trigger_weight_only_metrics(self) -> None:
         """Compute weight-only metrics and stamp measurement time."""

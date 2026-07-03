@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "bodymiscale"
-version = "2026.6.0"
+version = "2026.7.0"
 description = "Home Assistant custom integration for body composition tracking"
 readme = "README.md"
 license = { text = "Apache-2.0" }
