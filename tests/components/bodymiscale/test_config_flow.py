@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from unittest.mock import patch
+
 from homeassistant import config_entries
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
@@ -676,3 +678,407 @@ async def test_options_flow_profile_weight_range_invalid(
     )
     assert result["type"] == FlowResultType.FORM
     assert result["errors"].get("base") == "weight_range_invalid"
+
+
+# ===========================================================================
+# _get_profile_schema — direct unit tests (unreachable-in-practice branches)
+# ===========================================================================
+
+
+def test_get_profile_schema_none_method_returns_none() -> None:
+    """PROFILE_METHOD_NONE must yield no schema at all."""
+    from custom_components.bodymiscale.config_flow import _get_profile_schema
+
+    assert _get_profile_schema(PROFILE_METHOD_NONE, {}) is None
+
+
+def test_get_profile_schema_unknown_method_returns_none() -> None:
+    """An unrecognized method must fall through to None (defensive branch)."""
+    from custom_components.bodymiscale.config_flow import _get_profile_schema
+
+    assert _get_profile_schema("not_a_real_method", {}) is None
+
+
+# ===========================================================================
+# _validate_nearest — direct unit tests
+# ===========================================================================
+
+
+def test_validate_nearest_missing_weight() -> None:
+    """A missing initial weight must set 'weight_range_invalid'."""
+    from custom_components.bodymiscale.config_flow import _validate_nearest
+
+    errors: dict[str, str] = {}
+    _validate_nearest({CONF_NEAREST_TOLERANCE: 5}, errors)
+    assert errors[CONF_INITIAL_WEIGHT] == "weight_range_invalid"
+
+
+def test_validate_nearest_weight_too_low() -> None:
+    """An initial weight below the constraint must set 'weight_low'."""
+    from custom_components.bodymiscale.config_flow import _validate_nearest
+
+    errors: dict[str, str] = {}
+    _validate_nearest({CONF_INITIAL_WEIGHT: 0.0, CONF_NEAREST_TOLERANCE: 5}, errors)
+    assert errors[CONF_INITIAL_WEIGHT] == "weight_low"
+
+
+def test_validate_nearest_weight_too_high() -> None:
+    """An initial weight above the constraint must set 'weight_limit'."""
+    from custom_components.bodymiscale.config_flow import _validate_nearest
+
+    errors: dict[str, str] = {}
+    _validate_nearest({CONF_INITIAL_WEIGHT: 5000.0, CONF_NEAREST_TOLERANCE: 5}, errors)
+    assert errors[CONF_INITIAL_WEIGHT] == "weight_limit"
+
+
+def test_validate_nearest_weight_not_a_number() -> None:
+    """A non-numeric initial weight must set 'weight_range_invalid'."""
+    from custom_components.bodymiscale.config_flow import _validate_nearest
+
+    errors: dict[str, str] = {}
+    _validate_nearest(
+        {CONF_INITIAL_WEIGHT: "not-a-number", CONF_NEAREST_TOLERANCE: 5}, errors
+    )
+    assert errors[CONF_INITIAL_WEIGHT] == "weight_range_invalid"
+
+
+def test_validate_nearest_missing_tolerance() -> None:
+    """A missing tolerance must set 'weight_range_invalid'."""
+    from custom_components.bodymiscale.config_flow import _validate_nearest
+
+    errors: dict[str, str] = {}
+    _validate_nearest({CONF_INITIAL_WEIGHT: 65.0}, errors)
+    assert errors[CONF_NEAREST_TOLERANCE] == "weight_range_invalid"
+
+
+def test_validate_nearest_tolerance_too_low() -> None:
+    """A negative tolerance must set 'weight_low'."""
+    from custom_components.bodymiscale.config_flow import _validate_nearest
+
+    errors: dict[str, str] = {}
+    _validate_nearest({CONF_INITIAL_WEIGHT: 65.0, CONF_NEAREST_TOLERANCE: -1}, errors)
+    assert errors[CONF_NEAREST_TOLERANCE] == "weight_low"
+
+
+def test_validate_nearest_tolerance_too_high() -> None:
+    """A tolerance above 99 must set 'weight_limit'."""
+    from custom_components.bodymiscale.config_flow import _validate_nearest
+
+    errors: dict[str, str] = {}
+    _validate_nearest({CONF_INITIAL_WEIGHT: 65.0, CONF_NEAREST_TOLERANCE: 150}, errors)
+    assert errors[CONF_NEAREST_TOLERANCE] == "weight_limit"
+
+
+def test_validate_nearest_tolerance_not_a_number() -> None:
+    """A non-numeric tolerance must set 'weight_range_invalid'."""
+    from custom_components.bodymiscale.config_flow import _validate_nearest
+
+    errors: dict[str, str] = {}
+    _validate_nearest(
+        {CONF_INITIAL_WEIGHT: 65.0, CONF_NEAREST_TOLERANCE: "nope"}, errors
+    )
+    assert errors[CONF_NEAREST_TOLERANCE] == "weight_range_invalid"
+
+
+# ===========================================================================
+# _validate_weight — direct unit tests
+# ===========================================================================
+
+
+def test_validate_weight_missing_min_or_max() -> None:
+    """A missing weight_min or weight_max must set 'base' and stop early."""
+    from custom_components.bodymiscale.config_flow import _validate_weight
+
+    errors: dict[str, str] = {}
+    _validate_weight({CONF_WEIGHT_MAX: 80.0}, errors, [])
+    assert errors["base"] == "weight_range_invalid"
+
+
+def test_validate_weight_min_too_high() -> None:
+    """A weight_min above the constraint must set 'weight_limit'."""
+    from custom_components.bodymiscale.config_flow import _validate_weight
+
+    errors: dict[str, str] = {}
+    _validate_weight({CONF_WEIGHT_MIN: 5000.0, CONF_WEIGHT_MAX: 5001.0}, errors, [])
+    assert errors[CONF_WEIGHT_MIN] == "weight_limit"
+
+
+def test_validate_weight_max_too_low() -> None:
+    """A weight_max below the constraint must set 'weight_low'."""
+    from custom_components.bodymiscale.config_flow import _validate_weight
+
+    errors: dict[str, str] = {}
+    _validate_weight({CONF_WEIGHT_MIN: -5.0, CONF_WEIGHT_MAX: 0.0}, errors, [])
+    assert errors[CONF_WEIGHT_MAX] == "weight_low"
+
+
+def test_validate_weight_max_too_high() -> None:
+    """A weight_max above the constraint must set 'weight_limit'."""
+    from custom_components.bodymiscale.config_flow import _validate_weight
+
+    errors: dict[str, str] = {}
+    _validate_weight({CONF_WEIGHT_MIN: 50.0, CONF_WEIGHT_MAX: 5000.0}, errors, [])
+    assert errors[CONF_WEIGHT_MAX] == "weight_limit"
+
+
+# ===========================================================================
+# _validate_notify — direct unit tests
+# ===========================================================================
+
+
+def test_validate_notify_weight_min_too_low() -> None:
+    """A notify weight_min below the constraint must set 'weight_low'."""
+    from custom_components.bodymiscale.config_flow import _validate_notify
+
+    errors: dict[str, str] = {}
+    _validate_notify({CONF_NOTIFY_WEIGHT_MIN: -5.0}, errors)
+    assert errors[CONF_NOTIFY_WEIGHT_MIN] == "weight_low"
+
+
+def test_validate_notify_weight_max_too_low() -> None:
+    """A notify weight_max below the constraint must set 'weight_low'."""
+    from custom_components.bodymiscale.config_flow import _validate_notify
+
+    errors: dict[str, str] = {}
+    _validate_notify({CONF_NOTIFY_WEIGHT_MAX: -5.0}, errors)
+    assert errors[CONF_NOTIFY_WEIGHT_MAX] == "weight_low"
+
+
+def test_validate_notify_weight_max_too_high() -> None:
+    """A notify weight_max above the constraint must set 'weight_limit'."""
+    from custom_components.bodymiscale.config_flow import _validate_notify
+
+    errors: dict[str, str] = {}
+    _validate_notify({CONF_NOTIFY_WEIGHT_MAX: 5000.0}, errors)
+    assert errors[CONF_NOTIFY_WEIGHT_MAX] == "weight_limit"
+
+
+# ===========================================================================
+# Config Flow — defensive "schema is None" branch at the profile step
+# ===========================================================================
+
+
+async def test_flow_profile_step_schema_none_creates_entry_directly(
+    hass: HomeAssistant,
+) -> None:
+    """If _get_profile_schema unexpectedly returns None, entry is created directly."""
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": config_entries.SOURCE_USER}
+    )
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"], USER_STEP
+    )
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"],
+        {
+            CONF_HEIGHT: 165.0,
+            CONF_CALCULATION_MODE: "xiaomi",
+            CONF_IMPEDANCE_MODE: IMPEDANCE_MODE_NONE,
+            CONF_PROFILE_METHOD: PROFILE_METHOD_ID,
+        },
+    )
+    with patch(
+        "custom_components.bodymiscale.config_flow._get_profile_schema",
+        return_value=None,
+    ):
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            {
+                CONF_SENSOR_WEIGHT: "sensor.weight",
+                CONF_SENSOR_PROFILE_ID: "sensor.profile_id",
+            },
+        )
+    assert result["type"] == FlowResultType.CREATE_ENTRY
+
+
+# ===========================================================================
+# Options Flow — additional branch coverage
+# ===========================================================================
+
+
+async def test_options_flow_height_too_low(
+    hass: HomeAssistant, mock_config_entry: MockConfigEntry
+) -> None:
+    """Options flow: height too low → error 'height_low'."""
+    mock_config_entry.add_to_hass(hass)
+
+    result = await hass.config_entries.options.async_init(mock_config_entry.entry_id)
+    result = await hass.config_entries.options.async_configure(
+        result["flow_id"],
+        {
+            CONF_HEIGHT: 0.1,
+            CONF_CALCULATION_MODE: "xiaomi",
+            CONF_IMPEDANCE_MODE: IMPEDANCE_MODE_NONE,
+            CONF_PROFILE_METHOD: PROFILE_METHOD_NONE,
+        },
+    )
+    assert result["type"] == FlowResultType.FORM
+    assert result["step_id"] == "init"
+    assert result["errors"][CONF_HEIGHT] == "height_low"
+
+
+async def _reach_options_profile_step(
+    hass: HomeAssistant, entry: MockConfigEntry, profile_method: str
+) -> dict:
+    """Run the options flow up to the profile step."""
+    entry.add_to_hass(hass)
+    result = await hass.config_entries.options.async_init(entry.entry_id)
+    result = await hass.config_entries.options.async_configure(
+        result["flow_id"],
+        {
+            CONF_HEIGHT: 165.0,
+            CONF_CALCULATION_MODE: "xiaomi",
+            CONF_IMPEDANCE_MODE: IMPEDANCE_MODE_NONE,
+            CONF_PROFILE_METHOD: profile_method,
+        },
+    )
+    result = await hass.config_entries.options.async_configure(
+        result["flow_id"],
+        {CONF_SENSOR_WEIGHT: "sensor.weight"},
+    )
+    assert result["step_id"] == "profile"
+    return result
+
+
+async def test_options_flow_profile_nearest_weight_too_low(
+    hass: HomeAssistant, mock_config_entry: MockConfigEntry
+) -> None:
+    """Options flow profile step (NEAREST): weight below constraint → error."""
+    result = await _reach_options_profile_step(
+        hass, mock_config_entry, PROFILE_METHOD_NEAREST
+    )
+    result = await hass.config_entries.options.async_configure(
+        result["flow_id"],
+        {CONF_INITIAL_WEIGHT: 0.0, CONF_NEAREST_TOLERANCE: 5},
+    )
+    assert result["type"] == FlowResultType.FORM
+    assert result["errors"].get(CONF_INITIAL_WEIGHT) == "weight_low"
+
+
+async def test_options_flow_profile_notify_weight_min_too_high(
+    hass: HomeAssistant, mock_config_entry: MockConfigEntry
+) -> None:
+    """Options flow profile step (NOTIFY): weight_min above constraint → error."""
+    result = await _reach_options_profile_step(
+        hass, mock_config_entry, PROFILE_METHOD_NOTIFY
+    )
+    result = await hass.config_entries.options.async_configure(
+        result["flow_id"],
+        {
+            CONF_NOTIFY_DEVICE_ID: "device_abc",
+            CONF_NOTIFY_WEIGHT_MIN: 250.0,
+        },
+    )
+    assert result["type"] == FlowResultType.FORM
+    assert result["errors"].get(CONF_NOTIFY_WEIGHT_MIN) == "weight_limit"
+
+
+async def test_options_flow_profile_step_schema_none_creates_entry_directly(
+    hass: HomeAssistant, mock_config_entry: MockConfigEntry
+) -> None:
+    """If _get_profile_schema unexpectedly returns None, entry is created directly."""
+    mock_config_entry.add_to_hass(hass)
+    result = await hass.config_entries.options.async_init(mock_config_entry.entry_id)
+    result = await hass.config_entries.options.async_configure(
+        result["flow_id"],
+        {
+            CONF_HEIGHT: 165.0,
+            CONF_CALCULATION_MODE: "xiaomi",
+            CONF_IMPEDANCE_MODE: IMPEDANCE_MODE_NONE,
+            CONF_PROFILE_METHOD: PROFILE_METHOD_ID,
+        },
+    )
+    with patch(
+        "custom_components.bodymiscale.config_flow._get_profile_schema",
+        return_value=None,
+    ):
+        result = await hass.config_entries.options.async_configure(
+            result["flow_id"],
+            {
+                CONF_SENSOR_WEIGHT: "sensor.weight",
+                CONF_SENSOR_PROFILE_ID: "sensor.profile_id",
+            },
+        )
+    assert result["type"] == FlowResultType.CREATE_ENTRY
+
+
+async def test_options_flow_get_other_weight_ranges_detects_overlap(
+    hass: HomeAssistant,
+) -> None:
+    """_get_other_weight_ranges must include other entries and flag overlap."""
+    other = MockConfigEntry(
+        domain=DOMAIN,
+        title="Bob",
+        unique_id="bob",
+        data={
+            "name": "Bob",
+            CONF_BIRTHDAY: "1985-06-20",
+            CONF_GENDER: Gender.MALE,
+            CONF_HEIGHT: 180.0,
+            CONF_CALCULATION_MODE: "xiaomi",
+            CONF_IMPEDANCE_MODE: IMPEDANCE_MODE_NONE,
+            CONF_PROFILE_METHOD: PROFILE_METHOD_WEIGHT,
+            CONF_SENSOR_WEIGHT: "sensor.weight_bob",
+            CONF_WEIGHT_MIN: 50.0,
+            CONF_WEIGHT_MAX: 80.0,
+        },
+        options={
+            CONF_PROFILE_METHOD: PROFILE_METHOD_WEIGHT,
+            CONF_WEIGHT_MIN: 50.0,
+            CONF_WEIGHT_MAX: 80.0,
+        },
+        version=4,
+    )
+    other.add_to_hass(hass)
+
+    mine = MockConfigEntry(
+        domain=DOMAIN,
+        title="Alice",
+        unique_id="alice",
+        data={
+            "name": "Alice",
+            CONF_BIRTHDAY: "1990-01-15",
+            CONF_GENDER: Gender.FEMALE,
+            CONF_HEIGHT: 165.0,
+            CONF_CALCULATION_MODE: "xiaomi",
+            CONF_IMPEDANCE_MODE: IMPEDANCE_MODE_NONE,
+            CONF_PROFILE_METHOD: PROFILE_METHOD_NONE,
+            CONF_SENSOR_WEIGHT: "sensor.weight_alice",
+        },
+        options={},
+        version=4,
+    )
+
+    result = await _reach_options_profile_step(hass, mine, PROFILE_METHOD_WEIGHT)
+    result = await hass.config_entries.options.async_configure(
+        result["flow_id"],
+        {CONF_WEIGHT_MIN: 60.0, CONF_WEIGHT_MAX: 90.0},  # overlaps Bob's 50-80
+    )
+    assert result["type"] == FlowResultType.FORM
+    assert result["errors"].get("base") == "weight_range_overlap"
+
+
+async def test_options_flow_get_other_weight_ranges_excludes_self(
+    hass: HomeAssistant, mock_config_entry: MockConfigEntry
+) -> None:
+    """The entry being edited must not be counted against itself for overlap."""
+    mock_config_entry.add_to_hass(hass)
+    hass.config_entries.async_update_entry(
+        mock_config_entry,
+        data={
+            **mock_config_entry.data,
+            CONF_PROFILE_METHOD: PROFILE_METHOD_WEIGHT,
+            CONF_WEIGHT_MIN: 60.0,
+            CONF_WEIGHT_MAX: 90.0,
+        },
+    )
+
+    result = await _reach_options_profile_step(
+        hass, mock_config_entry, PROFILE_METHOD_WEIGHT
+    )
+    # Same range as the entry's own pre-existing data — must NOT self-overlap.
+    result = await hass.config_entries.options.async_configure(
+        result["flow_id"],
+        {CONF_WEIGHT_MIN: 60.0, CONF_WEIGHT_MAX: 90.0},
+    )
+    assert result["type"] == FlowResultType.CREATE_ENTRY
