@@ -391,8 +391,8 @@ class BodyScaleSensor(BodyScaleBaseEntity, RestoreSensor):
         entity_description: SensorEntityDescription,
         metric: Metric,
         get_attributes: (
-            None
-            | Callable[[StateType | datetime, Mapping[str, Any]], Mapping[str, Any]]
+            Callable[[StateType | datetime, Mapping[str, Any]], Mapping[str, Any]]
+            | None
         ) = None,
     ) -> None:
         super().__init__(handler, entity_description)

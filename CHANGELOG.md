@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## 2026.8.0
+
+### 🔧 Bug fixes
+
+- Fixed Lean Body Mass (LBM) being systematically overestimated for **female** profiles in **Scientific** and **S400 (dual-frequency)** modes. The hardware-calibrated foot-to-foot formula lacks a sex term; cross-validation against reference data (Xiaomi Home app, clinical literature) shows female LBM was ~16 % too high, causing downstream errors:
+
+  - Body fat underestimated by ~12–15 percentage points
+  - BMR (Katch-McArdle) overestimated by ~180 kcal
+  - Muscle mass, bone mass, protein % and body score all skewed high
+    A correction factor of **0.84** is now applied to female LBM in Science and Dual-frequency modes. Xiaomi Legacy mode is unchanged — it already compensates downstream via its `adjust`/`coeff` constants. Closes [#349](https://github.com/dckiller51/bodymiscale/issues/349).
+
+- Fixed HA 2027.8.0 deprecation warning on the umbrella entity (`bodymiscale.<name>`) by returning `None` for `device_info` when the entity is not bound to a config-entry platform. Sensors remain correctly attached to the device.
+- Fixed an issue where the `stabilized` binary sensor and notify weight limits remained stuck in the memory after being removed in the options flow. Clearing these fields now correctly removes them from the entry configuration.
+
 ## 2026.7.0
 
 ### ✨ New features

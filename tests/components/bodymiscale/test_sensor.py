@@ -239,7 +239,29 @@ async def test_sensor_device_info_name_matches_config(
     sensors = add_entities.call_args[0][0]
     sensor = sensors[0]
 
+    sensor.platform = MagicMock()
+    sensor.platform.config_entry = mock_config_entry
+
     assert sensor.device_info["name"] == "Alice"
+
+
+async def test_sensor_device_info_none_without_platform(
+    hass: HomeAssistant,
+    mock_config_entry: MockConfigEntry,
+) -> None:
+    """device_info must be None when the entity is not bound to a platform."""
+    mock_config_entry.add_to_hass(hass)
+    handler = _make_handler(IMPEDANCE_MODE_NONE, name="Alice")
+    hass.data.setdefault(DOMAIN, {})[HANDLERS] = {mock_config_entry.entry_id: handler}
+
+    add_entities = _make_add_entities()
+    await async_setup_entry(hass, mock_config_entry, add_entities)
+
+    sensors = add_entities.call_args[0][0]
+    sensor = sensors[0]
+
+    assert sensor.platform is None
+    assert sensor.device_info is None
 
 
 # ===========================================================================
