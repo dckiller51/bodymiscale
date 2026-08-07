@@ -13,7 +13,7 @@ All notable changes to this project will be documented in this file.
   - Body fat underestimated by ~12–15 percentage points
   - BMR (Katch-McArdle) overestimated by ~180 kcal
   - Muscle mass, bone mass, protein % and body score all skewed high
-    A correction factor of **0.84** is now applied to female LBM in Science and Dual-frequency modes. Xiaomi Legacy mode is unchanged — it already compensates downstream via its `adjust`/`coeff` constants. Closes [#349](https://github.com/dckiller51/bodymiscale/issues/349).
+    A correction factor of **0.84** is now applied to female LBM in Science and Dual-frequency modes. Xiaomi Legacy mode is unchanged — it already compensates downstream via its `adjust`/`coeff` constants. Closes [#412](https://github.com/dckiller51/bodymiscale/issues/412).
 
 - Fixed HA 2027.8.0 deprecation warning on the umbrella entity (`bodymiscale.<name>`) by returning `None` for `device_info` when the entity is not bound to a config-entry platform. Sensors remain correctly attached to the device.
 - Fixed an issue where the `stabilized` binary sensor and notify weight limits remained stuck in the memory after being removed in the options flow. Clearing these fields now correctly removes them from the entry configuration.
