@@ -50,3 +50,10 @@ class BodyScaleBaseEntity(Entity):
             sw_version=VERSION,
             identifiers={(DOMAIN, self._handler.config_entry_id)},
         )
+
+    @property
+    def device_info(self) -> DeviceInfo | None:
+        """Return device info only when bound to a config entry platform."""
+        if self.platform is None or self.platform.config_entry is None:
+            return None
+        return self._attr_device_info

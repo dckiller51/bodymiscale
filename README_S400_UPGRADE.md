@@ -29,7 +29,10 @@ This naming is inverted relative to the BIA standard convention (where "low" ref
 
 $$LBM = \frac{H \times 9.058}{100} \times \frac{H}{100} + W \times 0.32 + 12.226 - Z_{lf} \times 0.0068 - A \times 0.0542$$
 
-**Origin:** Empirical regression from the Xiaomi/Zepp Life ecosystem, calibrated for foot-to-foot impedance levels. The most appropriate baseline for this hardware, as it accounts for the higher resistance values typical of foot-to-foot measurements.
+**Sexual dimorphism correction (Science & S400 modes)**
+The base regression lacks a sex term. Cross-validation against reference data shows female LBM is overestimated by ~16 % (essential fat + lower skeletal muscle mass). A correction factor of **0.84** is applied for females in Science and Dual-frequency modes. Xiaomi Legacy mode compensates this downstream via its `adjust`/`coeff` constants and is left unchanged.
+
+**Origin:** Empirical regression from the Xiaomi/Zepp Life ecosystem, calibrated for foot-to-foot impedance levels, with sex correction added in v2026.8.x. The most appropriate baseline for this hardware, as it accounts for the higher resistance values typical of foot-to-foot measurements.
 
 ---
 

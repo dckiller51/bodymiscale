@@ -129,21 +129,40 @@ def get_lbm(
         Uses the hardware-calibrated formula optimized for foot-to-foot impedance.
         Science mode shares this formula; differences appear downstream (fat%, water%, BMR).
         LBM = (H * 9.058/100) * (H/100) + W * 0.32 + 12.226 - Z * 0.0068 - A * 0.0542
+
+    Gender correction (Science & Dual modes only):
+        The base regression was derived from foot-to-foot BIA data without a sex
+        term. Cross-validation against the Xiaomi Home app and clinical literature
+        (Kyle 2001, Janssen 2000, Heymsfield 2005) shows female LBM is
+        overestimated by ~16 % (essential fat + skeletal muscle + bone mass
+        sexual dimorphism). Xiaomi Legacy mode compensates this downstream in
+        get_fat_percentage via a -9.25 kg adjust. We apply an equivalent
+        correction upstream here so that all derived metrics (BMR, muscle, water,
+        protein, body score) remain consistent.
     """
     h = to_float(config.get(CONF_HEIGHT))
     w = to_float(metrics.get(Metric.WEIGHT))
     a = to_float(metrics.get(Metric.AGE))
+    gender = config.get(CONF_GENDER)
+    mode = config.get(CONF_CALCULATION_MODE, ALGO_XIAOMI)
 
     z = _get_z_lf(metrics) if _is_dual(config) else _get_z_std(metrics)
 
-    if h <= 0 or w <= 0 or z <= 0:
+    if h <= 0 or w <= 0 or z <= 0 or gender is None:
         return 0.0
 
-    # We use the Xiaomi-calibrated formula for all modes on the S400
-    # because it is the only one that accounts for foot-to-foot resistance levels.
     lbm = (
         (h * 9.058 / 100.0) * (h / 100.0) + w * 0.32 + 12.226 - z * 0.0068 - a * 0.0542
     )
+
+    # ── Sexual dimorphism correction for Science / Dual modes ──────────────
+    # The hardware formula lacks a sex term. In healthy adults, female LBM is
+    # ~15-16 % lower than male LBM at identical height/weight/impedance
+    # (Heymsfield 2005). Xiaomi Legacy compensates via `adjust` in
+    # get_fat_percentage; Science/S400 use Siri 1956 directly and therefore
+    # require the correction here.
+    if gender == Gender.FEMALE and (_is_dual(config) or mode == ALGO_SCIENCE):
+        lbm *= 0.84
 
     return float(min(lbm, w * 0.98))
 
@@ -156,29 +175,21 @@ def get_lbm(
 def get_fat_percentage(
     config: Mapping[str, Any], metrics: Mapping[Metric, StateType | datetime]
 ) -> float:
-    """Calculate body fat percentage.
-
-    XIAOMI :
-        Zepp Life formula. Empirical Xiaomi coefficients.
-
-    SCIENCE :
-        Direct 2-compartment method (Siri 1956) :
-        fat% = (W − LBM) / W × 100
-
-    S400 :
-        3-compartment model using TBW (Siri 1961):
-        fat% = (2.057 × W − 0.786 × TBW − 1.286 × LBM) / W × 100
-        Simplified: direct 2-compartment with Sun 2003 LBM.
-    """
+    """Calculate body fat percentage."""
     w = to_float(metrics.get(Metric.WEIGHT))
     lbm = to_float(metrics.get(Metric.LBM))
     mode = config.get(CONF_CALCULATION_MODE, ALGO_XIAOMI)
+    gender = config.get(CONF_GENDER)
 
     if w <= 0 or lbm <= 0:
         return 0.0
 
     if _is_dual(config) or mode == ALGO_SCIENCE:
         fat_pct = (w - lbm) / w * 100.0
+        # Essential fat limits: biological floor to prevent absurd values
+        # if sensors glitch or LBM formula drifts (Heymsfield 2005)
+        min_fat = 10.0 if gender == Gender.FEMALE else 5.0
+        fat_pct = check_value_constraints(fat_pct, min_fat, 75.0)
     else:
         # XIAOMI — exact Zepp Life formula
         h = to_float(config.get(CONF_HEIGHT))

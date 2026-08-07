@@ -124,14 +124,14 @@ Uses standardized anthropometric equations:
 
 Switches to advanced bioelectrical impedance analysis (BIA) models:
 
-- **Lean Body Mass (LBM):** Uses clinically validated equations to calculate non-fat tissue.
+- **Lean Body Mass (LBM):** Uses clinically validated equations to calculate non-fat tissue, with a sex-specific correction for females (factor 0.84) to account for lower lean mass at identical height/weight/impedance.
 - **Water & Protein:** Derived from LBM using standardized physiological constants (**Pace 73%** for hydration and **Wang 19.5%** for proteins).
 
 ### 3. S400 (Dual-frequency)
 
 Exclusive to dual-frequency hardware capable of measuring impedance at 50 kHz and 250 kHz.
 
-- **Advanced BIA Models:** Implements a hardware-calibrated baseline for LBM, combined with clinical models like **Deurenberg (1995)** for multi-frequency water analysis, and **Janssen (2000)** for skeletal muscle.
+- **Advanced BIA Models:** Implements a hardware-calibrated baseline for LBM, **with sexual dimorphism correction**, combined with clinical models like **Deurenberg (1995)** for multi-frequency water analysis, and **Janssen (2000)** for skeletal muscle.
 - **BMR (Basal Metabolic Rate):** Uses the **Schofield Equation** (official WHO standard),
   which accounts for age, weight, height, and gender using age-stratified coefficients
   recommended by the Food and Agriculture Organization (FAO/WHO/UNU 1985).

@@ -26,6 +26,7 @@ from custom_components.bodymiscale.const import (
     CONF_SENSOR_IMPEDANCE_HIGH,
     CONF_SENSOR_IMPEDANCE_LOW,
     CONF_SENSOR_PROFILE_ID,
+    CONF_SENSOR_STABILIZED,
     CONF_SENSOR_WEIGHT,
     CONF_WEIGHT_MAX,
     CONF_WEIGHT_MIN,
@@ -1082,3 +1083,152 @@ async def test_options_flow_get_other_weight_ranges_excludes_self(
         {CONF_WEIGHT_MIN: 60.0, CONF_WEIGHT_MAX: 90.0},
     )
     assert result["type"] == FlowResultType.CREATE_ENTRY
+
+
+async def test_options_flow_clearing_stabilized_sensor_removes_it(
+    hass: HomeAssistant,
+) -> None:
+    """Regression test: clearing the stabilized sensor must actually remove it.
+
+    CONF_SENSOR_STABILIZED is an Optional field with no default. When the
+    user clears it in the UI, Home Assistant omits the key from user_input
+    entirely rather than sending an empty string — so a plain
+    ``self._data.update(user_input)`` never drops the old value.
+    """
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        title="Alice",
+        unique_id="alice",
+        data={
+            "name": "Alice",
+            CONF_BIRTHDAY: "1990-01-15",
+            CONF_GENDER: Gender.FEMALE,
+            CONF_HEIGHT: 165.0,
+            CONF_CALCULATION_MODE: "xiaomi",
+            CONF_IMPEDANCE_MODE: IMPEDANCE_MODE_NONE,
+            CONF_PROFILE_METHOD: PROFILE_METHOD_NONE,
+            CONF_SENSOR_WEIGHT: "sensor.weight",
+            CONF_SENSOR_STABILIZED: "binary_sensor.stabilized",
+        },
+        options={
+            CONF_SENSOR_STABILIZED: "binary_sensor.stabilized",
+        },
+        version=4,
+    )
+    entry.add_to_hass(hass)
+
+    result = await hass.config_entries.options.async_init(entry.entry_id)
+    result = await hass.config_entries.options.async_configure(
+        result["flow_id"],
+        {
+            CONF_HEIGHT: 165.0,
+            CONF_CALCULATION_MODE: "xiaomi",
+            CONF_IMPEDANCE_MODE: IMPEDANCE_MODE_NONE,
+            CONF_PROFILE_METHOD: PROFILE_METHOD_NONE,
+        },
+    )
+    assert result["step_id"] == "sensors"
+
+    # User clears the stabilized sensor field: HA omits it from user_input.
+    result = await hass.config_entries.options.async_configure(
+        result["flow_id"],
+        {CONF_SENSOR_WEIGHT: "sensor.weight"},
+    )
+    assert result["type"] == FlowResultType.CREATE_ENTRY
+    assert CONF_SENSOR_STABILIZED not in result["data"]
+
+    # The deeper bug: entry.data itself must be updated, not just
+    # entry.options — otherwise {**entry.data, **entry.options} resurrects
+    # the stale value from entry.data on the very next merge/reload.
+    assert CONF_SENSOR_STABILIZED not in entry.data
+    assert CONF_SENSOR_STABILIZED not in entry.options
+
+    # Reopening the options flow again must NOT show the sensor coming back.
+    result = await hass.config_entries.options.async_init(entry.entry_id)
+    result = await hass.config_entries.options.async_configure(
+        result["flow_id"],
+        {
+            CONF_HEIGHT: 165.0,
+            CONF_CALCULATION_MODE: "xiaomi",
+            CONF_IMPEDANCE_MODE: IMPEDANCE_MODE_NONE,
+            CONF_PROFILE_METHOD: PROFILE_METHOD_NONE,
+        },
+    )
+    assert result["step_id"] == "sensors"
+    schema_defaults = {
+        k.description.get("suggested_value") if hasattr(k, "description") else None
+        for k in result["data_schema"].schema
+    }
+    assert "binary_sensor.stabilized" not in schema_defaults
+
+
+async def test_options_flow_clearing_notify_weight_bounds_removes_them(
+    hass: HomeAssistant,
+) -> None:
+    """Same regression, for the optional notify weight_min/weight_max fields."""
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        title="Alice",
+        unique_id="alice_notify",
+        data={
+            "name": "Alice",
+            CONF_BIRTHDAY: "1990-01-15",
+            CONF_GENDER: Gender.FEMALE,
+            CONF_HEIGHT: 165.0,
+            CONF_CALCULATION_MODE: "xiaomi",
+            CONF_IMPEDANCE_MODE: IMPEDANCE_MODE_NONE,
+            CONF_PROFILE_METHOD: PROFILE_METHOD_NOTIFY,
+            CONF_SENSOR_WEIGHT: "sensor.weight",
+            CONF_NOTIFY_DEVICE_ID: "device_abc",
+            CONF_NOTIFY_WEIGHT_MIN: 50.0,
+            CONF_NOTIFY_WEIGHT_MAX: 90.0,
+        },
+        options={
+            CONF_NOTIFY_DEVICE_ID: "device_abc",
+            CONF_NOTIFY_WEIGHT_MIN: 50.0,
+            CONF_NOTIFY_WEIGHT_MAX: 90.0,
+        },
+        version=4,
+    )
+    entry.add_to_hass(hass)
+
+    result = await _reach_options_profile_step(hass, entry, PROFILE_METHOD_NOTIFY)
+    # User clears both optional bounds, keeping only the required device.
+    result = await hass.config_entries.options.async_configure(
+        result["flow_id"],
+        {CONF_NOTIFY_DEVICE_ID: "device_abc"},
+    )
+    assert result["type"] == FlowResultType.CREATE_ENTRY
+    assert CONF_NOTIFY_WEIGHT_MIN not in result["data"]
+    assert CONF_NOTIFY_WEIGHT_MAX not in result["data"]
+    assert CONF_NOTIFY_WEIGHT_MIN not in entry.data
+    assert CONF_NOTIFY_WEIGHT_MAX not in entry.data
+    assert CONF_NOTIFY_WEIGHT_MIN not in entry.options
+    assert CONF_NOTIFY_WEIGHT_MAX not in entry.options
+
+
+async def test_flow_clearing_stabilized_sensor_removes_it_on_second_visit(
+    hass: HomeAssistant,
+) -> None:
+    """Same regression, but for the initial config flow going back and forth."""
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": config_entries.SOURCE_USER}
+    )
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"], USER_STEP
+    )
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"], MODES_STEP_NONE
+    )
+    assert result["step_id"] == "sensors"
+
+    # First visit: sets a stabilized sensor.
+    flow = hass.config_entries.flow._progress[result["flow_id"]]
+    flow._data[CONF_SENSOR_STABILIZED] = "binary_sensor.stabilized"
+
+    # Second visit to the sensors step: user leaves it empty this time.
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"], SENSORS_STEP_NONE
+    )
+    assert result["type"] == FlowResultType.CREATE_ENTRY
+    assert CONF_SENSOR_STABILIZED not in result["data"]

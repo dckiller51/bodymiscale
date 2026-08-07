@@ -566,6 +566,9 @@ class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):
         """Handle sensors selection step."""
         if user_input is not None:
             self._data.update(user_input)
+            if CONF_SENSOR_STABILIZED not in user_input:
+                self._data.pop(CONF_SENSOR_STABILIZED, None)
+
             profile_method = self._data.get(CONF_PROFILE_METHOD, PROFILE_METHOD_NONE)
             if profile_method != PROFILE_METHOD_NONE:
                 return await self.async_step_profile()
@@ -601,6 +604,12 @@ class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):
 
             if not errors:
                 self._data.update(user_input)
+                if method == PROFILE_METHOD_NOTIFY:
+                    if CONF_NOTIFY_WEIGHT_MIN not in user_input:
+                        self._data.pop(CONF_NOTIFY_WEIGHT_MIN, None)
+                    if CONF_NOTIFY_WEIGHT_MAX not in user_input:
+                        self._data.pop(CONF_NOTIFY_WEIGHT_MAX, None)
+
                 return self._create_entry()
 
         return self.async_show_form(
@@ -683,9 +692,15 @@ class BodyMiScaleOptionsFlowHandler(OptionsFlow):
         """Handle sensors selection step."""
         if user_input is not None:
             self._data.update(user_input)
+            if CONF_SENSOR_STABILIZED not in user_input:
+                self._data.pop(CONF_SENSOR_STABILIZED, None)
+
             profile_method = self._data.get(CONF_PROFILE_METHOD, PROFILE_METHOD_NONE)
             if profile_method != PROFILE_METHOD_NONE:
                 return await self.async_step_profile()
+            self.hass.config_entries.async_update_entry(
+                self._config_entry, data=self._data
+            )
             return self.async_create_entry(data=self._data)
 
         impedance_mode = self._data.get(CONF_IMPEDANCE_MODE, IMPEDANCE_MODE_NONE)
@@ -716,6 +731,15 @@ class BodyMiScaleOptionsFlowHandler(OptionsFlow):
 
             if not errors:
                 self._data.update(user_input)
+                if method == PROFILE_METHOD_NOTIFY:
+                    if CONF_NOTIFY_WEIGHT_MIN not in user_input:
+                        self._data.pop(CONF_NOTIFY_WEIGHT_MIN, None)
+                    if CONF_NOTIFY_WEIGHT_MAX not in user_input:
+                        self._data.pop(CONF_NOTIFY_WEIGHT_MAX, None)
+
+                self.hass.config_entries.async_update_entry(
+                    self._config_entry, data=self._data
+                )
                 return self.async_create_entry(data=self._data)
 
         return self.async_show_form(
