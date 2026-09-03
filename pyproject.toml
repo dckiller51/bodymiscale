@@ -16,16 +16,16 @@ classifiers = [
     "Programming Language :: Python :: 3.14",
     "Topic :: Home Automation",
 ]
-dependencies = ["homeassistant>=2026.5.0"]
+dependencies = ["homeassistant>=2026.9.0b6"]
 
 [project.optional-dependencies]
 dev = [
-    "mypy==2.3.0",
+    "mypy==2.3.1",
     "pre-commit==4.6.2",
-    "pylint==4.0.6",
+    "pylint==4.0.8",
     "pytest-cov",
-    "pytest-homeassistant-custom-component",
-    "ruff==0.16.1",
+    "pytest-homeassistant-custom-component>=0.13.353",
+    "ruff==0.16.5",
 ]
 
 [tool.setuptools.packages.find]
