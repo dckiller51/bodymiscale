@@ -144,8 +144,14 @@ _METRIC_DEPS: dict[Metric, MetricInfo] = {
     # Metric.ECW, Metric.ICW and ECW_TBW_RATIO depend on WEIGHT and FAT_PERCENTAGE
     # because they use TBW for compartments instead of WATER_PERCENTAGE (Standard TBW).
     Metric.ECW: MetricInfo(
-        [Metric.WEIGHT, Metric.FAT_PERCENTAGE, Metric.IMPEDANCE_LOW, Metric.IMPEDANCE_HIGH],
-        get_ecw, 2
+        [
+            Metric.WEIGHT,
+            Metric.FAT_PERCENTAGE,
+            Metric.IMPEDANCE_LOW,
+            Metric.IMPEDANCE_HIGH,
+        ],
+        get_ecw,
+        2,
     ),
     Metric.ICW: MetricInfo(
         [Metric.WEIGHT, Metric.FAT_PERCENTAGE, Metric.ECW], get_icw, 2
@@ -351,7 +357,9 @@ class BodyScaleMetricsHandler:
         if impedance_mode == IMPEDANCE_MODE_DUAL:
             self._dependencies[Metric.BMR].depends_on.append(Metric.LBM)
             self._dependencies[Metric.METABOLIC_AGE].depends_on.append(Metric.LBM)
-            self._dependencies[Metric.BODY_SCORE].depends_on.append(Metric.SKELETAL_MUSCLE_MASS)
+            self._dependencies[Metric.BODY_SCORE].depends_on.append(
+                Metric.SKELETAL_MUSCLE_MASS
+            )
         for key, value in self._dependencies.items():
             for dep in value.depends_on:
                 self._dependencies[dep].depended_by.append(key)
