@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## 2026.9.0
+
+> 🙏 Thank you to [@Triple-S](https://github.com/Triple-S)
+
+### 🔧 Bug fixes
+
+- Fixed metabolic age ceiling inconsistency in `get_metabolic_age()`. The Science calculation path was previously hard-capped at a fixed value of 80.0 via `check_value_constraints`, causing the sensor to get permanently stuck for heavier or older users, and disagreeing with the S400 mode ceiling. Science mode now consistently uses the dynamic ceiling `get_metabolic_age_clamped(...)` (up to 95) to match Dual-frequency behavior and remain informative. Legacy Xiaomi mode remains strictly untouched (hard-capped at 80.0) to preserve exact clone behavior with official application formulas. Closes [[#439](https://github.com/dckiller51/bodymiscale/issues/439)].
+- Fixed metric dependency graph for calculations using impedance mode. Some metrics were calculated in the wrong order, causing incorrect values that only fixed themselves after a Home Assistant restart. The dependency graph now dynamically accounts for impedance mode changes.
+  - Fixed Extracellular Water (ECW) calculations by adding its missing required dependencies for Total Body Water (TBW).
+  - Fixed Intracellular Water (ICW) and ECW/TBW ratio dependencies, which now correctly rely on compartment TBW instead of `WATER_PERCENTAGE`.
+- Fixed impedance value precision for the Xiaomi S400 scale. The integration was previously rounding impedance data to a precision of 1, but it now correctly passes through the raw values with their native 0.1 precision.
+
 ## 2026.8.0
 
 ### 🔧 Bug fixes
