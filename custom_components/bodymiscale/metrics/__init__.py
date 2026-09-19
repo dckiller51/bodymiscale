@@ -105,8 +105,8 @@ _METRIC_DEPS: dict[Metric, MetricInfo] = {
     Metric.AGE: MetricInfo([], lambda c, s: None, 0),
     Metric.WEIGHT: MetricInfo([], lambda c, s: None, 2),
     Metric.IMPEDANCE: MetricInfo([], lambda c, s: None, 0),
-    Metric.IMPEDANCE_LOW: MetricInfo([], lambda c, s: None, 0),
-    Metric.IMPEDANCE_HIGH: MetricInfo([], lambda c, s: None, 0),
+    Metric.IMPEDANCE_LOW: MetricInfo([], lambda c, s: None, 1),
+    Metric.IMPEDANCE_HIGH: MetricInfo([], lambda c, s: None, 1),
     Metric.LAST_MEASUREMENT_TIME: MetricInfo([], lambda c, s: None),
     # Weight only
     Metric.BMI: MetricInfo([Metric.WEIGHT], get_bmi, 1),
@@ -141,16 +141,27 @@ _METRIC_DEPS: dict[Metric, MetricInfo] = {
     ),
     # dual-frequency metrics
     # These require dual-frequency mode (IMPEDANCE_LOW + IMPEDANCE_HIGH)
-    Metric.ECW: MetricInfo([Metric.IMPEDANCE_LOW, Metric.IMPEDANCE_HIGH], get_ecw, 2),
-    # Metric.ICW, ECW_TBW_RATIO and BCM depend on WATER_PERCENTAGE (TBW)
-    # to ensure they are calculated after TBW for the subtraction logic.
-    Metric.ICW: MetricInfo([Metric.WATER_PERCENTAGE, Metric.ECW], get_icw, 2),
-    Metric.ECW_TBW_RATIO: MetricInfo(
-        [Metric.WATER_PERCENTAGE, Metric.ECW], get_ecw_tbw_ratio, 1
+    # Metric.ECW, Metric.ICW and ECW_TBW_RATIO depend on WEIGHT and FAT_PERCENTAGE
+    # because they use TBW for compartments instead of WATER_PERCENTAGE (Standard TBW).
+    Metric.ECW: MetricInfo(
+        [
+            Metric.WEIGHT,
+            Metric.FAT_PERCENTAGE,
+            Metric.IMPEDANCE_LOW,
+            Metric.IMPEDANCE_HIGH,
+        ],
+        get_ecw,
+        2,
     ),
-    Metric.BCM: MetricInfo([Metric.WATER_PERCENTAGE, Metric.ECW], get_bcm, 2),
+    Metric.ICW: MetricInfo(
+        [Metric.WEIGHT, Metric.FAT_PERCENTAGE, Metric.ECW], get_icw, 2
+    ),
+    Metric.ECW_TBW_RATIO: MetricInfo(
+        [Metric.WEIGHT, Metric.FAT_PERCENTAGE, Metric.ECW], get_ecw_tbw_ratio, 1
+    ),
+    Metric.BCM: MetricInfo([Metric.ICW], get_bcm, 2),
     Metric.SKELETAL_MUSCLE_MASS: MetricInfo(
-        [Metric.LBM, Metric.IMPEDANCE_LOW, Metric.IMPEDANCE_HIGH],
+        [Metric.AGE, Metric.IMPEDANCE_LOW, Metric.IMPEDANCE_HIGH],
         get_skeletal_muscle_mass,
         2,
     ),
@@ -338,6 +349,17 @@ class BodyScaleMetricsHandler:
             )
             for key, value in _METRIC_DEPS.items()
         }
+        # Depending on impedance mode PROTEIN_PERCENTAGE, BMR and METABOLIC_AGE can depend
+        # additionally on LBM and BODY_SCORE can depend additionally on SKELETAL_MUSCLE_MASS
+        impedance_mode = self._config.get(CONF_IMPEDANCE_MODE, "none")
+        if impedance_mode in (IMPEDANCE_MODE_STANDARD, IMPEDANCE_MODE_DUAL):
+            self._dependencies[Metric.PROTEIN_PERCENTAGE].depends_on.append(Metric.LBM)
+        if impedance_mode == IMPEDANCE_MODE_DUAL:
+            self._dependencies[Metric.BMR].depends_on.append(Metric.LBM)
+            self._dependencies[Metric.METABOLIC_AGE].depends_on.append(Metric.LBM)
+            self._dependencies[Metric.BODY_SCORE].depends_on.append(
+                Metric.SKELETAL_MUSCLE_MASS
+            )
         for key, value in self._dependencies.items():
             for dep in value.depends_on:
                 self._dependencies[dep].depended_by.append(key)
@@ -352,7 +374,6 @@ class BodyScaleMetricsHandler:
         sensors = [self._config[CONF_SENSOR_WEIGHT]]
 
         # Subscribe to sensors based on impedance mode
-        impedance_mode = self._config.get(CONF_IMPEDANCE_MODE, "none")
         if (
             impedance_mode == IMPEDANCE_MODE_STANDARD
             and CONF_SENSOR_IMPEDANCE in self._config
