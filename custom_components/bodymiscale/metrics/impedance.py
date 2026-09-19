@@ -520,6 +520,7 @@ def get_metabolic_age(
         to_float(metrics.get(Metric.AGE)),
     )
     gender = config.get(CONF_GENDER)
+    mode = config.get(CONF_CALCULATION_MODE, ALGO_XIAOMI)
 
     if h <= 0 or w <= 0 or a <= 0 or gender is None:
         return a
@@ -546,6 +547,8 @@ def get_metabolic_age(
             metab_age = (
                 (h * -1.1165) + (w * 1.5784) + (a * 0.4615) + (z * 0.0415) + 83.2548
             )
+
+    if mode == ALGO_XIAOMI:
         return check_value_constraints(metab_age, 15, 80)
 
     return float(get_metabolic_age_clamped(int(metab_age), int(a)))
