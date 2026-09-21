@@ -25,7 +25,7 @@ dev = [
     "pylint==4.0.8",
     "pytest-cov",
     "pytest-homeassistant-custom-component>=0.13.353",
-    "ruff==0.16.5",
+    "ruff==0.16.8",
 ]
 
 [tool.setuptools.packages.find]
