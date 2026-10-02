@@ -22,7 +22,7 @@ dependencies = ["homeassistant>=2026.9.0b6"]
 dev = [
     "mypy==2.3.1",
     "pre-commit==4.6.2",
-    "pylint==4.0.8",
+    "pylint==4.1.1",
     "pytest-cov",
     "pytest-homeassistant-custom-component>=0.13.353",
     "ruff==0.16.5",
