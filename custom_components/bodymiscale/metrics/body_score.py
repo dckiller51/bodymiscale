@@ -148,6 +148,7 @@ def _calculate_water_deduct_score(
         water_percentage_normal,
     )
 
+
 def _calculate_bone_deduct_score(
     config: Mapping[str, Any], metrics: Mapping[Metric, StateType | datetime]
 ) -> float:
@@ -223,7 +224,7 @@ def _calculate_protein_deduct_score(protein_percentage: float) -> float:
         return _get_malus(protein_percentage, 10.0, 16.0, 10, 5)
     elif protein_percentage <= 17.0:
         return _get_malus(protein_percentage, 16.0, 17.0, 5, 3)
-    
+
     return 0.0
 
 
