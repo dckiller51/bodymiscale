@@ -19,17 +19,25 @@ from ..util import check_value_constraints, to_float
 
 
 def _get_malus(
-    data: float,
-    min_data: float,
-    max_data: float,
-    max_malus: int | float,
-    min_malus: int | float,
+    value: float,
+    value1: float,
+    value2: float,
+    malus1: int | float,
+    malus2: int | float,
 ) -> float:
-    """Calculate malus based on data and predefined ranges."""
-    if (min_data - max_data) == 0:
-        return 0.0
-    result = ((data - max_data) / (min_data - max_data)) * float(max_malus - min_malus)
-    return max(0.0, result)
+    """Calculate malus based on value and predefined ranges."""
+    if value1 == value2:
+        return (malus1 + malus2) / 2.0
+    elif value2 < value1:
+        value1, value2, malus1, malus2 = value2, value1, malus2, malus1
+
+    if value <= value1:
+        return malus1
+    elif value >= value2:
+        return malus2
+
+    interpolated = (malus2 - malus1) / (value2 - value1) * (value - value1) + malus1
+    return max(0.0, interpolated)
 
 
 def _calculate_bmi_deduct_score(
@@ -50,24 +58,16 @@ def _calculate_bmi_deduct_score(
     fat_percentage = to_float(metrics.get(Metric.FAT_PERCENTAGE))
     fat_scale = config[CONF_SCALE].get_fat_percentage(age)
 
-    if bmi <= bmi_very_low:
-        return 30.0
-
-    if (fat_percentage < fat_scale[2]) and (
-        (bmi >= bmi_normal and age >= 18) or (bmi >= bmi_low and age < 18)
-    ):
-        return 0.0
-
     if bmi < bmi_low:
-        return _get_malus(bmi, bmi_very_low, bmi_low, 30, 15) + 15.0
-    if bmi < bmi_normal and age >= 18:
-        return _get_malus(bmi, 15.0, 18.5, 15, 5) + 5.0
-
-    if fat_percentage >= fat_scale[2]:
-        if bmi >= bmi_obese:
-            return 10.0
-        if bmi > bmi_overweight:
-            return _get_malus(bmi, 28.0, 25.0, 5, 10) + 5.0
+        return _get_malus(bmi, bmi_very_low, bmi_low, 30, 15)
+    elif bmi < bmi_normal:
+        if fat_percentage < fat_scale[2] and age < 18:
+            return 0.0
+        return _get_malus(bmi, bmi_low, bmi_normal, 15, 5)
+    elif bmi < bmi_overweight:
+        return 0.0
+    elif fat_percentage >= fat_scale[2]:
+        return _get_malus(bmi, bmi_overweight, bmi_obese, 5, 10)
 
     return 0.0
 
@@ -83,25 +83,20 @@ def _calculate_body_fat_deduct_score(
 
     best_fat_level = scale[2] - 3.0 if gender == Gender.MALE else scale[2] - 2.0
 
-    if scale[0] <= fat_percentage < best_fat_level:
-        return 0.0
-    if fat_percentage >= scale[3]:
-        return 20.0
-
-    if fat_percentage < scale[3]:
-        return _get_malus(fat_percentage, scale[3], scale[2], 20, 10) + 10.0
-
-    if fat_percentage <= scale[2]:
-        return _get_malus(fat_percentage, scale[2], best_fat_level, 3, 9) + 3.0
-
     if fat_percentage < scale[0]:
-        return _get_malus(fat_percentage, 1.0, scale[0], 3, 10) + 3.0
+        return _get_malus(fat_percentage, 1.0, scale[0], 10, 3)
+    elif fat_percentage < best_fat_level:
+        return 0.0
+    elif fat_percentage < scale[2]:
+        return _get_malus(fat_percentage, best_fat_level, scale[2], 3, 9)
+    else:
+        return _get_malus(fat_percentage, scale[2], scale[3], 10, 20)
 
     return 0.0
 
 
 def _calculate_common_deduct_score(
-    min_value: float, max_value: float, value: float
+    value: float, min_value: float, max_value: float
 ) -> float:
     """Calculate common deduct score (Universal logic)."""
     if value >= max_value:
@@ -109,9 +104,7 @@ def _calculate_common_deduct_score(
 
     penalty_max = 10.0
 
-    if value < min_value:
-        return penalty_max
-    return _get_malus(value, min_value, max_value, penalty_max, 5) + 5.0
+    return _get_malus(value, min_value, max_value, penalty_max, 5)
 
 
 def _calculate_muscle_deduct_score(
@@ -141,7 +134,7 @@ def _calculate_muscle_deduct_score(
         target_min = scale[0] - 5.0
         target_max = scale[0]
 
-    return _calculate_common_deduct_score(target_min, target_max, muscle_mass)
+    return _calculate_common_deduct_score(muscle_mass, target_min, target_max)
 
 
 def _calculate_water_deduct_score(
@@ -150,11 +143,10 @@ def _calculate_water_deduct_score(
     """Calculate water percentage deduct score."""
     water_percentage_normal = 55.0 if config[CONF_GENDER] == Gender.MALE else 45.0
     return _calculate_common_deduct_score(
+        water_percentage,
         water_percentage_normal - 5.0,
         water_percentage_normal,
-        water_percentage,
     )
-
 
 def _calculate_bone_deduct_score(
     config: Mapping[str, Any], metrics: Mapping[Metric, StateType | datetime]
@@ -184,7 +176,7 @@ def _calculate_bone_deduct_score(
             break
 
     return _calculate_common_deduct_score(
-        expected_bone_mass - 0.3, expected_bone_mass, bone_mass
+        bone_mass, expected_bone_mass - 0.3, expected_bone_mass
     )
 
 
@@ -195,9 +187,8 @@ def _calculate_body_visceral_deduct_score(visceral_fat: float) -> float:
 
     if visceral_fat < min_data:
         return 0.0
-    if visceral_fat >= max_data:
-        return 15.0
-    return _get_malus(visceral_fat, max_data, min_data, max_data, min_data) + 10.0
+
+    return _get_malus(visceral_fat, min_data, max_data, min_data, max_data)
 
 
 def _calculate_basal_metabolism_deduct_score(
@@ -222,21 +213,17 @@ def _calculate_basal_metabolism_deduct_score(
 
     if bmr >= normal_bmr:
         return 0.0
-    if bmr <= normal_bmr - 300:
-        return 6.0
-    return _get_malus(bmr, normal_bmr - 300, normal_bmr, 6, 3) + 5.0
+
+    return _get_malus(bmr, normal_bmr - 300, normal_bmr, 6, 3)
 
 
 def _calculate_protein_deduct_score(protein_percentage: float) -> float:
     """Calculate protein deduct score."""
-    if protein_percentage > 17.0:
-        return 0.0
-    if protein_percentage < 10.0:
-        return 10.0
     if protein_percentage <= 16.0:
-        return _get_malus(protein_percentage, 10.0, 16.0, 10, 5) + 5.0
-    if protein_percentage <= 17.0:
-        return _get_malus(protein_percentage, 16.0, 17.0, 5, 3) + 3.0
+        return _get_malus(protein_percentage, 10.0, 16.0, 10, 5)
+    elif protein_percentage <= 17.0:
+        return _get_malus(protein_percentage, 16.0, 17.0, 5, 3)
+    
     return 0.0
 
 
