@@ -3,10 +3,10 @@
 from __future__ import annotations
 
 from types import MappingProxyType
-from typing import Any
+from typing import Any, cast
 
 import homeassistant.helpers.config_validation as cv
-import voluptuous as vol
+import probatio
 from homeassistant.config_entries import (
     ConfigEntry,
     ConfigFlow,
@@ -68,21 +68,21 @@ from .models import Gender
 @callback
 def _get_user_schema(
     defaults: dict[str, Any] | MappingProxyType[str, Any],
-) -> vol.Schema:
+) -> probatio.Schema:
     """Step 1 (config only): identity — name, birthday, gender."""
-    return vol.Schema(
+    return probatio.Schema(
         {
-            vol.Required(CONF_NAME, default=defaults.get(CONF_NAME)): str,
-            vol.Required(
+            probatio.Required(CONF_NAME, default=defaults.get(CONF_NAME)): str,
+            probatio.Required(
                 CONF_BIRTHDAY,
                 description={"suggested_value": defaults.get(CONF_BIRTHDAY)},
             ): selector.TextSelector(
                 selector.TextSelectorConfig(type=selector.TextSelectorType.DATE)
             ),
-            vol.Required(
+            probatio.Required(
                 CONF_GENDER,
                 default=defaults.get(CONF_GENDER),
-            ): vol.In({gender: gender.value for gender in Gender}),
+            ): probatio.In({gender: gender.value for gender in Gender}),
         }
     )
 
@@ -90,11 +90,11 @@ def _get_user_schema(
 @callback
 def _get_modes_schema(
     defaults: dict[str, Any] | MappingProxyType[str, Any],
-) -> vol.Schema:
+) -> probatio.Schema:
     """Step 2: height, calculation mode, impedance mode, profile method."""
-    return vol.Schema(
+    return probatio.Schema(
         {
-            vol.Required(
+            probatio.Required(
                 CONF_HEIGHT,
                 description={"suggested_value": defaults.get(CONF_HEIGHT)},
             ): selector.NumberSelector(
@@ -105,7 +105,7 @@ def _get_modes_schema(
                     unit_of_measurement="cm",
                 )
             ),
-            vol.Required(
+            probatio.Required(
                 CONF_CALCULATION_MODE,
                 default=defaults.get(CONF_CALCULATION_MODE, "xiaomi"),
             ): selector.SelectSelector(
@@ -115,7 +115,7 @@ def _get_modes_schema(
                     translation_key="calculation_mode",
                 )
             ),
-            vol.Required(
+            probatio.Required(
                 CONF_IMPEDANCE_MODE,
                 default=defaults.get(CONF_IMPEDANCE_MODE, IMPEDANCE_MODE_NONE),
             ): selector.SelectSelector(
@@ -125,7 +125,7 @@ def _get_modes_schema(
                     translation_key="impedance_mode",
                 )
             ),
-            vol.Required(
+            probatio.Required(
                 CONF_PROFILE_METHOD,
                 default=defaults.get(CONF_PROFILE_METHOD, PROFILE_METHOD_NONE),
             ): selector.SelectSelector(
@@ -143,10 +143,10 @@ def _get_sensors_schema(
     impedance_mode: str,
     profile_method: str,
     defaults: dict[str, Any],
-) -> vol.Schema:
+) -> probatio.Schema:
     """Step 3: sensor selectors — dynamic based on impedance & profile modes."""
     fields: dict = {
-        vol.Required(
+        probatio.Required(
             CONF_SENSOR_WEIGHT,
             description={"suggested_value": defaults.get(CONF_SENSOR_WEIGHT)},
         ): selector.EntitySelector(
@@ -156,7 +156,7 @@ def _get_sensors_schema(
 
     if impedance_mode == IMPEDANCE_MODE_STANDARD:
         fields[
-            vol.Required(
+            probatio.Required(
                 CONF_SENSOR_IMPEDANCE,
                 description={"suggested_value": defaults.get(CONF_SENSOR_IMPEDANCE)},
             )
@@ -166,7 +166,7 @@ def _get_sensors_schema(
 
     elif impedance_mode == IMPEDANCE_MODE_DUAL:
         fields[
-            vol.Required(
+            probatio.Required(
                 CONF_SENSOR_IMPEDANCE_LOW,
                 description={
                     "suggested_value": defaults.get(CONF_SENSOR_IMPEDANCE_LOW)
@@ -176,7 +176,7 @@ def _get_sensors_schema(
             selector.EntitySelectorConfig(domain=["sensor", "input_number", "number"])
         )
         fields[
-            vol.Required(
+            probatio.Required(
                 CONF_SENSOR_IMPEDANCE_HIGH,
                 description={
                     "suggested_value": defaults.get(CONF_SENSOR_IMPEDANCE_HIGH)
@@ -188,7 +188,7 @@ def _get_sensors_schema(
 
     if profile_method == PROFILE_METHOD_ID:
         fields[
-            vol.Required(
+            probatio.Required(
                 CONF_SENSOR_PROFILE_ID,
                 description={"suggested_value": defaults.get(CONF_SENSOR_PROFILE_ID)},
             )
@@ -197,24 +197,26 @@ def _get_sensors_schema(
         )
 
     fields[
-        vol.Optional(
+        probatio.Optional(
             CONF_SENSOR_STABILIZED,
             description={"suggested_value": defaults.get(CONF_SENSOR_STABILIZED)},
         )
     ] = selector.EntitySelector(selector.EntitySelectorConfig(domain=["binary_sensor"]))
 
-    return vol.Schema(fields)
+    return probatio.Schema(fields)
 
 
-def _get_profile_schema(method: str, defaults: dict[str, Any]) -> vol.Schema | None:
+def _get_profile_schema(
+    method: str, defaults: dict[str, Any]
+) -> probatio.Schema | None:
     """Step 4 (conditional): profile-specific configuration."""
     if method == PROFILE_METHOD_NONE:
         return None
 
     if method == PROFILE_METHOD_ID:
-        return vol.Schema(
+        return probatio.Schema(
             {
-                vol.Required(
+                probatio.Required(
                     CONF_PROFILE_ID,
                     description={"suggested_value": defaults.get(CONF_PROFILE_ID)},
                 ): selector.NumberSelector(
@@ -229,9 +231,9 @@ def _get_profile_schema(method: str, defaults: dict[str, Any]) -> vol.Schema | N
         )
 
     if method == PROFILE_METHOD_WEIGHT:
-        return vol.Schema(
+        return probatio.Schema(
             {
-                vol.Required(
+                probatio.Required(
                     CONF_WEIGHT_MIN,
                     description={"suggested_value": defaults.get(CONF_WEIGHT_MIN)},
                 ): selector.NumberSelector(
@@ -243,7 +245,7 @@ def _get_profile_schema(method: str, defaults: dict[str, Any]) -> vol.Schema | N
                         unit_of_measurement="kg",
                     )
                 ),
-                vol.Required(
+                probatio.Required(
                     CONF_WEIGHT_MAX,
                     description={"suggested_value": defaults.get(CONF_WEIGHT_MAX)},
                 ): selector.NumberSelector(
@@ -260,12 +262,14 @@ def _get_profile_schema(method: str, defaults: dict[str, Any]) -> vol.Schema | N
 
     if method == PROFILE_METHOD_NEAREST:
         initial_weight = defaults.get(CONF_INITIAL_WEIGHT)
-        return vol.Schema(
+        return probatio.Schema(
             {
                 (
-                    vol.Required(CONF_INITIAL_WEIGHT, default=float(initial_weight))
+                    probatio.Required(
+                        CONF_INITIAL_WEIGHT, default=float(initial_weight)
+                    )
                     if initial_weight is not None
-                    else vol.Required(CONF_INITIAL_WEIGHT)
+                    else probatio.Required(CONF_INITIAL_WEIGHT)
                 ): selector.NumberSelector(
                     selector.NumberSelectorConfig(
                         mode=selector.NumberSelectorMode.BOX,
@@ -275,7 +279,7 @@ def _get_profile_schema(method: str, defaults: dict[str, Any]) -> vol.Schema | N
                         unit_of_measurement="kg",
                     )
                 ),
-                vol.Required(
+                probatio.Required(
                     CONF_NEAREST_TOLERANCE,
                     default=defaults.get(CONF_NEAREST_TOLERANCE, 5),
                 ): selector.NumberSelector(
@@ -291,9 +295,9 @@ def _get_profile_schema(method: str, defaults: dict[str, Any]) -> vol.Schema | N
         )
 
     if method == PROFILE_METHOD_NOTIFY:
-        return vol.Schema(
+        return probatio.Schema(
             {
-                vol.Required(
+                probatio.Required(
                     CONF_NOTIFY_DEVICE_ID,
                     description={
                         "suggested_value": defaults.get(CONF_NOTIFY_DEVICE_ID)
@@ -301,7 +305,7 @@ def _get_profile_schema(method: str, defaults: dict[str, Any]) -> vol.Schema | N
                 ): selector.DeviceSelector(
                     selector.DeviceSelectorConfig(integration="mobile_app")
                 ),
-                vol.Optional(
+                probatio.Optional(
                     CONF_NOTIFY_WEIGHT_MIN,
                     description={
                         "suggested_value": defaults.get(CONF_NOTIFY_WEIGHT_MIN)
@@ -315,7 +319,7 @@ def _get_profile_schema(method: str, defaults: dict[str, Any]) -> vol.Schema | N
                         unit_of_measurement="kg",
                     )
                 ),
-                vol.Optional(
+                probatio.Optional(
                     CONF_NOTIFY_WEIGHT_MAX,
                     description={
                         "suggested_value": defaults.get(CONF_NOTIFY_WEIGHT_MAX)
@@ -497,7 +501,7 @@ class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):
         if user_input is not None:
             try:
                 cv.date(user_input[CONF_BIRTHDAY])
-            except vol.Invalid:
+            except probatio.Invalid:
                 errors[CONF_BIRTHDAY] = "invalid_date"
 
             if not errors:
@@ -522,7 +526,7 @@ class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):
         return self.async_show_form(
             step_id="user",
             errors=errors,
-            data_schema=_get_user_schema(self._data),
+            data_schema=cast(Any, _get_user_schema(self._data)),
         )
 
     # ── Step 2: modes (height, calc, impedance, profile) ──────────────────
@@ -555,7 +559,7 @@ class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):
         return self.async_show_form(
             step_id="modes",
             errors=errors,
-            data_schema=_get_modes_schema(self._data),
+            data_schema=cast(Any, _get_modes_schema(self._data)),
         )
 
     # ── Step 3: sensors (weight, impedance, profile sensor) ───────────────
@@ -578,7 +582,9 @@ class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):
         profile_method = self._data.get(CONF_PROFILE_METHOD, PROFILE_METHOD_NONE)
         return self.async_show_form(
             step_id="sensors",
-            data_schema=_get_sensors_schema(impedance_mode, profile_method, self._data),
+            data_schema=cast(
+                Any, _get_sensors_schema(impedance_mode, profile_method, self._data)
+            ),
         )
 
     # ── Step 4: profile-specific configuration ────────────────────────────
@@ -615,7 +621,7 @@ class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):
         return self.async_show_form(
             step_id="profile",
             errors=errors,
-            data_schema=schema,
+            data_schema=cast(Any, schema),
         )
 
     # ── Helpers ───────────────────────────────────────────────────────────
@@ -683,7 +689,7 @@ class BodyMiScaleOptionsFlowHandler(OptionsFlow):
         return self.async_show_form(
             step_id="init",
             errors=errors,
-            data_schema=_get_modes_schema(self._data),
+            data_schema=cast(Any, _get_modes_schema(self._data)),
         )
 
     async def async_step_sensors(
@@ -707,7 +713,9 @@ class BodyMiScaleOptionsFlowHandler(OptionsFlow):
         profile_method = self._data.get(CONF_PROFILE_METHOD, PROFILE_METHOD_NONE)
         return self.async_show_form(
             step_id="sensors",
-            data_schema=_get_sensors_schema(impedance_mode, profile_method, self._data),
+            data_schema=cast(
+                Any, _get_sensors_schema(impedance_mode, profile_method, self._data)
+            ),
         )
 
     async def async_step_profile(
@@ -745,7 +753,7 @@ class BodyMiScaleOptionsFlowHandler(OptionsFlow):
         return self.async_show_form(
             step_id="profile",
             errors=errors,
-            data_schema=schema,
+            data_schema=cast(Any, schema),
         )
 
     def _get_other_weight_ranges(self) -> list[tuple[float, float]]:
