@@ -27,13 +27,13 @@ def _get_malus(
 ) -> float:
     """Calculate malus based on value and predefined ranges."""
     if value1 == value2:
-        return (malus1 + malus2) / 2.0
-    elif value2 < value1:
+        return 0.0
+    if value2 < value1:
         value1, value2, malus1, malus2 = value2, value1, malus2, malus1
 
     if value <= value1:
         return malus1
-    elif value >= value2:
+    if value >= value2:
         return malus2
 
     interpolated = (malus2 - malus1) / (value2 - value1) * (value - value1) + malus1
@@ -60,13 +60,13 @@ def _calculate_bmi_deduct_score(
 
     if bmi < bmi_low:
         return _get_malus(bmi, bmi_very_low, bmi_low, 30, 15)
-    elif bmi < bmi_normal:
+    if bmi < bmi_normal:
         if fat_percentage < fat_scale[2] and age < 18:
             return 0.0
         return _get_malus(bmi, bmi_low, bmi_normal, 15, 5)
-    elif bmi < bmi_overweight:
+    if bmi < bmi_overweight:
         return 0.0
-    elif fat_percentage >= fat_scale[2]:
+    if fat_percentage >= fat_scale[2]:
         return _get_malus(bmi, bmi_overweight, bmi_obese, 5, 10)
 
     return 0.0
@@ -85,14 +85,12 @@ def _calculate_body_fat_deduct_score(
 
     if fat_percentage < scale[0]:
         return _get_malus(fat_percentage, 1.0, scale[0], 10, 3)
-    elif fat_percentage < best_fat_level:
+    if fat_percentage < best_fat_level:
         return 0.0
-    elif fat_percentage < scale[2]:
+    if fat_percentage < scale[2]:
         return _get_malus(fat_percentage, best_fat_level, scale[2], 3, 9)
-    else:
-        return _get_malus(fat_percentage, scale[2], scale[3], 10, 20)
 
-    return 0.0
+    return _get_malus(fat_percentage, scale[2], scale[3], 10, 20)
 
 
 def _calculate_common_deduct_score(
@@ -222,7 +220,7 @@ def _calculate_protein_deduct_score(protein_percentage: float) -> float:
     """Calculate protein deduct score."""
     if protein_percentage <= 16.0:
         return _get_malus(protein_percentage, 10.0, 16.0, 10, 5)
-    elif protein_percentage <= 17.0:
+    if protein_percentage <= 17.0:
         return _get_malus(protein_percentage, 16.0, 17.0, 5, 3)
 
     return 0.0
