@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## 2026.10.0
+
+> 🙏 Thank you to [@Triple-S](https://github.com/Triple-S)
+
+### 🔧 Improvements & Bug Fixes
+
+- **Body score calculation improvements**: Addresses the concerns raised in [[#426](https://github.com/dckiller51/bodymiscale/issues/426)]. The calculation logic has been cleaned up and made more readable while staying as close as possible to the original algorithms, making the functions easier to understand and maintain. Closes [[#426](https://github.com/dckiller51/bodymiscale/issues/426)] via [#450](https://github.com/dckiller51/bodymiscale/pull/450).
+
 ## 2026.9.0
 
 > 🙏 Thank you to [@Triple-S](https://github.com/Triple-S)

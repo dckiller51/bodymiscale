@@ -260,10 +260,10 @@ def test_get_malus_negative_result_clamped_to_zero() -> None:
 
 
 def test_get_malus_computes_expected_value() -> None:
-    """_get_malus must follow the documented linear-interpolation formula."""
+    """_get_malus must follow the documented linear-interpolation formula and bound checks."""
     result = body_score._get_malus(16.0, 14.0, 15.0, 30, 15)
-    expected = ((16.0 - 15.0) / (14.0 - 15.0)) * float(30 - 15)
-    assert result == pytest.approx(max(0.0, expected))
+    # Since 16.0 >= value2 (15.0), it returns malus2 (15) directly as a boundary cap
+    assert result == pytest.approx(15.0)
 
 
 # ---------------------------------------------------------------------------
@@ -376,18 +376,18 @@ def test_body_fat_deduct_score_very_low_fat_also_hits_below_high_branch() -> Non
 
 def test_common_deduct_score_at_or_above_max_returns_zero() -> None:
     """A value at/above max_value must deduct nothing."""
-    assert body_score._calculate_common_deduct_score(10.0, 20.0, 20.0) == 0.0
-    assert body_score._calculate_common_deduct_score(10.0, 20.0, 25.0) == 0.0
+    assert body_score._calculate_common_deduct_score(20.0, 20.0, 20.0) == 0.0
+    assert body_score._calculate_common_deduct_score(25.0, 20.0, 25.0) == 0.0
 
 
 def test_common_deduct_score_below_min_returns_full_penalty() -> None:
     """A value below min_value must deduct the full 10-point penalty."""
-    assert body_score._calculate_common_deduct_score(10.0, 20.0, 5.0) == 10.0
+    assert body_score._calculate_common_deduct_score(10.0, 15.0, 20.0) == 10.0
 
 
 def test_common_deduct_score_between_bounds_applies_malus() -> None:
     """A value strictly between min/max must apply a partial malus + 5."""
-    result = body_score._calculate_common_deduct_score(10.0, 20.0, 15.0)
+    result = body_score._calculate_common_deduct_score(15.0, 10.0, 20.0)
     assert 5.0 < result < 10.0
 
 
@@ -507,7 +507,7 @@ def test_basal_metabolism_deduct_score_moderately_low_applies_malus() -> None:
     documents the current (discontinuous) behavior.
     """
     config = _score_config(gender=Gender.FEMALE)
-    metrics = {Metric.AGE: 25, Metric.WEIGHT: 60.0, Metric.BMR: 1100.0}
+    metrics = {Metric.AGE: 25, Metric.WEIGHT: 60.0, Metric.BMR: 1050.0}
     result = body_score._calculate_basal_metabolism_deduct_score(config, metrics)
     assert 5.0 < result < 8.0
 

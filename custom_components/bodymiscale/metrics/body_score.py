@@ -27,7 +27,7 @@ def _get_malus(
 ) -> float:
     """Calculate malus based on value and predefined ranges."""
     if value1 == value2:
-        return (malus1 + malus2) / 2.0
+        return 0.0
     if value2 < value1:
         value1, value2, malus1, malus2 = value2, value1, malus2, malus1
 
