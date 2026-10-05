@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 
 ### 🔧 Improvements & Bug Fixes
 
+- **Minimum Home Assistant Version**: Bumped the minimum required Home Assistant version to **2026.9.0** to properly support modern registry features (`ChildDeviceInfo`), preventing startup import errors on older core versions. Closes [[#454](https://github.com/dckiller51/bodymiscale/issues/454)]
 - **Body score calculation improvements**: Addresses the concerns raised in [[#426](https://github.com/dckiller51/bodymiscale/issues/426)]. The calculation logic has been cleaned up and made more readable while staying as close as possible to the original algorithms, making the functions easier to understand and maintain. Closes [[#426](https://github.com/dckiller51/bodymiscale/issues/426)] via [#450](https://github.com/dckiller51/bodymiscale/pull/450).
 
 ## 2026.9.0
