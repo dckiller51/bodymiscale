@@ -109,23 +109,24 @@ def _calculate_muscle_deduct_score(
     config: Mapping[str, Any], metrics: Mapping[Metric, StateType | datetime]
 ) -> float:
     """Calculate muscle mass deduct score with S400 adaptation."""
-    scale = config[CONF_SCALE].muscle_mass
     is_s400 = config.get(CONF_IMPEDANCE_MODE) == IMPEDANCE_MODE_DUAL
 
     if is_s400:
         # In S400, we use the SMM (Skeletal Muscle Mass)
+        scale = config[CONF_SCALE].sceletal_muscle_index
+        height = to_float(config.get(CONF_HEIGHT))
         muscle_mass = to_float(metrics.get(Metric.SKELETAL_MUSCLE_MASS))
 
         # Guard: if SMM calculation failed or is 0, we don't apply penalty
         if muscle_mass <= 0:
             return 0.0
 
-        # We adjust the standard thresholds (Total Muscle Mass) to the SMM format
-        # The 0.77 ratio is a physiological estimate of skeletal muscle vs total muscle.
-        target_min = (scale[0] - 5.0) * 0.77
-        target_max = scale[0] * 0.77
+        # We use the SMI (SMM/h(m)^2) thresholds proposed in Janssen et al. (2004)
+        target_min = scale[0] * (height / 100.0) ** 2
+        target_max = scale[1] * (height / 100.0) ** 2
     else:
         # Classical modes: Total muscle mass
+        scale = config[CONF_SCALE].muscle_mass
         muscle_mass = to_float(metrics.get(Metric.MUSCLE_MASS))
         if muscle_mass <= 0:
             return 0.0
