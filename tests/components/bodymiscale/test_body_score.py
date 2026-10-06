@@ -416,7 +416,7 @@ def test_muscle_deduct_score_s400_uses_skeletal_muscle_mass() -> None:
         impedance_mode=IMPEDANCE_MODE_DUAL, gender=Gender.MALE, height=175.0
     )
     scale = config[CONF_SCALE].sceletal_muscle_index
-    target_max = scale[1] * (config[CONF_height] / 100.0)**2
+    target_max = scale[1] * (config[CONF_height] / 100.0) ** 2
     metrics = {Metric.SKELETAL_MUSCLE_MASS: target_max}
     assert body_score._calculate_muscle_deduct_score(config, metrics) == 0.0
 

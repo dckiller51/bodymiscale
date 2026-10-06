@@ -122,8 +122,8 @@ def _calculate_muscle_deduct_score(
             return 0.0
 
         # We use the SMI (SMM/h(m)^2) thresholds proposed in Janssen et al. (2004)
-        target_min = scale[0] * (height / 100.0)**2
-        target_max = scale[1] * (height / 100.0)**2
+        target_min = scale[0] * (height / 100.0) ** 2
+        target_max = scale[1] * (height / 100.0) ** 2
     else:
         # Classical modes: Total muscle mass
         scale = config[CONF_SCALE].muscle_mass

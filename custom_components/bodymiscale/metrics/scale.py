@@ -31,11 +31,9 @@ class Scale:
     ]
 
     # Sceletal muscle index table: [low, normal] by gender
-    _SCELETAL_MUSCLE_INDEX: ClassVar[
-        dict[Gender, list[float]]
-    ] = {
+    _SCELETAL_MUSCLE_INDEX: ClassVar[dict[Gender, list[float]]] = {
         Gender.MALE: [8.51, 10.75],
-        Gender.FEMALE: [5.76, 6.75]
+        Gender.FEMALE: [5.76, 6.75],
     }
 
     def __init__(self, height: int, gender: Gender) -> None:
