@@ -421,7 +421,9 @@ def test_muscle_deduct_score_s400_uses_skeletal_muscle_mass() -> None:
     assert body_score._calculate_muscle_deduct_score(config, metrics) == 0.0
 
 
-def test_muscle_deduct_score_s400_uses_skeletal_muscle_mass_min_returns_full_penalty() -> None:
+def test_muscle_deduct_score_s400_uses_skeletal_muscle_mass_min_returns_full_penalty() -> (
+    None
+):
     """At and below the min SMI threshold the full malus must be returned."""
     config = _score_config(
         impedance_mode=IMPEDANCE_MODE_DUAL, gender=Gender.MALE, height=175.0
