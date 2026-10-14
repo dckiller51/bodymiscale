@@ -88,6 +88,20 @@
       "body_cell_mass": { "name": "體細胞量" },
       "body_fat": { "name": "體脂率" },
       "body_score": { "name": "身體評分" },
+      "body_type": {
+        "name": "體型",
+        "state": {
+          "balanced": "勻稱型",
+          "balanced_muscular": "勻稱肌肉型",
+          "balanced_skinny": "勻稱偏瘦型",
+          "lack_exercise": "缺乏運動型",
+          "obese": "肥胖型",
+          "overweight": "超重型",
+          "skinny": "消瘦型",
+          "skinny_muscular": "偏瘦肌肉型",
+          "thick_set": "結實型"
+        }
+      },
       "bone_mass": { "name": "骨量" },
       "ecw_tbw_ratio": { "name": "ECW/TBW 比率" },
       "extracellular_water": { "name": "細胞外水分" },

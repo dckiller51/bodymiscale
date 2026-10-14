@@ -660,3 +660,38 @@ def test_body_type_sensor_options_match_metric_values() -> None:
             }
             returned.add(get_body_type(config, metrics))
     assert returned == set(description.options or [])
+
+
+def test_every_sensor_has_translations_in_all_languages() -> None:
+    """Each sensor translation_key must exist in entity.sensor for every language.
+
+    A missing entry makes Home Assistant name the entity after the device only
+    (e.g. ``sensor.<profile>``) and show raw enum states.
+    """
+    import json
+    from pathlib import Path
+
+    from custom_components.bodymiscale import sensor as sensor_module
+
+    descriptions = [
+        d
+        for name in dir(sensor_module)
+        if name.startswith("_") and name.endswith("_SENSORS")
+        for d, _, _ in getattr(sensor_module, name)
+    ]
+    assert descriptions
+
+    translations_dir = Path(sensor_module.__file__).parent / "translations"
+    files = sorted(translations_dir.glob("*.json"))
+    assert files
+
+    for path in files:
+        sensors = json.loads(path.read_text(encoding="utf-8"))["entity"]["sensor"]
+        for description in descriptions:
+            key = description.translation_key
+            assert key in sensors, f"{path.name}: missing entity.sensor.{key}"
+            assert sensors[key].get("name"), f"{path.name}: {key} has no name"
+            if description.device_class == SensorDeviceClass.ENUM:
+                states = sensors[key].get("state", {})
+                missing = set(description.options or []) - set(states)
+                assert not missing, f"{path.name}: {key} missing states {missing}"

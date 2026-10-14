@@ -88,6 +88,20 @@
       "body_cell_mass": { "name": "Kropscellemasse" },
       "body_fat": { "name": "Kropsfedt" },
       "body_score": { "name": "Kropsscore" },
+      "body_type": {
+        "name": "Kropstype",
+        "state": {
+          "balanced": "Balanceret",
+          "balanced_muscular": "Balanceret muskuløs",
+          "balanced_skinny": "Balanceret slank",
+          "lack_exercise": "Mangel på motion",
+          "obese": "Fed",
+          "overweight": "Overvægtig",
+          "skinny": "Slank",
+          "skinny_muscular": "Muskuløs slank",
+          "thick_set": "Kraftig"
+        }
+      },
       "bone_mass": { "name": "Knoglemasse" },
       "ecw_tbw_ratio": { "name": "ECW/TBW-forhold" },
       "extracellular_water": { "name": "Ekstracellulært vand" },

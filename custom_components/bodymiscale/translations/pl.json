@@ -88,6 +88,20 @@
       "body_cell_mass": { "name": "Masa komórkowa ciała" },
       "body_fat": { "name": "Tkanka tłuszczowa" },
       "body_score": { "name": "Ocena sylwetki" },
+      "body_type": {
+        "name": "Typ sylwetki",
+        "state": {
+          "balanced": "Zrównoważona",
+          "balanced_muscular": "Zrównoważona muskularna",
+          "balanced_skinny": "Zrównoważona szczupła",
+          "lack_exercise": "Brak ruchu",
+          "obese": "Otyła",
+          "overweight": "Nadwaga",
+          "skinny": "Szczupła",
+          "skinny_muscular": "Szczupła muskularna",
+          "thick_set": "Krępa"
+        }
+      },
       "bone_mass": { "name": "Masa kości" },
       "ecw_tbw_ratio": { "name": "Stosunek ECW/TBW" },
       "extracellular_water": { "name": "Woda zewnątrzkomórkowa" },

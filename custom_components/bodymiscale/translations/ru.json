@@ -88,6 +88,20 @@
       "body_cell_mass": { "name": "Масса клеток тела" },
       "body_fat": { "name": "Жировая масса" },
       "body_score": { "name": "Оценка тела" },
+      "body_type": {
+        "name": "Тип телосложения",
+        "state": {
+          "balanced": "Сбалансированный",
+          "balanced_muscular": "Сбалансированный мускулистый",
+          "balanced_skinny": "Сбалансированный худощавый",
+          "lack_exercise": "Недостаток нагрузки",
+          "obese": "Ожирение",
+          "overweight": "Лишний вес",
+          "skinny": "Худой",
+          "skinny_muscular": "Худой мускулистый",
+          "thick_set": "Крепкое телосложение"
+        }
+      },
       "bone_mass": { "name": "Костная масса" },
       "ecw_tbw_ratio": { "name": "Соотношение ECW/TBW" },
       "extracellular_water": { "name": "Внеклеточная вода" },
