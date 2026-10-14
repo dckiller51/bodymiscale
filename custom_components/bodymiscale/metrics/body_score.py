@@ -113,7 +113,7 @@ def _calculate_muscle_deduct_score(
 
     if is_s400:
         # In S400, we use the SMM (Skeletal Muscle Mass)
-        scale = config[CONF_SCALE].sceletal_muscle_index
+        scale = config[CONF_SCALE].skeletal_muscle_index
         height = to_float(config.get(CONF_HEIGHT))
         muscle_mass = to_float(metrics.get(Metric.SKELETAL_MUSCLE_MASS))
 

@@ -30,8 +30,8 @@ class Scale:
         ({Gender.MALE: 0, Gender.FEMALE: 0}, [29.1, 34.8], [38.5, 46.6]),
     ]
 
-    # Sceletal muscle index table: [low, normal] by gender
-    _SCELETAL_MUSCLE_INDEX: ClassVar[dict[Gender, list[float]]] = {
+    # Skeletal muscle index table: [low, normal] by gender
+    _SKELETAL_MUSCLE_INDEX: ClassVar[dict[Gender, list[float]]] = {
         Gender.MALE: [8.51, 10.75],
         Gender.FEMALE: [5.76, 6.75],
     }
@@ -61,5 +61,6 @@ class Scale:
         return female_vals if self._gender == Gender.FEMALE else male_vals
 
     @cached_property
-    def sceletal_muscle_index(self) -> list[float]:
-        return self._SCELETAL_MUSCLE_INDEX[self._gender]
+    def skeletal_muscle_index(self) -> list[float]:
+        """Return [low, normal] skeletal muscle index thresholds for gender."""
+        return self._SKELETAL_MUSCLE_INDEX[self._gender]

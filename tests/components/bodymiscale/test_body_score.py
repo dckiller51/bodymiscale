@@ -415,8 +415,30 @@ def test_muscle_deduct_score_s400_uses_skeletal_muscle_mass() -> None:
     config = _score_config(
         impedance_mode=IMPEDANCE_MODE_DUAL, gender=Gender.MALE, height=175.0
     )
-    scale = config[CONF_SCALE].sceletal_muscle_index
-    target_max = scale[1] * (config[CONF_height] / 100.0) ** 2
+    scale = config[CONF_SCALE].skeletal_muscle_index
+    target_max = scale[1] * (config[CONF_HEIGHT] / 100.0) ** 2
+    metrics = {Metric.SKELETAL_MUSCLE_MASS: target_max}
+    assert body_score._calculate_muscle_deduct_score(config, metrics) == 0.0
+
+
+def test_muscle_deduct_score_s400_uses_skeletal_muscle_mass_min_returns_full_penalty() -> None:
+    """At and below the min SMI threshold the full malus must be returned."""
+    config = _score_config(
+        impedance_mode=IMPEDANCE_MODE_DUAL, gender=Gender.MALE, height=175.0
+    )
+    scale = config[CONF_SCALE].skeletal_muscle_index
+    target_min = scale[0] * (config[CONF_HEIGHT] / 100.0) ** 2
+    metrics = {Metric.SKELETAL_MUSCLE_MASS: target_min}
+    assert body_score._calculate_muscle_deduct_score(config, metrics) == 10.0
+
+
+def test_muscle_deduct_score_s400_uses_skeletal_muscle_mass_female_thresholds() -> None:
+    """The SMI thresholds must depend on gender."""
+    config = _score_config(
+        impedance_mode=IMPEDANCE_MODE_DUAL, gender=Gender.FEMALE, height=165.0
+    )
+    scale = config[CONF_SCALE].skeletal_muscle_index
+    target_max = scale[1] * (config[CONF_HEIGHT] / 100.0) ** 2
     metrics = {Metric.SKELETAL_MUSCLE_MASS: target_max}
     assert body_score._calculate_muscle_deduct_score(config, metrics) == 0.0
 
