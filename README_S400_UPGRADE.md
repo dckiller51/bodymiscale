@@ -112,6 +112,15 @@ _(Sex = 1 for male, 0 for female)_
 
 **Adaptation note:** Applied here on `Z_lf` (50 kHz) as the closest available equivalent to the original hand-to-foot single-frequency measurement. Tends to slightly overestimate SMM on foot-to-foot hardware due to path length differences, but remains the best published reference for BIA-based skeletal muscle estimation.
 
+**Body score thresholds:** In S400 mode, the muscle part of the body score compares SMM against the **Skeletal Muscle Index** (SMI = SMM / height², in kg/m²) cut-points of **Janssen et al. (2004)**:
+
+| Gender | Max penalty below | No penalty above |
+| :----- | :---------------- | :--------------- |
+| Male   | 8.51 kg/m²        | 10.75 kg/m²      |
+| Female | 5.76 kg/m²        | 6.75 kg/m²       |
+
+Between the two values, the penalty decreases progressively. These cut-points come from the same author as the SMM equation and were derived from NHANES III participants **aged 60 and over**, using hand-to-foot BIA, as the SMM levels below which the risk of physical disability rises (sarcopenia). For younger adults they are lenient thresholds: the score only penalizes clearly low muscle mass.
+
 ---
 
 ### 9. BMR — Basal Metabolic Rate
@@ -178,3 +187,4 @@ Uses weight, height, and age ratios from the original Xiaomi physiological model
 2. Katch FI, McArdle WD (1996). _Nutrition, Weight Control, and Exercise_. Williams & Wilkins.
 3. Janssen I et al. (2000). Skeletal muscle mass and distribution in 468 men and women aged 18-88 yr. _J Appl Physiol_, 89(1):81-88.
 4. Wang Z et al. (1999). Body composition models: a key to understanding nutritional health. _Am J Clin Nutr_, 70(3):405-411.
+5. Janssen I et al. (2004). Skeletal muscle cutpoints associated with elevated physical disability risk in older men and women. _Am J Epidemiol_, 159(4):413-421.
