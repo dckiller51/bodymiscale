@@ -88,6 +88,20 @@
       "body_cell_mass": { "name": "Körperzellmasse" },
       "body_fat": { "name": "Körperfett" },
       "body_score": { "name": "Körperbewertung" },
+      "body_type": {
+        "name": "Körperbau",
+        "state": {
+          "balanced": "Ausgewogen",
+          "balanced_muscular": "Ausgewogen muskulös",
+          "balanced_skinny": "Ausgewogen schlank",
+          "lack_exercise": "Bewegungsmangel",
+          "obese": "Fettleibig",
+          "overweight": "Übergewicht",
+          "skinny": "Schlank",
+          "skinny_muscular": "Muskulös schlank",
+          "thick_set": "Stämmig"
+        }
+      },
       "bone_mass": { "name": "Knochenmasse" },
       "ecw_tbw_ratio": { "name": "ECW/TBW-Verhältnis" },
       "extracellular_water": { "name": "Extrazelluläres Wasser" },

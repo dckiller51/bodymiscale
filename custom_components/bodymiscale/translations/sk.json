@@ -88,6 +88,20 @@
       "body_cell_mass": { "name": "Bunková hmota tela" },
       "body_fat": { "name": "Telesný tuk" },
       "body_score": { "name": "Skóre tela" },
+      "body_type": {
+        "name": "Typ postavy",
+        "state": {
+          "balanced": "Vyvážená",
+          "balanced_muscular": "Vyvážená svalnatá",
+          "balanced_skinny": "Vyvážená chudá",
+          "lack_exercise": "Nedostatok pohybu",
+          "obese": "Obezita",
+          "overweight": "Nadváha",
+          "skinny": "Chudá",
+          "skinny_muscular": "Chudá svalnatá",
+          "thick_set": "Robustná"
+        }
+      },
       "bone_mass": { "name": "Kostná hmota" },
       "ecw_tbw_ratio": { "name": "Pomer ECW/TBW" },
       "extracellular_water": { "name": "Extracelulárna voda" },

@@ -88,6 +88,20 @@
       "body_cell_mass": { "name": "Massa cellulare corporea" },
       "body_fat": { "name": "Massa grassa" },
       "body_score": { "name": "Punteggio corpo" },
+      "body_type": {
+        "name": "Tipo di corpo",
+        "state": {
+          "balanced": "Bilanciato",
+          "balanced_muscular": "Bilanciato muscoloso",
+          "balanced_skinny": "Bilanciato magro",
+          "lack_exercise": "Mancanza di esercizio",
+          "obese": "Obeso",
+          "overweight": "Sovrappeso",
+          "skinny": "Magro",
+          "skinny_muscular": "Magro muscoloso",
+          "thick_set": "Robusto"
+        }
+      },
       "bone_mass": { "name": "Massa ossea" },
       "ecw_tbw_ratio": { "name": "Rapporto ECW/TBW" },
       "extracellular_water": { "name": "Acqua extracellulare" },

@@ -88,6 +88,20 @@
       "body_cell_mass": { "name": "Body cell mass" },
       "body_fat": { "name": "Body fat" },
       "body_score": { "name": "Body score" },
+      "body_type": {
+        "name": "Body type",
+        "state": {
+          "balanced": "Balanced",
+          "balanced_muscular": "Balanced-muscular",
+          "balanced_skinny": "Balanced-skinny",
+          "lack_exercise": "Lack-exercise",
+          "obese": "Obese",
+          "overweight": "Overweight",
+          "skinny": "Skinny",
+          "skinny_muscular": "Skinny-muscular",
+          "thick_set": "Thick-set"
+        }
+      },
       "bone_mass": { "name": "Bone mass" },
       "ecw_tbw_ratio": { "name": "ECW/TBW ratio" },
       "extracellular_water": { "name": "Extracellular water" },

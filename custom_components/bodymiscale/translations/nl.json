@@ -88,6 +88,20 @@
       "body_cell_mass": { "name": "Lichaamscelmassa" },
       "body_fat": { "name": "Lichaamsvet" },
       "body_score": { "name": "Lichaamsscore" },
+      "body_type": {
+        "name": "Lichaamstype",
+        "state": {
+          "balanced": "In balans",
+          "balanced_muscular": "In balans en gespierd",
+          "balanced_skinny": "In balans en slank",
+          "lack_exercise": "Gebrek aan beweging",
+          "obese": "Obees",
+          "overweight": "Overgewicht",
+          "skinny": "Slank",
+          "skinny_muscular": "Slank en gespierd",
+          "thick_set": "Stevig gebouwd"
+        }
+      },
       "bone_mass": { "name": "Botmassa" },
       "ecw_tbw_ratio": { "name": "ECW/TBW-ratio" },
       "extracellular_water": { "name": "Extracellulair water" },

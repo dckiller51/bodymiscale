@@ -88,6 +88,20 @@
       "body_cell_mass": { "name": "Masă celulară corporală" },
       "body_fat": { "name": "Grăsime corporală" },
       "body_score": { "name": "Scor corporal" },
+      "body_type": {
+        "name": "Tip corporal",
+        "state": {
+          "balanced": "Echilibrat",
+          "balanced_muscular": "Muscular echilibrat",
+          "balanced_skinny": "Slab echilibrat",
+          "lack_exercise": "Lipsă exercițiu",
+          "obese": "Obez",
+          "overweight": "Supraponderal",
+          "skinny": "Slab",
+          "skinny_muscular": "Slab muscular",
+          "thick_set": "Robust"
+        }
+      },
       "bone_mass": { "name": "Masă osoasă" },
       "ecw_tbw_ratio": { "name": "Raport ECW/TBW" },
       "extracellular_water": { "name": "Apă extracelulară" },
