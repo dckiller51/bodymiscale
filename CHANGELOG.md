@@ -6,9 +6,15 @@ All notable changes to this project will be documented in this file.
 
 ## 2026.10.2
 
+> 🙏 Thank you to [@Triple-S](https://github.com/Triple-S)
+
 ### ✨ New features
 
-- **Body type sensor**: The body type (obese, overweight, thick-set, lack-exercise, balanced, balanced-muscular, skinny, balanced-skinny, skinny-muscular) was already calculated and translated but never exposed as an entity. It is now available as an `enum` sensor for profiles with an impedance sensor (standard and dual-frequency modes). Closes [[#273](https://github.com/dckiller51/bodymiscale/issues/273)].
+- **Body type sensor**: The body type (obese, overweight, thick-set, lack-exercise, balanced, balanced-muscular, skinny, balanced-skinny, skinny-muscular) was already calculated and translated but never exposed as an entity. It is now available as an `enum` sensor, translated in all supported languages, for profiles with an impedance sensor (standard and dual-frequency modes). Its value appears after the next measurement. Closes [[#273](https://github.com/dckiller51/bodymiscale/issues/273)].
+
+### 🔧 Improvements
+
+- **S400 body score — muscle thresholds based on the Skeletal Muscle Index**: In S400 (dual-frequency) mode, the muscle part of the body score compared skeletal muscle mass (SMM) against total muscle mass thresholds scaled by an arbitrary 0.77 ratio. These thresholds were far too high and penalized most users (e.g. up to ~28 kg SMM for a 165 cm woman, while a typical value is ~18–22 kg). SMM is now compared against the Skeletal Muscle Index (SMI = SMM / height²) cut-points of Janssen et al. (2004), consistent with the Janssen equation already used to calculate SMM: 8.51 / 10.75 kg/m² for men and 5.76 / 6.75 kg/m² for women. **S400 body scores will usually increase.** Documented in `README_S400_UPGRADE.md`. Via [#458](https://github.com/dckiller51/bodymiscale/pull/458).
 
 ## 2026.10.1
 
