@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## 2026.10.2
+
+### ✨ New features
+
+- **Body type sensor**: The body type (obese, overweight, thick-set, lack-exercise, balanced, balanced-muscular, skinny, balanced-skinny, skinny-muscular) was already calculated and translated but never exposed as an entity. It is now available as an `enum` sensor for profiles with an impedance sensor (standard and dual-frequency modes). Closes [[#273](https://github.com/dckiller51/bodymiscale/issues/273)].
+
 ## 2026.10.1
 
 ### 🔧 Bug fixes

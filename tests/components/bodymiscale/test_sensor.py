@@ -8,13 +8,18 @@ from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-from homeassistant.components.sensor import SensorEntityDescription, SensorStateClass
+from homeassistant.components.sensor import (
+    SensorDeviceClass,
+    SensorEntityDescription,
+    SensorStateClass,
+)
 from homeassistant.core import HomeAssistant
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.bodymiscale.const import (
     ATTR_BMI,
     ATTR_BMR,
+    ATTR_BODY,
     ATTR_BONES,
     ATTR_ECW_TBW_RATIO,
     ATTR_EXTRACELLULAR_WATER,
@@ -26,6 +31,7 @@ from custom_components.bodymiscale.const import (
     ATTR_VISCERAL,
     ATTR_WATER,
     CONF_IMPEDANCE_MODE,
+    CONF_SCALE,
     CONF_SENSOR_IMPEDANCE,
     CONF_SENSOR_IMPEDANCE_HIGH,
     CONF_SENSOR_IMPEDANCE_LOW,
@@ -37,8 +43,14 @@ from custom_components.bodymiscale.const import (
     IMPEDANCE_MODE_STANDARD,
 )
 from custom_components.bodymiscale.metrics import BodyScaleMetricsHandler
-from custom_components.bodymiscale.models import Metric
-from custom_components.bodymiscale.sensor import BodyScaleSensor, async_setup_entry
+from custom_components.bodymiscale.metrics.impedance import get_body_type
+from custom_components.bodymiscale.metrics.scale import Scale
+from custom_components.bodymiscale.models import Gender, Metric
+from custom_components.bodymiscale.sensor import (
+    _IMPEDANCE_SENSORS,
+    BodyScaleSensor,
+    async_setup_entry,
+)
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -142,6 +154,7 @@ async def test_sensor_setup_no_impedance_creates_base_sensors(
     assert ATTR_LAST_MEASUREMENT_TIME in keys
 
     # Impedance sensors must NOT be present
+    assert ATTR_BODY not in keys
     assert CONF_SENSOR_IMPEDANCE not in keys
     assert CONF_SENSOR_IMPEDANCE_LOW not in keys
     assert CONF_SENSOR_IMPEDANCE_HIGH not in keys
@@ -170,6 +183,7 @@ async def test_sensor_setup_standard_impedance_includes_shared_sensors(
     assert ATTR_BONES in keys
     assert ATTR_MUSCLE in keys
     assert CONF_SENSOR_IMPEDANCE in keys
+    assert ATTR_BODY in keys
     # Dual-only keys must NOT be present
     assert CONF_SENSOR_IMPEDANCE_LOW not in keys
     assert CONF_SENSOR_IMPEDANCE_HIGH not in keys
@@ -195,6 +209,7 @@ async def test_sensor_setup_dual_impedance_includes_dual_sensors(
     assert ATTR_EXTRACELLULAR_WATER in keys
     assert ATTR_INTRACELLULAR_WATER in keys
     assert ATTR_ECW_TBW_RATIO in keys
+    assert ATTR_BODY in keys
     assert CONF_SENSOR_IMPEDANCE_LOW in keys
     assert CONF_SENSOR_IMPEDANCE_HIGH not in keys or CONF_SENSOR_IMPEDANCE_HIGH in keys
     # Standard-only key must NOT be present
@@ -627,3 +642,21 @@ async def test_on_value_populates_extra_attributes(hass: HomeAssistant) -> None:
 
     assert sensor._attr_extra_state_attributes.get("bmi_label") == "normal"
     assert attr_calls[0] == pytest.approx(22.5)
+
+
+def test_body_type_sensor_options_match_metric_values() -> None:
+    """The body type ENUM options must cover every value get_body_type returns."""
+    description = next(d for d, _, _ in _IMPEDANCE_SENSORS if d.key == ATTR_BODY)
+    assert description.device_class == SensorDeviceClass.ENUM
+    returned: set[str] = set()
+    # Male 170 cm, 30 y: fat normal range 17-22 %, muscle range 49.4-59.5 kg
+    for fat in (10.0, 20.0, 30.0):
+        for muscle in (40.0, 55.0, 70.0):
+            config = {CONF_SCALE: Scale(170, Gender.MALE)}
+            metrics = {
+                Metric.FAT_PERCENTAGE: fat,
+                Metric.MUSCLE_MASS: muscle,
+                Metric.AGE: 30,
+            }
+            returned.add(get_body_type(config, metrics))
+    assert returned == set(description.options or [])
