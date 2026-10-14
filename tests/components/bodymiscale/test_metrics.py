@@ -1795,3 +1795,158 @@ async def test_dual_impedance_not_mixed_with_stale_reading(
     await hass.async_block_till_done()
     assert len(lbm) == 1
     handler.unload()
+
+
+# ===========================================================================
+# last_measurement_time — only stamped on a genuinely new measurement
+# ===========================================================================
+
+
+def _lmt(handler: BodyScaleMetricsHandler) -> Any:
+    return handler._available_metrics.get(Metric.LAST_MEASUREMENT_TIME)
+
+
+async def test_lmt_with_stabilized_ignores_weight_rewrites(
+    hass: HomeAssistant, freezer: Any
+) -> None:
+    """With a stabilized sensor, weight re-reports must not move the timestamp."""
+    freezer.move_to("2026-10-14 08:00:00+00:00")
+    hass.states.async_set("binary_sensor.stab_lmt", "off")
+    config = _make_config(
+        weight_sensor="sensor.w_lmt", stabilized_sensor="binary_sensor.stab_lmt"
+    )
+    handler = BodyScaleMetricsHandler(hass, config, config_entry_id="e1")
+
+    # New weigh-in: weight written, then stabilized OFF → ON
+    hass.states.async_set("sensor.w_lmt", "70.0")
+    hass.states.async_set("binary_sensor.stab_lmt", "on")
+    await hass.async_block_till_done()
+    assert _lmt(handler) is None  # stamped after STABILIZED_NOTIFY_DELAY
+    freezer.tick(timedelta(seconds=2))
+    async_fire_time_changed(hass)
+    await hass.async_block_till_done()
+    stamped = _lmt(handler)
+    assert stamped is not None
+
+    # Idle packets / rebroadcast 50 min later: same weight re-written
+    hass.states.async_set("binary_sensor.stab_lmt", "off")
+    freezer.tick(timedelta(minutes=50))
+    hass.states.async_set("sensor.w_lmt", "70.0")
+    await hass.async_block_till_done()
+    async_fire_time_changed(hass)
+    await hass.async_block_till_done()
+    assert _lmt(handler) == stamped
+    handler.unload()
+
+
+async def test_lmt_with_stabilized_not_stamped_for_rejected_profile(
+    hass: HomeAssistant, freezer: Any
+) -> None:
+    """Stabilized ON must not stamp a profile whose weight filter rejected it."""
+    hass.states.async_set("binary_sensor.stab_rej", "off")
+    config = _make_config(
+        weight_sensor="sensor.w_rej",
+        stabilized_sensor="binary_sensor.stab_rej",
+        profile_method=PROFILE_METHOD_WEIGHT,
+    )
+    config[CONF_WEIGHT_MIN] = 15.0
+    config[CONF_WEIGHT_MAX] = 40.0
+    handler = BodyScaleMetricsHandler(hass, config, config_entry_id="child")
+
+    hass.states.async_set("sensor.w_rej", "75.0")  # another user's weight
+    hass.states.async_set("binary_sensor.stab_rej", "on")
+    await hass.async_block_till_done()
+    freezer.tick(timedelta(seconds=2))
+    async_fire_time_changed(hass)
+    await hass.async_block_till_done()
+
+    assert _lmt(handler) is None
+    handler.unload()
+
+
+async def test_lmt_without_stabilized_still_stamped_on_identical_weight(
+    hass: HomeAssistant, freezer: Any
+) -> None:
+    """Without stabilized, an identical weight still counts as a new weigh-in."""
+    freezer.move_to("2026-10-14 08:00:00+00:00")
+    handler = BodyScaleMetricsHandler(
+        hass, _make_config(weight_sensor="sensor.w_nostab"), config_entry_id="e1"
+    )
+    hass.states.async_set("sensor.w_nostab", "70.0")
+    await hass.async_block_till_done()
+    first = _lmt(handler)
+
+    freezer.tick(timedelta(hours=24))
+    hass.states.async_set("sensor.w_nostab", "70.0")  # state_reported
+    await hass.async_block_till_done()
+    assert first is not None
+    assert _lmt(handler) > first
+    handler.unload()
+
+
+async def test_lmt_not_stamped_by_startup_replay(hass: HomeAssistant) -> None:
+    """Replaying the current sensor value at startup is not a measurement."""
+    hass.states.async_set("sensor.w_boot_lmt", "70.0")
+    handler = BodyScaleMetricsHandler(
+        hass, _make_config(weight_sensor="sensor.w_boot_lmt"), config_entry_id="e1"
+    )
+    assert _lmt(handler) is None
+    assert handler.current_weight == pytest.approx(70.0)
+    handler.unload()
+
+
+async def test_weight_back_from_unavailable_with_same_value_ignored(
+    hass: HomeAssistant,
+) -> None:
+    """A scale entity returning from unavailable with its last value is ignored.
+
+    This must neither notify again nor move last_measurement_time (#441).
+    """
+    hass.states.async_set("sensor.w_unav", "70.0")
+    config = _make_config(
+        weight_sensor="sensor.w_unav", profile_method=PROFILE_METHOD_NOTIFY
+    )
+    handler = BodyScaleMetricsHandler(hass, config, config_entry_id="e1")
+    coordinator = MagicMock(spec=NotificationCoordinator)
+    coordinator.async_notify = AsyncMock()
+    handler.set_notification_coordinator(coordinator)
+
+    hass.states.async_set("sensor.w_unav", "unavailable")
+    await hass.async_block_till_done()
+    hass.states.async_set("sensor.w_unav", "70.0")
+    await hass.async_block_till_done()
+    coordinator.async_notify.assert_not_awaited()
+
+    # A different value after unavailable is a real new measurement
+    hass.states.async_set("sensor.w_unav", "unavailable")
+    hass.states.async_set("sensor.w_unav", "71.0")
+    await hass.async_block_till_done()
+    coordinator.async_notify.assert_awaited_once_with(71.0)
+    handler.unload()
+
+
+async def test_weight_after_reset_to_zero_is_new_even_after_unavailable(
+    hass: HomeAssistant,
+) -> None:
+    """After a reset to 0 (e.g. ESPHome), the same weight is a new measurement.
+
+    Even if the scale was unavailable in between (device reboot overnight).
+    """
+    config = _make_config(
+        weight_sensor="sensor.w_esp", profile_method=PROFILE_METHOD_NOTIFY
+    )
+    handler = BodyScaleMetricsHandler(hass, config, config_entry_id="e1")
+    coordinator = MagicMock(spec=NotificationCoordinator)
+    coordinator.async_notify = AsyncMock()
+    handler.set_notification_coordinator(coordinator)
+
+    hass.states.async_set("sensor.w_esp", "70.0")
+    await hass.async_block_till_done()
+    handler._expire_pending_measurement(datetime.now(UTC))
+    hass.states.async_set("sensor.w_esp", "0.0")  # ESPHome reset after 30 s
+    hass.states.async_set("sensor.w_esp", "unavailable")  # node reboot
+    hass.states.async_set("sensor.w_esp", "70.0")  # next morning, same weight
+    await hass.async_block_till_done()
+
+    assert coordinator.async_notify.await_count == 2
+    handler.unload()

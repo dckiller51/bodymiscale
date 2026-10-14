@@ -72,6 +72,8 @@ If your scale exposes a stabilization signal (e.g. Xiaomi S400 via ESPHome or `x
 
 With the **interactive push notification** identification method, the stabilized sensor also decides when the notification is sent: only when it turns from `OFF` to `ON`. Many scale integrations (e.g. `xiaomi_ble`) re-publish the last weight on every Bluetooth advertisement, including idle packets after a weighing and periodic rebroadcasts. Without a stabilized sensor, these rewrites can trigger extra notifications once the previous one has expired. **If your scale exposes a stabilized sensor, configuring it is strongly recommended with the notification method.**
 
+The stabilized sensor also drives the **last measurement time**: when configured, it is only updated when the sensor turns from `OFF` to `ON` for a weight accepted by the profile, i.e. once per real weighing. Re-published weights, Bluetooth rebroadcasts and Home Assistant restarts no longer move it. Without a stabilized sensor, every new weight reading (even an identical one) updates it.
+
 ## Generated data
 
 Bodymiscale calculates the following metrics. Note that some advanced parameters require an impedance sensor, and clinical-grade multi-compartment metrics are exclusive to dual-frequency hardware (e.g., Xiaomi S400).
@@ -181,7 +183,7 @@ Exclusive to dual-frequency hardware capable of measuring impedance at 50 kHz an
 4. **Select your weight sensor:** Choose the existing weight sensor in Home Assistant (e.g., a `sensor`, or an `input_number`).
    Since v2026.5.x, you can select the scale's shared native sensor directly. If you prefer data persistence across restarts, an `input_number` entity is still a solid choice.
 5. **Impedance sensor (optional):** If you have an impedance sensor, select it here. Since v2026.5.x, the scale's own sensor can be shared across profiles. This sensor is required to calculate advanced metrics (lean body mass, body fat mass, etc.).
-6. **Stabilized sensor (optional):** If your scale exposes a stabilization binary sensor (e.g. Xiaomi S400 via ESPHome or `xiaomi_ble`), select it here. When it turns `ON`, Bodymiscale recalculates immediately without waiting for the debounce window. Particularly useful for scales where weight or impedance may not change between two consecutive measurements. With the interactive notification method, it also ensures a notification is sent only once per real weighing.
+6. **Stabilized sensor (optional):** If your scale exposes a stabilization binary sensor (e.g. Xiaomi S400 via ESPHome or `xiaomi_ble`), select it here. When it turns `ON`, Bodymiscale recalculates immediately without waiting for the debounce window. Particularly useful for scales where weight or impedance may not change between two consecutive measurements. With the interactive notification method, it also ensures a notification is sent only once per real weighing, and it keeps the last measurement time accurate.
 7. Click "Save".
 
 **Explanation of choices:**

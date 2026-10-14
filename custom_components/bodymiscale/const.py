@@ -67,6 +67,10 @@ PENDING_MEASUREMENT_TIMEOUT = 300
 # to send the "who is weighing?" notification.
 STABILIZED_NOTIFY_DELAY = 1
 
+# Max delay (s) between an accepted weight and the stabilized OFF→ON
+# transition for the measurement to be stamped for this profile.
+STABILIZED_MEASUREMENT_WINDOW = 15
+
 # Max delay (s) between impedance_low and impedance_high of the same
 # dual-frequency measurement (packet order is not guaranteed).
 DUAL_IMPEDANCE_WINDOW = 15
