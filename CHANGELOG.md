@@ -16,6 +16,14 @@ All notable changes to this project will be documented in this file.
 
 - **S400 body score — muscle thresholds based on the Skeletal Muscle Index**: In S400 (dual-frequency) mode, the muscle part of the body score compared skeletal muscle mass (SMM) against total muscle mass thresholds scaled by an arbitrary 0.77 ratio. These thresholds were far too high and penalized most users (e.g. up to ~28 kg SMM for a 165 cm woman, while a typical value is ~18–22 kg). SMM is now compared against the Skeletal Muscle Index (SMI = SMM / height²) cut-points of Janssen et al. (2004), consistent with the Janssen equation already used to calculate SMM: 8.51 / 10.75 kg/m² for men and 5.76 / 6.75 kg/m² for women. **S400 body scores will usually increase.** Documented in `README_S400_UPGRADE.md`. Via [#458](https://github.com/dckiller51/bodymiscale/pull/458).
 
+### 🔧 Bug fixes
+
+- **Last measurement time moving without a new weighing**: `last_measurement_time` was stamped on every valid weight write. Scale integrations such as `xiaomi_ble` re-publish the last weight on every advertisement (idle packets, periodic rebroadcasts about every 50 minutes on the S200), so the timestamp kept moving without any new weighing, and it could also be reset when the scale entity came back after a Home Assistant restart.
+  - When a `stabilized` sensor is configured, the timestamp is now updated only on its `OFF` → `ON` transition, and only for a profile that accepted the weight (another user's weighing no longer updates it).
+  - The startup replay of the current sensor values no longer updates it.
+  - Without a `stabilized` sensor, the behavior is unchanged: every new weight reading, even an identical one, updates it.
+- **Repeated notification when the weight sensor comes back from `unavailable`**: When the scale's weight entity became unavailable and then reappeared with the same last value (e.g. Xiaomi S200), it was treated as a new measurement and a new "Who is weighing?" notification was sent. A weight sensor returning from `unavailable`/`unknown` with its last value is now ignored. After a reset to 0 (e.g. ESPHome scales), the next reading is always a new measurement. Closes [[#441](https://github.com/dckiller51/bodymiscale/issues/441)].
+
 ## 2026.10.1
 
 ### 🔧 Bug fixes
