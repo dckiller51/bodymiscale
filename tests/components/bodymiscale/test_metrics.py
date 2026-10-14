@@ -2,13 +2,15 @@
 
 from __future__ import annotations
 
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from typing import Any
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 from homeassistant.const import EVENT_STATE_CHANGED, EVENT_STATE_REPORTED
 from homeassistant.core import HomeAssistant, State
+from homeassistant.util import dt as dt_util
+from pytest_homeassistant_custom_component.common import async_fire_time_changed
 
 from custom_components.bodymiscale.const import (
     CONF_BIRTHDAY,
@@ -519,6 +521,122 @@ async def test_weight_with_notification_coordinator_stores_pending(
     assert len(values) == 0
     coordinator.async_notify.assert_awaited_once()
     assert handler._pending_weight == pytest.approx(70.0)
+    handler.unload()
+
+
+def _notify_handler_with_stabilized(
+    hass: HomeAssistant, weight_sensor: str, stabilized_sensor: str
+) -> tuple[BodyScaleMetricsHandler, MagicMock]:
+    config = _make_config(
+        weight_sensor=weight_sensor,
+        profile_method=PROFILE_METHOD_NOTIFY,
+        stabilized_sensor=stabilized_sensor,
+    )
+    handler = BodyScaleMetricsHandler(hass, config, config_entry_id="e1")
+    coordinator = MagicMock(spec=NotificationCoordinator)
+    coordinator.async_notify = AsyncMock()
+    handler.set_notification_coordinator(coordinator)
+    return handler, coordinator
+
+
+async def _fire_stabilized_delay(hass: HomeAssistant) -> None:
+    async_fire_time_changed(hass, dt_util.utcnow() + timedelta(seconds=2))
+    await hass.async_block_till_done()
+
+
+async def test_notify_with_stabilized_ignores_weight_rewrites(
+    hass: HomeAssistant,
+) -> None:
+    """With a stabilized sensor, weight writes alone must not send a notification.
+
+    xiaomi_ble rewrites the weight sensor on every advertisement (idle packets,
+    periodic rebroadcasts), which fires state_reported with the same value.
+    """
+    hass.states.async_set("binary_sensor.stab_rw", "off")
+    handler, coordinator = _notify_handler_with_stabilized(
+        hass, "sensor.w_stab_rw", "binary_sensor.stab_rw"
+    )
+
+    hass.states.async_set("sensor.w_stab_rw", "70.0")
+    await hass.async_block_till_done()
+    hass.states.async_set("sensor.w_stab_rw", "70.0", force_update=True)
+    await hass.async_block_till_done()
+    await _fire_stabilized_delay(hass)
+
+    coordinator.async_notify.assert_not_awaited()
+    assert handler._pending_weight is None
+    handler.unload()
+
+
+async def test_notify_with_stabilized_sends_on_off_to_on(
+    hass: HomeAssistant,
+) -> None:
+    """The notification must be sent once when stabilized goes OFF → ON."""
+    hass.states.async_set("binary_sensor.stab_on", "off")
+    handler, coordinator = _notify_handler_with_stabilized(
+        hass, "sensor.w_stab_on", "binary_sensor.stab_on"
+    )
+
+    # Stabilized written before the weight (platform order is not guaranteed)
+    hass.states.async_set("binary_sensor.stab_on", "on")
+    hass.states.async_set("sensor.w_stab_on", "72.5")
+    await hass.async_block_till_done()
+    coordinator.async_notify.assert_not_awaited()
+
+    await _fire_stabilized_delay(hass)
+
+    coordinator.async_notify.assert_awaited_once_with(72.5)
+    assert handler._pending_weight == pytest.approx(72.5)
+
+    # Idle packets: stabilized back OFF, weight rewritten with the same value
+    hass.states.async_set("binary_sensor.stab_on", "off")
+    hass.states.async_set("sensor.w_stab_on", "72.5", force_update=True)
+    await hass.async_block_till_done()
+    await _fire_stabilized_delay(hass)
+
+    coordinator.async_notify.assert_awaited_once()
+    handler.unload()
+
+
+async def test_notify_with_stabilized_not_sent_on_bootstrap(
+    hass: HomeAssistant,
+) -> None:
+    """A stabilized sensor already ON at startup must not send a notification."""
+    hass.states.async_set("sensor.w_stab_boot", "70.0")
+    hass.states.async_set("binary_sensor.stab_boot", "on")
+    handler, coordinator = _notify_handler_with_stabilized(
+        hass, "sensor.w_stab_boot", "binary_sensor.stab_boot"
+    )
+    await _fire_stabilized_delay(hass)
+
+    coordinator.async_notify.assert_not_awaited()
+    handler.unload()
+
+
+async def test_notify_without_stabilized_not_repeated_for_same_pending_weight(
+    hass: HomeAssistant,
+) -> None:
+    """Re-reported identical weight while pending must not notify again."""
+    config = _make_config(
+        weight_sensor="sensor.w_repeat",
+        profile_method=PROFILE_METHOD_NOTIFY,
+    )
+    handler = BodyScaleMetricsHandler(hass, config, config_entry_id="e1")
+    coordinator = MagicMock(spec=NotificationCoordinator)
+    coordinator.async_notify = AsyncMock()
+    handler.set_notification_coordinator(coordinator)
+
+    hass.states.async_set("sensor.w_repeat", "70.0")
+    await hass.async_block_till_done()
+    hass.states.async_set("sensor.w_repeat", "70.0", force_update=True)
+    await hass.async_block_till_done()
+
+    coordinator.async_notify.assert_awaited_once()
+
+    # A different weight is a new measurement
+    hass.states.async_set("sensor.w_repeat", "71.0")
+    await hass.async_block_till_done()
+    assert coordinator.async_notify.await_count == 2
     handler.unload()
 
 
@@ -1560,4 +1678,120 @@ async def test_state_changed_event_wrapper_is_unused_dead_code(
     handler._state_changed_event(event)
 
     assert len(weight_values) == 0
+    handler.unload()
+
+
+# ===========================================================================
+# Stale impedance re-reported by the scale integration (issue #459)
+# ===========================================================================
+
+
+async def test_weight_only_measurement_ignores_stale_impedance_reports(
+    hass: HomeAssistant,
+) -> None:
+    """A weight-only measurement must not inherit another user's impedance.
+
+    xiaomi_ble re-publishes every known value on each advertisement, so the
+    impedance sensors are rewritten (state_reported, unchanged value) with the
+    previous user's readings when a child weighs in without impedance.
+    """
+    w, low, high = "sensor.w_459", "sensor.imp_low_459", "sensor.imp_high_459"
+
+    # Parent measurement already exposed by the scale entities
+    hass.states.async_set(w, "75.0")
+    hass.states.async_set(low, "500.0")
+    hass.states.async_set(high, "450.0")
+    await hass.async_block_till_done()
+
+    config = _make_config(
+        weight_sensor=w,
+        impedance_mode=IMPEDANCE_MODE_DUAL,
+        impedance_low_sensor=low,
+        impedance_high_sensor=high,
+        profile_method=PROFILE_METHOD_WEIGHT,
+        birthday="2018-05-01",
+        height=125.0,
+    )
+    config[CONF_WEIGHT_MIN] = 15.0
+    config[CONF_WEIGHT_MAX] = 40.0
+    child = BodyScaleMetricsHandler(hass, config, config_entry_id="child")
+
+    lbm: list[float] = []
+    child.subscribe(Metric.LBM, lambda v: lbm.append(float(v)))
+
+    # Child weight-only measurement: weight changes, impedance rewritten as-is
+    # (same value → Home Assistant fires state_reported, not state_changed)
+    hass.states.async_set(w, "25.0")
+    hass.states.async_set(low, "500.0")
+    hass.states.async_set(high, "450.0")
+    await hass.async_block_till_done()
+
+    assert child.current_weight == pytest.approx(25.0)
+    assert Metric.IMPEDANCE_LOW not in child._available_metrics
+    assert Metric.IMPEDANCE_HIGH not in child._available_metrics
+    assert lbm == []
+    child.unload()
+
+
+# ===========================================================================
+# Dual-frequency impedance packet order (issue #448)
+# ===========================================================================
+
+
+def _dual_handler(hass: HomeAssistant, suffix: str) -> BodyScaleMetricsHandler:
+    config = _make_config(
+        weight_sensor=f"sensor.w_{suffix}",
+        impedance_mode=IMPEDANCE_MODE_DUAL,
+        impedance_low_sensor=f"sensor.low_{suffix}",
+        impedance_high_sensor=f"sensor.high_{suffix}",
+    )
+    return BodyScaleMetricsHandler(hass, config, config_entry_id="e1")
+
+
+async def test_dual_impedance_low_after_high_computes(hass: HomeAssistant) -> None:
+    """Metrics must be computed when impedance_low arrives after impedance_high."""
+    handler = _dual_handler(hass, "448a")
+    lbm: list[float] = []
+    handler.subscribe(Metric.LBM, lambda v: lbm.append(float(v)))
+
+    hass.states.async_set("sensor.w_448a", "75.0")
+    hass.states.async_set("sensor.high_448a", "450.0")
+    await hass.async_block_till_done()
+    assert lbm == []  # still waiting for impedance_low
+
+    hass.states.async_set("sensor.low_448a", "500.0")
+    await hass.async_block_till_done()
+    assert len(lbm) == 1
+    handler.unload()
+
+
+async def test_dual_impedance_not_mixed_with_stale_reading(
+    hass: HomeAssistant, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A fresh impedance must not be combined with one from a previous weigh-in."""
+    from custom_components.bodymiscale import metrics as metrics_module
+
+    now = [1000.0]
+    monkeypatch.setattr(metrics_module.time, "monotonic", lambda: now[0])
+
+    handler = _dual_handler(hass, "448b")
+    lbm: list[float] = []
+    handler.subscribe(Metric.LBM, lambda v: lbm.append(float(v)))
+
+    # Previous weigh-in: only impedance_low was received
+    hass.states.async_set("sensor.w_448b", "75.0")
+    hass.states.async_set("sensor.low_448b", "510.0")
+    await hass.async_block_till_done()
+
+    # Next weigh-in one hour later: impedance_high first, then impedance_low
+    now[0] += 3600
+    hass.states.async_set("sensor.w_448b", "74.0")
+    hass.states.async_set("sensor.high_448b", "450.0")
+    await hass.async_block_till_done()
+    assert lbm == []  # stale low (1 h old) must not be used
+
+    now[0] += 0.5
+    hass.states.async_set("sensor.low_448b", "500.0")
+    await hass.async_block_till_done()
+    assert len(lbm) == 1
     handler.unload()

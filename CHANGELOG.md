@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## 2026.10.1
+
+### 🔧 Bug fixes
+
+- **Notification sent without a new measurement**: Scale integrations such as `xiaomi_ble` re-publish the last known weight on every advertisement. Each of these writes triggered a new "Who is weighing?" notification, even though the `stabilized` sensor never turned `ON`.
+  - When a `stabilized` sensor is configured, the notification is now sent only on its `OFF` → `ON` transition, using the weight read 1 second later (the binary sensor and the weight sensor are not written in a guaranteed order).
+  - A `stabilized` sensor already `ON` when Home Assistant starts no longer sends a notification.
+  - Without a `stabilized` sensor, an identical weight that is still awaiting confirmation is no longer notified again.
+- **Weight-only measurement inheriting another user's impedance**: When a user weighed in without impedance (e.g. a child, or with socks), the impedance sensors were rewritten with the previous user's unchanged values, and Bodymiscale accepted them for the new profile. Impedance values that are only re-reported (`state_reported`, value unchanged) are now ignored; only a genuinely new impedance reading is used. If a profile already stored another user's impedance, reload the integration once after updating. Closes [[#459](https://github.com/dckiller51/bodymiscale/issues/459)].
+- **Dual-frequency metrics frozen when packets arrive out of order**: In dual-frequency mode, metrics were only computed when `impedance_high` arrived, assuming it is always the last packet. When `impedance_low` arrived after it (Bluetooth proxies, delayed or lost packets), body fat, skeletal muscle mass, body cell mass and water stayed frozen until the integration was reloaded. Metrics are now computed when either frequency arrives, as soon as both readings belong to the same measurement (received within 15 seconds of each other), so a fresh reading is never combined with a stale one. The reload automation workaround is no longer needed. Closes [[#448](https://github.com/dckiller51/bodymiscale/issues/448)].
+
 ## 2026.10.0
 
 > 🙏 Thank you to [@Triple-S](https://github.com/Triple-S)
