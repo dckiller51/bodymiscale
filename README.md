@@ -70,6 +70,8 @@ If you plan to integrate your own last weigh-in sensor, make sure a dedicated se
 
 If your scale exposes a stabilization signal (e.g. Xiaomi S400 via ESPHome or `xiaomi_ble`), you can configure it here. When this sensor turns `ON`, Bodymiscale fires the recalculation immediately — bypassing the 5-second debounce window. This ensures instantaneous results regardless of whether the weight or impedance values have changed since the last measurement.
 
+With the **interactive push notification** identification method, the stabilized sensor also decides when the notification is sent: only when it turns from `OFF` to `ON`. Many scale integrations (e.g. `xiaomi_ble`) re-publish the last weight on every Bluetooth advertisement, including idle packets after a weighing and periodic rebroadcasts. Without a stabilized sensor, these rewrites can trigger extra notifications once the previous one has expired. **If your scale exposes a stabilized sensor, configuring it is strongly recommended with the notification method.**
+
 ## Generated data
 
 Bodymiscale calculates the following metrics. Note that some advanced parameters require an impedance sensor, and clinical-grade multi-compartment metrics are exclusive to dual-frequency hardware (e.g., Xiaomi S400).
@@ -173,13 +175,13 @@ Exclusive to dual-frequency hardware capable of measuring impedance at 50 kHz an
    - **User identification method** _(new in v2026.5.x)_: Choose how Bodymiscale determines which user to assign a measurement to when using the scale's native sensors:
      - **Weight range:** Each user is assigned a weight interval (e.g. 60–75 kg). Bodymiscale routes the measurement automatically.
      - **Nearest current weight:** Bodymiscale assigns the measurement to the user whose last known weight is closest to the measured value. A configurable tolerance window (default ±5 kg) ensures the measurement is rejected if no user is close enough. An initial weight must be provided at setup so the filter is operational from the very first weighing.
-     - **Interactive push notification:** After each weighing, a notification is sent to a chosen mobile device. The user taps their name to confirm the measurement.
+     - **Interactive push notification:** After each weighing, a notification is sent to a chosen mobile device. The user taps their name to confirm the measurement. If a stabilized sensor is configured (recommended), the notification is sent only when it turns `ON`.
      - **Profile ID:** For recent scales (e.g. Xiaomi S400 via Xiaomi Home) that broadcast a user slot ID — Bodymiscale matches it directly with no extra step.
      - **None — manual assignment:** No automatic identification. Use this if each person still has their own dedicated sensors.
 4. **Select your weight sensor:** Choose the existing weight sensor in Home Assistant (e.g., a `sensor`, or an `input_number`).
    Since v2026.5.x, you can select the scale's shared native sensor directly. If you prefer data persistence across restarts, an `input_number` entity is still a solid choice.
 5. **Impedance sensor (optional):** If you have an impedance sensor, select it here. Since v2026.5.x, the scale's own sensor can be shared across profiles. This sensor is required to calculate advanced metrics (lean body mass, body fat mass, etc.).
-6. **Stabilized sensor (optional):** If your scale exposes a stabilization binary sensor (e.g. Xiaomi S400 via ESPHome or `xiaomi_ble`), select it here. When it turns `ON`, Bodymiscale recalculates immediately without waiting for the debounce window. Particularly useful for scales where weight or impedance may not change between two consecutive measurements.
+6. **Stabilized sensor (optional):** If your scale exposes a stabilization binary sensor (e.g. Xiaomi S400 via ESPHome or `xiaomi_ble`), select it here. When it turns `ON`, Bodymiscale recalculates immediately without waiting for the debounce window. Particularly useful for scales where weight or impedance may not change between two consecutive measurements. With the interactive notification method, it also ensures a notification is sent only once per real weighing.
 7. Click "Save".
 
 **Explanation of choices:**
