@@ -11,6 +11,7 @@ from homeassistant.const import (
     ATTR_UNIT_OF_MEASUREMENT,
     STATE_UNAVAILABLE,
     STATE_UNKNOWN,
+    UnitOfMass,
 )
 from homeassistant.core import (
     CALLBACK_TYPE,
@@ -28,6 +29,7 @@ from homeassistant.helpers.event import (
 )
 from homeassistant.helpers.typing import StateType
 from homeassistant.util import dt as dt_util
+from homeassistant.util.unit_conversion import MassConverter
 
 from ..const import (
     CONF_BIRTHDAY,
@@ -55,7 +57,6 @@ from ..const import (
     PROFILE_METHOD_NEAREST,
     STABILIZED_MEASUREMENT_WINDOW,
     STABILIZED_NOTIFY_DELAY,
-    UNIT_POUNDS,
 )
 from ..models import Gender, Metric
 from ..profile import (
@@ -86,6 +87,23 @@ from .scale import Scale
 from .weight import get_bmi, get_bmr, get_visceral_fat
 
 _LOGGER = logging.getLogger(__name__)
+
+# Mass units accepted for the weight sensor, keyed by lower-cased spelling.
+# Includes Home Assistant's own units plus common variants found in template
+# sensors ("lbs", "Kg", "pounds"…), which HA itself would not convert.
+_MASS_UNITS: dict[str, str] = {
+    **{str(unit).lower(): unit for unit in MassConverter.VALID_UNITS if unit},
+    "kgs": UnitOfMass.KILOGRAMS,
+    "kilo": UnitOfMass.KILOGRAMS,
+    "kilos": UnitOfMass.KILOGRAMS,
+    "kilogram": UnitOfMass.KILOGRAMS,
+    "kilograms": UnitOfMass.KILOGRAMS,
+    "lbs": UnitOfMass.POUNDS,
+    "pound": UnitOfMass.POUNDS,
+    "pounds": UnitOfMass.POUNDS,
+    "stone": UnitOfMass.STONES,
+    "stones": UnitOfMass.STONES,
+}
 
 
 @dataclass
@@ -328,6 +346,8 @@ class BodyScaleMetricsHandler:
         self._stabilized_stamp_cancel: CALLBACK_TYPE | None = None
         self._weight_accepted_at: float | None = None
         self._known_weight: float | None = None
+        # Unknown weight units already reported, so the warning is logged once.
+        self._warned_units: set[str] = set()
         # filled after HA starts
         self._sensors_set: frozenset[str] = frozenset()
 
@@ -670,16 +690,35 @@ class BodyScaleMetricsHandler:
         )
         return True
 
-    @staticmethod
-    def _weight_kg(state: State) -> float | None:
-        """Return the weight in kg from a sensor state, or None if not numeric."""
+    def _weight_kg(self, state: State) -> float | None:
+        """Return the weight in kg from a sensor state, or None if not numeric.
+
+        Any mass unit known to Home Assistant is converted (lb, st, g, oz…),
+        as well as common spellings used in template sensors (lbs, pounds,
+        Kg…). A missing or unrecognized unit is assumed to be kg, as before.
+        """
         try:
             val = float(state.state)
         except ValueError:
             return None
-        if state.attributes.get(ATTR_UNIT_OF_MEASUREMENT) == UNIT_POUNDS:
-            val *= 0.45359237
-        return val
+
+        raw_unit = state.attributes.get(ATTR_UNIT_OF_MEASUREMENT)
+        if not raw_unit:
+            return val
+
+        unit = _MASS_UNITS.get(str(raw_unit).strip().lower())
+        if unit is None:
+            if raw_unit not in self._warned_units:
+                self._warned_units.add(raw_unit)
+                _LOGGER.warning(
+                    "[%s] Unknown weight unit '%s' on %s — value assumed to be kg",
+                    self._name,
+                    raw_unit,
+                    state.entity_id,
+                )
+            return val
+
+        return MassConverter.convert(val, unit, UnitOfMass.KILOGRAMS)
 
     def _stamp_measurement_time(self) -> None:
         """Set last_measurement_time to now."""
@@ -941,9 +980,10 @@ class BodyScaleMetricsHandler:
             _LOGGER.debug("[%s] Weight sensor unavailable — ignoring", self._name)
             return False, None
 
-        try:
-            val = float(raw)
-        except ValueError:
+        # Convert to kg *before* checking the limits, which are expressed in kg.
+        # Otherwise a 202 lb reading (≈ 91.6 kg) is rejected as "weight high".
+        val = self._weight_kg(state)
+        if val is None:
             return False, "invalid_format"
 
         if val < CONSTRAINT_WEIGHT_MIN:
@@ -961,9 +1001,6 @@ class BodyScaleMetricsHandler:
             return False, "low"
         if val > CONSTRAINT_WEIGHT_MAX:
             return False, "high"
-
-        if state.attributes.get(ATTR_UNIT_OF_MEASUREMENT) == UNIT_POUNDS:
-            val *= 0.45359237
 
         self._known_weight = val
 

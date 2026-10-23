@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## 2026.10.3
+
+### 🔧 Bug fixes
+
+- **Weight in pounds above 200 lb flagged as "weight high"**: The 10–200 kg limits were checked before the pound-to-kg conversion, so a scale reporting in `lb` raised a "weight high" problem from 200 lb (≈ 90.7 kg). The conversion now happens first. Fixes [lovelace-body-miscale-card#149](https://github.com/dckiller51/lovelace-body-miscale-card/issues/149).
+  - All Home Assistant mass units are now converted (`lb`, `st`, `oz`, `g`…), as well as common spellings used in template sensors (`lbs`, `pounds`, `Kg`…). A missing or unknown unit is still treated as kg, with a warning in the log.
+  - Since the 10 kg minimum is now applied after conversion, readings below ≈ 22 lb are reported as "weight low" (they were previously accepted).
+
 ## 2026.10.2
 
 > 🙏 Thank you to [@Triple-S](https://github.com/Triple-S)
@@ -107,62 +115,6 @@ All notable changes to this project will be documented in this file.
   `_bootstrapping` flag now suppresses the notification side effect during
   this initial replay.
   Closes [#393](https://github.com/dckiller51/bodymiscale/issues/393).
-
-## 2026.5.6
-
-### 🔧 Bug fixes
-
-- Refactored metric recalculation to use topological ordering — all derived
-  metrics are now computed in a single deterministic pass (BMI → LBM →
-  FAT_PERCENTAGE → ... → BODY_SCORE), eliminating redundant cascade
-  recalculations.
-- Fixed double/redundant recalculations when weight and impedance arrive as
-  separate state updates — a `_settling` flag now blocks intermediate
-  recalculations until the debounce window elapses. A 5-second debounce
-  (`RECALCULATION_DEBOUNCE` in `const.py`) ensures all sensors (weight,
-  impedance_low, impedance_high) have settled before the single recalculation
-  fires.
-  Closes [#378](https://github.com/dckiller51/bodymiscale/issues/378).
-- Fixed `last_measurement_time` updating twice per measurement cycle (once on
-  weight, once on impedance) — timestamp is now stamped once in
-  `_on_debounce_elapsed` after all sensors have settled.
-  Closes [#378](https://github.com/dckiller51/bodymiscale/issues/378).
-- Fixed renamed `bone_cell_mass` to `bcm` in attributes to match the
-  bodymiscale component attribute name.
-
-## 2026.5.5
-
-### 🔧 Bug fixes
-
-- Fixed sensor name translations not being applied in the UI [[#222](https://github.com/dckiller51/bodymiscale/issues/222)] — `_attr_name` was overriding `translation_key` for all entities. The main umbrella entity now sets its name explicitly while normal sensors delegate name resolution to HA via `translation_key`
-
-## 2026.5.6
-
-### 🔧 Bug fixes
-
-- Refactored metric recalculation to use topological ordering — all derived
-  metrics are now computed in a single deterministic pass (BMI → LBM →
-  FAT_PERCENTAGE → ... → BODY_SCORE), eliminating redundant cascade
-  recalculations.
-- Fixed double/redundant recalculations when weight and impedance arrive as
-  separate state updates — a `_settling` flag now blocks intermediate
-  recalculations until the debounce window elapses. A 5-second debounce
-  (`RECALCULATION_DEBOUNCE` in `const.py`) ensures all sensors (weight,
-  impedance_low, impedance_high) have settled before the single recalculation
-  fires.
-  Closes [#378](https://github.com/dckiller51/bodymiscale/issues/378).
-- Fixed `last_measurement_time` updating twice per measurement cycle (once on
-  weight, once on impedance) — timestamp is now stamped once in
-  `_on_debounce_elapsed` after all sensors have settled.
-  Closes [#378](https://github.com/dckiller51/bodymiscale/issues/378).
-- Fixed renamed `bone_cell_mass` to `bcm` in attributes to match the
-  bodymiscale component attribute name.
-
-## 2026.5.5
-
-### 🔧 Bug fixes
-
-- Fixed sensor name translations not being applied in the UI [[#222](https://github.com/dckiller51/bodymiscale/issues/222)] — `_attr_name` was overriding `translation_key` for all entities. The main umbrella entity now sets its name explicitly while normal sensors delegate name resolution to HA via `translation_key`
 
 ## 2026.5.6
 
