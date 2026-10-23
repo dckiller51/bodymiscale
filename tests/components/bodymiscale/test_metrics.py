@@ -475,6 +475,131 @@ async def test_weight_in_pounds_converted_to_kg(hass: HomeAssistant) -> None:
     handler.unload()
 
 
+async def test_weight_in_pounds_above_200_accepted(hass: HomeAssistant) -> None:
+    """202 lb (~91.6 kg) must be accepted: limits apply after conversion (#149)."""
+    config = _make_config(weight_sensor="sensor.w_lbs_heavy")
+    handler = BodyScaleMetricsHandler(hass, config, config_entry_id="e1")
+
+    values: list[float] = []
+    status_values: list[Any] = []
+    handler.subscribe(Metric.WEIGHT, lambda v: values.append(float(v)))
+    handler.subscribe(Metric.STATUS, status_values.append)
+
+    hass.states.async_set("sensor.w_lbs_heavy", "202.0", {"unit_of_measurement": "lb"})
+    await hass.async_block_till_done()
+
+    assert values, "Expected WEIGHT update"
+    assert values[-1] == pytest.approx(202.0 * 0.45359237, abs=0.1)
+    assert not any("weight_high" in str(v) for v in status_values)
+    handler.unload()
+
+
+async def test_weight_in_pounds_above_limit_sets_problem(hass: HomeAssistant) -> None:
+    """A weight above the limit once converted to kg still records 'high'."""
+    config = _make_config(weight_sensor="sensor.w_lbs_limit")
+    handler = BodyScaleMetricsHandler(hass, config, config_entry_id="e1")
+
+    status_values: list[Any] = []
+    handler.subscribe(Metric.STATUS, status_values.append)
+
+    hass.states.async_set("sensor.w_lbs_limit", "450.0", {"unit_of_measurement": "lb"})
+    await hass.async_block_till_done()
+
+    assert any("weight_high" in str(v) for v in status_values)
+    handler.unload()
+
+
+async def test_weight_in_pounds_below_limit_sets_problem(hass: HomeAssistant) -> None:
+    """20 lb (~9.1 kg) is below the 10 kg minimum once converted."""
+    config = _make_config(weight_sensor="sensor.w_lbs_light")
+    handler = BodyScaleMetricsHandler(hass, config, config_entry_id="e1")
+
+    values: list[float] = []
+    status_values: list[Any] = []
+    handler.subscribe(Metric.WEIGHT, lambda v: values.append(float(v)))
+    handler.subscribe(Metric.STATUS, status_values.append)
+
+    hass.states.async_set("sensor.w_lbs_light", "20.0", {"unit_of_measurement": "lb"})
+    await hass.async_block_till_done()
+
+    assert len(values) == 0
+    assert any("weight_low" in str(v) for v in status_values)
+    handler.unload()
+
+
+@pytest.mark.parametrize(
+    ("unit", "raw", "expected_kg"),
+    [
+        ("lb", "202.0", 202.0 * 0.45359237),
+        ("lbs", "202.0", 202.0 * 0.45359237),  # template sensors (#149)
+        ("Pounds", "202.0", 202.0 * 0.45359237),
+        (" LB ", "202.0", 202.0 * 0.45359237),
+        ("st", "14.0", 14.0 * 6.35029318),
+        ("stones", "14.0", 14.0 * 6.35029318),
+        ("g", "70000", 70.0),
+        ("oz", "2469.18", 70.0),
+        ("kg", "70.0", 70.0),
+        ("Kg", "70.0", 70.0),
+        ("kgs", "70.0", 70.0),
+    ],
+)
+async def test_weight_units_converted_to_kg(
+    hass: HomeAssistant, unit: str, raw: str, expected_kg: float
+) -> None:
+    """Any mass unit (and common spellings) must be converted to kg."""
+    config = _make_config(weight_sensor="sensor.w_units")
+    handler = BodyScaleMetricsHandler(hass, config, config_entry_id="e1")
+
+    values: list[float] = []
+    status_values: list[Any] = []
+    handler.subscribe(Metric.WEIGHT, lambda v: values.append(float(v)))
+    handler.subscribe(Metric.STATUS, status_values.append)
+
+    hass.states.async_set("sensor.w_units", raw, {"unit_of_measurement": unit})
+    await hass.async_block_till_done()
+
+    assert values, f"Expected WEIGHT update for unit {unit!r}"
+    assert values[-1] == pytest.approx(expected_kg, abs=0.01)
+    assert not any("weight_high" in str(v) for v in status_values)
+    handler.unload()
+
+
+async def test_weight_without_unit_assumed_kg(hass: HomeAssistant) -> None:
+    """A weight sensor without unit (e.g. input_number) is treated as kg."""
+    config = _make_config(weight_sensor="input_number.w_no_unit")
+    handler = BodyScaleMetricsHandler(hass, config, config_entry_id="e1")
+
+    values: list[float] = []
+    handler.subscribe(Metric.WEIGHT, lambda v: values.append(float(v)))
+
+    hass.states.async_set("input_number.w_no_unit", "70.0")
+    await hass.async_block_till_done()
+
+    assert values[-1] == pytest.approx(70.0, abs=0.01)
+    handler.unload()
+
+
+async def test_weight_unknown_unit_assumed_kg(
+    hass: HomeAssistant, caplog: pytest.LogCaptureFixture
+) -> None:
+    """An unrecognized unit keeps the legacy behavior (kg) and warns once."""
+    config = _make_config(weight_sensor="sensor.w_unk_unit")
+    handler = BodyScaleMetricsHandler(hass, config, config_entry_id="e1")
+
+    values: list[float] = []
+    handler.subscribe(Metric.WEIGHT, lambda v: values.append(float(v)))
+
+    attrs = {"unit_of_measurement": "kilogramm"}
+    hass.states.async_set("sensor.w_unk_unit", "70.0", attrs)
+    await hass.async_block_till_done()
+    hass.states.async_set("sensor.w_unk_unit", "71.0", attrs)
+    await hass.async_block_till_done()
+
+    assert values[-1] == pytest.approx(71.0, abs=0.01)
+    assert caplog.text.count("Unknown weight unit 'kilogramm'") == 1
+    handler.unload()
+
+
 async def test_weight_unknown_state_clears_problem(hass: HomeAssistant) -> None:
     """Weight sensor going to 'unknown' must clear any existing problem."""
     config = _make_config(weight_sensor="sensor.w_unknown")
@@ -521,6 +646,29 @@ async def test_weight_with_notification_coordinator_stores_pending(
     assert len(values) == 0
     coordinator.async_notify.assert_awaited_once()
     assert handler._pending_weight == pytest.approx(70.0)
+    handler.unload()
+
+
+async def test_notification_weight_in_pounds_sent_in_kg(
+    hass: HomeAssistant,
+) -> None:
+    """The pending weight sent in the notification must be the kg value."""
+    config = _make_config(
+        weight_sensor="sensor.w_notify_lb",
+        profile_method=PROFILE_METHOD_NOTIFY,
+    )
+    handler = BodyScaleMetricsHandler(hass, config, config_entry_id="e1")
+
+    coordinator = MagicMock(spec=NotificationCoordinator)
+    coordinator.async_notify = AsyncMock()
+    handler.set_notification_coordinator(coordinator)
+
+    hass.states.async_set("sensor.w_notify_lb", "202.0", {"unit_of_measurement": "lb"})
+    await hass.async_block_till_done()
+
+    coordinator.async_notify.assert_awaited_once()
+    sent = coordinator.async_notify.await_args.args[0]
+    assert sent == pytest.approx(202.0 * 0.45359237, abs=0.01)
     handler.unload()
 
 
@@ -1922,6 +2070,29 @@ async def test_weight_back_from_unavailable_with_same_value_ignored(
     hass.states.async_set("sensor.w_unav", "71.0")
     await hass.async_block_till_done()
     coordinator.async_notify.assert_awaited_once_with(71.0)
+    handler.unload()
+
+
+async def test_weight_back_from_unavailable_in_pounds_ignored(
+    hass: HomeAssistant,
+) -> None:
+    """The unavailable-restore check must compare kg values for lb sensors too."""
+    attrs = {"unit_of_measurement": "lb"}
+    hass.states.async_set("sensor.w_unav_lb", "180.0", attrs)
+    config = _make_config(
+        weight_sensor="sensor.w_unav_lb", profile_method=PROFILE_METHOD_NOTIFY
+    )
+    handler = BodyScaleMetricsHandler(hass, config, config_entry_id="e1")
+    coordinator = MagicMock(spec=NotificationCoordinator)
+    coordinator.async_notify = AsyncMock()
+    handler.set_notification_coordinator(coordinator)
+
+    hass.states.async_set("sensor.w_unav_lb", "unavailable", attrs)
+    await hass.async_block_till_done()
+    hass.states.async_set("sensor.w_unav_lb", "180.0", attrs)
+    await hass.async_block_till_done()
+
+    coordinator.async_notify.assert_not_awaited()
     handler.unload()
 
 
