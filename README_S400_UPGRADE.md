@@ -165,24 +165,25 @@ Uses weight, height, and age ratios from the original Xiaomi physiological model
 
 Select **Xiaomi — Xiaomi Home (S400 only)** as the calculation mode to get the same values as the Xiaomi Home app instead of the scientific formulas above. This mode is only available in dual-frequency mode. With the S400, the calculation mode is either **Scientific** (the formulas above) or **Xiaomi Home**. **Xiaomi — Zepp Life** is for single-frequency scales only. Existing S400 profiles keep the scientific formulas: profiles saved with **Xiaomi — Zepp Life** already used them and are switched to **Scientific** automatically.
 
-**Origin:** formulas reverse-engineered by [@RX14](https://github.com/RX14) from the S400 Pro firmware (unencrypted OTA image) and contributed under the Apache-2.0 license in [#474](https://github.com/dckiller51/bodymiscale/issues/474). They also apply to the standard S400: all validation weighings below come from a standard S400.
+**Origin:** formulas reverse-engineered by [@RX14](https://github.com/RX14) from the S400 Pro firmware (unencrypted OTA image) and contributed under the Apache-2.0 license in [#474](https://github.com/dckiller51/bodymiscale/issues/474). RX14 checked the reference implementation against the unmodified firmware running under qemu (3218 pathological inputs, ages 6–90, zero divergences), and this mode follows it exactly. They also apply to the standard S400: all validation weighings below come from a standard S400.
 
-**Inputs:** height (H, cm), weight (W, kg), age (A), sex, Z₅₀ (50 kHz, the larger impedance) and Z₂₅₀ (250 kHz). Values are rounded to 0.1 like the firmware (truncated to 0.01, then rounded half up).
+**Inputs:** height (H, cm), weight (W, kg), age (A), sex, Z₅₀ (50 kHz, the larger impedance) and Z₂₅₀ (250 kHz). Values are rounded to 0.1 like the firmware (half away from zero), including the intermediate values the firmware rounds itself (fat mass, lean mass, bone, muscle, water/protein split).
 
-| Metric                                         | Formula                                                                                 |
-| :--------------------------------------------- | :-------------------------------------------------------------------------------------- |
-| **Body fat %**                                 | 100 × (c₁·H + c₂·W + c₃·A + c₄·Z₅₀ + c₅) / W, with sex-specific coefficients (Z₅₀ only) |
-| **LBM**                                        | W × (1 − fat% / 100)                                                                    |
-| **BMR**                                        | int(21.6 × LBM + 370.5) with LBM rounded to 0.1 kg, clamped to 400–3500 kcal            |
-| **Water, bone, skeletal muscle, visceral fat** | Firmware regressions on H, W, Z₅₀, Z₂₅₀ and their square roots                          |
-| **Muscle mass**                                | LBM − bone mass                                                                         |
-| **Protein**                                    | LBM − solids − water, where solids is another firmware regression                       |
+| Metric                                  | Formula                                                                                 |
+| :-------------------------------------- | :-------------------------------------------------------------------------------------- |
+| **Body fat %**                          | 100 × (c₁·H + c₂·W + c₃·A + c₄·Z₅₀ + c₅) / W, with sex-specific coefficients (Z₅₀ only) |
+| **LBM**                                 | W − fat mass, the fat mass (W × fat% / 100) rounded to 0.1 kg                           |
+| **BMR**                                 | int(21.6 × LBM + 370.5), clamped to 400–3500 kcal                                       |
+| **Bone, skeletal muscle, visceral fat** | Firmware regressions on H, W, Z₅₀, Z₂₅₀ and their square roots                          |
+| **Muscle mass**                         | LBM − bone mass                                                                         |
+| **Protein**                             | LBM − solids − first-pass water, where solids and water are firmware regressions        |
+| **Water**                               | LBM − solids − protein mass (the remainder of the split)                                |
 
 **Validation:** on 10 S400 weighings reported with their Xiaomi Home values ([#349](https://github.com/dckiller51/bodymiscale/issues/349)), 4 match the app exactly on every metric. Across all 10, the mean gap is 0.10 point on body fat, 0.06 kg on muscle, 0.11 kg on bone and 2.5 kcal on BMR. Most remaining gaps are single values, likely typos in the reported data.
 
-**Firmware limits:** body fat is kept between 3 % and 55 %, muscle mass between 7 and 141.5 kg, and skeletal muscle between 45 % and 70 % of the muscle mass.
+**Firmware limits:** body fat is kept between 3 % and 55 %, muscle mass between 7 and 141.5 kg, and skeletal muscle between 45 % and 70 % of the muscle mass. Bone mass below 0.3 kg is stored as 0.
 
-**Metabolic age:** shown as "body age" in Xiaomi Home. It compares weight, BMR, body fat and muscle with reference values for the same sex, age and height, and stays between 18 and 100. It matches the app on 9 of the 10 reference weighings.
+**Metabolic age:** shown as "body age" in Xiaomi Home. It compares weight, BMR, body fat and muscle with reference values for the same sex, age and height, and stays between 18 and 100. Under 18, it uses dedicated coefficients and stays within one year of the real age. It matches the app on 9 of the 10 reference weighings.
 
 **Requirement:** the 250 kHz impedance (`impedance_high`) must be updated on every weigh-in. With an older `xiaomi_ble` integration it can stay frozen at an old value, which skews water, protein, visceral fat and skeletal muscle. On a weigh-in where Home Assistant received both impedances, every value matched the Xiaomi Home app.
 

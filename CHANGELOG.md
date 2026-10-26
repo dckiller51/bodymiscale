@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## 2026.10.5
+
+### 🔧 Bug fixes
+
+- **Xiaomi Home mode now byte-exact with the S400 firmware**: [@RX14](https://github.com/RX14) ran the original S400 Pro firmware under qemu and shared a reference implementation that matches it on 3218 pathological inputs. The Xiaomi Home mode now follows it exactly:
+  - **Body age for children**: under 18, body age was always shown as 18. It now uses the firmware's youth rule (real age ± 1 year) and youth coefficients, and the reference body fat for 11-year-old girls is fixed (20 %, not 25 %).
+  - **Water and protein**: the firmware forms protein first and gives the remainder to water. Values could differ from the app by 0.1 (up to several points when protein reaches its 5 % floor).
+  - **Lean mass, muscle and BMR**: lean mass is now weight minus the rounded fat mass, as on the scale. Muscle could differ by 0.1 kg and BMR by up to 3 kcal.
+  - **Body fat floor**: a body fat below 5 % was shown as 5 % instead of the firmware's 3 % floor.
+  - **Bone**: below 0.3 kg the firmware stores 0 kg.
+  - The weighings from #349 give the same values as before.
+
 ## 2026.10.4
 
 🙏 A huge thank you to [@RX14](https://github.com/RX14), who reverse-engineered the S400 Pro firmware and shared its body composition formulas, smoothing rules and limits under the Apache-2.0 license, making the Xiaomi Home mode possible. Thanks also to everyone who shared their S400 weighings and app values in #349.

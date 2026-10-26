@@ -37,9 +37,9 @@ Three distinct modes, each with its own formulas:
 
   XIAOMI HOME (dual-frequency, calculation mode ``xiaomi_home``)
     The S400 firmware formulas, identical to the Xiaomi Home app. See
-    ``xiaomi_home.py``. Only fat%, LBM, water, bone, muscle, skeletal
-    muscle and protein are replaced; compartments (ECW/ICW/BCM) and
-    metabolic age keep the S400 scientific formulas on top of them.
+    ``xiaomi_home.py``. Fat%, LBM, water, bone, muscle, skeletal muscle,
+    protein and metabolic age are replaced; compartments (ECW/ICW/BCM)
+    keep the S400 scientific formulas on top of them.
 """
 
 from collections.abc import Mapping
@@ -216,9 +216,9 @@ def get_fat_percentage(
     """Calculate body fat percentage."""
     if is_xiaomi_home(config):
         xh = xiaomi_home_inputs(config, metrics)
-        return (
-            check_value_constraints(xiaomi_home.body_fat(*xh[:5]), 5, 75) if xh else 0.0
-        )
+        # The firmware already clamps body fat to 3-55 %; re-clamping here
+        # would show 5 % where the scale and the app show 3 %.
+        return xiaomi_home.body_fat(*xh[:5]) if xh else 0.0
 
     w = to_float(metrics.get(Metric.WEIGHT))
     lbm = to_float(metrics.get(Metric.LBM))
@@ -279,7 +279,7 @@ def get_water_percentage(
     """
     if is_xiaomi_home(config):
         xh = xiaomi_home_inputs(config, metrics)
-        return xiaomi_home.water_percentage(xh[1], xh[2], xh[4], xh[5]) if xh else 0.0
+        return xiaomi_home.water_percentage(*xh) if xh else 0.0
 
     fat_pct = to_float(metrics.get(Metric.FAT_PERCENTAGE))
     mode = config.get(CONF_CALCULATION_MODE, ALGO_XIAOMI)
