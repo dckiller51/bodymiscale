@@ -1,0 +1,27 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  zip:
+    name: Attach bodymiscale.zip to the release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build the HACS archive
+        # HACS expects the integration files at the root of the zip.
+        run: |
+          cd custom_components/bodymiscale
+          zip -r "${GITHUB_WORKSPACE}/bodymiscale.zip" . -x "__pycache__/*" "*.pyc"
+
+      - name: Upload to the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release upload "${{ github.event.release.tag_name }}" bodymiscale.zip --clobber
