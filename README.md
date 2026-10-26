@@ -146,7 +146,7 @@ Exclusive to dual-frequency hardware capable of measuring impedance at 50 kHz an
 
 Optional for dual-frequency hardware: select **Xiaomi — Xiaomi Home (S400 only)** as the calculation mode.
 
-- **Same values as the Xiaomi Home app:** Body fat, lean mass, muscle, water, bone, protein, skeletal muscle, visceral fat, BMR and metabolic age (body age) use the formulas of the S400 firmware, reverse-engineered by [@RX14](https://github.com/RX14) ([#474](https://github.com/dckiller51/bodymiscale/issues/474)).
+- **Same values as the Xiaomi Home app:** Body fat, lean mass, muscle, water, bone, protein, skeletal muscle, visceral fat, BMR and metabolic age (body age) use the formulas of the S400 firmware, reverse-engineered by [@RX14](https://github.com/RX14) and checked against the original firmware running in an emulator ([#474](https://github.com/dckiller51/bodymiscale/issues/474)).
 - **Validated on real weighings:** On 10 S400 weighings reported with their Xiaomi Home values, 4 match the app exactly on every metric. Across all 10, the mean gap is 0.1 point on body fat and 2.5 kcal on BMR.
 - **Other metrics:** ECW, ICW, ECW/TBW ratio and BCM keep the S400 scientific formulas, computed from the Xiaomi Home body fat and lean mass.
 - **Default unchanged:** Existing S400 profiles keep the S400 scientific formulas (shown as **Scientific**). Switch in the integration options if you prefer the Xiaomi Home values.
