@@ -1,5 +1,7 @@
 {
   "homeassistant": "2026.9.0",
   "name": "Bodymiscale",
-  "render_readme": true
+  "render_readme": true,
+  "zip_release": true,
+  "filename": "bodymiscale.zip"
 }
