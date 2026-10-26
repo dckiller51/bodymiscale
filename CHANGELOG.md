@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ## 2026.10.4
 
-🙏 A huge thank you to @RX14, who reverse-engineered the S400 Pro firmware and shared its body composition formulas, smoothing rules and limits under the Apache-2.0 license, making the Xiaomi Home mode possible. Thanks also to everyone who shared their S400 weighings and app values in #349.
+🙏 A huge thank you to [@RX14](https://github.com/RX14), who reverse-engineered the S400 Pro firmware and shared its body composition formulas, smoothing rules and limits under the Apache-2.0 license, making the Xiaomi Home mode possible. Thanks also to everyone who shared their S400 weighings and app values in #349.
 
 ### ✨ New features
 
