@@ -26,7 +26,10 @@ from custom_components.bodymiscale.const import (
     PROFILE_METHOD_NONE,
 )
 from custom_components.bodymiscale.metrics import BodyScaleMetricsHandler, xiaomi_home
-from custom_components.bodymiscale.metrics.impedance import is_xiaomi_home
+from custom_components.bodymiscale.metrics.impedance import (
+    get_fat_percentage,
+    is_xiaomi_home,
+)
 from custom_components.bodymiscale.models import Gender, Metric
 
 # ---------------------------------------------------------------------------
@@ -296,6 +299,128 @@ def test_clamps() -> None:
     assert xiaomi_home.visceral_fat(200, 30, 900, 800) >= 1
     assert 0.0 <= xiaomi_home.bone_mass(120, 20, 900, 800) <= 5.0
     assert 400 <= xiaomi_home.basal_metabolism(Gender.FEMALE, 120, 20, 30, 900) <= 3500
+
+
+# ---------------------------------------------------------------------------
+# Firmware vectors: expected values from RX14's qemu-verified reference
+# implementation (#474). Same order as _KEYS.
+# ---------------------------------------------------------------------------
+
+FIRMWARE_VECTORS: list[tuple[str, Gender, int, float, float, float, float, tuple]] = [
+    # Children: youth body age rule (real age ± 1) and youth coefficients.
+    (
+        "girl_11",
+        Gender.FEMALE,
+        11,
+        145,
+        38.0,
+        650,
+        590,
+        (20.6, 28.7, 52.1, 1.5, 22.6, 1022, 5, 11),
+    ),
+    (
+        "boy_12_fat_floor",
+        Gender.MALE,
+        12,
+        167,
+        41.4,
+        701,
+        640,
+        (3.0, 38.1, 67.9, 2.1, 22.9, 1238, 1, 12),
+    ),
+    (
+        "boy_15",
+        Gender.MALE,
+        15,
+        170,
+        70,
+        500,
+        450,
+        (20.3, 52.9, 55.0, 2.9, 19.7, 1575, 8, 16),
+    ),
+    (
+        "girl_8",
+        Gender.FEMALE,
+        8,
+        125,
+        25,
+        800,
+        760,
+        (23.0, 18.2, 53.2, 1.0, 18.4, 785, 4, 8),
+    ),
+    # Water is the remainder of the split chain, after protein is formed.
+    (
+        "woman_53_split_chain",
+        Gender.FEMALE,
+        53,
+        173.9,
+        75.4,
+        598.9,
+        533.4,
+        (35.5, 45.6, 51.3, 3.0, 8.4, 1420, 10, 53),
+    ),
+    # Lean mass = weight - rounded fat mass (muscle and BMR follow).
+    (
+        "man_26_rounded_fat_mass",
+        Gender.MALE,
+        26,
+        169,
+        86.5,
+        610.2,
+        561.7,
+        (None, 57.5, None, None, None, 1677, None, None),
+    ),
+    # Bone below 0.3 kg is stored as 0.
+    (
+        "woman_40_bone_zero",
+        Gender.FEMALE,
+        40,
+        118,
+        34.3,
+        917.2,
+        765.0,
+        (48.2, 17.8, 20.7, 0.0, 31.2, 754, 10, 38),
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    ("label", "gender", "age", "h", "w", "z50", "z250", "expected"),
+    FIRMWARE_VECTORS,
+    ids=[v[0] for v in FIRMWARE_VECTORS],
+)
+def test_matches_firmware_reference(
+    label: str,
+    gender: Gender,
+    age: int,
+    h: float,
+    w: float,
+    z50: float,
+    z250: float,
+    expected: tuple,
+) -> None:
+    """Values match RX14's qemu-verified firmware reference."""
+    result = _compute(gender, age, h, w, z50, z250)
+    for key, value in zip(_KEYS, expected, strict=True):
+        if value is not None:
+            assert result[key] == pytest.approx(value, abs=1e-6), key
+
+
+def test_fat_percentage_sensor_keeps_firmware_floor() -> None:
+    """The sensor shows the firmware's 3.0 % floor, not a 5 % re-clamp."""
+    config = {
+        CONF_IMPEDANCE_MODE: IMPEDANCE_MODE_DUAL,
+        CONF_CALCULATION_MODE: ALGO_XIAOMI_HOME,
+        CONF_GENDER: Gender.MALE,
+        CONF_HEIGHT: 167,
+    }
+    metrics = {
+        Metric.WEIGHT: 41.4,
+        Metric.AGE: 12,
+        Metric.IMPEDANCE_LOW: 640,
+        Metric.IMPEDANCE_HIGH: 701,
+    }
+    assert get_fat_percentage(config, metrics) == 3.0
 
 
 # ---------------------------------------------------------------------------

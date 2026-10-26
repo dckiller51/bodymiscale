@@ -216,9 +216,9 @@ def get_fat_percentage(
     """Calculate body fat percentage."""
     if is_xiaomi_home(config):
         xh = xiaomi_home_inputs(config, metrics)
-        return (
-            check_value_constraints(xiaomi_home.body_fat(*xh[:5]), 5, 75) if xh else 0.0
-        )
+        # The firmware already clamps body fat to 3-55 %; re-clamping here
+        # would show 5 % where the scale and the app show 3 %.
+        return xiaomi_home.body_fat(*xh[:5]) if xh else 0.0
 
     w = to_float(metrics.get(Metric.WEIGHT))
     lbm = to_float(metrics.get(Metric.LBM))
