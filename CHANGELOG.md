@@ -6,6 +6,8 @@ All notable changes to this project will be documented in this file.
 
 ## 2026.10.4
 
+🙏 A huge thank you to @RX14, who reverse-engineered the S400 Pro firmware and shared its body composition formulas, smoothing rules and limits under the Apache-2.0 license, making the Xiaomi Home mode possible. Thanks also to everyone who shared their S400 weighings and app values in #349.
+
 ### ✨ New features
 
 - **Xiaomi Home calculation mode (S400)**: A new **Xiaomi — Xiaomi Home (S400 only)** calculation mode uses the S400 firmware formulas, reverse-engineered by [@RX14](https://github.com/RX14), to give the same values as the Xiaomi Home app: body fat, lean mass, muscle, water, bone, protein, skeletal muscle, visceral fat, BMR and metabolic age (body age). On 10 S400 weighings reported with their app values, 4 match exactly on every metric, and metabolic age matches on 9. Only available in dual-frequency mode. **Existing S400 profiles are not changed**: they keep the scientific formulas until you select the new mode in the integration options. Closes [[#474](https://github.com/dckiller51/bodymiscale/issues/474)].
