@@ -279,7 +279,7 @@ def get_water_percentage(
     """
     if is_xiaomi_home(config):
         xh = xiaomi_home_inputs(config, metrics)
-        return xiaomi_home.water_percentage(xh[1], xh[2], xh[4], xh[5]) if xh else 0.0
+        return xiaomi_home.water_percentage(*xh) if xh else 0.0
 
     fat_pct = to_float(metrics.get(Metric.FAT_PERCENTAGE))
     mode = config.get(CONF_CALCULATION_MODE, ALGO_XIAOMI)

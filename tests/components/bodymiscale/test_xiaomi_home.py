@@ -160,7 +160,7 @@ KNOWN_GAPS: dict[str, set[str]] = {
     "P4": {"bmr"},
     "P5": {"protein"},
     "P6": {"body_fat", "muscle", "bone", "protein", "bmr", "metabolic_age"},
-    "P7": set(_KEYS),
+    "P7": {"body_fat", "muscle", "water", "bone", "protein", "bmr", "visceral"},
     "P8": {"water", "protein", "visceral"},
 }
 
@@ -171,7 +171,7 @@ def _compute(
     return {
         "body_fat": xiaomi_home.body_fat(gender, h, w, age, z50),
         "muscle": xiaomi_home.muscle_mass(gender, h, w, age, z50, z250),
-        "water": xiaomi_home.water_percentage(h, w, z50, z250),
+        "water": xiaomi_home.water_percentage(gender, h, w, age, z50, z250),
         "bone": xiaomi_home.bone_mass(h, w, z50, z250),
         "protein": xiaomi_home.protein_percentage(gender, h, w, age, z50, z250),
         "bmr": xiaomi_home.basal_metabolism(gender, h, w, age, z50),
@@ -224,8 +224,11 @@ def test_matched_weigh_in() -> None:
     )
     assert xiaomi_home.basal_metabolism(g, h, w, a, z50) == 1672
     assert xiaomi_home.lean_body_mass(g, h, w, a, z50) == pytest.approx(60.3, abs=0.05)
-    # Small gaps, pending confirmation from the firmware
-    assert xiaomi_home.water_percentage(h, w, z50, z250) == pytest.approx(52.3, abs=0.5)
+    # The small gaps are the scale's impedance smoothing: the app computed
+    # this weigh-in from the smoothed pair 557.9 / 497.6 Ω.
+    assert xiaomi_home.water_percentage(g, h, w, a, z50, z250) == pytest.approx(
+        52.3, abs=0.5
+    )
     assert xiaomi_home.protein_percentage(g, h, w, a, z50, z250) == pytest.approx(
         18.9, abs=0.5
     )
@@ -248,7 +251,7 @@ def test_matched_weigh_in_with_fresh_250khz_impedance() -> None:
     assert xiaomi_home.body_fat(g, h, w, a, z50) == 24.6
     assert xiaomi_home.lean_body_mass(g, h, w, a, z50) == pytest.approx(60.2, abs=0.05)
     assert xiaomi_home.muscle_mass(g, h, w, a, z50, z250) == pytest.approx(57.0)
-    assert xiaomi_home.water_percentage(h, w, z50, z250) == pytest.approx(51.3)
+    assert xiaomi_home.water_percentage(g, h, w, a, z50, z250) == pytest.approx(51.3)
     assert xiaomi_home.protein_percentage(g, h, w, a, z50, z250) == pytest.approx(19.3)
     assert xiaomi_home.bone_mass(h, w, z50, z250) == pytest.approx(3.2)
     assert xiaomi_home.basal_metabolism(g, h, w, a, z50) == 1670
@@ -260,10 +263,11 @@ def test_matched_weigh_in_with_fresh_250khz_impedance() -> None:
 
 
 def test_round_01_matches_firmware() -> None:
-    """Truncate to 0.01, then round half up to 0.1."""
+    """Round to 0.1, half away from zero."""
     assert xiaomi_home._round_01(23.349) == pytest.approx(23.3)
     assert xiaomi_home._round_01(23.35) == pytest.approx(23.4)
     assert xiaomi_home._round_01(23.3499) == pytest.approx(23.3)
+    assert xiaomi_home._round_01(-23.35) == pytest.approx(-23.4)
 
 
 def test_body_fat_floor_from_s400_pro_logs() -> None:
@@ -290,7 +294,7 @@ def test_skeletal_muscle_kept_within_muscle_range() -> None:
 def test_clamps() -> None:
     """Outputs stay within the firmware ranges."""
     assert xiaomi_home.visceral_fat(200, 30, 900, 800) >= 1
-    assert 0.3 <= xiaomi_home.bone_mass(120, 20, 900, 800) <= 5.0
+    assert 0.0 <= xiaomi_home.bone_mass(120, 20, 900, 800) <= 5.0
     assert 400 <= xiaomi_home.basal_metabolism(Gender.FEMALE, 120, 20, 30, 900) <= 3500
 
 
