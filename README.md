@@ -241,6 +241,7 @@ This folder includes:
 - [Lovelace Card for Bodymiscale](https://github.com/dckiller51/lovelace-body-miscale-card)
 - [ESPHome for Xiaomi Mi Scale](https://esphome.io/components/sensor/xiaomi_miscale.html)
 - [BLE Monitor for Xiaomi Mi Scale](https://github.com/custom-components/ble_monitor)
+- [Xiaomi BLE](https://www.home-assistant.io/integrations/xiaomi_ble/)
 
 ## ☕ Support
 
