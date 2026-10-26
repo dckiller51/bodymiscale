@@ -18,6 +18,7 @@ from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.helpers.typing import StateType
 
 from .const import (
+    ALGO_SCIENCE,
     ALGO_XIAOMI,
     ATTR_AGE,
     ATTR_BMILABEL,
@@ -56,7 +57,7 @@ from .entity import BodyScaleBaseEntity
 from .metrics import BodyScaleMetricsHandler
 from .models import Metric
 from .profile import NotificationCoordinator, NotificationFilter
-from .util import get_age, get_bmi_label, get_ideal_weight
+from .util import as_device_list, get_age, get_bmi_label, get_ideal_weight
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -113,7 +114,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                 entry_id=entry.entry_id,
                 user_name=config.get(CONF_NAME, entry.title),
                 notify_filter=notify_filter,
-                device_id=config[CONF_NOTIFY_DEVICE_ID],
+                device_ids=as_device_list(config.get(CONF_NOTIFY_DEVICE_ID)),
                 handler=handler,
             )
             handler.set_notification_coordinator(coordinator)
@@ -164,6 +165,24 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 async def async_reload_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Reload the config entry when options change."""
     await hass.config_entries.async_reload(entry.entry_id)
+
+
+def _migrate_s400_calculation_mode(
+    data: MutableMapping[str, Any], options: MutableMapping[str, Any]
+) -> None:
+    """Config entry v5: S400 profiles stored as Zepp Life become Scientific.
+
+    Dual-frequency profiles ignored the calculation mode and always used the
+    S400 scientific formulas. "Xiaomi — Zepp Life" is no longer offered for
+    them, so record the mode they actually use. Values do not change.
+    """
+    impedance_mode = options.get(CONF_IMPEDANCE_MODE, data.get(CONF_IMPEDANCE_MODE))
+    if impedance_mode != IMPEDANCE_MODE_DUAL:
+        return
+    if data.get(CONF_CALCULATION_MODE) == ALGO_XIAOMI:
+        data[CONF_CALCULATION_MODE] = ALGO_SCIENCE
+    if options.get(CONF_CALCULATION_MODE, ALGO_XIAOMI) == ALGO_XIAOMI:
+        options[CONF_CALCULATION_MODE] = ALGO_SCIENCE
 
 
 async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
@@ -225,6 +244,10 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry) ->
         new_data.pop("last_measurement_time", None)
         new_options.pop("last_measurement_time", None)
         current_version = 4
+
+    if current_version == 4:
+        _migrate_s400_calculation_mode(new_data, new_options)
+        current_version = 5
 
     if current_version != config_entry.version:
         hass.config_entries.async_update_entry(

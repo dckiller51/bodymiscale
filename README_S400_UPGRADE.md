@@ -161,6 +161,40 @@ Uses weight, height, and age ratios from the original Xiaomi physiological model
 
 ---
 
+## Xiaomi Home Mode (S400 Firmware Formulas)
+
+Select **Xiaomi — Xiaomi Home (S400 only)** as the calculation mode to get the same values as the Xiaomi Home app instead of the scientific formulas above. This mode is only available in dual-frequency mode. With the S400, the calculation mode is either **Scientific** (the formulas above) or **Xiaomi Home**. **Xiaomi — Zepp Life** is for single-frequency scales only. Existing S400 profiles keep the scientific formulas: profiles saved with **Xiaomi — Zepp Life** already used them and are switched to **Scientific** automatically.
+
+**Origin:** formulas reverse-engineered by [@RX14](https://github.com/RX14) from the S400 Pro firmware (unencrypted OTA image) and contributed under the Apache-2.0 license in [#474](https://github.com/dckiller51/bodymiscale/issues/474). They also apply to the standard S400: all validation weighings below come from a standard S400.
+
+**Inputs:** height (H, cm), weight (W, kg), age (A), sex, Z₅₀ (50 kHz, the larger impedance) and Z₂₅₀ (250 kHz). Values are rounded to 0.1 like the firmware (truncated to 0.01, then rounded half up).
+
+| Metric                                         | Formula                                                                                 |
+| :--------------------------------------------- | :-------------------------------------------------------------------------------------- |
+| **Body fat %**                                 | 100 × (c₁·H + c₂·W + c₃·A + c₄·Z₅₀ + c₅) / W, with sex-specific coefficients (Z₅₀ only) |
+| **LBM**                                        | W × (1 − fat% / 100)                                                                    |
+| **BMR**                                        | int(21.6 × LBM + 370.5) with LBM rounded to 0.1 kg, clamped to 400–3500 kcal            |
+| **Water, bone, skeletal muscle, visceral fat** | Firmware regressions on H, W, Z₅₀, Z₂₅₀ and their square roots                          |
+| **Muscle mass**                                | LBM − bone mass                                                                         |
+| **Protein**                                    | LBM − solids − water, where solids is another firmware regression                       |
+
+**Validation:** on 10 S400 weighings reported with their Xiaomi Home values ([#349](https://github.com/dckiller51/bodymiscale/issues/349)), 4 match the app exactly on every metric. Across all 10, the mean gap is 0.10 point on body fat, 0.06 kg on muscle, 0.11 kg on bone and 2.5 kcal on BMR. Most remaining gaps are single values, likely typos in the reported data.
+
+**Firmware limits:** body fat is kept between 3 % and 55 %, muscle mass between 7 and 141.5 kg, and skeletal muscle between 45 % and 70 % of the muscle mass.
+
+**Metabolic age:** shown as "body age" in Xiaomi Home. It compares weight, BMR, body fat and muscle with reference values for the same sex, age and height, and stays between 18 and 100. It matches the app on 9 of the 10 reference weighings.
+
+**Requirement:** the 250 kHz impedance (`impedance_high`) must be updated on every weigh-in. With an older `xiaomi_ble` integration it can stay frozen at an old value, which skews water, protein, visceral fat and skeletal muscle. On a weigh-in where Home Assistant received both impedances, every value matched the Xiaomi Home app.
+
+**Known gaps:**
+
+- **Impedance smoothing:** for the values sent to the app, the scale smooths the impedances with the profile's previous measurement. Within 10 minutes and with less than 3.6 points of body fat change, it reuses the previous impedance; up to 30 minutes it weights it 80/20; beyond, 50/50; above 6.1 points of change it uses the new value. Home Assistant receives the raw impedances over Bluetooth, so values can differ slightly from the app after several weigh-ins close together.
+- **Visceral fat:** stored as an integer by the scale; the app only adds a decimal for display.
+- **Waist-to-hip ratio:** computed by the scale, but its formula is not validated yet, so it is not exposed.
+- **ECW, ICW, ECW/TBW ratio and BCM** are not part of the firmware formulas: they keep the scientific formulas, computed from the Xiaomi Home body fat.
+
+---
+
 ## Available Metrics Summary
 
 | Metric            | Unit | Method                     | Reliability   |

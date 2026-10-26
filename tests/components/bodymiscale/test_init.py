@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
+import pytest
 from homeassistant.const import CONF_NAME, STATE_OK, STATE_PROBLEM, STATE_UNAVAILABLE
 from homeassistant.core import HomeAssistant
 from pytest_homeassistant_custom_component.common import MockConfigEntry
@@ -459,11 +460,11 @@ async def test_unload_entry_no_coordinator_is_noop(
 # ===========================================================================
 
 
-async def test_migrate_entry_v1_to_v4(
+async def test_migrate_entry_v1_to_current(
     hass: HomeAssistant,
     mock_config_entry_v1: MockConfigEntry,
 ) -> None:
-    """Migration from v1 must produce a valid v4 config entry."""
+    """Migration from v1 must produce a valid current config entry."""
     mock_config_entry_v1.add_to_hass(hass)
 
     from custom_components.bodymiscale import async_migrate_entry
@@ -471,7 +472,7 @@ async def test_migrate_entry_v1_to_v4(
     result = await async_migrate_entry(hass, mock_config_entry_v1)
 
     assert result is True
-    assert mock_config_entry_v1.version == 4
+    assert mock_config_entry_v1.version == 5
     assert CONF_PROFILE_METHOD in mock_config_entry_v1.options
 
 
@@ -487,7 +488,7 @@ async def test_migrate_entry_v2_sets_impedance_mode_standard(
     result = await async_migrate_entry(hass, mock_config_entry_v2)
 
     assert result is True
-    assert mock_config_entry_v2.version == 4
+    assert mock_config_entry_v2.version == 5
     assert (
         mock_config_entry_v2.options.get(CONF_IMPEDANCE_MODE) == IMPEDANCE_MODE_STANDARD
     )
@@ -505,15 +506,15 @@ async def test_migrate_entry_v3_adds_profile_method(
     result = await async_migrate_entry(hass, mock_config_entry_v3)
 
     assert result is True
-    assert mock_config_entry_v3.version == 4
+    assert mock_config_entry_v3.version == 5
     assert mock_config_entry_v3.options.get(CONF_PROFILE_METHOD) == PROFILE_METHOD_NONE
 
 
-async def test_migrate_entry_v4_is_noop(
+async def test_migrate_entry_v4_without_dual_keeps_data(
     hass: HomeAssistant,
     mock_config_entry: MockConfigEntry,
 ) -> None:
-    """Migration of a current v4 entry must succeed without modifying it."""
+    """A v4 entry without dual frequency is migrated to v5 unchanged."""
     mock_config_entry.add_to_hass(hass)
     original_data = dict(mock_config_entry.data)
 
@@ -522,7 +523,7 @@ async def test_migrate_entry_v4_is_noop(
     result = await async_migrate_entry(hass, mock_config_entry)
 
     assert result is True
-    assert mock_config_entry.version == 4
+    assert mock_config_entry.version == 5
     assert dict(mock_config_entry.data) == original_data
 
 
@@ -646,7 +647,7 @@ async def test_migrate_entry_v1_restores_birthday_and_gender_from_options(
     result = await async_migrate_entry(hass, entry)
 
     assert result is True
-    assert entry.version == 4
+    assert entry.version == 5
     assert entry.data[CONF_BIRTHDAY] == "1991-02-03"
     assert entry.data[CONF_GENDER] == Gender.FEMALE
 
@@ -975,3 +976,49 @@ def test_bodymiscale_state_attributes_positive_fat_mass_means_gain() -> None:
 
     assert attrib[ATTR_FATMASSTOGAIN] == 2.0
     assert ATTR_FATMASSTOLOSE not in attrib
+
+
+@pytest.mark.parametrize(
+    ("impedance_mode", "stored_mode", "expected_mode"),
+    [
+        (IMPEDANCE_MODE_DUAL, "xiaomi", "science"),
+        (IMPEDANCE_MODE_DUAL, None, "science"),
+        (IMPEDANCE_MODE_DUAL, "science", "science"),
+        (IMPEDANCE_MODE_STANDARD, "xiaomi", "xiaomi"),
+    ],
+)
+async def test_migrate_entry_v4_to_v5_s400_zepp_life_becomes_science(
+    hass: HomeAssistant,
+    impedance_mode: str,
+    stored_mode: str | None,
+    expected_mode: str,
+) -> None:
+    """S400 profiles stored as Zepp Life always used the scientific formulas.
+
+    Zepp Life is no longer offered in dual frequency, so v5 records the mode
+    they actually use; nothing changes for single-frequency profiles.
+    """
+    options = {
+        CONF_HEIGHT: 176.0,
+        CONF_IMPEDANCE_MODE: impedance_mode,
+        CONF_PROFILE_METHOD: PROFILE_METHOD_NONE,
+        CONF_SENSOR_WEIGHT: "sensor.weight",
+    }
+    if stored_mode is not None:
+        options[CONF_CALCULATION_MODE] = stored_mode
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        title="S400",
+        unique_id=f"s400_{impedance_mode}_{stored_mode}",
+        data={"name": "S400", CONF_BIRTHDAY: "1980-01-01", CONF_GENDER: Gender.MALE},
+        options=options,
+        version=4,
+    )
+    entry.add_to_hass(hass)
+
+    from custom_components.bodymiscale import async_migrate_entry
+
+    assert await async_migrate_entry(hass, entry) is True
+    assert entry.version == 5
+    if impedance_mode == IMPEDANCE_MODE_DUAL or stored_mode is not None:
+        assert entry.options[CONF_CALCULATION_MODE] == expected_mode

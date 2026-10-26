@@ -13,21 +13,23 @@ With this Home Assistant integration, track your body composition closely using 
 
 **How it works**
 
-BodyMiScale calculates advanced body composition metrics based on your scale's data (Weight and/or Impedance). Unlike simple calculators, it offers three distinct calculation engines tailored to your hardware and preferences:
+BodyMiScale calculates advanced body composition metrics based on your scale's data (Weight and/or Impedance). Unlike simple calculators, it offers four distinct calculation engines tailored to your hardware and preferences:
 
 - **Xiaomi Mode:** Faithful to the original 2017 algorithms for consistency with legacy apps (Zepp Life/Mi Fit).
 - **Science Mode:** Uses international health standards like **Schofield (WHO)** for BMR and **Pace & Rathbun** for body water.
 - **S400 Mode:** A clinical-grade dual-frequency engine (50/250 kHz) utilizing **Deurenberg** and **Janssen** models for precise compartmental analysis.
+- **Xiaomi Home Mode (S400):** The scale's own firmware formulas, giving the same values as the Xiaomi Home app.
 
 Here's a breakdown of the process:
 
 1. **Data Input:** Bodymiscale relies on data provided by your configured weight sensor (Weight and optionally Impedance). This can be a `sensor` or an `input_number` entity.
 
-2. **Smart Calculation Engine:** Depending on your configuration, Bodymiscale applies one of three scientific models:
+2. **Smart Calculation Engine:** Depending on your configuration, Bodymiscale applies one of four models:
 
    - **Xiaomi Mode:** Uses the original 2017 algorithms for consistency with Zepp Life.
    - **Science Mode:** Uses international standards like **Schofield (WHO)** and **Pace (0.73)**.
    - **S400 Mode:** Automatically activated for dual-frequency data, using **Deurenberg** and **Janssen** models.
+   - **Xiaomi Home Mode (S400):** Optional for dual-frequency data, using the S400 firmware formulas.
 
 3. **Validation & Constraints:** The engine checks for physiological consistency (e.g., ensuring water doesn't exceed 73% in Science/S400 modes) and filters out aberrant values.
 
@@ -104,7 +106,7 @@ Bodymiscale calculates the following metrics. Note that some advanced parameters
 
 ## Calculation Methods
 
-Bodymiscale allows you to choose between three calculation levels. The formulas used depend on your hardware and the selected calculation mode.
+Bodymiscale allows you to choose between four calculation levels. The formulas used depend on your hardware and the selected calculation mode.
 
 ### 1. Xiaomi (Legacy 2017)
 
@@ -136,11 +138,18 @@ Switches to advanced bioelectrical impedance analysis (BIA) models:
 Exclusive to dual-frequency hardware capable of measuring impedance at 50 kHz and 250 kHz.
 
 - **Advanced BIA Models:** Implements a hardware-calibrated baseline for LBM, **with sexual dimorphism correction**, combined with clinical models like **Deurenberg (1995)** for multi-frequency water analysis, and **Janssen (2000)** for skeletal muscle.
-- **BMR (Basal Metabolic Rate):** Uses the **Schofield Equation** (official WHO standard),
-  which accounts for age, weight, height, and gender using age-stratified coefficients
-  recommended by the Food and Agriculture Organization (FAO/WHO/UNU 1985).
+- **BMR (Basal Metabolic Rate):** Uses the **Katch-McArdle** equation (370 + 21.6 × LBM), based on the measured lean body mass. The **Schofield Equation** (WHO standard) is used as a fallback when no lean body mass is available.
 - **Visceral Fat:** Standard Zepp Life base estimate.
 - **Exclusive Metrics:** Unlocks 5 clinical metrics: Extracellular Water (ECW), Intracellular Water (ICW), ECW/TBW Ratio, Body Cell Mass (BCM), and MRI-validated Skeletal Muscle Mass (SMM).
+
+### 4. Xiaomi Home (S400 firmware)
+
+Optional for dual-frequency hardware: select **Xiaomi — Xiaomi Home (S400 only)** as the calculation mode.
+
+- **Same values as the Xiaomi Home app:** Body fat, lean mass, muscle, water, bone, protein, skeletal muscle, visceral fat, BMR and metabolic age (body age) use the formulas of the S400 firmware, reverse-engineered by [@RX14](https://github.com/RX14) ([#474](https://github.com/dckiller51/bodymiscale/issues/474)).
+- **Validated on real weighings:** On 10 S400 weighings reported with their Xiaomi Home values, 4 match the app exactly on every metric. Across all 10, the mean gap is 0.1 point on body fat and 2.5 kcal on BMR.
+- **Other metrics:** ECW, ICW, ECW/TBW ratio and BCM keep the S400 scientific formulas, computed from the Xiaomi Home body fat and lean mass.
+- **Default unchanged:** Existing S400 profiles keep the S400 scientific formulas (shown as **Scientific**). Switch in the integration options if you prefer the Xiaomi Home values.
 
 ---
 
@@ -172,12 +181,12 @@ Exclusive to dual-frequency hardware capable of measuring impedance at 50 kHz an
    - **First Name (or other identifier):** Enter your first name or another identifier. **Important:** This identifier will determine the name of your Bodymiscale component in Home Assistant, as well as the names of all sensors created by it. Choose a clear and relevant name.
    - **Date of Birth:** Enter your date of birth in YYYY-MM-DD format.
    - **Calculation Mode:** Choose between **Xiaomi (Legacy 2017)** or **Scientific**. The Scientific mode (added in v2026.4.0) provides a more granular approach to body composition for specific profiles.
-     > **S400 users:** The S400 dual-frequency engine is activated automatically when you configure two impedance sensors (`impedance_low` + `impedance_high`) and select `Dual-frequency S400` as the `impedance_mode`. It uses its own dedicated clinical formulas regardless of the `calculation_mode` setting.
+     > **S400 users:** The S400 dual-frequency engine is activated automatically when you configure two impedance sensors (`impedance_low` + `impedance_high`) and select `Dual-frequency S400` as the `impedance_mode`. Choose **Scientific** for its dedicated clinical formulas, or **Xiaomi — Xiaomi Home (S400 only)** to get the same values as the Xiaomi Home app. **Xiaomi — Zepp Life** is for single-frequency scales only and cannot be selected with the S400.
    - **Gender:** Select your gender (Male/Female).
    - **User identification method** _(new in v2026.5.x)_: Choose how Bodymiscale determines which user to assign a measurement to when using the scale's native sensors:
      - **Weight range:** Each user is assigned a weight interval (e.g. 60–75 kg). Bodymiscale routes the measurement automatically.
      - **Nearest current weight:** Bodymiscale assigns the measurement to the user whose last known weight is closest to the measured value. A configurable tolerance window (default ±5 kg) ensures the measurement is rejected if no user is close enough. An initial weight must be provided at setup so the filter is operational from the very first weighing.
-     - **Interactive push notification:** After each weighing, a notification is sent to a chosen mobile device. The user taps their name to confirm the measurement. If a stabilized sensor is configured (recommended), the notification is sent only when it turns `ON`.
+     - **Interactive push notification:** After each weighing, a notification is sent to the chosen mobile device(s). Select several phones so anyone in the household can confirm from their own phone. The user taps their name to confirm the measurement. If a stabilized sensor is configured (recommended), the notification is sent only when it turns `ON`.
      - **Profile ID:** For recent scales (e.g. Xiaomi S400 via Xiaomi Home) that broadcast a user slot ID — Bodymiscale matches it directly with no extra step.
      - **None — manual assignment:** No automatic identification. Use this if each person still has their own dedicated sensors.
 4. **Select your weight sensor:** Choose the existing weight sensor in Home Assistant (e.g., a `sensor`, or an `input_number`).

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from datetime import UTC, datetime, timedelta
 from typing import Any
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from homeassistant.const import EVENT_STATE_CHANGED, EVENT_STATE_REPORTED
@@ -2120,4 +2120,87 @@ async def test_weight_after_reset_to_zero_is_new_even_after_unavailable(
     await hass.async_block_till_done()
 
     assert coordinator.async_notify.await_count == 2
+    handler.unload()
+
+
+# ===========================================================================
+# Notification on several phones — one measurement, one user (#433)
+# ===========================================================================
+
+
+async def test_notify_measurement_claimed_once_across_users(
+    hass: HomeAssistant,
+) -> None:
+    """Once a user confirms, a tap by another user must not take the measurement.
+
+    Both phones receive the notification. Alice taps first; Bob tapping his
+    own name afterwards must not assign the same measurement to Bob.
+    """
+    coordinator = NotificationCoordinator(hass)
+    handlers: dict[str, BodyScaleMetricsHandler] = {}
+    weights: dict[str, list[float]] = {}
+    for name in ("Alice", "Bob"):
+        config = _make_config(
+            weight_sensor="sensor.w_shared_433", profile_method=PROFILE_METHOD_NOTIFY
+        )
+        config["name"] = name
+        handler = BodyScaleMetricsHandler(hass, config, config_entry_id=name)
+        assert isinstance(handler.profile_filter, NotificationFilter)
+        coordinator.register(name, name, handler.profile_filter, [f"d_{name}"], handler)
+        handler.set_notification_coordinator(coordinator)
+        weights[name] = []
+        handler.subscribe(Metric.WEIGHT, lambda v, n=name: weights[n].append(float(v)))
+        handlers[name] = handler
+
+    async def _resolve(device_id: str) -> str:
+        return f"mobile_app_{device_id}"
+
+    with (
+        patch.object(coordinator, "_resolve_notify_service", new=_resolve),
+        patch(
+            "homeassistant.core.ServiceRegistry.async_call", new_callable=AsyncMock
+        ) as mock_call,
+    ):
+        hass.states.async_set("sensor.w_shared_433", "70.0")
+        await hass.async_block_till_done()
+        # Both profiles requested it, but each phone is notified once
+        assert mock_call.call_count == 2
+
+        hass.bus.async_fire("mobile_app_notification_action", {"action": "ALICE"})
+        await hass.async_block_till_done()
+        hass.bus.async_fire("mobile_app_notification_action", {"action": "BOB"})
+        await hass.async_block_till_done()
+
+    assert weights["Alice"] == [pytest.approx(70.0)]
+    assert weights["Bob"] == []
+    assert not handlers["Bob"].has_pending_measurement
+    assert handlers["Bob"].profile_filter.is_confirmed() is False  # type: ignore[attr-defined]
+    for handler in handlers.values():
+        handler.unload()
+    coordinator.unload()
+
+
+async def test_discard_pending_measurement(hass: HomeAssistant) -> None:
+    """discard_pending_measurement must drop the measurement and the timer."""
+    config = _make_config(
+        weight_sensor="sensor.w_discard", profile_method=PROFILE_METHOD_NOTIFY
+    )
+    handler = BodyScaleMetricsHandler(hass, config, config_entry_id="e1")
+    coordinator = MagicMock(spec=NotificationCoordinator)
+    coordinator.async_notify = AsyncMock()
+    handler.set_notification_coordinator(coordinator)
+
+    hass.states.async_set("sensor.w_discard", "70.0")
+    await hass.async_block_till_done()
+    assert handler.has_pending_measurement
+
+    handler.discard_pending_measurement()
+
+    assert not handler.has_pending_measurement
+    assert handler._pending_timeout_cancel is None
+    # Nothing left to accept afterwards
+    values: list[float] = []
+    handler.subscribe(Metric.WEIGHT, lambda v: values.append(float(v)))
+    handler.accept_pending_measurement()
+    assert values == []
     handler.unload()
