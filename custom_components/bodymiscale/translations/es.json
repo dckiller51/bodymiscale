@@ -12,10 +12,13 @@
       "height_low": "Altura demasiado baja (mínimo: 50 cm).",
       "invalid_date": "Fecha inválida.",
       "name_already_used": "Este nombre ya está siendo utilizado por otro perfil. Elige uno diferente.",
+      "notify_device_required": "Selecciona al menos un dispositivo móvil.",
       "weight_limit": "Peso demasiado alto (máximo: 200 kg).",
       "weight_low": "Peso demasiado bajo (mínimo: 10 kg).",
       "weight_range_invalid": "El peso mínimo debe ser estrictamente menor que el peso máximo.",
-      "weight_range_overlap": "Este rango se solapa con el de otro usuario. Los rangos no deben compartir ningún valor — ajusta los límites en consecuencia."
+      "weight_range_overlap": "Este rango se solapa con el de otro usuario. Los rangos no deben compartir ningún valor — ajusta los límites en consecuencia.",
+      "xiaomi_home_requires_dual": "Xiaomi Home solo está disponible en el modo S400 de doble frecuencia.",
+      "zepp_life_not_dual": "Zepp Life es solo para básculas de frecuencia única. Para la S400, elige Científico o Xiaomi Home."
     },
     "step": {
       "modes": {
@@ -26,7 +29,7 @@
           "profile_method": "Método de identificación del usuario"
         },
         "data_description": {
-          "calculation_mode": "Xiaomi: idéntico a la app Zepp Life. Científico: fórmulas OMS / Schofield. No disponible en el modo S400 de doble frecuencia.",
+          "calculation_mode": "Elige según tu báscula. Mi Scale (frecuencia única): Xiaomi — Zepp Life = mismos valores que la app Zepp Life, Científico = fórmulas OMS / Schofield. S400 (doble frecuencia): Científico = fórmulas científicas S400, Xiaomi Home = mismos valores que la app Xiaomi Home.",
           "impedance_mode": "Ninguno: báscula sin sensor de impedancia. Estándar: frecuencia única (Xiaomi Gen2). Doble frecuencia S400: dos sensores a 50 kHz y 250 kHz.",
           "profile_method": "Cómo bodymiscale determina a qué usuario asignar una medición. Selecciona \"Ninguno\" si utilizas sensores dedicados por persona."
         },
@@ -36,7 +39,7 @@
         "data": {
           "initial_weight": "Peso inicial (kg)",
           "nearest_tolerance": "Tolerancia de peso más cercano (kg)",
-          "notify_device_id": "Dispositivo móvil que recibe la notificación",
+          "notify_device_id": "Dispositivos móviles que reciben la notificación",
           "notify_weight_max": "Peso máximo para notificar (opcional)",
           "notify_weight_min": "Peso mínimo para notificar (opcional)",
           "profile_id": "ID de perfil (1–5)",
@@ -46,7 +49,7 @@
         "data_description": {
           "initial_weight": "Peso actual utilizado para inicializar este usuario cuando se activa por primera vez la coincidencia por peso más cercano.",
           "nearest_tolerance": "Distancia máxima permitida entre el valor del sensor y el peso actual del usuario. El valor predeterminado es ±5 kg.",
-          "notify_device_id": "El teléfono que recibirá una notificación interactiva después de cada pesaje. Toca tu nombre para confirmar la medición.",
+          "notify_device_id": "Los teléfonos que recibirán una notificación interactiva después de cada pesaje. Selecciona varios para que cualquier miembro del hogar pueda confirmar. Toca tu nombre para confirmar la medición.",
           "notify_weight_max": "Notificar a este usuario solo si el peso medido es menor o igual a este valor. Dejar vacío para notificar siempre.",
           "notify_weight_min": "Notificar a este usuario solo si el peso medido es mayor o igual a este valor. Dejar vacío para notificar siempre.",
           "weight_max": "Límite superior, excluido del rango. Si el siguiente usuario comienza en 65 kg, introduce como máximo 64,99 kg aquí.",
@@ -215,10 +218,13 @@
     "error": {
       "height_limit": "Altura demasiado alta (máximo: 220 cm).",
       "height_low": "Altura demasiado baja (mínimo: 50 cm).",
+      "notify_device_required": "Selecciona al menos un dispositivo móvil.",
       "weight_limit": "Peso demasiado alto (máximo: 200 kg).",
       "weight_low": "Peso demasiado bajo (mínimo: 10 kg).",
       "weight_range_invalid": "El peso mínimo debe ser estrictamente menor que el peso máximo.",
-      "weight_range_overlap": "Este rango se solapa con el de otro usuario. Los rangos no deben compartir ningún valor — ajusta los límites en consecuencia."
+      "weight_range_overlap": "Este rango se solapa con el de otro usuario. Los rangos no deben compartir ningún valor — ajusta los límites en consecuencia.",
+      "xiaomi_home_requires_dual": "Xiaomi Home solo está disponible en el modo S400 de doble frecuencia.",
+      "zepp_life_not_dual": "Zepp Life es solo para básculas de frecuencia única. Para la S400, elige Científico o Xiaomi Home."
     },
     "step": {
       "init": {
@@ -229,7 +235,7 @@
           "profile_method": "Método de identificación del usuario"
         },
         "data_description": {
-          "calculation_mode": "Xiaomi: idéntico a la app Zepp Life. Científico: fórmulas OMS / Schofield. No disponible en el modo S400 de doble frecuencia.",
+          "calculation_mode": "Elige según tu báscula. Mi Scale (frecuencia única): Xiaomi — Zepp Life = mismos valores que la app Zepp Life, Científico = fórmulas OMS / Schofield. S400 (doble frecuencia): Científico = fórmulas científicas S400, Xiaomi Home = mismos valores que la app Xiaomi Home.",
           "impedance_mode": "Ninguno: báscula sin sensor de impedancia. Estándar: frecuencia única (Xiaomi Gen2). Doble frecuencia S400: dos sensores a 50 kHz y 250 kHz.",
           "profile_method": "Cómo bodymiscale determina a qué usuario asignar una medición. Selecciona \"Ninguno\" si utilizas sensores dedicados por persona."
         },
@@ -239,7 +245,7 @@
         "data": {
           "initial_weight": "Peso inicial (kg)",
           "nearest_tolerance": "Tolerancia de peso más cercano (kg)",
-          "notify_device_id": "Dispositivo móvil que recibe la notificación",
+          "notify_device_id": "Dispositivos móviles que reciben la notificación",
           "notify_weight_max": "Peso máximo para notificar (opcional)",
           "notify_weight_min": "Peso mínimo para notificar (opcional)",
           "profile_id": "ID de perfil (1–5)",
@@ -249,7 +255,7 @@
         "data_description": {
           "initial_weight": "Peso actual utilizado para inicializar este usuario cuando se activa por primera vez la coincidencia por peso más cercano.",
           "nearest_tolerance": "Distancia máxima permitida entre el valor del sensor y el peso actual del usuario. El valor predeterminado es ±5 kg.",
-          "notify_device_id": "El teléfono que recibirá una notificación interactiva después de cada pesaje. Toca tu nombre para confirmar la medición.",
+          "notify_device_id": "Los teléfonos que recibirán una notificación interactiva después de cada pesaje. Selecciona varios para que cualquier miembro del hogar pueda confirmar. Toca tu nombre para confirmar la medición.",
           "notify_weight_max": "Notificar a este usuario solo si el peso medido es menor o igual a este valor. Dejar vacío para notificar siempre.",
           "notify_weight_min": "Notificar a este usuario solo si el peso medido es mayor o igual a este valor. Dejar vacío para notificar siempre.",
           "weight_max": "Límite superior, excluido del rango. Si el siguiente usuario comienza en 65 kg, introduce como máximo 64,99 kg aquí.",
@@ -279,8 +285,9 @@
   "selector": {
     "calculation_mode": {
       "options": {
-        "science": "Científico — OMS / Schofield",
-        "xiaomi": "Xiaomi — Zepp Life (Legacy 2017)"
+        "science": "Científico — impedancia simple o doble",
+        "xiaomi": "Xiaomi — Zepp Life (Legacy 2017)",
+        "xiaomi_home": "Xiaomi — Xiaomi Home (solo S400)"
       }
     },
     "impedance_mode": {

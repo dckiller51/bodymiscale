@@ -29,6 +29,19 @@ def to_float(val: Any, default: float = 0.0) -> float:
     return default
 
 
+def as_device_list(value: Any) -> list[str]:
+    """Return the notification device config value as a list of device ids.
+
+    Up to 2026.10.3 a single device id (str) was stored. Several devices can
+    now be selected, so the value is a list; both forms are accepted.
+    """
+    if not value:
+        return []
+    if isinstance(value, str):
+        return [value]
+    return [str(device_id) for device_id in value if device_id]
+
+
 def get_ideal_weight(config: Mapping[str, Any]) -> float:
     """Get ideal weight based on height and gender."""
     height = float(config[CONF_HEIGHT])

@@ -152,7 +152,7 @@ async def test_flow_with_dual_impedance(hass: HomeAssistant) -> None:
         result["flow_id"],
         {
             CONF_HEIGHT: 175.0,
-            CONF_CALCULATION_MODE: "xiaomi",
+            CONF_CALCULATION_MODE: "science",
             CONF_IMPEDANCE_MODE: IMPEDANCE_MODE_DUAL,
             CONF_PROFILE_METHOD: PROFILE_METHOD_NONE,
         },
@@ -299,13 +299,16 @@ async def test_flow_profile_method_notify(hass: HomeAssistant) -> None:
     result = await hass.config_entries.flow.async_configure(
         result["flow_id"],
         {
-            CONF_NOTIFY_DEVICE_ID: "device_abc123",
+            CONF_NOTIFY_DEVICE_ID: ["device_abc123", "device_def456"],
             CONF_NOTIFY_WEIGHT_MIN: 50.0,
             CONF_NOTIFY_WEIGHT_MAX: 80.0,
         },
     )
     assert result["type"] == FlowResultType.CREATE_ENTRY
-    assert result["data"][CONF_NOTIFY_DEVICE_ID] == "device_abc123"
+    assert result["data"][CONF_NOTIFY_DEVICE_ID] == [
+        "device_abc123",
+        "device_def456",
+    ]
 
 
 # ===========================================================================
@@ -503,7 +506,7 @@ async def test_flow_profile_notify_weight_min_too_high(hass: HomeAssistant) -> N
     result = await hass.config_entries.flow.async_configure(
         result["flow_id"],
         {
-            CONF_NOTIFY_DEVICE_ID: "device_abc",
+            CONF_NOTIFY_DEVICE_ID: ["device_abc"],
             CONF_NOTIFY_WEIGHT_MIN: 250.0,
             CONF_NOTIFY_WEIGHT_MAX: 80.0,
         },
@@ -518,13 +521,23 @@ async def test_flow_profile_notify_weight_range_invalid(hass: HomeAssistant) -> 
     result = await hass.config_entries.flow.async_configure(
         result["flow_id"],
         {
-            CONF_NOTIFY_DEVICE_ID: "device_abc",
+            CONF_NOTIFY_DEVICE_ID: ["device_abc"],
             CONF_NOTIFY_WEIGHT_MIN: 80.0,
             CONF_NOTIFY_WEIGHT_MAX: 50.0,
         },
     )
     assert result["type"] == FlowResultType.FORM
     assert result["errors"].get("base") == "weight_range_invalid"
+
+
+async def test_flow_profile_notify_requires_a_device(hass: HomeAssistant) -> None:
+    """Notify method with no device selected → error 'notify_device_required'."""
+    result = await _reach_profile_step(hass, PROFILE_METHOD_NOTIFY)
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"], {CONF_NOTIFY_DEVICE_ID: []}
+    )
+    assert result["type"] == FlowResultType.FORM
+    assert result["errors"].get(CONF_NOTIFY_DEVICE_ID) == "notify_device_required"
 
 
 # ===========================================================================
@@ -966,7 +979,7 @@ async def test_options_flow_profile_notify_weight_min_too_high(
     result = await hass.config_entries.options.async_configure(
         result["flow_id"],
         {
-            CONF_NOTIFY_DEVICE_ID: "device_abc",
+            CONF_NOTIFY_DEVICE_ID: ["device_abc"],
             CONF_NOTIFY_WEIGHT_MIN: 250.0,
         },
     )
@@ -1196,7 +1209,7 @@ async def test_options_flow_clearing_notify_weight_bounds_removes_them(
     # User clears both optional bounds, keeping only the required device.
     result = await hass.config_entries.options.async_configure(
         result["flow_id"],
-        {CONF_NOTIFY_DEVICE_ID: "device_abc"},
+        {CONF_NOTIFY_DEVICE_ID: ["device_abc"]},
     )
     assert result["type"] == FlowResultType.CREATE_ENTRY
     assert CONF_NOTIFY_WEIGHT_MIN not in result["data"]
@@ -1232,3 +1245,86 @@ async def test_flow_clearing_stabilized_sensor_removes_it_on_second_visit(
     )
     assert result["type"] == FlowResultType.CREATE_ENTRY
     assert CONF_SENSOR_STABILIZED not in result["data"]
+
+
+# ===========================================================================
+# Xiaomi Home calculation mode (S400 firmware formulas, #474)
+# ===========================================================================
+
+
+async def test_flow_xiaomi_home_requires_dual_frequency(hass: HomeAssistant) -> None:
+    """Xiaomi Home with a single-frequency scale → error on the modes step."""
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": config_entries.SOURCE_USER}
+    )
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"], USER_STEP
+    )
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"],
+        {**MODES_STEP_NONE, CONF_CALCULATION_MODE: "xiaomi_home"},
+    )
+    assert result["type"] == FlowResultType.FORM
+    assert result["step_id"] == "modes"
+    assert result["errors"][CONF_CALCULATION_MODE] == "xiaomi_home_requires_dual"
+
+
+async def test_flow_xiaomi_home_with_dual_frequency(hass: HomeAssistant) -> None:
+    """Xiaomi Home with the S400 dual-frequency mode → entry created."""
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": config_entries.SOURCE_USER}
+    )
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"], USER_STEP
+    )
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"],
+        {
+            **MODES_STEP_NONE,
+            CONF_CALCULATION_MODE: "xiaomi_home",
+            CONF_IMPEDANCE_MODE: IMPEDANCE_MODE_DUAL,
+        },
+    )
+    assert result["step_id"] == "sensors"
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"],
+        {
+            CONF_SENSOR_WEIGHT: "sensor.weight",
+            CONF_SENSOR_IMPEDANCE_LOW: "sensor.impedance_low",
+            CONF_SENSOR_IMPEDANCE_HIGH: "sensor.impedance_high",
+        },
+    )
+    assert result["type"] == FlowResultType.CREATE_ENTRY
+    assert result["data"][CONF_CALCULATION_MODE] == "xiaomi_home"
+
+
+async def test_options_flow_xiaomi_home_requires_dual_frequency(
+    hass: HomeAssistant, mock_config_entry: MockConfigEntry
+) -> None:
+    """Options flow: Xiaomi Home without dual frequency → error on init step."""
+    mock_config_entry.add_to_hass(hass)
+    result = await hass.config_entries.options.async_init(mock_config_entry.entry_id)
+    result = await hass.config_entries.options.async_configure(
+        result["flow_id"],
+        {**MODES_STEP_NONE, CONF_CALCULATION_MODE: "xiaomi_home"},
+    )
+    assert result["type"] == FlowResultType.FORM
+    assert result["step_id"] == "init"
+    assert result["errors"][CONF_CALCULATION_MODE] == "xiaomi_home_requires_dual"
+
+
+async def test_flow_zepp_life_rejected_with_dual_frequency(hass: HomeAssistant) -> None:
+    """Zepp Life (Mi Scale formulas) with the S400 dual frequency → error."""
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": config_entries.SOURCE_USER}
+    )
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"], USER_STEP
+    )
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"],
+        {**MODES_STEP_NONE, CONF_IMPEDANCE_MODE: IMPEDANCE_MODE_DUAL},
+    )
+    assert result["type"] == FlowResultType.FORM
+    assert result["step_id"] == "modes"
+    assert result["errors"][CONF_CALCULATION_MODE] == "zepp_life_not_dual"

@@ -82,6 +82,7 @@ from .impedance import (
     get_protein_percentage,
     get_skeletal_muscle_mass,
     get_water_percentage,
+    is_xiaomi_home,
 )
 from .scale import Scale
 from .weight import get_bmi, get_bmr, get_visceral_fat
@@ -398,9 +399,27 @@ class BodyScaleMetricsHandler:
             self._dependencies[Metric.BODY_SCORE].depends_on.append(
                 Metric.SKELETAL_MUSCLE_MASS
             )
+        if is_xiaomi_home(self._config):
+            # The firmware visceral fat regression reads both impedances, and
+            # its skeletal muscle regression reads the weight.
+            self._dependencies[Metric.VISCERAL_FAT].depends_on.extend(
+                [Metric.IMPEDANCE_LOW, Metric.IMPEDANCE_HIGH]
+            )
+            self._dependencies[Metric.SKELETAL_MUSCLE_MASS].depends_on.append(
+                Metric.WEIGHT
+            )
         for key, value in self._dependencies.items():
             for dep in value.depends_on:
                 self._dependencies[dep].depended_by.append(key)
+        # Metrics computed as soon as the weight arrives. A metric that needs
+        # impedance in this configuration (e.g. BMR from LBM in dual mode)
+        # must wait for the impedance pass; otherwise it would be computed
+        # from the previous measurement's values and never refreshed.
+        self._weight_only_metrics: frozenset[Metric] = frozenset(
+            metric
+            for metric in self._WEIGHT_ONLY_METRICS
+            if set(self._dependencies[metric].depends_on) <= {Metric.WEIGHT, Metric.AGE}
+        )
 
         if self._config.get(CONF_PROFILE_METHOD) == PROFILE_METHOD_NEAREST:
             initial_weight = self._config.get(CONF_INITIAL_WEIGHT)
@@ -586,6 +605,11 @@ class BodyScaleMetricsHandler:
         """Inject the notification coordinator."""
         self._notification_coordinator = coordinator
 
+    @property
+    def has_pending_measurement(self) -> bool:
+        """Return True if a measurement is awaiting notification confirmation."""
+        return self._pending_weight is not None
+
     # ── Pending measurement ───────────────────────────────────────────────────
 
     def _cancel_pending_timeout(self) -> None:
@@ -606,6 +630,24 @@ class BodyScaleMetricsHandler:
             "Pending measurement %.2f kg expired after %ds without confirmation — discarded.",
             self._pending_weight,
             PENDING_MEASUREMENT_TIMEOUT,
+        )
+        self._pending_weight = None
+        self._pending_state = None
+        self._pending_impedance.clear()
+        self._last_accepted_weight = None
+
+    @callback
+    def discard_pending_measurement(self) -> None:
+        """Drop the pending measurement because another user confirmed it."""
+        self._cancel_pending_timeout()
+        if isinstance(self._profile_filter, NotificationFilter):
+            self._profile_filter.reset()
+        if self._pending_weight is None:
+            return
+        _LOGGER.debug(
+            "[%s] Pending measurement %.2f kg confirmed by another user — discarded",
+            self._name,
+            self._pending_weight,
         )
         self._pending_weight = None
         self._pending_state = None
@@ -1258,7 +1300,8 @@ class BodyScaleMetricsHandler:
 
         return ordered
 
-    # Metrics that depend only on weight (no impedance required)
+    # Metrics that can depend only on weight (no impedance required); see
+    # _weight_only_metrics for the set that applies to this configuration.
     _WEIGHT_ONLY_METRICS: frozenset[Metric] = frozenset(
         {
             Metric.BMI,
@@ -1304,14 +1347,14 @@ class BodyScaleMetricsHandler:
         """Compute weight-only metrics."""
         _LOGGER.debug("[%s][recalc] Weight-only pass", self._name)
         for metric in self._topological_order():
-            if metric in self._WEIGHT_ONLY_METRICS:
+            if metric in self._weight_only_metrics:
                 self._compute_metric(metric)
 
     def _trigger_impedance_metrics(self) -> None:
         """Compute metrics that require impedance — skip weight-only metrics already computed."""
         _LOGGER.debug("[%s][recalc] Impedance pass", self._name)
         for metric in self._topological_order():
-            if metric not in self._WEIGHT_ONLY_METRICS:
+            if metric not in self._weight_only_metrics:
                 self._compute_metric(metric)
 
     def _trigger_dependent_recalculation(self) -> None:

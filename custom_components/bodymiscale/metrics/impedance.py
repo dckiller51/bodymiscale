@@ -34,6 +34,12 @@ Three distinct modes, each with its own formulas:
       - Visceral : Standard Zepp Life physiological estimate.
       - Age      : BMR-relative metabolic age.
       - Protein% : Wang 1999 (protein is ~19.5% of LBM).
+
+  XIAOMI HOME (dual-frequency, calculation mode ``xiaomi_home``)
+    The S400 firmware formulas, identical to the Xiaomi Home app. See
+    ``xiaomi_home.py``. Only fat%, LBM, water, bone, muscle, skeletal
+    muscle and protein are replaced; compartments (ECW/ICW/BCM) and
+    metabolic age keep the S400 scientific formulas on top of them.
 """
 
 from collections.abc import Mapping
@@ -45,6 +51,7 @@ from homeassistant.helpers.typing import StateType
 from ..const import (
     ALGO_SCIENCE,
     ALGO_XIAOMI,
+    ALGO_XIAOMI_HOME,
     CONF_CALCULATION_MODE,
     CONF_GENDER,
     CONF_HEIGHT,
@@ -59,6 +66,7 @@ from ..util import (
     get_metabolic_age_clamped,
     to_float,
 )
+from . import xiaomi_home
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Helper : effective impedance according to hardware mode
@@ -67,6 +75,32 @@ from ..util import (
 
 def _is_dual(config: Mapping[str, Any]) -> bool:
     return config.get(CONF_IMPEDANCE_MODE) == IMPEDANCE_MODE_DUAL
+
+
+def xiaomi_home_inputs(
+    config: Mapping[str, Any], metrics: Mapping[Metric, StateType | datetime]
+) -> tuple[Gender, float, float, float, float, float] | None:
+    """Return (gender, h, w, age, z50, z250) in Xiaomi Home mode, else None.
+
+    Also None when an input is missing, so callers fall back to their
+    regular formula only outside Xiaomi Home mode (see ``is_xiaomi_home``).
+    """
+    if not is_xiaomi_home(config):
+        return None
+    gender = config.get(CONF_GENDER)
+    h = to_float(config.get(CONF_HEIGHT))
+    w = to_float(metrics.get(Metric.WEIGHT))
+    a = to_float(metrics.get(Metric.AGE))
+    z50 = _get_z_lf(metrics)
+    z250 = _get_z_hf(metrics)
+    if gender is None or min(h, w, a, z50, z250) <= 0:
+        return None
+    return Gender(gender), h, w, a, z50, z250
+
+
+def is_xiaomi_home(config: Mapping[str, Any]) -> bool:
+    """Return True for the Xiaomi Home (S400 firmware) calculation mode."""
+    return _is_dual(config) and config.get(CONF_CALCULATION_MODE) == ALGO_XIAOMI_HOME
 
 
 def _get_z_lf(metrics: Mapping[Metric, StateType | datetime]) -> float:
@@ -140,6 +174,10 @@ def get_lbm(
         correction upstream here so that all derived metrics (BMR, muscle, water,
         protein, body score) remain consistent.
     """
+    if is_xiaomi_home(config):
+        xh = xiaomi_home_inputs(config, metrics)
+        return xiaomi_home.lean_body_mass(*xh[:5]) if xh else 0.0
+
     h = to_float(config.get(CONF_HEIGHT))
     w = to_float(metrics.get(Metric.WEIGHT))
     a = to_float(metrics.get(Metric.AGE))
@@ -176,6 +214,12 @@ def get_fat_percentage(
     config: Mapping[str, Any], metrics: Mapping[Metric, StateType | datetime]
 ) -> float:
     """Calculate body fat percentage."""
+    if is_xiaomi_home(config):
+        xh = xiaomi_home_inputs(config, metrics)
+        return (
+            check_value_constraints(xiaomi_home.body_fat(*xh[:5]), 5, 75) if xh else 0.0
+        )
+
     w = to_float(metrics.get(Metric.WEIGHT))
     lbm = to_float(metrics.get(Metric.LBM))
     mode = config.get(CONF_CALCULATION_MODE, ALGO_XIAOMI)
@@ -233,6 +277,10 @@ def get_water_percentage(
     internally for TBW liters (ECW/ICW/BCM calculations), but the displayed
     water percentage uses Pace for physiological plausibility.
     """
+    if is_xiaomi_home(config):
+        xh = xiaomi_home_inputs(config, metrics)
+        return xiaomi_home.water_percentage(xh[1], xh[2], xh[4], xh[5]) if xh else 0.0
+
     fat_pct = to_float(metrics.get(Metric.FAT_PERCENTAGE))
     mode = config.get(CONF_CALCULATION_MODE, ALGO_XIAOMI)
 
@@ -416,6 +464,10 @@ def get_skeletal_muscle_mass(
 
     More specific than generic "muscle mass" as it targets skeletal muscle only.
     """
+    if is_xiaomi_home(config):
+        xh = xiaomi_home_inputs(config, metrics)
+        return xiaomi_home.skeletal_muscle_mass(*xh) if xh else 0.0
+
     h = to_float(config.get(CONF_HEIGHT))
     a = to_float(metrics.get(Metric.AGE))
     z_lf = _get_z_lf(metrics)
@@ -444,6 +496,10 @@ def get_bone_mass(
     Common empirical formula for all 3 modes (based on LBM).
     Each mode calculates a different LBM, which indirectly differentiates bone mass.
     """
+    if is_xiaomi_home(config):
+        xh = xiaomi_home_inputs(config, metrics)
+        return xiaomi_home.bone_mass(xh[1], xh[2], xh[4], xh[5]) if xh else 0.0
+
     lbm = to_float(metrics.get(Metric.LBM))
     gender = config.get(CONF_GENDER)
 
@@ -476,6 +532,10 @@ def get_muscle_mass(
     Common formula: W − (fat% × W) − bone_mass.
     Identical in all 3 modes (the difference comes from the fat% calculated upstream).
     """
+    if is_xiaomi_home(config):
+        xh = xiaomi_home_inputs(config, metrics)
+        return xiaomi_home.muscle_mass(*xh) if xh else 0.0
+
     w = to_float(metrics.get(Metric.WEIGHT))
     fat_pct = to_float(metrics.get(Metric.FAT_PERCENTAGE))
     bone_mass = to_float(metrics.get(Metric.BONE_MASS))
@@ -514,6 +574,12 @@ def get_metabolic_age(
         → Higher LBM → lower metabolic age (younger metabolism).
         → Lower LBM → higher metabolic age (older metabolism).
     """
+    if is_xiaomi_home(config):
+        xh = xiaomi_home_inputs(config, metrics)
+        if xh:
+            return xiaomi_home.metabolic_age(*xh)
+        return to_float(metrics.get(Metric.AGE))
+
     h, w, a = (
         to_float(config.get(CONF_HEIGHT)),
         to_float(metrics.get(Metric.WEIGHT)),
@@ -548,7 +614,7 @@ def get_metabolic_age(
                 (h * -1.1165) + (w * 1.5784) + (a * 0.4615) + (z * 0.0415) + 83.2548
             )
 
-    if mode == ALGO_XIAOMI:
+    if mode == ALGO_XIAOMI and not _is_dual(config):
         return check_value_constraints(metab_age, 15, 80)
 
     return float(get_metabolic_age_clamped(int(metab_age), int(a)))
@@ -574,6 +640,10 @@ def get_protein_percentage(
         Empirical formula: protein% = (muscle / W) × 100 − water%
         Matches Zepp Life / Mi Fit app output.
     """
+    if is_xiaomi_home(config):
+        xh = xiaomi_home_inputs(config, metrics)
+        return xiaomi_home.protein_percentage(*xh) if xh else 0.0
+
     w = to_float(metrics.get(Metric.WEIGHT))
     lbm = to_float(metrics.get(Metric.LBM))
     mode = config.get(CONF_CALCULATION_MODE, ALGO_XIAOMI)

@@ -19,6 +19,8 @@ from homeassistant.helpers import selector
 from homeassistant.util import slugify
 
 from .const import (
+    ALGO_XIAOMI,
+    ALGO_XIAOMI_HOME,
     CALCULATION_MODE_OPTIONS,
     CONF_BIRTHDAY,
     CONF_CALCULATION_MODE,
@@ -59,6 +61,7 @@ from .const import (
     PROFILE_METHOD_WEIGHT,
 )
 from .models import Gender
+from .util import as_device_list
 
 # ---------------------------------------------------------------------------
 # Schema helpers
@@ -300,10 +303,14 @@ def _get_profile_schema(
                 probatio.Required(
                     CONF_NOTIFY_DEVICE_ID,
                     description={
-                        "suggested_value": defaults.get(CONF_NOTIFY_DEVICE_ID)
+                        "suggested_value": as_device_list(
+                            defaults.get(CONF_NOTIFY_DEVICE_ID)
+                        )
                     },
                 ): selector.DeviceSelector(
-                    selector.DeviceSelectorConfig(integration="mobile_app")
+                    selector.DeviceSelectorConfig(
+                        integration="mobile_app", multiple=True
+                    )
                 ),
                 probatio.Optional(
                     CONF_NOTIFY_WEIGHT_MIN,
@@ -408,8 +415,27 @@ def _validate_weight(
             errors["base"] = err
 
 
+def _validate_calculation_mode(user_input: dict, errors: dict) -> None:
+    """Match the calculation mode with the scale.
+
+    Xiaomi Home (S400 firmware) needs dual frequency; Zepp Life (Mi Scale)
+    is single frequency only. Scientific works with both.
+    """
+    mode = user_input.get(CONF_CALCULATION_MODE)
+    dual = user_input.get(CONF_IMPEDANCE_MODE) == IMPEDANCE_MODE_DUAL
+    if mode == ALGO_XIAOMI_HOME and not dual:
+        errors[CONF_CALCULATION_MODE] = "xiaomi_home_requires_dual"
+    elif mode == ALGO_XIAOMI and dual:
+        errors[CONF_CALCULATION_MODE] = "zepp_life_not_dual"
+
+
 def _validate_notify(user_input: dict, errors: dict) -> None:
     """Validate NOTIFY method fields."""
+    devices = as_device_list(user_input.get(CONF_NOTIFY_DEVICE_ID))
+    if not devices:
+        errors[CONF_NOTIFY_DEVICE_ID] = "notify_device_required"
+    else:
+        user_input[CONF_NOTIFY_DEVICE_ID] = devices
     w_min = user_input.get(CONF_NOTIFY_WEIGHT_MIN)
     w_max = user_input.get(CONF_NOTIFY_WEIGHT_MAX)
     if w_min is not None:
@@ -475,7 +501,7 @@ def _purge_impedance_keys(data: dict, keep_mode: str) -> None:
 class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):
     """Config flow for bodymiscale."""
 
-    VERSION = 4
+    VERSION = 5
 
     def __init__(self) -> None:
         """Initialize BodyMiScaleFlowHandler."""
@@ -543,6 +569,7 @@ class BodyMiScaleFlowHandler(ConfigFlow, domain=DOMAIN):
                 errors[CONF_HEIGHT] = "height_limit"
             elif h < CONSTRAINT_HEIGHT_MIN:
                 errors[CONF_HEIGHT] = "height_low"
+            _validate_calculation_mode(user_input, errors)
 
             if not errors:
                 self._data.update(user_input)
@@ -673,6 +700,7 @@ class BodyMiScaleOptionsFlowHandler(OptionsFlow):
                 errors[CONF_HEIGHT] = "height_limit"
             elif h < CONSTRAINT_HEIGHT_MIN:
                 errors[CONF_HEIGHT] = "height_low"
+            _validate_calculation_mode(user_input, errors)
 
             if not errors:
                 self._data.update(user_input)

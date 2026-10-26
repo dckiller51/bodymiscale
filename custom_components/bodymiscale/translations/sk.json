@@ -12,10 +12,13 @@
       "height_low": "Výška príliš nízka (minimum: 50 cm).",
       "invalid_date": "Neplatný dátum.",
       "name_already_used": "Tento názov je už používaný iným profilom. Zvoľte iný.",
+      "notify_device_required": "Vyberte aspoň jedno mobilné zariadenie.",
       "weight_limit": "Hmotnosť príliš vysoká (maximum: 200 kg).",
       "weight_low": "Hmotnosť príliš nízka (minimum: 10 kg).",
       "weight_range_invalid": "Minimálna hmotnosť musí byť striktne menšia ako maximálna hmotnosť.",
-      "weight_range_overlap": "Tento rozsah sa prekrýva s rozsahom iného používateľa. Rozsahy nesmú zdieľať žiadnu hodnotu — upravte hranice podľa toho."
+      "weight_range_overlap": "Tento rozsah sa prekrýva s rozsahom iného používateľa. Rozsahy nesmú zdieľať žiadnu hodnotu — upravte hranice podľa toho.",
+      "xiaomi_home_requires_dual": "Xiaomi Home je dostupné len v dvojfrekvenčnom režime S400.",
+      "zepp_life_not_dual": "Zepp Life je len pre jednofrekvenčné váhy. Pre S400 vyberte Vedecká alebo Xiaomi Home."
     },
     "step": {
       "modes": {
@@ -26,7 +29,7 @@
           "profile_method": "Metóda identifikácie používateľa"
         },
         "data_description": {
-          "calculation_mode": "Xiaomi: identické s aplikáciou Zepp Life. Vedecká: vzorce WHO / Schofield. Nie je dostupná v dvojfrekvenčnom režime S400.",
+          "calculation_mode": "Vyberte podľa váhy. Mi Scale (jedna frekvencia): Xiaomi — Zepp Life = rovnaké hodnoty ako aplikácia Zepp Life, Vedecká = vzorce WHO / Schofield. S400 (dve frekvencie): Vedecká = vedecké vzorce S400, Xiaomi Home = rovnaké hodnoty ako aplikácia Xiaomi Home.",
           "impedance_mode": "Žiadny: váha bez senzora impedancie. Štandard: jedna frekvencia (Xiaomi Gen2). Dvojfrekvenčný S400: dva senzory na 50 kHz a 250 kHz.",
           "profile_method": "Ako bodymiscale určuje, ktorému používateľovi priradiť meranie. Zvoľte \"Žiadny\", ak používate vyhradené senzory pre každú osobu."
         },
@@ -36,7 +39,7 @@
         "data": {
           "initial_weight": "Počiatočná hmotnosť (kg)",
           "nearest_tolerance": "Tolerancia najbližšej hmotnosti (kg)",
-          "notify_device_id": "Mobilné zariadenie prijímajúce notifikáciu",
+          "notify_device_id": "Mobilné zariadenia prijímajúce notifikáciu",
           "notify_weight_max": "Maximálna hmotnosť pre notifikáciu (voliteľné)",
           "notify_weight_min": "Minimálna hmotnosť pre notifikáciu (voliteľné)",
           "profile_id": "ID profilu (1–5)",
@@ -46,7 +49,7 @@
         "data_description": {
           "initial_weight": "Aktuálna hmotnosť použitá na inicializáciu tohto používateľa pri prvom aktivovaní zhody podľa najbližšej hmotnosti.",
           "nearest_tolerance": "Maximálna povolená vzdialenosť medzi hodnotou senzora a aktuálnou hmotnosťou používateľa. Predvolená hodnota: ±5 kg.",
-          "notify_device_id": "Telefón, ktorý dostane interaktívnu notifikáciu po každom vážení. Klepnite na svoje meno pre potvrdenie merania.",
+          "notify_device_id": "Telefóny, ktoré dostanú interaktívnu notifikáciu po každom vážení. Vyberte ich viac, aby mohol potvrdiť ktokoľvek z domácnosti. Klepnite na svoje meno pre potvrdenie merania.",
           "notify_weight_max": "Notifikovať tohto používateľa iba ak nameraná hmotnosť je menšia alebo rovná tejto hodnote. Nechajte prázdne pre vždy notifikovať.",
           "notify_weight_min": "Notifikovať tohto používateľa iba ak nameraná hmotnosť je väčšia alebo rovná tejto hodnote. Nechajte prázdne pre vždy notifikovať.",
           "weight_max": "Horná hranica, vylúčená z rozsahu. Ak nasledujúci používateľ začína od 65 kg, zadajte najviac 64,99 kg.",
@@ -215,10 +218,13 @@
     "error": {
       "height_limit": "Výška príliš vysoká (maximum: 220 cm).",
       "height_low": "Výška príliš nízka (minimum: 50 cm).",
+      "notify_device_required": "Vyberte aspoň jedno mobilné zariadenie.",
       "weight_limit": "Hmotnosť príliš vysoká (maximum: 200 kg).",
       "weight_low": "Hmotnosť príliš nízka (minimum: 10 kg).",
       "weight_range_invalid": "Minimálna hmotnosť musí byť striktne menšia ako maximálna hmotnosť.",
-      "weight_range_overlap": "Tento rozsah sa prekrýva s rozsahom iného používateľa. Rozsahy nesmú zdieľať žiadnu hodnotu — upravte hranice podľa toho."
+      "weight_range_overlap": "Tento rozsah sa prekrýva s rozsahom iného používateľa. Rozsahy nesmú zdieľať žiadnu hodnotu — upravte hranice podľa toho.",
+      "xiaomi_home_requires_dual": "Xiaomi Home je dostupné len v dvojfrekvenčnom režime S400.",
+      "zepp_life_not_dual": "Zepp Life je len pre jednofrekvenčné váhy. Pre S400 vyberte Vedecká alebo Xiaomi Home."
     },
     "step": {
       "init": {
@@ -229,7 +235,7 @@
           "profile_method": "Metóda identifikácie používateľa"
         },
         "data_description": {
-          "calculation_mode": "Xiaomi: identické s aplikáciou Zepp Life. Vedecká: vzorce WHO / Schofield. Nie je dostupná v dvojfrekvenčnom režime S400.",
+          "calculation_mode": "Vyberte podľa váhy. Mi Scale (jedna frekvencia): Xiaomi — Zepp Life = rovnaké hodnoty ako aplikácia Zepp Life, Vedecká = vzorce WHO / Schofield. S400 (dve frekvencie): Vedecká = vedecké vzorce S400, Xiaomi Home = rovnaké hodnoty ako aplikácia Xiaomi Home.",
           "impedance_mode": "Žiadny: váha bez senzora impedancie. Štandard: jedna frekvencia (Xiaomi Gen2). Dvojfrekvenčný S400: dva senzory na 50 kHz a 250 kHz.",
           "profile_method": "Ako bodymiscale určuje, ktorému používateľovi priradiť meranie. Zvoľte \"Žiadny\", ak používate vyhradené senzory pre každú osobu."
         },
@@ -239,7 +245,7 @@
         "data": {
           "initial_weight": "Počiatočná hmotnosť (kg)",
           "nearest_tolerance": "Tolerancia najbližšej hmotnosti (kg)",
-          "notify_device_id": "Mobilné zariadenie prijímajúce notifikáciu",
+          "notify_device_id": "Mobilné zariadenia prijímajúce notifikáciu",
           "notify_weight_max": "Maximálna hmotnosť pre notifikáciu (voliteľné)",
           "notify_weight_min": "Minimálna hmotnosť pre notifikáciu (voliteľné)",
           "profile_id": "ID profilu (1–5)",
@@ -249,7 +255,7 @@
         "data_description": {
           "initial_weight": "Aktuálna hmotnosť použitá na inicializáciu tohto používateľa pri prvom aktivovaní zhody podľa najbližšej hmotnosti.",
           "nearest_tolerance": "Maximálna povolená vzdialenosť medzi hodnotou senzora a aktuálnou hmotnosťou používateľa. Predvolená hodnota: ±5 kg.",
-          "notify_device_id": "Telefón, ktorý dostane interaktívnu notifikáciu po každom vážení. Klepnite na svoje meno pre potvrdenie merania.",
+          "notify_device_id": "Telefóny, ktoré dostanú interaktívnu notifikáciu po každom vážení. Vyberte ich viac, aby mohol potvrdiť ktokoľvek z domácnosti. Klepnite na svoje meno pre potvrdenie merania.",
           "notify_weight_max": "Notifikovať tohto používateľa iba ak nameraná hmotnosť je menšia alebo rovná tejto hodnote. Nechajte prázdne pre vždy notifikovať.",
           "notify_weight_min": "Notifikovať tohto používateľa iba ak nameraná hmotnosť je väčšia alebo rovná tejto hodnote. Nechajte prázdne pre vždy notifikovať.",
           "weight_max": "Horná hranica, vylúčená z rozsahu. Ak nasledujúci používateľ začína od 65 kg, zadajte najviac 64,99 kg.",
@@ -279,8 +285,9 @@
   "selector": {
     "calculation_mode": {
       "options": {
-        "science": "Vedecká — WHO / Schofield",
-        "xiaomi": "Xiaomi — Zepp Life (Legacy 2017)"
+        "science": "Vedecká — jednoduchá alebo dvojitá impedancia",
+        "xiaomi": "Xiaomi — Zepp Life (Legacy 2017)",
+        "xiaomi_home": "Xiaomi — Xiaomi Home (len S400)"
       }
     },
     "impedance_mode": {

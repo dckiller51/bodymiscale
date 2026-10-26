@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## 2026.10.4
+
+### ✨ New features
+
+- **Xiaomi Home calculation mode (S400)**: A new **Xiaomi — Xiaomi Home (S400 only)** calculation mode uses the S400 firmware formulas, reverse-engineered by [@RX14](https://github.com/RX14), to give the same values as the Xiaomi Home app: body fat, lean mass, muscle, water, bone, protein, skeletal muscle, visceral fat, BMR and metabolic age (body age). On 10 S400 weighings reported with their app values, 4 match exactly on every metric, and metabolic age matches on 9. Only available in dual-frequency mode. **Existing S400 profiles are not changed**: they keep the scientific formulas until you select the new mode in the integration options. Closes [[#474](https://github.com/dckiller51/bodymiscale/issues/474)].
+- **Notification sent to several phones**: With the interactive notification method, each profile can now select several mobile devices, so anyone in the household can confirm their weigh-in from their own phone (e.g. a child's profile on both parents' phones). Each phone receives a single notification listing the users registered on it. Existing configurations keep working unchanged. Closes [[#433](https://github.com/dckiller51/bodymiscale/issues/433)].
+
+### 🔧 Bug fixes
+
+- **Calculation mode clearer for the S400**: With the S400, choosing **Xiaomi — Zepp Life** silently used the S400 scientific formulas. The S400 now offers only **Scientific** or **Xiaomi Home**, and Zepp Life shows an error. Existing S400 profiles saved with Zepp Life are switched to **Scientific** automatically, which is what they already used: their values do not change.
+- **S400 basal metabolism not updated**: In dual-frequency mode, BMR is calculated from lean body mass, but it was computed when the weight arrived, before the impedances, and never refreshed afterwards. It could keep the value of a previous weigh-in. It is now calculated once the impedances of the measurement are received.
+- **Same measurement assigned to two users**: When several profiles were notified, a measurement confirmed by one user stayed pending for the others, so a second tap on another phone assigned it to a second user. Once a user confirms, the measurement is now discarded for the other profiles and the notification is cleared on every phone.
+- **Duplicate notifications**: Every notification profile requested its own notification for the same measurement, so each phone was notified once per profile. Identical requests are now sent only once.
+
 ## 2026.10.3
 
 ### 🔧 Bug fixes

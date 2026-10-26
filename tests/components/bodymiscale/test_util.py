@@ -8,6 +8,7 @@ from freezegun import freeze_time
 from custom_components.bodymiscale.const import CONF_GENDER, CONF_HEIGHT
 from custom_components.bodymiscale.models import Gender
 from custom_components.bodymiscale.util import (
+    as_device_list,
     check_value_constraints,
     clamp_water_percentage,
     get_age,
@@ -290,3 +291,24 @@ def test_get_age_invalid_string_returns_zero() -> None:
 def test_get_age_none_returns_zero() -> None:
     """None must return 0."""
     assert get_age(None) == 0  # type: ignore[arg-type]
+
+
+# ===========================================================================
+# as_device_list
+# ===========================================================================
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        (None, []),
+        ("", []),
+        ([], []),
+        ("device_a", ["device_a"]),  # value stored up to 2026.10.3
+        (["device_a", "device_b"], ["device_a", "device_b"]),
+        (("device_a", "", None), ["device_a"]),
+    ],
+)
+def test_as_device_list(value: object, expected: list[str]) -> None:
+    """The notification device setting is always returned as a list."""
+    assert as_device_list(value) == expected

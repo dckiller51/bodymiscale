@@ -5,7 +5,7 @@ from homeassistant.const import Platform
 MIN_REQUIRED_HA_VERSION = "2026.9.0"
 NAME = "BodyMiScale"
 DOMAIN = "bodymiscale"
-VERSION = "2026.10.2"
+VERSION = "2026.10.4"
 ISSUE_URL = "https://github.com/dckiller51/bodymiscale/issues"
 
 # System keys for hass.data[DOMAIN]
@@ -63,6 +63,10 @@ CONF_NOTIFY_WEIGHT_MIN = "notify_weight_min"
 CONF_NOTIFY_WEIGHT_MAX = "notify_weight_max"
 PENDING_MEASUREMENT_TIMEOUT = 300
 
+# Every notification profile asks the coordinator to notify for the same
+# measurement; identical requests within this window (s) are sent only once.
+NOTIFY_DEDUP_WINDOW = 10
+
 # Delay (s) between the stabilized sensor turning ON and reading the weight
 # to send the "who is weighing?" notification.
 STABILIZED_NOTIFY_DELAY = 1
@@ -78,13 +82,18 @@ EVENT_MOBILE_APP_NOTIFICATION_ACTION = "mobile_app_notification_action"
 NOTIFICATION_TAG = "bodymiscale_user_selection"
 
 # ---------------------------------------------------------------------------
-# Calculation mode (standard impedance only; dual mode uses fixed formulas)
-# xiaomi  : Zepp Life / Mi Fit proprietary algorithm
-# science : OMS / Schofield / Janmahasatian
+# Calculation mode
+# xiaomi      : Zepp Life / Mi Fit proprietary algorithm (single frequency)
+# science     : OMS / Schofield / Janmahasatian (single frequency)
+# xiaomi_home : Xiaomi Home app, S400 firmware formulas (dual frequency only)
+# Dual frequency (S400) accepts science or xiaomi_home; config entries v5
+# migrate S400 profiles stored as xiaomi to science. A leftover xiaomi value
+# in dual mode is still treated as science.
 CONF_CALCULATION_MODE = "calculation_mode"
 ALGO_XIAOMI = "xiaomi"
 ALGO_SCIENCE = "science"
-CALCULATION_MODE_OPTIONS = [ALGO_XIAOMI, ALGO_SCIENCE]
+ALGO_XIAOMI_HOME = "xiaomi_home"
+CALCULATION_MODE_OPTIONS = [ALGO_XIAOMI, ALGO_SCIENCE, ALGO_XIAOMI_HOME]
 
 # Impedance mode
 # none          : non-impedance scale (Xiaomi Gen1)

@@ -15,6 +15,10 @@ Three distinct modes:
                More accurate than Harris-Benedict for active/overweight subjects
                because it uses actual lean body mass instead of total weight.
     Visceral : Standard Zepp Life formula (no validated WHO alternative without BIA).
+
+  XIAOMI HOME (S400, calculation mode ``xiaomi_home``) :
+    BMR      : S400 firmware formula (int(21.6 × LBM + 370.5), LBM rounded to 0.1).
+    Visceral : S400 firmware regression on height, weight and both impedances.
 """
 
 from collections.abc import Mapping
@@ -34,6 +38,8 @@ from ..const import (
 )
 from ..models import Gender, Metric
 from ..util import check_value_constraints, get_bmr_schofield, to_float
+from . import xiaomi_home
+from .impedance import is_xiaomi_home, xiaomi_home_inputs
 
 
 def _is_dual(config: Mapping[str, Any]) -> bool:
@@ -58,6 +64,10 @@ def get_bmr(
     config: Mapping[str, Any], metrics: Mapping[Metric, StateType | datetime]
 ) -> float:
     """Calculate Basal Metabolic Rate (BMR)."""
+    if is_xiaomi_home(config):
+        xh = xiaomi_home_inputs(config, metrics)
+        return xiaomi_home.basal_metabolism(*xh[:5]) if xh else 0.0
+
     w = to_float(metrics.get(Metric.WEIGHT))
     a = int(to_float(metrics.get(Metric.AGE)))
     h = to_float(config.get(CONF_HEIGHT))
@@ -92,6 +102,10 @@ def get_visceral_fat(
     config: Mapping[str, Any], metrics: Mapping[Metric, StateType | datetime]
 ) -> float:
     """Calculate Visceral Fat Rating."""
+    if is_xiaomi_home(config):
+        xh = xiaomi_home_inputs(config, metrics)
+        return xiaomi_home.visceral_fat(xh[1], xh[2], xh[4], xh[5]) if xh else 1.0
+
     h = to_float(config.get(CONF_HEIGHT))
     w = to_float(metrics.get(Metric.WEIGHT))
     a = to_float(metrics.get(Metric.AGE))

@@ -12,10 +12,13 @@
       "height_low": "身高过低（最小：50 厘米）。",
       "invalid_date": "日期无效。",
       "name_already_used": "此名称已被另一个配置文件使用，请选择其他名称。",
+      "notify_device_required": "请至少选择一台移动设备。",
       "weight_limit": "体重过高（最大：200 千克）。",
       "weight_low": "体重过低（最小：10 千克）。",
       "weight_range_invalid": "最小体重必须严格小于最大体重。",
-      "weight_range_overlap": "此区间与另一用户的区间重叠。各区间不得共享任何值 — 请相应调整边界。"
+      "weight_range_overlap": "此区间与另一用户的区间重叠。各区间不得共享任何值 — 请相应调整边界。",
+      "xiaomi_home_requires_dual": "Xiaomi Home 算法仅在 S400 双频模式下可用。",
+      "zepp_life_not_dual": "Zepp Life 算法仅适用于单频体脂秤。S400 请选择科学或 Xiaomi Home。"
     },
     "step": {
       "modes": {
@@ -26,7 +29,7 @@
           "profile_method": "用户识别方法"
         },
         "data_description": {
-          "calculation_mode": "小米：与 Zepp Life 算法一致。科学：基于 WHO / Schofield 公式。S400 双频模式下不可用。",
+          "calculation_mode": "请根据您的体脂秤选择。Mi Scale（单频）：小米算法 = 与 Zepp Life 应用数值一致，科学 = WHO / Schofield 公式。S400（双频）：科学 = S400 科学公式，Xiaomi Home = 与米家（Xiaomi Home）应用数值一致。",
           "impedance_mode": "无：秤不带阻抗传感器。标准：单频（小米二代秤）。双频 S400：两个传感器，分别为 50 kHz 和 250 kHz。",
           "profile_method": "bodymiscale 如何确定将测量结果分配给哪位用户。若每人使用独立传感器，请选择「无」。"
         },
@@ -46,7 +49,7 @@
         "data_description": {
           "initial_weight": "首次启用最近体重匹配时用于初始化该用户的当前体重。",
           "nearest_tolerance": "传感器值与用户当前体重之间允许的最大差距。默认值：±5 kg。",
-          "notify_device_id": "每次称重后将收到互动通知的手机。点击您的名字以确认测量结果。",
+          "notify_device_id": "每次称重后将收到互动通知的手机。选择多台设备，让家中每个人都能确认。点击您的名字以确认测量结果。",
           "notify_weight_max": "仅当测量体重小于或等于此值时通知该用户。留空则始终通知。",
           "notify_weight_min": "仅当测量体重大于或等于此值时通知该用户。留空则始终通知。",
           "weight_max": "区间上限（不含）。若下一用户从 65 kg 开始，此处最多输入 64.99 kg。",
@@ -215,10 +218,13 @@
     "error": {
       "height_limit": "身高过高（最大：220 厘米）。",
       "height_low": "身高过低（最小：50 厘米）。",
+      "notify_device_required": "请至少选择一台移动设备。",
       "weight_limit": "体重过高（最大：200 千克）。",
       "weight_low": "体重过低（最小：10 千克）。",
       "weight_range_invalid": "最小体重必须严格小于最大体重。",
-      "weight_range_overlap": "此区间与另一用户的区间重叠。各区间不得共享任何值 — 请相应调整边界。"
+      "weight_range_overlap": "此区间与另一用户的区间重叠。各区间不得共享任何值 — 请相应调整边界。",
+      "xiaomi_home_requires_dual": "Xiaomi Home 算法仅在 S400 双频模式下可用。",
+      "zepp_life_not_dual": "Zepp Life 算法仅适用于单频体脂秤。S400 请选择科学或 Xiaomi Home。"
     },
     "step": {
       "init": {
@@ -229,7 +235,7 @@
           "profile_method": "用户识别方法"
         },
         "data_description": {
-          "calculation_mode": "小米：与 Zepp Life 算法一致。科学：基于 WHO / Schofield 公式。S400 双频模式下不可用。",
+          "calculation_mode": "请根据您的体脂秤选择。Mi Scale（单频）：小米算法 = 与 Zepp Life 应用数值一致，科学 = WHO / Schofield 公式。S400（双频）：科学 = S400 科学公式，Xiaomi Home = 与米家（Xiaomi Home）应用数值一致。",
           "impedance_mode": "无：秤不带阻抗传感器。标准：单频（小米二代秤）。双频 S400：两个传感器，分别为 50 kHz 和 250 kHz。",
           "profile_method": "bodymiscale 如何确定将测量结果分配给哪位用户。若每人使用独立传感器，请选择「无」。"
         },
@@ -249,7 +255,7 @@
         "data_description": {
           "initial_weight": "首次启用最近体重匹配时用于初始化该用户的当前体重。",
           "nearest_tolerance": "传感器值与用户当前体重之间允许的最大差距。默认值：±5 kg。",
-          "notify_device_id": "每次称重后将收到互动通知的手机。点击您的名字以确认测量结果。",
+          "notify_device_id": "每次称重后将收到互动通知的手机。选择多台设备，让家中每个人都能确认。点击您的名字以确认测量结果。",
           "notify_weight_max": "仅当测量体重小于或等于此值时通知该用户。留空则始终通知。",
           "notify_weight_min": "仅当测量体重大于或等于此值时通知该用户。留空则始终通知。",
           "weight_max": "区间上限（不含）。若下一用户从 65 kg 开始，此处最多输入 64.99 kg。",
@@ -279,8 +285,9 @@
   "selector": {
     "calculation_mode": {
       "options": {
-        "science": "科学算法（WHO / Schofield）",
-        "xiaomi": "小米算法（Legacy 2017）"
+        "science": "科学算法（单频或双频阻抗）",
+        "xiaomi": "小米算法（Legacy 2017）",
+        "xiaomi_home": "小米算法（Xiaomi Home，仅限 S400）"
       }
     },
     "impedance_mode": {

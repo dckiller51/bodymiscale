@@ -10,9 +10,10 @@ Five strategies:
 
 For NOTIFY: when a weight change occurs the integration's
 NotificationCoordinator sends an interactive push notification to the
-configured mobile device.  The user taps their name; HA fires the standard
+configured mobile device(s).  The user taps their name; HA fires the standard
 ``mobile_app_notification_action`` event.  The coordinator routes the
-confirmation to the matching NotificationFilter.
+confirmation to the matching NotificationFilter, discards the measurement for
+the other profiles and clears the notification on the other phones.
 """
 
 from __future__ import annotations
@@ -20,9 +21,11 @@ from __future__ import annotations
 import json
 import logging
 import os
+import time
 import unicodedata
 from abc import ABC, abstractmethod
 from collections import defaultdict
+from collections.abc import Sequence
 from typing import Any, cast
 
 from homeassistant.const import CONF_NAME
@@ -42,12 +45,14 @@ from .const import (
     DOMAIN,
     HANDLERS,
     NOTIFICATION_TAG,
+    NOTIFY_DEDUP_WINDOW,
     PROFILE_METHOD_ID,
     PROFILE_METHOD_NEAREST,
     PROFILE_METHOD_NONE,
     PROFILE_METHOD_NOTIFY,
     PROFILE_METHOD_WEIGHT,
 )
+from .util import as_device_list
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -274,6 +279,10 @@ class NotificationFilter(ProfileFilter):
         """Return True if confirmation is pending without consuming it."""
         return self._confirmed
 
+    def reset(self) -> None:
+        """Drop a confirmation that will not be used (measurement discarded)."""
+        self._confirmed = False
+
     def accepts(
         self, hass: HomeAssistant, config: dict[str, Any], weight: float
     ) -> bool:
@@ -303,19 +312,25 @@ class NotificationCoordinator:
     ----
     1. BodyScaleMetricsHandler detects a weight change and calls
        coordinator.async_notify(weight).
-    2. The coordinator sends a notification to the configured mobile device(s)
-       with one action button per registered user name.
+    2. The coordinator sends a notification to each configured mobile device
+       with one action button per user registered on that device.  Every
+       notification profile requests it for the same measurement, so
+       identical requests are sent only once (NOTIFY_DEDUP_WINDOW).
     3. The user taps their name → HA fires mobile_app_notification_action.
-    4. _on_notification_action() finds the matching NotificationFilter and
-       calls filter.confirm().
-    5. On the next weight update (same measurement cycle), the metrics handler
-       calls profile_filter.accepts() which returns True once.
+    4. _on_notification_action() confirms the matching profile and replays
+       its pending measurement.  The measurement is discarded for every other
+       profile (one measurement = one user) and the notification is cleared
+       on the other phones.
     """
 
     def __init__(self, hass: HomeAssistant) -> None:
         self._hass = hass
-        # entry_id → (user_name, NotificationFilter, device_id, handler)
-        self._entries: dict[str, tuple[str, NotificationFilter, str, Any]] = {}
+        # entry_id → (user_name, NotificationFilter, device_ids, handler)
+        self._entries: dict[str, tuple[str, NotificationFilter, list[str], Any]] = {}
+        # (weight, monotonic time) of the last notification request.
+        self._last_request: tuple[float, float] | None = None
+        # Notify services that received the current notification.
+        self._notified_services: set[str] = set()
         self._remove_listener = hass.bus.async_listen(
             "mobile_app_notification_action",
             self._on_notification_action,
@@ -326,20 +341,24 @@ class NotificationCoordinator:
         entry_id: str,
         user_name: str,
         notify_filter: NotificationFilter,
-        device_id: str,
+        device_ids: str | Sequence[str],
         handler: Any,
     ) -> None:
         """Register a config entry with its metrics handler.
+
+        ``device_ids`` is the list of mobile devices that receive the
+        notification for this user (a single id is still accepted).
 
         The handler reference is needed so the coordinator can call
         ``handler.accept_pending_measurement()`` after the user confirms
         their identity via the interactive notification.
         """
-        self._entries[entry_id] = (user_name, notify_filter, device_id, handler)
+        devices = as_device_list(device_ids)
+        self._entries[entry_id] = (user_name, notify_filter, devices, handler)
         _LOGGER.debug(
-            "NotificationCoordinator: registered entry '%s' (device=%s)",
+            "NotificationCoordinator: registered entry '%s' (devices=%s)",
             user_name,
-            device_id,
+            devices,
         )
 
     def unregister(self, entry_id: str) -> None:
@@ -381,15 +400,31 @@ class NotificationCoordinator:
     async def async_notify(self, weight: float) -> None:
         """Send an interactive notification to all registered devices.
 
-        Users sharing a device receive a single notification listing all names.
-        Users on separate devices each receive their own notification.
+        Each device receives a single notification listing the names of all
+        users registered on it.  A user registered on several devices
+        appears on each of them.
         """
         if not self._entries:
             return
 
-        # Group by device_id so users on the same phone share one notification.
+        # Each notification profile calls this for the same measurement.
+        # Checked before any await so concurrent calls are deduplicated too.
+        now = time.monotonic()
+        if (
+            self._last_request is not None
+            and self._last_request[0] == weight
+            and now - self._last_request[1] < NOTIFY_DEDUP_WINDOW
+        ):
+            _LOGGER.debug(
+                "NotificationCoordinator: %.2f kg already notified — skipped",
+                weight,
+            )
+            return
+        self._last_request = (weight, now)
+
+        # Group by device so users on the same phone share one notification.
         by_device: dict[str, list[tuple[str, str]]] = defaultdict(list)
-        for entry_id, (name, _, device_id, _handler) in self._entries.items():
+        for entry_id, (name, _, device_ids, _handler) in self._entries.items():
             # Weight pre-filter — if configured, only include if within the range.
             entry_config = _handler.config
             w_min = entry_config.get(CONF_NOTIFY_WEIGHT_MIN)
@@ -408,7 +443,8 @@ class NotificationCoordinator:
                     w_max,
                 )
                 continue
-            by_device[device_id].append((entry_id, name))
+            for device_id in device_ids:
+                by_device[device_id].append((entry_id, name))
 
         if not by_device:
             _LOGGER.debug(
@@ -430,6 +466,7 @@ class NotificationCoordinator:
             _LOGGER.debug("Failed to format notification message: %s", message_tpl)
             message = f"New measurement: {weight:.1f} kg"
 
+        self._notified_services = set()
         for device_id, entry_names in by_device.items():
             service_name = await self._resolve_notify_service(device_id)
             if service_name is None:
@@ -458,6 +495,7 @@ class NotificationCoordinator:
                     },
                 },
             )
+            self._notified_services.add(service_name)
             _LOGGER.debug(
                 "NotificationCoordinator: sent to %s — actions: %s",
                 service_name,
@@ -600,30 +638,57 @@ class NotificationCoordinator:
         1. confirm() arms the NotificationFilter flag.
         2. accept_pending_measurement() replays the stored weight — it is a
            plain method (not a coroutine) so it can be called directly here.
-           Internally it calls _process_weight() which schedules async_notify()
-           via hass.async_create_task() — safe because we are in the event loop.
+        3. The measurement is discarded for the other profiles, so a second
+           tap on another phone cannot assign it to a second user.
+        4. The notification is cleared on the other phones.
         """
         action: str = event.data.get("action", "")
 
-        for _entry_id, (name, notify_filter, _, handler) in self._entries.items():
-            if action.upper() == name.upper():
+        for entry_id, (name, notify_filter, _, handler) in self._entries.items():
+            if action.upper() != name.upper():
+                continue
+            if not handler.has_pending_measurement:
+                # Already claimed by another user (tapped on another phone)
+                # or expired. Do not arm the filter: a leftover confirmation
+                # would accept the next measurement's impedance unprompted.
                 _LOGGER.debug(
-                    "NotificationCoordinator: action '%s' → entry '%s' confirmed",
+                    "NotificationCoordinator: action '%s' ignored — no pending "
+                    "measurement (already confirmed by another user or expired)",
                     action,
-                    name,
                 )
-                # Step 1: arm the filter so the next accepts() returns True.
-                notify_filter.confirm()
-                # Step 2: replay the pending measurement synchronously.
-                # accept_pending_measurement() is a plain method, safe to call
-                # from a @callback because it only calls other @callbacks and
-                # schedules coroutines via async_create_task().
-                handler.accept_pending_measurement()
                 return
+            _LOGGER.debug(
+                "NotificationCoordinator: action '%s' → entry '%s' confirmed",
+                action,
+                name,
+            )
+            notify_filter.confirm()
+            handler.accept_pending_measurement()
+            for other_id, (_, _, _, other_handler) in self._entries.items():
+                if other_id != entry_id:
+                    other_handler.discard_pending_measurement()
+            self._clear_notifications()
+            return
 
         _LOGGER.debug(
             "NotificationCoordinator: action '%s' did not match any user", action
         )
+
+    @callback
+    def _clear_notifications(self) -> None:
+        """Remove the "who is weighing?" notification from every phone."""
+        services, self._notified_services = self._notified_services, set()
+        for service_name in services:
+            self._hass.async_create_task(
+                self._hass.services.async_call(
+                    "notify",
+                    service_name,
+                    {
+                        "message": "clear_notification",
+                        "data": {"tag": NOTIFICATION_TAG},
+                    },
+                )
+            )
 
 
 # ---------------------------------------------------------------------------

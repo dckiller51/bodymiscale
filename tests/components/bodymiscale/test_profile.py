@@ -14,6 +14,7 @@ from custom_components.bodymiscale.const import (
     DOMAIN,
     EVENT_MOBILE_APP_NOTIFICATION_ACTION,
     HANDLERS,
+    NOTIFICATION_TAG,
     PROFILE_METHOD_NEAREST,
 )
 from custom_components.bodymiscale.profile import (
@@ -199,7 +200,7 @@ async def test_coordinator_register_and_has_entries(hass: HomeAssistant) -> None
         entry_id="entry_1",
         user_name="Alice",
         notify_filter=notify_filter,
-        device_id="device_abc",
+        device_ids="device_abc",
         handler=handler,
     )
     assert coord.has_entries() is True
@@ -213,7 +214,7 @@ async def test_coordinator_unregister_removes_entry(hass: HomeAssistant) -> None
         entry_id="entry_1",
         user_name="Alice",
         notify_filter=_make_filter(),
-        device_id="device_abc",
+        device_ids="device_abc",
         handler=_make_handler_mock(),
     )
 
@@ -236,14 +237,14 @@ async def test_coordinator_unload_clears_all_entries(hass: HomeAssistant) -> Non
         entry_id="e1",
         user_name="Alice",
         notify_filter=_make_filter(),
-        device_id="d1",
+        device_ids="d1",
         handler=_make_handler_mock(),
     )
     coord.register(
         entry_id="e2",
         user_name="Bob",
         notify_filter=_make_filter(),
-        device_id="d2",
+        device_ids="d2",
         handler=_make_handler_mock(),
     )
     coord.unload()
@@ -267,7 +268,7 @@ async def test_on_notification_action_confirms_matching_user(
         entry_id="e1",
         user_name="Alice",
         notify_filter=notify_filter,
-        device_id="d1",
+        device_ids="d1",
         handler=handler,
     )
 
@@ -292,7 +293,7 @@ async def test_on_notification_action_case_insensitive(hass: HomeAssistant) -> N
         entry_id="e1",
         user_name="Alice",
         notify_filter=notify_filter,
-        device_id="d1",
+        device_ids="d1",
         handler=handler,
     )
 
@@ -318,7 +319,7 @@ async def test_on_notification_action_ignores_unrelated_action(
         entry_id="e1",
         user_name="Alice",
         notify_filter=notify_filter,
-        device_id="d1",
+        device_ids="d1",
         handler=handler,
     )
 
@@ -829,3 +830,157 @@ async def test_get_notify_translations_falls_back_to_english(
 
     assert isinstance(result, dict)
     coord.unload()
+
+
+# ===========================================================================
+# NotificationCoordinator — several devices per user (#433)
+# ===========================================================================
+
+
+async def _resolve_by_device(device_id: str) -> str:
+    return f"mobile_app_{device_id}"
+
+
+async def test_async_notify_user_on_several_devices_notified_on_each(
+    hass: HomeAssistant,
+) -> None:
+    """A user registered on several devices must appear on each of them."""
+    coord = _make_coordinator(hass)
+    coord.register(
+        "e1", "Alice", _make_filter(), ["d_phone", "d_tablet"], _make_handler_mock()
+    )
+    # Legacy single-device value (str) is still accepted
+    coord.register("e2", "Bob", _make_filter(), "d_phone", _make_handler_mock())
+
+    with (
+        patch.object(coord, "_resolve_notify_service", new=_resolve_by_device),
+        patch(
+            "homeassistant.core.ServiceRegistry.async_call", new_callable=AsyncMock
+        ) as mock_call,
+    ):
+        await coord.async_notify(70.0)
+
+    sent = {
+        c.args[1]: sorted(a["title"] for a in c.args[2]["data"]["actions"])
+        for c in mock_call.call_args_list
+    }
+    assert sent == {
+        "mobile_app_d_phone": ["Alice", "Bob"],
+        "mobile_app_d_tablet": ["Alice"],
+    }
+    coord.unload()
+
+
+async def test_async_notify_deduplicates_same_measurement(hass: HomeAssistant) -> None:
+    """Every notify profile requests the same measurement: send it only once."""
+    coord = _make_coordinator(hass)
+    coord.register("e1", "Alice", _make_filter(), ["d1"], _make_handler_mock())
+    coord.register("e2", "Bob", _make_filter(), ["d1"], _make_handler_mock())
+
+    with (
+        patch.object(coord, "_resolve_notify_service", new=_resolve_by_device),
+        patch(
+            "homeassistant.core.ServiceRegistry.async_call", new_callable=AsyncMock
+        ) as mock_call,
+    ):
+        await coord.async_notify(70.0)
+        await coord.async_notify(70.0)
+        assert mock_call.call_count == 1
+
+        # A different weight is a new measurement
+        await coord.async_notify(71.0)
+        assert mock_call.call_count == 2
+    coord.unload()
+
+
+async def test_async_notify_same_weight_after_window_is_sent_again(
+    hass: HomeAssistant, monkeypatch
+) -> None:
+    """The same weight on another weigh-in later on must be notified again."""
+    from custom_components.bodymiscale import profile as profile_module
+
+    now = [1000.0]
+    monkeypatch.setattr(profile_module.time, "monotonic", lambda: now[0])
+
+    coord = _make_coordinator(hass)
+    coord.register("e1", "Alice", _make_filter(), ["d1"], _make_handler_mock())
+
+    with (
+        patch.object(coord, "_resolve_notify_service", new=_resolve_by_device),
+        patch(
+            "homeassistant.core.ServiceRegistry.async_call", new_callable=AsyncMock
+        ) as mock_call,
+    ):
+        await coord.async_notify(70.0)
+        now[0] += 3600
+        await coord.async_notify(70.0)
+
+    assert mock_call.call_count == 2
+    coord.unload()
+
+
+async def test_action_discards_other_users_and_clears_notifications(
+    hass: HomeAssistant,
+) -> None:
+    """Confirming one user must discard the measurement for the others.
+
+    The notification must also be cleared on every phone that received it.
+    """
+    coord = _make_coordinator(hass)
+    filter_alice, filter_bob = _make_filter(), _make_filter()
+    handler_alice, handler_bob = _make_handler_mock(), _make_handler_mock()
+    coord.register("e_alice", "Alice", filter_alice, ["d_alice"], handler_alice)
+    coord.register("e_bob", "Bob", filter_bob, ["d_bob", "d_alice"], handler_bob)
+
+    with (
+        patch.object(coord, "_resolve_notify_service", new=_resolve_by_device),
+        patch(
+            "homeassistant.core.ServiceRegistry.async_call", new_callable=AsyncMock
+        ) as mock_call,
+    ):
+        await coord.async_notify(70.0)
+        mock_call.reset_mock()
+
+        hass.bus.async_fire(EVENT_MOBILE_APP_NOTIFICATION_ACTION, {"action": "ALICE"})
+        await hass.async_block_till_done()
+
+    handler_alice.accept_pending_measurement.assert_called_once()
+    handler_alice.discard_pending_measurement.assert_not_called()
+    handler_bob.discard_pending_measurement.assert_called_once()
+    handler_bob.accept_pending_measurement.assert_not_called()
+
+    cleared = {
+        c.args[1]
+        for c in mock_call.call_args_list
+        if c.args[2]["message"] == "clear_notification"
+    }
+    assert cleared == {"mobile_app_d_alice", "mobile_app_d_bob"}
+    for c in mock_call.call_args_list:
+        assert c.args[2]["data"]["tag"] == NOTIFICATION_TAG
+    coord.unload()
+
+
+async def test_action_ignored_when_measurement_already_claimed(
+    hass: HomeAssistant,
+) -> None:
+    """A tap with no pending measurement must not arm the filter."""
+    coord = _make_coordinator(hass)
+    notify_filter = _make_filter()
+    handler = _make_handler_mock()
+    handler.has_pending_measurement = False
+    coord.register("e1", "Bob", notify_filter, ["d1"], handler)
+
+    hass.bus.async_fire(EVENT_MOBILE_APP_NOTIFICATION_ACTION, {"action": "BOB"})
+    await hass.async_block_till_done()
+
+    assert notify_filter.is_confirmed() is False
+    handler.accept_pending_measurement.assert_not_called()
+    coord.unload()
+
+
+def test_notification_filter_reset() -> None:
+    """reset() must drop a confirmation that was not consumed."""
+    notify_filter = NotificationFilter()
+    notify_filter.confirm()
+    notify_filter.reset()
+    assert notify_filter.is_confirmed() is False
