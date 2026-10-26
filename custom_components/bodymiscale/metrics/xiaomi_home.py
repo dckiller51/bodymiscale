@@ -5,27 +5,24 @@ Composition Scale S400 Pro firmware (OTA image), contributed under the
 Apache-2.0 license in https://github.com/dckiller51/bodymiscale/issues/474.
 
 They reproduce the values shown in the Xiaomi Home app: on the 10 S400
-weighings reported in #349 and on a matched weigh-in, body fat, lean mass,
-muscle, bone, BMR and metabolic (body) age match to 0.1, with only small gaps
-on water, protein and visceral fat (see
+weighings reported in #349 and on matched weigh-ins, every metric outside the
+reported data problems matches the app exactly (see
 ``tests/components/bodymiscale/test_xiaomi_home.py``).
 
 Inputs: height (cm), weight (kg), age (years), sex, and both impedances.
 ``z50`` is the 50 kHz impedance (always the larger value) and ``z250`` the
 250 kHz one. Body fat, and therefore lean mass and BMR, use ``z50`` only.
 
-Known gaps:
+Known gap:
   - Impedance smoothing: for the values sent to the app, the scale smooths
     the impedances with the profile's previous measurement (depending on the
     body fat change and the time elapsed). Home Assistant receives the raw
     impedances, so values can differ slightly from the app after several
     weigh-ins close together.
-  - Water and protein: the firmware split order is still being confirmed;
-    the order used here matches the app on every clean reference weighing.
 """
 
 from collections.abc import Mapping
-from math import sqrt
+from math import ceil, floor, sqrt
 
 from ..models import Gender
 
@@ -94,9 +91,8 @@ _VISCERAL_FAT = (
 
 
 def _round_01(x: float) -> float:
-    """Round to 0.1 like the firmware: truncate to 0.01, then round half up."""
-    n = int(x * 100.0)
-    return (n // 10 * 10 + (10 if n % 10 >= 5 else 0)) / 100.0
+    """Round to 0.1, half away from zero (the firmware's rounding)."""
+    return (floor(x * 10.0 + 0.5) if x >= 0 else ceil(x * 10.0 - 0.5)) / 10.0
 
 
 def _regression(
@@ -155,11 +151,12 @@ _BMI_MID: Mapping[Gender, tuple[float, ...]] = {
 }
 # Reference body fat (mid value): fixed for men, by age 6..13 then adult for women.
 _BFP_MID_MALE = 15.0
-_BFP_MID_FEMALE = (16.0, 16.0, 17.0, 18.0, 19.0, 25.0, 21.0, 22.0)
+_BFP_MID_FEMALE = (16.0, 16.0, 17.0, 18.0, 19.0, 20.0, 21.0, 22.0)
 _BFP_MID_FEMALE_ADULT = 23.0
 # Body age weights for (weight - standard weight), (BMR - reference BMR),
 # (fat% - reference fat%) and (muscle% - reference muscle%).
 _BODY_AGE_COEFFS = (-1.48615435, 0.129089458, 0.591458258, -0.000405611446)
+_BODY_AGE_COEFFS_YOUTH = (-1.0136192, 0.107155831, 0.277336024, -0.0349702346)
 
 
 def body_fat(gender: Gender, h: float, w: float, age: float, z50: float) -> float:
@@ -170,33 +167,59 @@ def body_fat(gender: Gender, h: float, w: float, age: float, z50: float) -> floa
 
 
 def lean_body_mass(gender: Gender, h: float, w: float, age: float, z50: float) -> float:
-    """Lean body mass (kg) = weight × (1 − body fat)."""
-    return w * (1.0 - body_fat(gender, h, w, age, z50) / 100.0)
+    """Lean body mass (kg): weight minus the rounded fat mass."""
+    fat_mass = _round_01(body_fat(gender, h, w, age, z50) / 100.0 * w)
+    return _round_01(w - fat_mass)
 
 
-def water_mass(h: float, w: float, z50: float, z250: float) -> float:
-    """Total body water (kg)."""
-    return _round_01(_regression(_WATER, h, w, z50, z250) + 0.03 * w)
+def _water_protein(
+    gender: Gender, h: float, w: float, age: float, z50: float, z250: float
+) -> tuple[float, float]:
+    """Split the lean mass into water and protein as the firmware does.
+
+    Water's first-pass percentage is clamped to 20–85 % and re-massed,
+    protein is taken from what is left of the lean mass, and the final
+    water mass is the remainder.  Returns (water kg, protein %).
+    """
+    lbm = lean_body_mass(gender, h, w, age, z50)
+    solids = _round_01(_regression(_SOLIDS, h, w, z50, z250))
+    water = _round_01(
+        _round_01(_regression(_WATER, h, w, z50, z250)) + (3.0 * w) / 100.0
+    )
+    water = _round_01(_clamp(_round_01(water / w * 100.0), 20.0, 85.0) * w / 100.0)
+    protein_pct = _clamp(_round_01((lbm - solids - water) / w * 100.0), 5.0, 32.0)
+    protein = _round_01(protein_pct * w / 100.0)
+    return lbm - solids - protein, protein_pct
 
 
-def water_percentage(h: float, w: float, z50: float, z250: float) -> float:
+def water_mass(
+    gender: Gender, h: float, w: float, age: float, z50: float, z250: float
+) -> float:
+    """Total body water (kg) — the remainder after protein."""
+    water, _ = _water_protein(gender, h, w, age, z50, z250)
+    return water
+
+
+def water_percentage(
+    gender: Gender, h: float, w: float, age: float, z50: float, z250: float
+) -> float:
     """Total body water (% of weight)."""
-    return _clamp(_round_01(water_mass(h, w, z50, z250) / w * 100.0), 20.0, 85.0)
+    water, _ = _water_protein(gender, h, w, age, z50, z250)
+    return _round_01(_round_01(water) / w * 100.0)
 
 
 def bone_mass(h: float, w: float, z50: float, z250: float) -> float:
-    """Bone mass (kg)."""
-    return _clamp(_round_01(_regression(_BONE, h, w, z50, z250)), 0.3, 5.0)
+    """Bone mass (kg).  The firmware shows 0 below 0.3 kg."""
+    r = _round_01(_regression(_BONE, h, w, z50, z250))
+    return 0.0 if r < 0.3 else min(r, 5.0)
 
 
 def protein_percentage(
     gender: Gender, h: float, w: float, age: float, z50: float, z250: float
 ) -> float:
-    """Protein (% of weight) = lean mass − solids − water."""
-    solids = _round_01(_regression(_SOLIDS, h, w, z50, z250))
-    lbm = lean_body_mass(gender, h, w, age, z50)
-    protein = _round_01(_round_01(lbm - solids) - water_mass(h, w, z50, z250))
-    return _clamp(_round_01(protein / w * 100.0), 5.0, 32.0)
+    """Protein (% of weight), from the lean mass left after water and solids."""
+    _, protein_pct = _water_protein(gender, h, w, age, z50, z250)
+    return protein_pct
 
 
 def muscle_mass(
@@ -225,17 +248,19 @@ def basal_metabolism(
     gender: Gender, h: float, w: float, age: float, z50: float
 ) -> float:
     """Basal metabolic rate (kcal/day) from lean body mass rounded to 0.1 kg."""
-    lbm = _round_01(lean_body_mass(gender, h, w, age, z50))
+    lbm = lean_body_mass(gender, h, w, age, z50)
     return float(_clamp(int(21.6 * lbm + 370.5), 400, 3500))
 
 
 def metabolic_age(
     gender: Gender, h: float, w: float, age: float, z50: float, z250: float
 ) -> float:
-    """Metabolic age, shown as "body age" in Xiaomi Home (18–100 years).
+    """Metabolic age, shown as "body age" in Xiaomi Home.
 
     Compares weight, BMR, body fat and muscle with the reference values of a
-    person of the same sex, age and height.
+    person of the same sex, age and height.  Adults get the age shifted by the
+    comparison score (18–100 years), children move by at most one year
+    (6–17 years).
     """
     age_int = int(age)
     band = min(max(age_int, 6), 18) - 6
@@ -252,8 +277,11 @@ def metabolic_age(
     reference_bmr = int(21.6 * reference_lbm + 370.5)
     reference_muscle_pct = _round_01((100 - bfp_mid) * 0.944)
 
-    c_w, c_bmr, c_fat, c_muscle = _BODY_AGE_COEFFS
-    muscle_pct = muscle_mass(gender, h, w, age, z50, z250) / w * 100.0
+    if age_int < 18:
+        c_w, c_bmr, c_fat, c_muscle = _BODY_AGE_COEFFS_YOUTH
+    else:
+        c_w, c_bmr, c_fat, c_muscle = _BODY_AGE_COEFFS
+    muscle_pct = _round_01(muscle_mass(gender, h, w, age, z50, z250) / w * 100.0)
     score = (
         (w - standard_weight) * c_w
         + (basal_metabolism(gender, h, w, age, z50) - reference_bmr) * c_bmr
@@ -261,6 +289,9 @@ def metabolic_age(
         + (muscle_pct - reference_muscle_pct) * c_muscle
     ) / 2.5
 
+    if age_int < 18:
+        shift = -1 if score < -2 else (1 if score >= 2 else 0)
+        return float(_clamp(age_int + shift, 6, 17))
     if score < -10:
         shift = -10
     elif score >= 2:
