@@ -13,6 +13,11 @@ Inputs: height (cm), weight (kg), age (years), sex, and both impedances.
 ``z50`` is the 50 kHz impedance (always the larger value) and ``z250`` the
 250 kHz one. Body fat, and therefore lean mass and BMR, use ``z50`` only.
 
+Values are returned at full precision and range-clamped; the app's display
+rounding belongs to the caller (round to 0.1 for the masses and percentages).
+Visceral fat is a 1–59 level and metabolic age is whole years, so both stay
+whole numbers.
+
 Known gap:
   - Impedance smoothing: for the values sent to the app, the scale smooths
     the impedances with the profile's previous measurement (depending on the
@@ -162,14 +167,15 @@ _BODY_AGE_COEFFS_YOUTH = (-1.0136192, 0.107155831, 0.277336024, -0.0349702346)
 def body_fat(gender: Gender, h: float, w: float, age: float, z50: float) -> float:
     """Body fat (%), from the 50 kHz impedance only."""
     c = _BODY_FAT_COEFFS[gender]
-    fat = _round_01(100.0 * (c[0] * h + c[1] * w + c[2] * age + c[3] * z50 + c[4]) / w)
-    return _clamp(fat, 3.0, 55.0)
+    return _clamp(
+        100.0 * (c[0] * h + c[1] * w + c[2] * age + c[3] * z50 + c[4]) / w, 3.0, 55.0
+    )
 
 
 def lean_body_mass(gender: Gender, h: float, w: float, age: float, z50: float) -> float:
     """Lean body mass (kg): weight minus the rounded fat mass."""
-    fat_mass = _round_01(body_fat(gender, h, w, age, z50) / 100.0 * w)
-    return _round_01(w - fat_mass)
+    fat = _round_01(body_fat(gender, h, w, age, z50))
+    return w - _round_01(fat / 100.0 * w)
 
 
 def _water_protein(
@@ -181,15 +187,15 @@ def _water_protein(
     protein is taken from what is left of the lean mass, and the final
     water mass is the remainder.  Returns (water kg, protein %).
     """
-    lbm = lean_body_mass(gender, h, w, age, z50)
+    lbm = _round_01(lean_body_mass(gender, h, w, age, z50))
     solids = _round_01(_regression(_SOLIDS, h, w, z50, z250))
     water = _round_01(
         _round_01(_regression(_WATER, h, w, z50, z250)) + (3.0 * w) / 100.0
     )
     water = _round_01(_clamp(_round_01(water / w * 100.0), 20.0, 85.0) * w / 100.0)
-    protein_pct = _clamp(_round_01((lbm - solids - water) / w * 100.0), 5.0, 32.0)
-    protein = _round_01(protein_pct * w / 100.0)
-    return lbm - solids - protein, protein_pct
+    protein_pct = (lbm - solids - water) / w * 100.0
+    protein = _round_01(_clamp(_round_01(protein_pct), 5.0, 32.0) * w / 100.0)
+    return lbm - solids - protein, _clamp(protein_pct, 5.0, 32.0)
 
 
 def water_mass(
@@ -205,13 +211,25 @@ def water_percentage(
 ) -> float:
     """Total body water (% of weight)."""
     water, _ = _water_protein(gender, h, w, age, z50, z250)
-    return _round_01(_round_01(water) / w * 100.0)
+    return _round_01(water) / w * 100.0
 
 
 def bone_mass(h: float, w: float, z50: float, z250: float) -> float:
-    """Bone mass (kg).  The firmware shows 0 below 0.3 kg."""
-    r = _round_01(_regression(_BONE, h, w, z50, z250))
-    return 0.0 if r < 0.3 else min(r, 5.0)
+    """Return the bone mass (kg).
+
+    Below 0.3 kg the firmware reports 0 — too small to measure — and so
+    does this.
+    """
+    value = _regression(_BONE, h, w, z50, z250)
+    return 0.0 if _round_01(value) < 0.3 else _clamp(value, 0.0, 5.0)
+
+
+def _bone_stored(h: float, w: float, z50: float, z250: float) -> float:
+    """Return the firmware's stored bone value for the chains to subtract.
+
+    Rounded, and 0 below 0.3 kg.
+    """
+    return _round_01(bone_mass(h, w, z50, z250))
 
 
 def protein_percentage(
@@ -226,16 +244,16 @@ def muscle_mass(
     gender: Gender, h: float, w: float, age: float, z50: float, z250: float
 ) -> float:
     """Muscle mass (kg) = lean mass − bone mass."""
-    muscle = lean_body_mass(gender, h, w, age, z50) - bone_mass(h, w, z50, z250)
-    return _clamp(_round_01(muscle), 7.0, 141.5)
+    muscle = lean_body_mass(gender, h, w, age, z50) - _bone_stored(h, w, z50, z250)
+    return _clamp(muscle, 7.0, 141.5)
 
 
 def skeletal_muscle_mass(
     gender: Gender, h: float, w: float, age: float, z50: float, z250: float
 ) -> float:
     """Skeletal muscle mass (kg), kept within 45–70 % of the muscle mass."""
-    smm = _round_01(_regression(_SKELETAL_MUSCLE, h, w, z50, z250))
-    muscle = muscle_mass(gender, h, w, age, z50, z250)
+    smm = _regression(_SKELETAL_MUSCLE, h, w, z50, z250)
+    muscle = _round_01(muscle_mass(gender, h, w, age, z50, z250))
     return _clamp(smm, 0.45 * muscle, 0.70 * muscle)
 
 
@@ -247,9 +265,12 @@ def visceral_fat(h: float, w: float, z50: float, z250: float) -> float:
 def basal_metabolism(
     gender: Gender, h: float, w: float, age: float, z50: float
 ) -> float:
-    """Basal metabolic rate (kcal/day) from lean body mass rounded to 0.1 kg."""
-    lbm = lean_body_mass(gender, h, w, age, z50)
-    return float(_clamp(int(21.6 * lbm + 370.5), 400, 3500))
+    """Basal metabolic rate (kcal/day) from lean body mass rounded to 0.1 kg.
+
+    The firmware shows int(value + 0.5).
+    """
+    lbm = _round_01(lean_body_mass(gender, h, w, age, z50))
+    return float(_clamp(21.6 * lbm + 370.0, 400.0, 3500.0))
 
 
 def metabolic_age(
@@ -281,11 +302,13 @@ def metabolic_age(
         c_w, c_bmr, c_fat, c_muscle = _BODY_AGE_COEFFS_YOUTH
     else:
         c_w, c_bmr, c_fat, c_muscle = _BODY_AGE_COEFFS
+    fat = _round_01(body_fat(gender, h, w, age, z50))
+    bmr = int(basal_metabolism(gender, h, w, age, z50) + 0.5)
     muscle_pct = _round_01(muscle_mass(gender, h, w, age, z50, z250) / w * 100.0)
     score = (
         (w - standard_weight) * c_w
-        + (basal_metabolism(gender, h, w, age, z50) - reference_bmr) * c_bmr
-        + (body_fat(gender, h, w, age, z50) - bfp_mid) * c_fat
+        + (bmr - reference_bmr) * c_bmr
+        + (fat - bfp_mid) * c_fat
         + (muscle_pct - reference_muscle_pct) * c_muscle
     ) / 2.5
 

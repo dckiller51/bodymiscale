@@ -171,13 +171,17 @@ KNOWN_GAPS: dict[str, set[str]] = {
 def _compute(
     gender: Gender, age: int, h: float, w: float, z50: float, z250: float
 ) -> dict[str, float]:
+    """Compute the metrics as the Xiaomi Home app displays them (0.1 / integer)."""
+    round01 = xiaomi_home._round_01
     return {
-        "body_fat": xiaomi_home.body_fat(gender, h, w, age, z50),
-        "muscle": xiaomi_home.muscle_mass(gender, h, w, age, z50, z250),
-        "water": xiaomi_home.water_percentage(gender, h, w, age, z50, z250),
-        "bone": xiaomi_home.bone_mass(h, w, z50, z250),
-        "protein": xiaomi_home.protein_percentage(gender, h, w, age, z50, z250),
-        "bmr": xiaomi_home.basal_metabolism(gender, h, w, age, z50),
+        "body_fat": round01(xiaomi_home.body_fat(gender, h, w, age, z50)),
+        "muscle": round01(xiaomi_home.muscle_mass(gender, h, w, age, z50, z250)),
+        "water": round01(xiaomi_home.water_percentage(gender, h, w, age, z50, z250)),
+        "bone": round01(xiaomi_home.bone_mass(h, w, z50, z250)),
+        "protein": round01(
+            xiaomi_home.protein_percentage(gender, h, w, age, z50, z250)
+        ),
+        "bmr": float(int(xiaomi_home.basal_metabolism(gender, h, w, age, z50) + 0.5)),
         "visceral": xiaomi_home.visceral_fat(h, w, z50, z250),
         "metabolic_age": xiaomi_home.metabolic_age(gender, h, w, age, z50, z250),
     }
@@ -221,11 +225,13 @@ def test_matched_weigh_in() -> None:
     skeletal muscle 30.1 kg, body age 43.
     """
     g, a, h, w, z50, z250 = Gender.MALE, 46, 176.0, 79.4, 559.0, 501.0
-    assert xiaomi_home.muscle_mass(g, h, w, a, z50, z250) == pytest.approx(57.1)
+    assert xiaomi_home._round_01(
+        xiaomi_home.muscle_mass(g, h, w, a, z50, z250)
+    ) == pytest.approx(57.1)
     assert xiaomi_home.bone_mass(h, w, z50, z250) / w * 100 == pytest.approx(
         4.0, abs=0.05
     )
-    assert xiaomi_home.basal_metabolism(g, h, w, a, z50) == 1672
+    assert int(xiaomi_home.basal_metabolism(g, h, w, a, z50) + 0.5) == 1672
     assert xiaomi_home.lean_body_mass(g, h, w, a, z50) == pytest.approx(60.3, abs=0.05)
     # The small gaps are the scale's impedance smoothing: the app computed
     # this weigh-in from the smoothed pair 557.9 / 497.6 Ω.
@@ -251,17 +257,25 @@ def test_matched_weigh_in_with_fresh_250khz_impedance() -> None:
     Xiaomi Home report of the same weigh-in.
     """
     g, a, h, w, z50, z250 = Gender.MALE, 46, 176.0, 79.9, 576.7, 514.6
-    assert xiaomi_home.body_fat(g, h, w, a, z50) == 24.6
+    assert xiaomi_home._round_01(xiaomi_home.body_fat(g, h, w, a, z50)) == 24.6
     assert xiaomi_home.lean_body_mass(g, h, w, a, z50) == pytest.approx(60.2, abs=0.05)
-    assert xiaomi_home.muscle_mass(g, h, w, a, z50, z250) == pytest.approx(57.0)
-    assert xiaomi_home.water_percentage(g, h, w, a, z50, z250) == pytest.approx(51.3)
-    assert xiaomi_home.protein_percentage(g, h, w, a, z50, z250) == pytest.approx(19.3)
-    assert xiaomi_home.bone_mass(h, w, z50, z250) == pytest.approx(3.2)
-    assert xiaomi_home.basal_metabolism(g, h, w, a, z50) == 1670
+    assert xiaomi_home._round_01(
+        xiaomi_home.muscle_mass(g, h, w, a, z50, z250)
+    ) == pytest.approx(57.0)
+    assert xiaomi_home._round_01(
+        xiaomi_home.water_percentage(g, h, w, a, z50, z250)
+    ) == pytest.approx(51.3)
+    assert xiaomi_home._round_01(
+        xiaomi_home.protein_percentage(g, h, w, a, z50, z250)
+    ) == pytest.approx(19.3)
+    assert xiaomi_home._round_01(
+        xiaomi_home.bone_mass(h, w, z50, z250)
+    ) == pytest.approx(3.2)
+    assert int(xiaomi_home.basal_metabolism(g, h, w, a, z50) + 0.5) == 1670
     assert xiaomi_home.visceral_fat(h, w, z50, z250) == 11
-    assert xiaomi_home.skeletal_muscle_mass(g, h, w, a, z50, z250) == pytest.approx(
-        29.6
-    )
+    assert xiaomi_home._round_01(
+        xiaomi_home.skeletal_muscle_mass(g, h, w, a, z50, z250)
+    ) == pytest.approx(29.6)
     assert xiaomi_home.metabolic_age(g, h, w, a, z50, z250) == 44
 
 
@@ -280,7 +294,10 @@ def test_body_fat_floor_from_s400_pro_logs() -> None:
 
 def test_body_fat_matches_s400_pro_logs() -> None:
     """S400 Pro log: 178 cm, 79.0 kg, male, 41 y, smoothed 606.3 ohm -> 23.5 %."""
-    assert xiaomi_home.body_fat(Gender.MALE, 178, 79.0, 41, 606.3) == 23.5
+    assert (
+        xiaomi_home._round_01(xiaomi_home.body_fat(Gender.MALE, 178, 79.0, 41, 606.3))
+        == 23.5
+    )
 
 
 def test_skeletal_muscle_kept_within_muscle_range() -> None:
@@ -515,11 +532,13 @@ async def test_handler_xiaomi_home_mode_uses_firmware_formulas(
     assert last[Metric.LBM] == pytest.approx(60.3)
     assert last[Metric.MUSCLE_MASS] == pytest.approx(57.1)
     assert last[Metric.WATER_PERCENTAGE] == pytest.approx(52.0)
-    assert last[Metric.BONE_MASS] == pytest.approx(3.2)
-    assert last[Metric.PROTEIN_PERCENTAGE] == pytest.approx(19.1)
+    assert xiaomi_home._round_01(last[Metric.BONE_MASS]) == pytest.approx(3.2)
+    assert xiaomi_home._round_01(last[Metric.PROTEIN_PERCENTAGE]) == pytest.approx(19.1)
     assert last[Metric.BMR] == 1672
     assert last[Metric.VISCERAL_FAT] == 11
-    assert last[Metric.SKELETAL_MUSCLE_MASS] == pytest.approx(29.9)
+    assert xiaomi_home._round_01(last[Metric.SKELETAL_MUSCLE_MASS]) == pytest.approx(
+        29.9
+    )
     handler.unload()
 
 
