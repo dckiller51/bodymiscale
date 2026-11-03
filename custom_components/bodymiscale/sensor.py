@@ -475,13 +475,9 @@ class BodyScaleSensor(BodyScaleBaseEntity, RestoreSensor):
                 else:
                     self._attr_native_value = value
             else:
-                if isinstance(value, (int, float)):
-                    precision = self.entity_description.suggested_display_precision
-                    self._attr_native_value = round(
-                        float(value), precision if precision is not None else 2
-                    )
-                else:
-                    self._attr_native_value = value
+                self._attr_native_value = (
+                    float(value) if isinstance(value, (int, float)) else value
+                )
 
             if self._get_attributes:
                 self._attr_extra_state_attributes = dict(

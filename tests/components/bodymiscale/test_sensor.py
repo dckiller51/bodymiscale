@@ -566,8 +566,8 @@ async def test_on_value_timestamp_non_string_non_datetime(hass: HomeAssistant) -
 # ===========================================================================
 
 
-async def test_on_value_numeric_rounded(hass: HomeAssistant) -> None:
-    """on_value for numeric metric must round to suggested_display_precision."""
+async def test_on_value_keeps_full_precision(hass: HomeAssistant) -> None:
+    """on_value must not round: the state carries the full-precision value."""
     sensor = _make_sensor(precision=1)
     sensor.hass = hass
 
@@ -585,7 +585,8 @@ async def test_on_value_numeric_rounded(hass: HomeAssistant) -> None:
     with patch.object(sensor, "async_write_ha_state"):
         on_value(22.6789)
 
-    assert sensor._attr_native_value == pytest.approx(22.7)
+    assert sensor._attr_native_value == 22.6789
+    assert sensor.entity_description.suggested_display_precision == 1
 
 
 async def test_on_value_non_numeric_stored_as_is(hass: HomeAssistant) -> None:

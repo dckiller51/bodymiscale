@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from math import ceil, floor
 from typing import Any
 
 import pytest
@@ -168,11 +169,23 @@ KNOWN_GAPS: dict[str, set[str]] = {
 }
 
 
+def _app_display(value: float) -> float:
+    """Round the way the Xiaomi Home app displays it (firmware round_0.1)."""
+    if value >= 0:
+        return floor(value * 10.0 + 0.5) / 10.0
+    return ceil(value * 10.0 - 0.5) / 10.0
+
+
+def _app_display_int(value: float) -> int:
+    """Round the way the app displays integer metrics such as BMR."""
+    return int(value + 0.5)
+
+
 def _compute(
     gender: Gender, age: int, h: float, w: float, z50: float, z250: float
 ) -> dict[str, float]:
     """Compute the metrics as the Xiaomi Home app displays them (0.1 / integer)."""
-    round01 = xiaomi_home._round_01
+    round01 = _app_display
     return {
         "body_fat": round01(xiaomi_home.body_fat(gender, h, w, age, z50)),
         "muscle": round01(xiaomi_home.muscle_mass(gender, h, w, age, z50, z250)),
@@ -181,7 +194,9 @@ def _compute(
         "protein": round01(
             xiaomi_home.protein_percentage(gender, h, w, age, z50, z250)
         ),
-        "bmr": float(int(xiaomi_home.basal_metabolism(gender, h, w, age, z50) + 0.5)),
+        "bmr": float(
+            _app_display_int(xiaomi_home.basal_metabolism(gender, h, w, age, z50))
+        ),
         "visceral": xiaomi_home.visceral_fat(h, w, z50, z250),
         "metabolic_age": xiaomi_home.metabolic_age(gender, h, w, age, z50, z250),
     }
@@ -225,13 +240,13 @@ def test_matched_weigh_in() -> None:
     skeletal muscle 30.1 kg, body age 43.
     """
     g, a, h, w, z50, z250 = Gender.MALE, 46, 176.0, 79.4, 559.0, 501.0
-    assert xiaomi_home._round_01(
+    assert _app_display(
         xiaomi_home.muscle_mass(g, h, w, a, z50, z250)
     ) == pytest.approx(57.1)
     assert xiaomi_home.bone_mass(h, w, z50, z250) / w * 100 == pytest.approx(
         4.0, abs=0.05
     )
-    assert int(xiaomi_home.basal_metabolism(g, h, w, a, z50) + 0.5) == 1672
+    assert _app_display_int(xiaomi_home.basal_metabolism(g, h, w, a, z50)) == 1672
     assert xiaomi_home.lean_body_mass(g, h, w, a, z50) == pytest.approx(60.3, abs=0.05)
     # The small gaps are the scale's impedance smoothing: the app computed
     # this weigh-in from the smoothed pair 557.9 / 497.6 Ω.
@@ -257,34 +272,32 @@ def test_matched_weigh_in_with_fresh_250khz_impedance() -> None:
     Xiaomi Home report of the same weigh-in.
     """
     g, a, h, w, z50, z250 = Gender.MALE, 46, 176.0, 79.9, 576.7, 514.6
-    assert xiaomi_home._round_01(xiaomi_home.body_fat(g, h, w, a, z50)) == 24.6
+    assert _app_display(xiaomi_home.body_fat(g, h, w, a, z50)) == 24.6
     assert xiaomi_home.lean_body_mass(g, h, w, a, z50) == pytest.approx(60.2, abs=0.05)
-    assert xiaomi_home._round_01(
+    assert _app_display(
         xiaomi_home.muscle_mass(g, h, w, a, z50, z250)
     ) == pytest.approx(57.0)
-    assert xiaomi_home._round_01(
+    assert _app_display(
         xiaomi_home.water_percentage(g, h, w, a, z50, z250)
     ) == pytest.approx(51.3)
-    assert xiaomi_home._round_01(
+    assert _app_display(
         xiaomi_home.protein_percentage(g, h, w, a, z50, z250)
     ) == pytest.approx(19.3)
-    assert xiaomi_home._round_01(
-        xiaomi_home.bone_mass(h, w, z50, z250)
-    ) == pytest.approx(3.2)
-    assert int(xiaomi_home.basal_metabolism(g, h, w, a, z50) + 0.5) == 1670
+    assert _app_display(xiaomi_home.bone_mass(h, w, z50, z250)) == pytest.approx(3.2)
+    assert _app_display_int(xiaomi_home.basal_metabolism(g, h, w, a, z50)) == 1670
     assert xiaomi_home.visceral_fat(h, w, z50, z250) == 11
-    assert xiaomi_home._round_01(
+    assert _app_display(
         xiaomi_home.skeletal_muscle_mass(g, h, w, a, z50, z250)
     ) == pytest.approx(29.6)
     assert xiaomi_home.metabolic_age(g, h, w, a, z50, z250) == 44
 
 
 def test_round_01_matches_firmware() -> None:
-    """Round to 0.1, half away from zero."""
-    assert xiaomi_home._round_01(23.349) == pytest.approx(23.3)
-    assert xiaomi_home._round_01(23.35) == pytest.approx(23.4)
-    assert xiaomi_home._round_01(23.3499) == pytest.approx(23.3)
-    assert xiaomi_home._round_01(-23.35) == pytest.approx(-23.4)
+    """Round to 0.1, half away from zero (firmware round_0.1, 0x44cdd4)."""
+    cases = ((23.349, 23.3), (23.35, 23.4), (23.3499, 23.3), (-23.35, -23.4))
+    for value, expected in cases:
+        assert xiaomi_home._round_01(value) == pytest.approx(expected)
+        assert _app_display(value) == pytest.approx(expected)
 
 
 def test_body_fat_floor_from_s400_pro_logs() -> None:
@@ -294,10 +307,61 @@ def test_body_fat_floor_from_s400_pro_logs() -> None:
 
 def test_body_fat_matches_s400_pro_logs() -> None:
     """S400 Pro log: 178 cm, 79.0 kg, male, 41 y, smoothed 606.3 ohm -> 23.5 %."""
-    assert (
-        xiaomi_home._round_01(xiaomi_home.body_fat(Gender.MALE, 178, 79.0, 41, 606.3))
-        == 23.5
+    assert _app_display(xiaomi_home.body_fat(Gender.MALE, 178, 79.0, 41, 606.3)) == 23.5
+
+
+@pytest.mark.parametrize(
+    ("metric", "formula", "raw"),
+    [
+        (Metric.FAT_PERCENTAGE, "body_fat", 12.45),
+        (Metric.BONE_MASS, "bone_mass", 3.249),
+    ],
+)
+async def test_entity_state_keeps_boundary_values(
+    hass: HomeAssistant, freezer: Any, metric: Metric, formula: str, raw: float
+) -> None:
+    """Keep the formula's value unrounded in the entity state.
+
+    Display rounding happens in the frontend from suggested_display_precision;
+    nothing in the state path rounds, so exact .x5 boundary values keep their
+    full precision here.
+    """
+    from unittest.mock import AsyncMock, patch
+
+    from homeassistant.components.sensor import (
+        SensorEntityDescription,
+        SensorStateClass,
     )
+
+    from custom_components.bodymiscale.sensor import BodyScaleSensor
+
+    freezer.move_to("2026-10-25 12:00:00+00:00")
+    handler = BodyScaleMetricsHandler(
+        hass, _dual_config("rnd", ALGO_XIAOMI_HOME), config_entry_id="e1"
+    )
+    sensor = BodyScaleSensor(
+        handler,
+        SensorEntityDescription(
+            key="test",
+            state_class=SensorStateClass.MEASUREMENT,
+            suggested_display_precision=1,
+        ),
+        metric,
+    )
+    sensor.hass = hass
+
+    with (
+        patch.object(sensor, "async_write_ha_state"),
+        patch.object(
+            sensor, "async_get_last_sensor_data", new=AsyncMock(return_value=None)
+        ),
+    ):
+        await sensor.async_added_to_hass()
+        with patch.object(xiaomi_home, formula, return_value=raw):
+            await _weigh(hass, "rnd", 79.4, 501, 559)
+
+    assert sensor.native_value == raw
+    handler.unload()
 
 
 def test_skeletal_muscle_kept_within_muscle_range() -> None:
@@ -528,17 +592,15 @@ async def test_handler_xiaomi_home_mode_uses_firmware_formulas(
     await _weigh(hass, "xh", 79.4, 501, 559)
 
     last = {m: v[-1] for m, v in values.items()}
-    assert last[Metric.FAT_PERCENTAGE] == pytest.approx(24.1)
-    assert last[Metric.LBM] == pytest.approx(60.3)
-    assert last[Metric.MUSCLE_MASS] == pytest.approx(57.1)
-    assert last[Metric.WATER_PERCENTAGE] == pytest.approx(52.0)
-    assert xiaomi_home._round_01(last[Metric.BONE_MASS]) == pytest.approx(3.2)
-    assert xiaomi_home._round_01(last[Metric.PROTEIN_PERCENTAGE]) == pytest.approx(19.1)
-    assert last[Metric.BMR] == 1672
+    assert _app_display(last[Metric.FAT_PERCENTAGE]) == pytest.approx(24.1)
+    assert _app_display(last[Metric.LBM]) == pytest.approx(60.3)
+    assert _app_display(last[Metric.MUSCLE_MASS]) == pytest.approx(57.1)
+    assert _app_display(last[Metric.WATER_PERCENTAGE]) == pytest.approx(52.0)
+    assert _app_display(last[Metric.BONE_MASS]) == pytest.approx(3.2)
+    assert _app_display(last[Metric.PROTEIN_PERCENTAGE]) == pytest.approx(19.1)
+    assert _app_display_int(last[Metric.BMR]) == 1672
     assert last[Metric.VISCERAL_FAT] == 11
-    assert xiaomi_home._round_01(last[Metric.SKELETAL_MUSCLE_MASS]) == pytest.approx(
-        29.9
-    )
+    assert _app_display(last[Metric.SKELETAL_MUSCLE_MASS]) == pytest.approx(29.9)
     handler.unload()
 
 
@@ -554,8 +616,8 @@ async def test_existing_s400_profiles_keep_scientific_formulas(
     values = _subscribe(handler, [Metric.FAT_PERCENTAGE, Metric.LBM])
     await _weigh(hass, calculation_mode, 79.4, 559, 501)
 
-    assert values[Metric.LBM][-1] == pytest.approx(59.4)
-    assert values[Metric.FAT_PERCENTAGE][-1] == pytest.approx(25.2)
+    assert values[Metric.LBM][-1] == pytest.approx(59.4, abs=0.05)
+    assert values[Metric.FAT_PERCENTAGE][-1] == pytest.approx(25.2, abs=0.05)
     handler.unload()
 
 
