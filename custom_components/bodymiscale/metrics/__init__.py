@@ -1358,9 +1358,8 @@ class BodyScaleMetricsHandler:
         if info:
             subscribers = self._subscribers.get(metric, [])
             if subscribers:
-                sub_state = state
                 for sub in subscribers:
-                    sub(sub_state)
+                    sub(state)
 
             # Cascade recalculation is handled by _trigger_dependent_recalculation
             # in topological order — no per-update cascades needed.

@@ -4,8 +4,10 @@ from __future__ import annotations
 
 from math import ceil, floor
 from typing import Any
+from unittest.mock import AsyncMock, patch
 
 import pytest
+from homeassistant.components.sensor import SensorEntityDescription, SensorStateClass
 from homeassistant.core import HomeAssistant
 
 from custom_components.bodymiscale.const import (
@@ -32,6 +34,7 @@ from custom_components.bodymiscale.metrics.impedance import (
     is_xiaomi_home,
 )
 from custom_components.bodymiscale.models import Gender, Metric
+from custom_components.bodymiscale.sensor import BodyScaleSensor
 
 # ---------------------------------------------------------------------------
 # Reference weighings: S400 weighings with the values shown in the Xiaomi Home
@@ -326,14 +329,6 @@ async def test_entity_state_keeps_boundary_values(
     nothing in the state path rounds, so exact .x5 boundary values keep their
     full precision here.
     """
-    from unittest.mock import AsyncMock, patch
-
-    from homeassistant.components.sensor import (
-        SensorEntityDescription,
-        SensorStateClass,
-    )
-
-    from custom_components.bodymiscale.sensor import BodyScaleSensor
 
     freezer.move_to("2026-10-25 12:00:00+00:00")
     handler = BodyScaleMetricsHandler(
