@@ -4,6 +4,28 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## 2026.11.0
+
+> 🙏 Thank you to [@RX14](https://github.com/RX14)
+
+### ⚠️ Breaking changes
+
+- **Sensor states now carry the full-precision value**: Bodymiscale used to round every metric twice before it reached Home Assistant (once in the calculation engine, once in the sensor), with Python's rounding, which does not round like the Xiaomi Home app on boundary values (e.g. 12.45 % was shown as 12.4 % instead of 12.5 %). Sensor states are now the unrounded calculated value, and rounding is left to the Home Assistant frontend through each sensor's display precision, as Home Assistant intends. Via [#486](https://github.com/dckiller51/bodymiscale/pull/486).
+  - **This applies to every calculation mode** (Xiaomi — Zepp Life, Scientific, S400 and Xiaomi Home).
+  - **Dashboards, entity pages and history graphs look the same**: they still show the default number of decimals.
+  - **Templates, automations, notifications and exports** (InfluxDB, CSV…) that read the raw state will now get the unrounded value, e.g. `24.137462` instead of `24.1`. If you display a state in a message, round it in the template: `{{ states('sensor.john_fat') | float | round(1) }}`.
+
+### ✨ Improvements
+
+- **Display precision you can change**: Since the state is no longer pre-rounded, the **Display precision** option in each entity's settings now really works: you can show 2 or 3 decimals instead of the default, which previously only added trailing zeros.
+- **Xiaomi Home mode (S400) closer to the app on rounding boundaries**: The firmware formulas now return full-precision values and keep only the firmware's own internal roundings (rounded fat mass for lean mass, stored bone value, water/protein chain). The final rounding is no longer done twice with Python's half-to-even rule. Via [#486](https://github.com/dckiller51/bodymiscale/pull/486).
+- **Default display precision aligned with the Xiaomi Home app**: Bone mass, muscle mass, skeletal muscle mass, body cell mass (BCM), extracellular water (ECW) and intracellular water (ICW) now show 1 decimal by default instead of 2, in every calculation mode. Weight keeps 2 decimals. You can change it back in the entity settings.
+
+### 🧰 Maintenance
+
+- Declared the `health_wellbeing` integration category in the manifest.
+- Bumped `actions/checkout` from 4 to 7 ([#481](https://github.com/dckiller51/bodymiscale/pull/481)).
+
 ## 2026.10.5
 
 ### 🔧 Bug fixes

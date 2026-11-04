@@ -1,6 +1,7 @@
 {
   "domain": "bodymiscale",
   "name": "BodyMiScale",
+  "categories": ["health_wellbeing"],
   "codeowners": [
     "@dckiller51",
     "@edenhaus"
@@ -13,5 +14,5 @@
     "custom_components.bodymiscale"
   ],
   "requirements": [],
-  "version": "2026.10.5"
+  "version": "2026.11.0"
 }
