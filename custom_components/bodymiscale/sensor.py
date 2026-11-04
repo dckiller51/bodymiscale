@@ -181,7 +181,7 @@ _IMPEDANCE_SENSORS: tuple[
             native_unit_of_measurement=UnitOfMass.KILOGRAMS,
             device_class=SensorDeviceClass.WEIGHT,
             state_class=SensorStateClass.MEASUREMENT,
-            suggested_display_precision=2,
+            suggested_display_precision=1,
         ),
         Metric.BONE_MASS,
         None,
@@ -193,7 +193,7 @@ _IMPEDANCE_SENSORS: tuple[
             native_unit_of_measurement=UnitOfMass.KILOGRAMS,
             device_class=SensorDeviceClass.WEIGHT,
             state_class=SensorStateClass.MEASUREMENT,
-            suggested_display_precision=2,
+            suggested_display_precision=1,
         ),
         Metric.MUSCLE_MASS,
         None,
@@ -271,7 +271,7 @@ _DUAL_SENSORS: tuple[
             icon="mdi:water-opacity",
             native_unit_of_measurement="L",
             state_class=SensorStateClass.MEASUREMENT,
-            suggested_display_precision=2,
+            suggested_display_precision=1,
         ),
         Metric.ECW,
         None,
@@ -283,7 +283,7 @@ _DUAL_SENSORS: tuple[
             icon="mdi:water-circle",
             native_unit_of_measurement="L",
             state_class=SensorStateClass.MEASUREMENT,
-            suggested_display_precision=2,
+            suggested_display_precision=1,
         ),
         Metric.ICW,
         None,
@@ -308,7 +308,7 @@ _DUAL_SENSORS: tuple[
             native_unit_of_measurement=UnitOfMass.KILOGRAMS,
             device_class=SensorDeviceClass.WEIGHT,
             state_class=SensorStateClass.MEASUREMENT,
-            suggested_display_precision=2,
+            suggested_display_precision=1,
         ),
         Metric.BCM,
         None,
@@ -321,7 +321,7 @@ _DUAL_SENSORS: tuple[
             native_unit_of_measurement=UnitOfMass.KILOGRAMS,
             device_class=SensorDeviceClass.WEIGHT,
             state_class=SensorStateClass.MEASUREMENT,
-            suggested_display_precision=2,
+            suggested_display_precision=1,
         ),
         Metric.SKELETAL_MUSCLE_MASS,
         None,
@@ -475,13 +475,9 @@ class BodyScaleSensor(BodyScaleBaseEntity, RestoreSensor):
                 else:
                     self._attr_native_value = value
             else:
-                if isinstance(value, (int, float)):
-                    precision = self.entity_description.suggested_display_precision
-                    self._attr_native_value = round(
-                        float(value), precision if precision is not None else 2
-                    )
-                else:
-                    self._attr_native_value = value
+                self._attr_native_value = (
+                    float(value) if isinstance(value, (int, float)) else value
+                )
 
             if self._get_attributes:
                 self._attr_extra_state_attributes = dict(

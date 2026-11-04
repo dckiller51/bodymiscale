@@ -115,7 +115,6 @@ class MetricInfo:
     calculate: Callable[
         [Mapping[str, Any], Mapping[Metric, StateType | datetime]], StateType
     ]
-    decimals: int | None = None
     depended_by: list[Metric] = field(default_factory=list, init=False)
 
 
@@ -124,38 +123,34 @@ class MetricInfo:
 # impedance availability verification is done in _recalculate_metric.
 _METRIC_DEPS: dict[Metric, MetricInfo] = {
     Metric.STATUS: MetricInfo([], lambda c, s: None),
-    Metric.AGE: MetricInfo([], lambda c, s: None, 0),
-    Metric.WEIGHT: MetricInfo([], lambda c, s: None, 2),
-    Metric.IMPEDANCE: MetricInfo([], lambda c, s: None, 0),
-    Metric.IMPEDANCE_LOW: MetricInfo([], lambda c, s: None, 1),
-    Metric.IMPEDANCE_HIGH: MetricInfo([], lambda c, s: None, 1),
+    Metric.AGE: MetricInfo([], lambda c, s: None),
+    Metric.WEIGHT: MetricInfo([], lambda c, s: None),
+    Metric.IMPEDANCE: MetricInfo([], lambda c, s: None),
+    Metric.IMPEDANCE_LOW: MetricInfo([], lambda c, s: None),
+    Metric.IMPEDANCE_HIGH: MetricInfo([], lambda c, s: None),
     Metric.LAST_MEASUREMENT_TIME: MetricInfo([], lambda c, s: None),
     # Weight only
-    Metric.BMI: MetricInfo([Metric.WEIGHT], get_bmi, 1),
-    Metric.BMR: MetricInfo([Metric.AGE, Metric.WEIGHT], get_bmr, 0),
-    Metric.VISCERAL_FAT: MetricInfo([Metric.AGE, Metric.WEIGHT], get_visceral_fat, 0),
+    Metric.BMI: MetricInfo([Metric.WEIGHT], get_bmi),
+    Metric.BMR: MetricInfo([Metric.AGE, Metric.WEIGHT], get_bmr),
+    Metric.VISCERAL_FAT: MetricInfo([Metric.AGE, Metric.WEIGHT], get_visceral_fat),
     # Impedance required (verification in _recalculate_metric)
-    Metric.LBM: MetricInfo([Metric.AGE, Metric.WEIGHT], get_lbm, 1),
+    Metric.LBM: MetricInfo([Metric.AGE, Metric.WEIGHT], get_lbm),
     Metric.FAT_PERCENTAGE: MetricInfo(
-        [Metric.AGE, Metric.WEIGHT, Metric.LBM], get_fat_percentage, 1
+        [Metric.AGE, Metric.WEIGHT, Metric.LBM], get_fat_percentage
     ),
-    Metric.WATER_PERCENTAGE: MetricInfo(
-        [Metric.FAT_PERCENTAGE], get_water_percentage, 1
-    ),
-    Metric.BONE_MASS: MetricInfo([Metric.LBM], get_bone_mass, 2),
+    Metric.WATER_PERCENTAGE: MetricInfo([Metric.FAT_PERCENTAGE], get_water_percentage),
+    Metric.BONE_MASS: MetricInfo([Metric.LBM], get_bone_mass),
     Metric.MUSCLE_MASS: MetricInfo(
-        [Metric.WEIGHT, Metric.FAT_PERCENTAGE, Metric.BONE_MASS], get_muscle_mass, 2
+        [Metric.WEIGHT, Metric.FAT_PERCENTAGE, Metric.BONE_MASS], get_muscle_mass
     ),
-    Metric.METABOLIC_AGE: MetricInfo([Metric.WEIGHT, Metric.AGE], get_metabolic_age, 0),
+    Metric.METABOLIC_AGE: MetricInfo([Metric.WEIGHT, Metric.AGE], get_metabolic_age),
     Metric.PROTEIN_PERCENTAGE: MetricInfo(
         [Metric.WEIGHT, Metric.MUSCLE_MASS, Metric.WATER_PERCENTAGE],
         get_protein_percentage,
-        1,
     ),
     Metric.FAT_MASS_2_IDEAL_WEIGHT: MetricInfo(
         [Metric.WEIGHT, Metric.FAT_PERCENTAGE, Metric.AGE],
         get_fat_mass_to_ideal_weight,
-        2,
     ),
     Metric.BODY_TYPE: MetricInfo(
         [Metric.MUSCLE_MASS, Metric.FAT_PERCENTAGE, Metric.AGE],
@@ -173,19 +168,15 @@ _METRIC_DEPS: dict[Metric, MetricInfo] = {
             Metric.IMPEDANCE_HIGH,
         ],
         get_ecw,
-        2,
     ),
-    Metric.ICW: MetricInfo(
-        [Metric.WEIGHT, Metric.FAT_PERCENTAGE, Metric.ECW], get_icw, 2
-    ),
+    Metric.ICW: MetricInfo([Metric.WEIGHT, Metric.FAT_PERCENTAGE, Metric.ECW], get_icw),
     Metric.ECW_TBW_RATIO: MetricInfo(
-        [Metric.WEIGHT, Metric.FAT_PERCENTAGE, Metric.ECW], get_ecw_tbw_ratio, 1
+        [Metric.WEIGHT, Metric.FAT_PERCENTAGE, Metric.ECW], get_ecw_tbw_ratio
     ),
-    Metric.BCM: MetricInfo([Metric.ICW], get_bcm, 2),
+    Metric.BCM: MetricInfo([Metric.ICW], get_bcm),
     Metric.SKELETAL_MUSCLE_MASS: MetricInfo(
         [Metric.AGE, Metric.IMPEDANCE_LOW, Metric.IMPEDANCE_HIGH],
         get_skeletal_muscle_mass,
-        2,
     ),
     # ── Body score ───────────────────────────────────────────────────────────
     Metric.BODY_SCORE: MetricInfo(
@@ -202,18 +193,8 @@ _METRIC_DEPS: dict[Metric, MetricInfo] = {
             Metric.PROTEIN_PERCENTAGE,
         ],
         get_body_score,
-        0,
     ),
 }
-
-
-def _modify_state_for_subscriber(
-    metric_info: MetricInfo, state: StateType | datetime
-) -> StateType | datetime:
-    """Round the state before sending to sensors."""
-    if isinstance(state, (int, float)) and metric_info.decimals is not None:
-        return round(float(state), metric_info.decimals)
-    return state
 
 
 # Raw sensor readings — stored without TTL so they remain available until the
@@ -384,7 +365,6 @@ class BodyScaleMetricsHandler:
             key: MetricInfo(
                 depends_on=list(value.depends_on),
                 calculate=value.calculate,
-                decimals=value.decimals,
             )
             for key, value in _METRIC_DEPS.items()
         }
@@ -872,9 +852,7 @@ class BodyScaleMetricsHandler:
 
         current = self._available_metrics.get(metric)
         if current is not None:
-            callback_func(
-                _modify_state_for_subscriber(self._dependencies[metric], current)
-            )
+            callback_func(current)
 
         return _remove_subscription
 
@@ -1380,9 +1358,8 @@ class BodyScaleMetricsHandler:
         if info:
             subscribers = self._subscribers.get(metric, [])
             if subscribers:
-                sub_state = _modify_state_for_subscriber(info, state)
                 for sub in subscribers:
-                    sub(sub_state)
+                    sub(state)
 
             # Cascade recalculation is handled by _trigger_dependent_recalculation
             # in topological order — no per-update cascades needed.
