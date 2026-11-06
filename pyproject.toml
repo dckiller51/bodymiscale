@@ -24,7 +24,7 @@ dev = [
     "pre-commit==4.7.0",
     "pylint==4.1.3",
     "pytest-cov",
-    "pytest-homeassistant-custom-component>=0.13.353",
+    "pytest-homeassistant==2026.11.0",
     "ruff==0.17.3",
 ]
 
@@ -84,11 +84,12 @@ warn_unreachable = true
 # PYTEST CONFIGURATION
 # ============================================================
 [tool.pytest.ini_options]
+asyncio_default_fixture_loop_scope = "function"
 testpaths = ["tests"]
 asyncio_mode = "auto"
 pythonpath = ["."]
 markers = ["slow: marks tests as slow (deselect with '-m \"not slow\"')"]
-addopts = "-rxf -x -v -l --tb=short --cov=./ --cov-report=xml"
+addopts = "-p no:respx -rxf -x -v -l --tb=short --cov=./ --cov-report=xml"
 
 # ============================================================
 # COVERAGE CONFIGURATION

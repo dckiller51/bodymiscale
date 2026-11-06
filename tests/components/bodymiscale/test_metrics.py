@@ -10,7 +10,7 @@ import pytest
 from homeassistant.const import EVENT_STATE_CHANGED, EVENT_STATE_REPORTED
 from homeassistant.core import HomeAssistant, State
 from homeassistant.util import dt as dt_util
-from pytest_homeassistant_custom_component.common import async_fire_time_changed
+from pytest_homeassistant.common import async_fire_time_changed
 
 from custom_components.bodymiscale.const import (
     CONF_BIRTHDAY,
