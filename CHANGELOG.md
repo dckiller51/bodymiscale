@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## 2026.11.1
+
+### 🔧 Bug fixes
+
+- **Last measurement time not updated when the weight is the same as the previous weigh-in**: a weight sensor coming back from `unavailable` or `unknown` with its last value is ignored, so that a scale waking up and re-broadcasting its last reading is not counted as a measurement. A real weigh-in with exactly the same weight was ignored too. Such a weight is now held for a few seconds and counted as a new measurement when a fresh impedance reading or a stabilized OFF→ON confirms it. Fixes [lovelace-body-miscale-card#250](https://github.com/dckiller51/lovelace-body-miscale-card/issues/250).
+
 ## 2026.11.0
 
 > 🙏 Thank you to [@RX14](https://github.com/RX14)

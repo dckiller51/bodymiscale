@@ -292,6 +292,15 @@ class _MetricsStore(MutableMapping):
 class BodyScaleMetricsHandler:
     """Handles metric propagation for a single body scale profile."""
 
+    # last_measurement_time tracking, see _init_measurement_tracking
+    _stabilized_stamp_cancel: CALLBACK_TYPE | None
+    _weight_accepted_at: float | None
+    _known_weight: float | None
+    _held_weight: tuple[State, float] | None
+    _fresh_impedance_at: float | None
+    _stabilized_on_at: float | None
+    _last_impedance_raw: dict[str, str]
+
     def __init__(
         self,
         hass: HomeAssistant,
@@ -321,13 +330,7 @@ class BodyScaleMetricsHandler:
         # the stabilized OFF→ON transition instead of on every weight write.
         self._stabilized_trigger: bool = False
         self._stabilized_notify_cancel: CALLBACK_TYPE | None = None
-        # last_measurement_time handling (see _stamp_measurement_time):
-        # - _weight_accepted_at: monotonic time of the last accepted weight
-        # - _known_weight: last valid weight exposed by the scale sensor, used
-        #   to ignore a sensor coming back from unavailable with the same value
-        self._stabilized_stamp_cancel: CALLBACK_TYPE | None = None
-        self._weight_accepted_at: float | None = None
-        self._known_weight: float | None = None
+        self._init_measurement_tracking()
         # Unknown weight units already reported, so the warning is logged once.
         self._warned_units: set[str] = set()
         # filled after HA starts
@@ -467,7 +470,9 @@ class BodyScaleMetricsHandler:
             if self._last_reported_ts.get(entity_id) == ts:
                 return
             self._last_reported_ts[entity_id] = ts
-            if self._is_weight_restore(
+            if entity_id in impedance_sensors:
+                self._check_fresh_impedance(entity_id, new_state)
+            if self._hold_restored_weight(
                 entity_id, event.data.get("old_state"), new_state
             ):
                 return
@@ -524,6 +529,8 @@ class BodyScaleMetricsHandler:
                     and old_state is not None
                     and old_state.state != "on"
                 ):
+                    self._stabilized_on_at = time.monotonic()
+                    self._replay_held_weight("stabilized")
                     self._schedule_stabilized_notification()
                     self._schedule_stabilized_stamp()
                 self._state_changed(entity_id, new_state)
@@ -550,6 +557,8 @@ class BodyScaleMetricsHandler:
             for sensor_id in sensors:
                 state = self._hass.states.get(sensor_id)
                 if state is not None:
+                    if sensor_id in impedance_sensors:
+                        self._is_fresh_impedance(sensor_id, state)
                     self._state_changed(sensor_id, state)
         finally:
             self._bootstrapping = False
@@ -711,6 +720,91 @@ class BodyScaleMetricsHandler:
             val,
         )
         return True
+
+    def _init_measurement_tracking(self) -> None:
+        """Set up the state used for last_measurement_time.
+
+        - _weight_accepted_at: monotonic time of the last accepted weight
+        - _known_weight: last valid weight exposed by the scale sensor, used
+          to ignore a sensor coming back from unavailable with the same value
+        - _held_weight: such a weight is held instead of dropped: a fresh
+          impedance or a stabilized OFF→ON within STABILIZED_MEASUREMENT_WINDOW
+          confirms that it is a new weigh-in with the same weight
+          (lovelace-body-miscale-card#250)
+        - _last_impedance_raw: last numeric value seen for each impedance
+          sensor, to tell a fresh reading from the previous one coming back
+          after unavailable
+        """
+        self._stabilized_stamp_cancel = None
+        self._weight_accepted_at = None
+        self._known_weight = None
+        self._held_weight = None
+        self._fresh_impedance_at = None
+        self._stabilized_on_at = None
+        self._last_impedance_raw = {}
+
+    def _check_fresh_impedance(self, entity_id: str, state: State) -> None:
+        """Note a fresh impedance reading and confirm a held weight."""
+        if not self._is_fresh_impedance(entity_id, state):
+            return
+        self._fresh_impedance_at = time.monotonic()
+        # The held weight is processed first, so that the impedance is
+        # validated against this measurement's weight.
+        self._replay_held_weight("fresh impedance")
+
+    def _hold_restored_weight(
+        self, entity_id: str, old_state: State | None, new_state: State
+    ) -> bool:
+        """Return True if the weight is held (back with its last value)."""
+        if not self._is_weight_restore(entity_id, old_state, new_state):
+            return False
+        if self._recent(self._fresh_impedance_at) or self._recent(
+            self._stabilized_on_at
+        ):
+            _LOGGER.debug(
+                "[%s] Same weight after a fresh reading — new measurement",
+                self._name,
+            )
+            return False
+        self._held_weight = (new_state, time.monotonic())
+        return True
+
+    @staticmethod
+    def _recent(timestamp: float | None) -> bool:
+        """Return True if timestamp is within the measurement window."""
+        return (
+            timestamp is not None
+            and time.monotonic() - timestamp <= STABILIZED_MEASUREMENT_WINDOW
+        )
+
+    def _is_fresh_impedance(self, entity_id: str, state: State) -> bool:
+        """Return True for a new impedance reading, and remember its value.
+
+        A value equal to the last one seen (e.g. the sensor coming back from
+        unavailable with its previous reading) is not fresh.
+        """
+        raw = state.state
+        if raw in (STATE_UNAVAILABLE, STATE_UNKNOWN):
+            return False
+        try:
+            if float(raw) <= 0:
+                return False
+        except ValueError:
+            return False
+        previous = self._last_impedance_raw.get(entity_id)
+        self._last_impedance_raw[entity_id] = raw
+        return previous is not None and previous != raw
+
+    def _replay_held_weight(self, reason: str) -> None:
+        """Process a held weight as a new measurement (same weight weigh-in)."""
+        held = self._held_weight
+        self._held_weight = None
+        if held is None or not self._recent(held[1]):
+            return
+        _LOGGER.debug(
+            "[%s] Same weight confirmed by %s — new measurement", self._name, reason
+        )
+        self._state_changed(self._config[CONF_SENSOR_WEIGHT], held[0])
 
     def _weight_kg(self, state: State) -> float | None:
         """Return the weight in kg from a sensor state, or None if not numeric.

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import time
 from datetime import UTC, datetime, timedelta
 from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
@@ -2204,3 +2205,119 @@ async def test_discard_pending_measurement(hass: HomeAssistant) -> None:
     handler.accept_pending_measurement()
     assert values == []
     handler.unload()
+
+
+# ── Same weight as the previous weigh-in (lovelace-body-miscale-card#250) ────
+
+
+async def _weigh_in_after_unavailable(
+    hass: HomeAssistant,
+    *,
+    stabilized: bool,
+    impedance: str,
+    stabilized_on: bool = True,
+    between: str = "unavailable",
+    dual: bool = False,
+) -> list[Any]:
+    """Weigh 70 kg, scale goes unavailable/unknown, then 70 kg again a day later.
+
+    With `dual`, the scale has two impedance sensors (S400) and `impedance`
+    is the new low-frequency value. Returns the last_measurement_time values
+    published after the setup.
+    """
+    impedance_ids = (
+        ["sensor.imp_low_250", "sensor.imp_high_250"] if dual else ["sensor.imp_250"]
+    )
+    config = _make_config(
+        impedance_mode=IMPEDANCE_MODE_DUAL if dual else IMPEDANCE_MODE_STANDARD,
+        impedance_sensor=None if dual else "sensor.imp_250",
+        impedance_low_sensor="sensor.imp_low_250" if dual else None,
+        impedance_high_sensor="sensor.imp_high_250" if dual else None,
+        weight_sensor="sensor.w_250",
+        stabilized_sensor="binary_sensor.stab_250" if stabilized else None,
+    )
+    hass.states.async_set("sensor.w_250", "70.0", {"unit_of_measurement": "kg"})
+    for sensor_id in impedance_ids:
+        hass.states.async_set(sensor_id, "500")
+    if stabilized:
+        hass.states.async_set("binary_sensor.stab_250", "off")
+    await hass.async_block_till_done()
+
+    handler = BodyScaleMetricsHandler(hass, config, config_entry_id="e1")
+    stamps: list[Any] = []
+    handler.subscribe(Metric.LAST_MEASUREMENT_TIME, stamps.append)
+    stamps.clear()
+
+    real_monotonic = time.monotonic
+    with patch(
+        "custom_components.bodymiscale.metrics.time.monotonic",
+        side_effect=lambda: real_monotonic() + 86400,
+    ):
+        # The scale sleeps between weigh-ins
+        hass.states.async_set("sensor.w_250", between)
+        for sensor_id in impedance_ids:
+            hass.states.async_set(sensor_id, between)
+        await hass.async_block_till_done()
+
+        if stabilized and stabilized_on:
+            hass.states.async_set("binary_sensor.stab_250", "on")
+        hass.states.async_set("sensor.w_250", "70.0", {"unit_of_measurement": "kg"})
+        hass.states.async_set(impedance_ids[0], impedance)
+        if dual:
+            hass.states.async_set(impedance_ids[1], "500")
+        await hass.async_block_till_done()
+        async_fire_time_changed(hass, dt_util.utcnow() + timedelta(seconds=2))
+        await hass.async_block_till_done()
+
+    handler.unload()
+    return stamps
+
+
+@pytest.mark.parametrize("between", ["unavailable", "unknown"])
+async def test_same_weight_new_impedance_is_a_new_measurement(
+    hass: HomeAssistant, between: str
+) -> None:
+    """Same weight back from unavailable/unknown + fresh impedance updates the time."""
+    stamps = await _weigh_in_after_unavailable(
+        hass, stabilized=False, impedance="512", between=between
+    )
+    assert len(stamps) == 1
+
+
+async def test_same_weight_new_impedance_dual_is_a_new_measurement(
+    hass: HomeAssistant,
+) -> None:
+    """S400 via ESPHome: weight and impedances go unknown between weigh-ins."""
+    stamps = await _weigh_in_after_unavailable(
+        hass, stabilized=False, impedance="512", between="unknown", dual=True
+    )
+    assert len(stamps) == 1
+
+
+async def test_same_weight_stabilized_is_a_new_measurement(
+    hass: HomeAssistant,
+) -> None:
+    """Same weight back from unavailable + stabilized OFF→ON updates the time."""
+    stamps = await _weigh_in_after_unavailable(hass, stabilized=True, impedance="500")
+    assert len(stamps) == 1
+
+
+@pytest.mark.parametrize("between", ["unavailable", "unknown"])
+async def test_scale_wake_up_with_last_values_is_not_a_measurement(
+    hass: HomeAssistant, between: str
+) -> None:
+    """Scale re-broadcasting its last weight and impedance is still ignored."""
+    stamps = await _weigh_in_after_unavailable(
+        hass, stabilized=False, impedance="500", between=between
+    )
+    assert stamps == []
+
+
+async def test_scale_wake_up_without_stabilized_on_is_not_a_measurement(
+    hass: HomeAssistant,
+) -> None:
+    """With a stabilized sensor, a wake-up without OFF→ON is still ignored."""
+    stamps = await _weigh_in_after_unavailable(
+        hass, stabilized=True, impedance="500", stabilized_on=False
+    )
+    assert stamps == []
