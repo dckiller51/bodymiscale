@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## 2026.11.2
+
+### 🔧 Bug fixes
+
+- **Last measurement time not updated for a same-weight weigh-in with a stabilized sensor (weight range profiles)**: Home Assistant's Bluetooth integrations only update an entity whose value changed, so a weigh-in with exactly the same weight as the previous one leaves the weight sensor untouched. With a stabilized sensor configured, the stabilized OFF→ON transition was then ignored and the last measurement time did not move. Profiles using notifications were not affected. For the other profiles, the stabilized sensor now takes precedence, as it already did with notifications: on a real OFF→ON, the current weight is checked against the profile again and the last measurement time is updated. The weight range still decides which profile the weigh-in belongs to, and a stabilized sensor coming back from `unavailable` or a Home Assistant restart is not counted as a weigh-in. Reported in [#378](https://github.com/dckiller51/bodymiscale/issues/378).
+
 ## 2026.11.1
 
 ### 🔧 Bug fixes

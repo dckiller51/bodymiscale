@@ -2033,6 +2033,146 @@ async def test_lmt_without_stabilized_still_stamped_on_identical_weight(
     handler.unload()
 
 
+async def _stabilized_cycle(
+    hass: HomeAssistant,
+    freezer: Any,
+    sensor: str,
+    weight: tuple[str, str] | None = None,
+) -> None:
+    """Run a weigh-in: stabilized OFF, optional weight write, then ON.
+
+    The delayed stamp is then left to run.
+    """
+    hass.states.async_set(sensor, "off")
+    await hass.async_block_till_done()
+    freezer.tick(timedelta(hours=24))
+    if weight is not None:
+        hass.states.async_set(*weight)
+    hass.states.async_set(sensor, "on")
+    await hass.async_block_till_done()
+    freezer.tick(timedelta(seconds=2))
+    async_fire_time_changed(hass)
+    await hass.async_block_till_done()
+
+
+async def test_lmt_with_stabilized_stamped_when_weight_not_rewritten(
+    hass: HomeAssistant, freezer: Any
+) -> None:
+    """A stabilized OFF→ON stamps a weigh-in whose weight did not change.
+
+    Bluetooth integrations only write an entity whose value changed, so the
+    weight sensor gets no update at all for a weigh-in with the same weight.
+    """
+    freezer.move_to("2026-11-19 08:00:00+00:00")
+    hass.states.async_set("binary_sensor.stab_same", "off")
+    config = _make_config(
+        weight_sensor="sensor.w_same", stabilized_sensor="binary_sensor.stab_same"
+    )
+    handler = BodyScaleMetricsHandler(hass, config, config_entry_id="e1")
+
+    await _stabilized_cycle(
+        hass, freezer, "binary_sensor.stab_same", ("sensor.w_same", "70.0")
+    )
+    first = _lmt(handler)
+    assert first is not None
+
+    # Next day, same weight: only the stabilized sensor changes
+    await _stabilized_cycle(hass, freezer, "binary_sensor.stab_same")
+    assert _lmt(handler) > first
+    handler.unload()
+
+
+async def test_lmt_with_stabilized_not_stamped_from_unavailable(
+    hass: HomeAssistant, freezer: Any
+) -> None:
+    """Stabilized back from unavailable to ON does not revalidate the weight."""
+    freezer.move_to("2026-11-19 08:00:00+00:00")
+    hass.states.async_set("binary_sensor.stab_unav", "off")
+    config = _make_config(
+        weight_sensor="sensor.w_stab_unav", stabilized_sensor="binary_sensor.stab_unav"
+    )
+    handler = BodyScaleMetricsHandler(hass, config, config_entry_id="e1")
+    await _stabilized_cycle(
+        hass, freezer, "binary_sensor.stab_unav", ("sensor.w_stab_unav", "70.0")
+    )
+    first = _lmt(handler)
+    assert first is not None
+
+    # Bluetooth drop: the stabilized sensor comes back with its last value
+    hass.states.async_set("binary_sensor.stab_unav", "unavailable")
+    await hass.async_block_till_done()
+    freezer.tick(timedelta(hours=1))
+    hass.states.async_set("binary_sensor.stab_unav", "on")
+    await hass.async_block_till_done()
+    freezer.tick(timedelta(seconds=2))
+    async_fire_time_changed(hass)
+    await hass.async_block_till_done()
+
+    assert _lmt(handler) == first
+    handler.unload()
+
+
+async def test_lmt_with_stabilized_unchanged_weight_follows_profile_ranges(
+    hass: HomeAssistant, freezer: Any
+) -> None:
+    """The revalidated weight is only stamped for the profile it belongs to."""
+    freezer.move_to("2026-11-19 08:00:00+00:00")
+    hass.states.async_set("binary_sensor.stab_two", "off")
+    hass.states.async_set("sensor.w_two", "70.0")
+    await hass.async_block_till_done()
+
+    adult_config = _make_config(
+        weight_sensor="sensor.w_two",
+        stabilized_sensor="binary_sensor.stab_two",
+        profile_method=PROFILE_METHOD_WEIGHT,
+    )
+    adult_config[CONF_WEIGHT_MIN] = 60.0
+    adult_config[CONF_WEIGHT_MAX] = 80.0
+    child_config = _make_config(
+        weight_sensor="sensor.w_two",
+        stabilized_sensor="binary_sensor.stab_two",
+        profile_method=PROFILE_METHOD_WEIGHT,
+    )
+    child_config[CONF_WEIGHT_MIN] = 15.0
+    child_config[CONF_WEIGHT_MAX] = 40.0
+    adult = BodyScaleMetricsHandler(hass, adult_config, config_entry_id="adult")
+    child = BodyScaleMetricsHandler(hass, child_config, config_entry_id="child")
+
+    # Same weight as before: the weight sensor is not written
+    await _stabilized_cycle(hass, freezer, "binary_sensor.stab_two")
+
+    assert _lmt(adult) is not None
+    assert _lmt(child) is None
+    adult.unload()
+    child.unload()
+
+
+async def test_lmt_with_stabilized_written_weight_stamped_once(
+    hass: HomeAssistant, freezer: Any
+) -> None:
+    """A weigh-in whose weight is written is stamped once, not revalidated."""
+    freezer.move_to("2026-11-19 08:00:00+00:00")
+    hass.states.async_set("binary_sensor.stab_once", "off")
+    config = _make_config(
+        weight_sensor="sensor.w_once", stabilized_sensor="binary_sensor.stab_once"
+    )
+    handler = BodyScaleMetricsHandler(hass, config, config_entry_id="e1")
+    stamps: list[Any] = []
+    weights: list[Any] = []
+    handler.subscribe(Metric.LAST_MEASUREMENT_TIME, stamps.append)
+    handler.subscribe(Metric.WEIGHT, weights.append)
+    stamps.clear()
+    weights.clear()
+
+    await _stabilized_cycle(
+        hass, freezer, "binary_sensor.stab_once", ("sensor.w_once", "71.0")
+    )
+
+    assert len(stamps) == 1
+    assert len(weights) == 1
+    handler.unload()
+
+
 async def test_lmt_not_stamped_by_startup_replay(hass: HomeAssistant) -> None:
     """Replaying the current sensor value at startup is not a measurement."""
     hass.states.async_set("sensor.w_boot_lmt", "70.0")
