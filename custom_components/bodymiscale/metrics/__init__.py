@@ -299,6 +299,7 @@ class BodyScaleMetricsHandler:
     _held_weight: tuple[State, float] | None
     _fresh_impedance_at: float | None
     _stabilized_on_at: float | None
+    _stabilized_from_off: bool
     _last_impedance_raw: dict[str, str]
 
     def __init__(
@@ -530,6 +531,9 @@ class BodyScaleMetricsHandler:
                     and old_state.state != "on"
                 ):
                     self._stabilized_on_at = time.monotonic()
+                    # Only a real OFF→ON is a new weigh-in that can revalidate
+                    # an unchanged weight (not unavailable/unknown → ON).
+                    self._stabilized_from_off = old_state.state == "off"
                     self._replay_held_weight("stabilized")
                     self._schedule_stabilized_notification()
                     self._schedule_stabilized_stamp()
@@ -731,6 +735,8 @@ class BodyScaleMetricsHandler:
           impedance or a stabilized OFF→ON within STABILIZED_MEASUREMENT_WINDOW
           confirms that it is a new weigh-in with the same weight
           (lovelace-body-miscale-card#250)
+        - _stabilized_from_off: the last stabilized ON came from OFF, so the
+          current weight can be revalidated if it was not re-written
         - _last_impedance_raw: last numeric value seen for each impedance
           sensor, to tell a fresh reading from the previous one coming back
           after unavailable
@@ -741,6 +747,7 @@ class BodyScaleMetricsHandler:
         self._held_weight = None
         self._fresh_impedance_at = None
         self._stabilized_on_at = None
+        self._stabilized_from_off = False
         self._last_impedance_raw = {}
 
     def _check_fresh_impedance(self, entity_id: str, state: State) -> None:
@@ -858,11 +865,9 @@ class BodyScaleMetricsHandler:
     def _stamp_on_stabilized(self, _now: datetime) -> None:
         """Stamp the measurement if this profile accepted the weight just now."""
         self._stabilized_stamp_cancel = None
-        if (
-            self._weight_accepted_at is None
-            or time.monotonic() - self._weight_accepted_at
-            > STABILIZED_MEASUREMENT_WINDOW
-        ):
+        if not self._recent(self._weight_accepted_at):
+            self._revalidate_unchanged_weight()
+        if not self._recent(self._weight_accepted_at):
             _LOGGER.debug(
                 "[%s][stabilized] ON — no weight accepted for this profile, "
                 "last_measurement_time unchanged",
@@ -870,6 +875,29 @@ class BodyScaleMetricsHandler:
             )
             return
         self._stamp_measurement_time()
+
+    def _revalidate_unchanged_weight(self) -> None:
+        """Run the current weight through the profile on a stabilized OFF→ON.
+
+        Bluetooth integrations only write an entity whose value changed, so a
+        weigh-in with exactly the same weight leaves the weight sensor
+        untouched: the stabilized transition is then the only sign of the new
+        measurement. The notification mode already re-processes the weight
+        in _notify_on_stabilized.
+        """
+        if not self._stabilized_from_off or self._notification_coordinator is not None:
+            return
+        self._stabilized_from_off = False
+        weight_id = self._config[CONF_SENSOR_WEIGHT]
+        state = self._hass.states.get(weight_id)
+        if state is None:
+            return
+        _LOGGER.debug(
+            "[%s][stabilized] ON without a weight update — revalidating %s",
+            self._name,
+            state.state,
+        )
+        self._state_changed(weight_id, state)
 
     @callback
     def accept_pending_measurement(self) -> None:
