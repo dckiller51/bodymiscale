@@ -2461,3 +2461,99 @@ async def test_scale_wake_up_without_stabilized_on_is_not_a_measurement(
         hass, stabilized=True, impedance="500", stabilized_on=False
     )
     assert stamps == []
+
+
+# ===========================================================================
+# Notification mode — impedance read before the notification is sent (#505)
+# ===========================================================================
+
+
+def _notify_dual_handler(
+    hass: HomeAssistant, prefix: str, stabilized: bool
+) -> tuple[BodyScaleMetricsHandler, MagicMock]:
+    config = _make_config(
+        weight_sensor=f"sensor.{prefix}_w",
+        profile_method=PROFILE_METHOD_NOTIFY,
+        impedance_mode=IMPEDANCE_MODE_DUAL,
+        impedance_low_sensor=f"sensor.{prefix}_low",
+        impedance_high_sensor=f"sensor.{prefix}_high",
+        stabilized_sensor=f"binary_sensor.{prefix}_stab" if stabilized else None,
+    )
+    handler = BodyScaleMetricsHandler(hass, config, config_entry_id="e1")
+    coordinator = MagicMock(spec=NotificationCoordinator)
+    coordinator.async_notify = AsyncMock()
+    handler.set_notification_coordinator(coordinator)
+    return handler, coordinator
+
+
+def _confirm(handler: BodyScaleMetricsHandler) -> None:
+    """Do what NotificationCoordinator does when the user taps their name."""
+    handler.profile_filter.confirm()
+    handler.accept_pending_measurement()
+
+
+async def test_notify_stabilized_dual_impedance_kept_until_confirmation(
+    hass: HomeAssistant,
+) -> None:
+    """S400: both impedances arrive before stabilized ON sends the notification."""
+    hass.states.async_set("binary_sensor.n505_stab", "off")
+    handler, coordinator = _notify_dual_handler(hass, "n505", stabilized=True)
+
+    hass.states.async_set("sensor.n505_w", "72.5")
+    hass.states.async_set("sensor.n505_low", "520.0")
+    hass.states.async_set("sensor.n505_high", "470.0")
+    hass.states.async_set("binary_sensor.n505_stab", "on")
+    await hass.async_block_till_done()
+    await _fire_stabilized_delay(hass)
+    coordinator.async_notify.assert_awaited_once_with(72.5)
+
+    _confirm(handler)
+
+    assert handler._available_metrics[Metric.IMPEDANCE_LOW] == pytest.approx(520.0)
+    assert handler._available_metrics[Metric.IMPEDANCE_HIGH] == pytest.approx(470.0)
+    assert Metric.LBM in handler._available_metrics
+    assert Metric.FAT_PERCENTAGE in handler._available_metrics
+    handler.unload()
+
+
+async def test_notify_impedance_written_before_weight_kept(
+    hass: HomeAssistant,
+) -> None:
+    """Without stabilized, an impedance written before the weight is kept."""
+    handler, coordinator = _notify_dual_handler(hass, "n505b", stabilized=False)
+
+    hass.states.async_set("sensor.n505b_low", "520.0")
+    hass.states.async_set("sensor.n505b_w", "72.5")
+    hass.states.async_set("sensor.n505b_high", "470.0")
+    await hass.async_block_till_done()
+    coordinator.async_notify.assert_awaited_once_with(72.5)
+
+    _confirm(handler)
+
+    assert Metric.LBM in handler._available_metrics
+    assert Metric.FAT_PERCENTAGE in handler._available_metrics
+    handler.unload()
+
+
+async def test_notify_stale_impedance_not_reused(
+    hass: HomeAssistant,
+) -> None:
+    """An impedance read long before the weigh-in is not replayed with it."""
+    handler, _coordinator = _notify_dual_handler(hass, "n505c", stabilized=False)
+
+    hass.states.async_set("sensor.n505c_low", "520.0")
+    hass.states.async_set("sensor.n505c_high", "470.0")
+    await hass.async_block_till_done()
+
+    real_monotonic = time.monotonic
+    with patch(
+        "custom_components.bodymiscale.metrics.time.monotonic",
+        side_effect=lambda: real_monotonic() + 3600,
+    ):
+        hass.states.async_set("sensor.n505c_w", "72.5")
+        await hass.async_block_till_done()
+        _confirm(handler)
+
+    assert Metric.IMPEDANCE_LOW not in handler._available_metrics
+    assert Metric.LBM not in handler._available_metrics
+    handler.unload()
