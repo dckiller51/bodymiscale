@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 <!--next-version-placeholder-->
 
+## 2026.11.3
+
+### 🔧 Bug fixes
+
+- **Notification profiles: impedance lost, only the weight was updated**: in notification mode, the impedance received before the notification was sent was dropped, so after confirming, only the weight was updated and no body composition metric was calculated. This happened on every weigh-in with a stabilized sensor (the notification is sent once the measurement is stable, after the impedance has arrived, e.g. with the S400 in dual-frequency mode), and without one when the impedance was written just before the weight. The impedance of the current weigh-in is now kept until you confirm, while a reading from a previous weigh-in is still never reused. Fixes [#505](https://github.com/dckiller51/bodymiscale/issues/505).
+
 ## 2026.11.2
 
 ### 🔧 Bug fixes

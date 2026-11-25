@@ -324,7 +324,9 @@ class BodyScaleMetricsHandler:
 
         self._pending_weight: float | None = None
         self._pending_state: State | None = None
-        self._pending_impedance: dict[Metric, tuple[float, State]] = {}
+        # Impedance read while no user has confirmed yet: value and the
+        # monotonic time it was received, replayed after confirmation.
+        self._pending_impedance: dict[Metric, tuple[float, float]] = {}
         self._replaying: bool = False
         self._pending_timeout_cancel: CALLBACK_TYPE | None = None
         # Notification mode + stabilized sensor: the notification is sent on
@@ -652,7 +654,15 @@ class BodyScaleMetricsHandler:
         self._cancel_pending_timeout()
         self._pending_weight = val
         self._pending_state = state
-        self._pending_impedance.clear()
+        # Keep the impedance of this weigh-in: with a stabilized sensor the
+        # notification is sent after both impedances arrived, and without one
+        # an impedance can be written just before the weight. Only readings
+        # older than the measurement window belong to a previous weigh-in.
+        self._pending_impedance = {
+            metric: (imp, received_at)
+            for metric, (imp, received_at) in self._pending_impedance.items()
+            if self._recent(received_at)
+        }
         self._last_accepted_weight = None
 
         self._pending_timeout_cancel = async_call_later(
@@ -928,7 +938,7 @@ class BodyScaleMetricsHandler:
             self._set_sensor_problem(self._config[CONF_SENSOR_WEIGHT], problem)
         if valid:
             if self._pending_impedance:
-                for metric, (val, _state) in self._pending_impedance.items():
+                for metric, (val, _received_at) in self._pending_impedance.items():
                     _LOGGER.debug(
                         "accept_pending_measurement: replaying impedance %s=%.2f",
                         metric,
@@ -1238,7 +1248,7 @@ class BodyScaleMetricsHandler:
                 _LOGGER.debug(
                     "Notification filter: impedance %.2f stored as pending", val
                 )
-                self._pending_impedance[metric] = (val, state)
+                self._pending_impedance[metric] = (val, time.monotonic())
                 return False, None
         else:
             # Use the weight accepted in the current measurement cycle.
