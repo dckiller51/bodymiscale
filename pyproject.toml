@@ -24,7 +24,7 @@ dev = [
     "pre-commit==4.7.0",
     "pylint==4.1.4",
     "pytest-cov",
-    "pytest-homeassistant==2026.11.2",
+    "pytest-homeassistant==2026.11.3",
     "ruff==0.17.5",
 ]
 
